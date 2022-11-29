@@ -1,0 +1,25 @@
+url: ~
+# Customize:
+# https://bootswatch.com/journal/
+# https://rstudio.github.io/bslib/articles/bs5-variables.html
+# bs_theme_preview()
+template:
+  bootstrap: 5
+  #theme: pygments
+  #theme: solarized-light
+  #theme: yeti
+  bootswatch: yeti
+  bslib:
+    #headings-color: "#9FCDC8"
+    info: "#9FCDC8"
+    primary: "#B76747"
+    bg: "#F4EACA"
+    fg: "#00445B"
+navbar:
+  left:
+  - text: "Functions"
+    icon: fas fa-hat-wizard
+    href: reference/index.html
+  - text: "News"
+    icon: fas fa-rss
+    href: news/index.html
