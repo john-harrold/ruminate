@@ -15,6 +15,13 @@ template:
     primary: "#B76747"
     bg: "#F4EACA"
     fg: "#00445B"
+reference:
+# - contents:
+#   - ruminate
+  - title: "NCA Module functions"
+  - contents:
+    - autocast
+    - starts_with("NCA_")
 navbar:
   left:
   - text: "Functions"

@@ -4,6 +4,8 @@ library(shinydashboard)
 library(devtools)
 load_all()
 
+library(prompter)
+
 #https://fontawesome.com/icons?from=io
 
 ui <- dashboardPage(
@@ -19,47 +21,114 @@ ui <- dashboardPage(
     tabItems(
        tabItem(tabName="ncatab",
        fluidRow(
-         box(title="Current NCAs",
-             "ui_nca_curr_ncas",
-             htmlOutput(NS("NCAFG", "ui_nca_curr_ncas")), width=5),
+         prompter::use_prompt(),
+         box(title="Current Analysis",
+             "ui_nca_curr_anas",
+             htmlOutput(NS("NCA", "ui_nca_curr_anas")), width=5),
          box(title="Current Data Views",
              "ui_nca_curr_views",
-             htmlOutput(NS("NCAFG", "ui_nca_curr_views")), width=5)),
+             htmlOutput(NS("NCA", "ui_nca_curr_views")), width=5)),
        fluidRow(
-         box(title="NCA Actions",
+         box(title="Analysis Actions",
              div(style="display:inline-block",
-                 "ui_nca_new_nca",
-                 htmlOutput(NS("NCA", "ui_nca_new_nca"))),
+                 "ui_nca_new_ana",
+                 htmlOutput(NS("NCA", "ui_nca_new_ana"))),
              div(style="display:inline-block",
-                 "ui_nca_save_nca",
-                 htmlOutput(NS("NCA", "ui_nca_save_nca"))),
+                 "ui_nca_save_ana",
+                 htmlOutput(NS("NCA", "ui_nca_save_ana"))),
              div(style="display:inline-block",
                  "ui_nca_clip_code",
                  htmlOutput(NS("NCA", "ui_nca_clip_code")) ),
              div(style="display:inline-block",
-                 "ui_nca_del_nca",
-                 htmlOutput(NS("NCA", "ui_nca_del_nca"))),
+                 "ui_nca_del_ana",
+                 htmlOutput(NS("NCA", "ui_nca_del_ana"))),
              div(style="display:inline-block",
-                 "ui_nca_copy_nca",
-                 htmlOutput(NS("NCA", "ui_nca_copy_nca"))),
+                 "ui_nca_copy_ana",
+                 htmlOutput(NS("NCA", "ui_nca_copy_ana"))),
              width = 12)
        ),
        fluidRow(
          box(title="NCA Caption",
-             "ui_nca_nca_name",
-             htmlOutput(NS("NCA", "ui_nca_nca_name")),
+             "ui_nca_ana_name",
+             htmlOutput(NS("NCA", "ui_nca_ana_name")),
              tags$br(),
-             "ui_nca_nca_notes",
-             htmlOutput(NS("NCA", "ui_nca_nca_notes")),
+             "ui_nca_ana_notes",
+             htmlOutput(NS("NCA", "ui_nca_ana_notes")),
              width=12)),
        fluidRow(
          box(title="Messages",
            "ui_nca_msg",
            verbatimTextOutput(NS("NCA", "ui_nca_msg")), width=12)),
        fluidRow(
+         box(title="Analysis Options",
+           div(style="display:inline-block;vertical-align:top",
+             "ui_nca_ana_int",
+             htmlOutput(NS("NCA", "ui_nca_ana_int")),
+             ),
+           div(style="display:inline-block;vertical-align:top",
+             "ui_nca_ana_params",
+             htmlOutput(NS("NCA", "ui_nca_ana_params")),
+             ),
+           div(style="display:inline-block;vertical-align:top",
+             "ui_nca_ana_source_sampling",
+             htmlOutput(NS("NCA", "ui_nca_ana_source_sampling")),
+             ),
+             width=12)),
+       fluidRow(
+         box(title="Column Mapping",
+           div(style="display:inline-block",
+             "ui_nca_ana_col_id",
+             htmlOutput(NS("NCA", "ui_nca_ana_col_id"))),
+           div(style="display:inline-block",
+             "ui_nca_ana_col_time",
+             htmlOutput(NS("NCA", "ui_nca_ana_col_time"))),
+           div(style="display:inline-block",
+             "ui_nca_ana_col_dose",
+             htmlOutput(NS("NCA", "ui_nca_ana_col_dose"))),
+           div(style="display:inline-block",
+             "ui_nca_ana_col_conc",
+             htmlOutput(NS("NCA", "ui_nca_ana_col_conc"))),
+           div(style="display:inline-block",
+             "ui_nca_ana_col_group",
+             htmlOutput(NS("NCA", "ui_nca_ana_col_group"))),
+             width=12)),
+       fluidRow(
+         box(title="Specify Units",
+           div(style="display:inline-block",
+             "ui_nca_ana_check_units",
+             htmlOutput(NS("NCA", "ui_nca_ana_check_units"))),
+           tags$br(),
+           div(style="display:inline-block",
+             "ui_nca_ana_units_time",
+             htmlOutput(NS("NCA", "ui_nca_ana_units_time"))),
+           div(style="display:inline-block",
+             "ui_nca_ana_units_dose",
+             htmlOutput(NS("NCA", "ui_nca_ana_units_dose"))),
+           div(style="display:inline-block",
+             "ui_nca_ana_units_conc",
+             htmlOutput(NS("NCA", "ui_nca_ana_units_conc"))),
+           div(style="display:inline-block",
+             "ui_nca_ana_units_amt",
+             htmlOutput(NS("NCA", "ui_nca_ana_units_amt"))),
+             width=12)),
+       fluidRow(
          box(title="Generated Code",
            "NCA_ui_ace_code",
            shinyAce::aceEditor(NS("NCA", "NCA_ui_ace_code")), width=12)),
+       fluidRow(
+         box(title="Analysis Scenarios",
+         div(style="display:inline-block",
+           "NCA_nca_ana_scenario",
+           htmlOutput(NS("NCA", "ui_nca_ana_scenario"))),
+         div(style="display:inline-block",
+           "NCA_nca_ana_scenario_use",
+           htmlOutput(NS("NCA", "ui_nca_ana_scenario_use"))),
+           width=6)),
+       fluidRow(
+         box(title="PKNCA Options",
+             "ui_nca_ana_options",
+             htmlOutput(NS("NCA", "ui_nca_ana_options")),
+             width=12)),
        fluidRow(
          box(title="Current Module State",
            verbatimTextOutput("ui_state"),width=12))
@@ -75,13 +144,16 @@ server <- function(input, output, session) {
    # changes in the module state outside of the module
    react_FM = reactiveValues()
 
+   #UD_test_mksession(session)
+   DW_test_mksession(session)
+
  # # Module server
- # NCA_Server(id="NCA", react_state=react_FM)
+   NCA_Server(id="NCA", react_state=react_FM)
 #
- # # Current state outside of the module
- # output$ui_state  =  renderText({
- #   uiele = paste(capture.output(str(react_FM[["NCA"]])), collapse="\n")
- # uiele})
+   # Current state outside of the module
+   output$ui_state  =  renderText({
+     uiele = paste(capture.output(str(react_FM[["NCA"]])), collapse="\n")
+   uiele})
 }
 
 shinyApp(ui, server)

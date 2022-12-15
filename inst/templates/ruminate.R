@@ -19,13 +19,13 @@ CSS <- "
 
 ui <- dashboardPage(
   skin="black",
-  dashboardHeader(title="formods"),
+  dashboardHeader(title="ruminate"),
   dashboardSidebar(
      sidebarMenu(
-       menuItem("Source Data",     tabName="upload",      icon=icon("table")) ,
-       menuItem("Wrangle",         tabName="wrangle",     icon=icon("hat-cowboy")),
-       menuItem("Plot",            tabName="plot",        icon=icon("chart-line")),
-       menuItem("App State",       tabName="app_state",   icon=icon("archive"))
+       menuItem("Load/Save",       tabName="loadsave",    icon=icon("arrow-down-up-across-line")) ,
+       menuItem("Transform Data",  tabName="wrangle",     icon=icon("shuffle")),
+       menuItem("Visualize",       tabName="plot",        icon=icon("chart-line")),
+       menuItem("NCA",             tabName="nca",         icon=icon("chart-area"))
      )
   ),
   dashboardBody(
@@ -33,9 +33,11 @@ ui <- dashboardPage(
     tags$style(HTML(CSS))
   ),
     tabItems(
-       tabItem(tabName="app_state", box(title="Manage App State", htmlOutput(NS("ASM", "ui_asm_compact")))),
-       tabItem(tabName="upload",
-               box(title="Load Data", width=12,
+       tabItem(tabName="nca", 
+               htmlOutput(NS("NCA",  "ui_nca_compact")),
+               ),
+       tabItem(tabName="loadsave",
+               box(title="Load Dataset", width=12,
                  fluidRow(
                    column(width=6,
                      htmlOutput(NS("UD",  "ui_ud_compact"))),
@@ -50,7 +52,9 @@ ui <- dashboardPage(
                        tags$a("test dataset", href="https://github.com/john-harrold/formods/raw/master/inst/test_data/TEST_DATA.xlsx"),
                               'and upload it into the App using the form on the left.'))
                  )
-               )
+               ),
+               box(title="Save or Load Analysis", width=12,
+                   htmlOutput(NS("ASM", "ui_asm_compact")))
                ),
        tabItem(tabName="wrangle",
                box(title="Transform and Create Views of Your Data", width=12,

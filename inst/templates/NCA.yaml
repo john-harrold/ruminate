@@ -1,4 +1,4 @@
-NCA:
+MC: 
   code: # module specific code options
     readOnly: TRUE
     mode:     r
@@ -8,14 +8,875 @@ NCA:
   # put different formatting options (widths, heights,
   # shinyWidgets button sizes, etc) here.
   formatting:
-    input:
-      width: 100
-  labels:
-    input_label: "This is the text for a label"
+    # Dimensions of code snippet box
+    code:
+      width:  500
+      height: 150
+    # Dimensions of the notes text area
+    notes:      
+      width:  "300px"
+      height: "75px"
+    # Width of textInput and selectInput UI elements in the
+    # nca configuration
+    nca_config_option:
+      width: 150
+    slider_ana_interval:
+      width: 150
+    button_ana_del:
+      size: "sm" 
+      block: TRUE
+    button_ana_save:
+      size: "sm" 
+      block: TRUE
+    button_ana_clip:
+      size: "sm" 
+      block: TRUE
+    button_ana_copy:
+      size: "sm" 
+      block: TRUE
+    button_ana_new:
+      size: "sm" 
+      block: TRUE
+    button_ana_use_scenario:
+      size: "sm" 
+      block: TRUE
+    select_current_view:
+      width: 200
+    select_ana_col_id:
+      width: 150
+    select_ana_source_sampling: 
+      width: 150
+    select_ana_nca_parameters:
+      width: 150
+    select_ana_col_dose:
+      width: 150
+    select_ana_col_conc:
+      width: 150
+    select_ana_col_time:
+      width: 150
+    select_ana_col_group:
+      width: 150
+    select_ana_units_dose:
+      width: 150
+    select_ana_units_time:
+      width: 150
+    select_ana_units_conc:
+      width: 150
+    select_ana_units_amt: 
+      width: 150
+    select_ana_scenario:
+      width: 150
   errors:
     bad_input: "Input error message"
   tooltips:
     # Set to FALSE to disable tool tips for this module
     include: TRUE
-    components:
-      input_tip: "My tool tip"
+    notes:             "Optional analysis notes that will be carried over and used in other elements (e.g. reporting)."
+    ana_key:           "Unique description used for referencing analysis and in other elements (e.g. reporting)."
+    show_code:         "Show analysis code"
+  labels:
+    ana_key:                         "title/caption"
+    new_ana:                         "New"
+    save_ana:                        "Save"
+    del_ana:                         "Delete"
+    copy_ana:                        "Copy"
+    clip_ana:                        "Code"
+    curr_anas_none:                  "No figures yet created"
+    ana_use_scenario:                "Use Analysis Type"
+    ana_interval:                    "Analysis time interval"
+    select_current_view:             "Data from"
+    select_current_ana:              "Current NCA"
+    select_ana_scenario:             NULL  # "Type of Analysis:"
+    select_ana_col_id:               "Subject ID"
+    select_ana_col_time:             "Time"
+    select_ana_col_dose:             "Dose"
+    select_ana_col_conc:             "Concentration"
+    select_ana_col_group:            "Other Grouping"
+    select_ana_units_time:           "Time"
+    select_ana_units_dose:           "Dose"
+    select_ana_units_conc:           "Concentration"
+    select_ana_units_amt:            "Amount"
+    select_ana_nca_parameters:       "Amount"
+    switch_ana_include_units:        "Include Units"
+    select_ana_source_sampling:      "Data Sampling"
+  # For details on the PKNCA options see this vignette:
+  # https://billdenney.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html
+  # This section contains information about different options, metadata about
+  # them, default values, etc. Using this, the options UI for an analysis is
+  # generated automatically. Each configuration option has the following:
+  #
+  # group        - This is how configuration options will be grouped in the app
+  # label        - Short textual description
+  # tooltip      - More detailed description of the option and what goes into it.
+  #                Set to NULL to not display a tool tip.
+  # type         - List of possible types. For example if you have "numeric" then
+  #                "character" the value will be evaluated as numeric, if this is
+  #                NA then it will be evaluated as character. 
+  # value        - Default value in the UI
+  # options      - If set to NULL a text input box will be created for this option, 
+  #                if there are options then a selection box will be created. 
+  # pknca_option - The actual option set with PKNCA
+  nca_config:
+    adj_r_squared_factor:
+      group:         General
+      # BILL I need a better label for this
+      label:         "r² (Adj) factor"
+      tooltip:       "The adjusted r² for the calculation of λz has this factor times the number of data points added to it. It allows for more data points to be preferred in the calculation of half-life."
+      type:          numeric
+      value:         0.0001
+      options:       NULL
+      pknca_option:  adj.r.squared.factor
+    max_missing:
+      group:         General
+      label:         "Max Missing (frac)"
+      tooltip:       "The maximum fraction of the data that may be missing (‘NA’) to calculate summary statistics."
+      type:          numeric
+      value:         0.5
+      options:       NULL
+      pknca_option:  max.missing
+    auc_method:
+      group:         AUC     
+      label:         Method
+      tooltip:       "The method used to calculate the AUC and related statistics."
+      type:          character
+      value:         "lin up/log down"
+      options:       ["lin up/log down", "linear"]
+      pknca_option:  auc.method
+    conc_na:   
+      group:         Missing and BLQ Values 
+      label:         Missing Values
+      tooltip:       "Determines how missing (NA) values are generally handled. Can be either drop or a numeric value to use. "
+      type:          ["numeric", "character"]
+      value:         "drop"
+      options:       NULL
+      pknca_option:  conc.na
+    conc_blq_first:
+      group:         Missing and BLQ Values 
+      label:         First Value BLQ
+      tooltip:       "Indicates what to do if the first observation is BLQ. It can either be drop, keep, or a numeric value to use."
+      type:          ["numeric", "character"]
+      value:         "keep"
+      options:       NULL
+      pknca_option:  conc.blq$first
+    conc_blq_middle:
+      group:         Missing and BLQ Values 
+      label:         Middle Values BLQ
+      tooltip:       "Indicates what to do if a value between the first and last observations is BLQ. It can either be drop, keep, or a numeric value to use."
+      type:          ["numeric", "character"]
+      value:         "drop"
+      options:       NULL
+      pknca_option:  conc.blq$middle
+    conc_blq_last:  
+      group:         "Missing and BLQ Values"
+      label:         "Last Value BLQ"
+      tooltip:       "Indicates what to do if the last observation is BLQ. It can either be drop, keep, or a numeric value to use."
+      type:          ["numeric", "character"]
+      value:         "keep"
+      options:       NULL
+      pknca_option:  conc.blq$last
+    first_tmax:     
+      group:         "General"
+      label:         "Multiple tmax use first"
+      tooltip:       "If there is more than one concentration equal to Cmax, should the time selected for Tmax be the first value? If TRUE, the first will be selected. If FALSE, the last will be selected."
+      type:          ["logical"]
+      value:         TRUE  
+      options:       [TRUE, FALSE]
+      pknca_option:  first.tmax
+    allow_tmax_in_half_life:
+      group:         "Half-Life"
+      label:         "Allow tmax in half-life"
+      tooltip:       "Should the concentration and time at Tmax be allowed in the half-life calculation? TRUE is yes and FALSE is no."
+      type:          ["logical"]
+      value:         FALSE 
+      options:       [TRUE, FALSE]
+      pknca_option:  allow.tmax.in.half.life
+    min_hl_points:
+      group:         "Half-Life"
+      label:         "Min points"
+      tooltip:       "What is the minimum number of points required to calculate half-life?"
+      type:          ["logical"]
+      value:         3     
+      options:       [ 2, 3, 4, 5 ]      
+      pknca_option:  min.hl.points
+    min_span_ratio: 
+      group:         "Half-Life"
+      label:         "Min span ratio"
+      # BILL this is a bit cryptic
+      tooltip:       "What is the minimum span ratio required to consider a half-life valid?"
+      type:          ["logical"]
+      value:         2     
+      options:       NULL 
+      pknca_option:  min.span.ratio  
+    min_hl_r_squared:
+      group:         "Half-Life"
+      label:         "Min span ratio"
+      tooltip:       "What is the minimum r² value to consider a half-life calculation valid?"
+      type:          ["numeric"]
+      value:         0.9   
+      options:       NULL 
+      pknca_option:  min.hl.r.squared
+    max_aucinf_pext:
+      group:         "AUC"
+      label:         "Max allowed extrap (%)"
+      tooltip:       "What is the maximum percent extrapolation to consider an AUC∞ valid?"
+      type:          ["numeric"]
+      value:         20     
+      options:       NULL
+      pknca_option:  max.aucinf.pext
+  # Prefix used to create NCA analysis objects in generated code
+  nca_object_name: "ana"
+  # The following patterns are used when detecting columns in your dataset
+  # automatically. You can create a multiple patterns. They will be processed
+  # in order from left to right. The first pattern to match will return that
+  # column. For example if you set id to:
+  #
+  # id:   ["^(?i)id$",    "(?i)subject"] 
+  #
+  # It will match any column that is id. The (?i) is case insensitive. But it
+  # wont match IDs for example because it looks for something that starts with
+  # i (^) and ends with d ($).
+  #
+  # If that fails it will look for any column with the text 'subject' in it
+  # regardless of case. So it would match SUBJECT, subject, Subjects,
+  # subject id, etc.
+  #
+  # If you set it to NULL no attempt will be made to detect the column.
+  detect_col:
+    id:    ["^(?i)id$",    "(?i)subject",    "(?i)animal"]
+    time:  ["^(?i)time",   "(?i)ntime"  ]
+    ntime: ["^(?i)ntime",  "(?i)time"   ]
+    conc:  ["^(?i)conc",   "^(?i)dv$",  ]
+    dose:  ["(?i)dose"]
+    grouping: NULL
+  # These are default analysis scenarios that are shown in the App. They will
+  # be shown in the order defined. Each scenario has the following attributes:
+  #   - description: Free form textual description shown to the user
+  #   - parameters: List of nca parameters to be calculated 
+  #   - sampling: Can be either "serial" or "sparse"
+  ana_scenarios:
+    sd_iv: 
+      description: "Single Dose (IV)"
+      parameters: ["cmax", "auclast", "aucinf"] 
+      sampling:   "serial"
+    md_iv: 
+      description: "Multiple Dose IV"
+      parameters: ["cmax", "auclast", "aucinf"] 
+      sampling:   "serial"
+  # This is the default shown when the app loads or a new analysis is created
+  ana_scenario_def: "sd_iv"
+  # Here are all of the available NCA parameters. Each field is the name of
+  # the parameter used in PKNCA. See the table in this vignette for the 
+  # available parameters:
+  #
+  # https://cran.r-project.org/web/packages/PKNCA/vignettes/v03-selection-of-calculation-intervals.html
+  #
+  # Each of parameter has the following
+  #
+  #  - description: This is a verbose description of the parameter. If set to NULL the 
+  #                 description from PKNCA will be used. Set it to other text to
+  #                 overwrite it. This description will also be used in exports as
+  #                 well.
+  #                 
+  #  - text:        Textual description to show the user. If set to NULL it
+  #                 will use the text form PKCNA.
+  #                 
+  #  - md:          Markdown formatted value of text.
+  #
+  # To limit the options the user sees you simply need to comment out the
+  # parameters you do not want in the App.
+  #
+  # BILL can you go through the text and md elements below and make any
+  # changes you think make sense. For example is there a better way to label
+  # the parameter aucint.inf.obs.dose :).
+  #
+  nca_parameters:
+    aucall:
+      description: NULL
+      text:        NULL
+      md:          "AUC~all~"
+      group:       "Common Parameters"
+    adj.r.squared:
+      description: NULL
+      text:        "r² (Adj)"
+      md:          "Adj. R^2^"
+      group:       "Other"
+    ae:
+      description: NULL
+      text:        NULL
+      md:          "AE"
+      group:       "Other"
+    aucall.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUC~all,dn~"
+      group:       "Other"
+    aucinf.obs:
+      description: NULL
+      text:        NULL
+      md:          "AUC~inf,obs~"
+      group:       "Other"
+    aucinf.obs.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUC~inf,obs,dn~"
+      group:       "Other"
+    aucinf.pred.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUC~inf,pred,dn~"
+      group:       "Other"
+    aucint.all:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,all~"
+      group:       "Other"
+    aucint.all.dose:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,all,dose~"
+      group:       "Other"
+    aucint.inf.obs:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,inf,obs~"
+      group:       "Other"
+    aucint.inf.obs.dose:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,inf,obs,dose~"
+      group:       "Other"
+    aucint.inf.pred:    
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,inf,pred~"
+      group:       "Other"
+    aucint.inf.pred.dose:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,inf,pred,dose~"
+      group:       "Other"
+    aucint.last:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,last~"
+      group:       "Other"
+    aucint.last.dose:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,last,dose~"
+      group:       "Other"
+    aucivall:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,all~"
+      group:       "Other"
+    aucivinf.obs: 
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,inf,obs~"
+      group:       "Other"
+    aucivinf.pred:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,inf,pred~"
+      group:       "Other"
+    aucivint.all:  
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,int,all~"
+      group:       "Other"
+    aucivint.last:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,int,last~"
+      group:       "Other"
+    aucivlast:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,last~"
+      group:       "Other"
+    aucivpbextall:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,all~"
+      group:       "Other"
+    aucivpbextinf.obs:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,inf,obs~"
+      group:       "Other"
+    aucivpbextinf.pred:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,inf,pred~"
+      group:       "Other"
+    aucivpbextint.all:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,inf,all~"
+      group:       "Other"
+    aucivpbextint.last:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,inf,last~"
+      group:       "Other"
+    aucivpbextlast:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,last~"
+      group:       "Other"
+    auclast:
+      description: NULL
+      text:        NULL
+      md:          "AUC~last~"
+      group:       "Other"
+    auclast.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUC~last,dn~"
+      group:       "Other"
+    aucpext.obs:
+      description: NULL
+      text:        NULL
+      md:          "AUC~pext,obs~"
+      group:       "Other"
+    aucpext.pred:
+      description: NULL
+      text:        NULL
+      md:          "AUC~pext,pred~"
+      group:       "Other"
+    aumcall:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~all~"
+      group:       "Other"
+    aumcall.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~all,dn~"
+      group:       "Other"
+    aumcinf.obs:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~inf,obs~"
+      group:       "Other"
+    aumcinf.obs.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~inf,obs,dn~"
+      group:       "Other"
+    aumcinf.pred.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~inf,pred,dn~"
+      group:       "Other"
+    aumclast:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~last~"
+      group:       "Other"
+    aumclast.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~last,dn~"
+      group:       "Other"
+    c0:
+      description: NULL
+      text:        NULL
+      md:          "c~0~"
+      group:       "Other"
+    cav:
+      description: NULL
+      text:        NULL
+      md:          "C~ave~"
+      group:       "Other"
+    cav.dn:
+      description: NULL
+      text:        NULL
+      md:          "C~ave,dn~"
+      group:       "Other"
+    ceoi:
+      description: NULL
+      text:        NULL
+      md:          "C~EOI~"
+      group:       "Other"
+    cl.all:
+      description: NULL
+      text:        NULL
+      md:          "CL"
+      group:       "Common Parameters"
+    cl.last:
+      description: NULL
+      text:        NULL
+      md:          "CL~last~"
+      group:       "Common Parameters"
+    cl.obs:
+      description: NULL
+      text:        NULL
+      md:          "CL~obs~"
+      group:       "Other"
+    cl.pred:
+      description: NULL
+      text:        NULL
+      md:          "CL~pred~"
+      group:       "Other"
+    clast.obs:
+      description: NULL
+      text:        NULL
+      md:          "CL~last,obs~"
+      group:       "Other"
+    clast.pred:
+      description: NULL
+      text:        NULL
+      md:          "CL~last,pred~"
+      group:       "Other"
+    clast.pred.dn:
+      description: NULL
+      text:        NULL
+      md:          "CL~last,pred,dn~"
+      group:       "Other"
+    clr.last:     
+      description: NULL
+      text:        NULL
+      md:          "CL~R,last~" 
+      group:       "Other"
+    clr.obs:
+      description: NULL
+      text:        NULL
+      md:          "CL~R,obs~" 
+      group:       "Other"
+    clr.pred:     
+      description: NULL
+      text:        NULL
+      md:          "CL~R,pred~" 
+      group:       "Other"
+    cmax:   
+      description: NULL
+      text:        NULL
+      md:          "CL~max~" 
+      group:       "Common Parameters"
+    cmax.dn:   
+      description: NULL
+      text:        NULL
+      md:          "CL~max,dn~" 
+      group:       "Other"
+    cmin:   
+      description: NULL
+      text:        NULL
+      md:          "CL~min~" 
+      group:       "Other"
+    cmin.dn:   
+      description: NULL
+      text:        NULL
+      md:          "CL~min,dn~" 
+      group:       "Other"
+    ctrough:
+      description: NULL
+      text:        NULL
+      md:          "CL~tr~" 
+      group:       "Other"
+    ctrough.dn:   
+      description: NULL
+      text:        NULL
+      md:          "CL~tr,dn~" 
+      group:       "Other"
+    deg.fluc:  
+      description: NULL
+      text:        NULL
+      md:          "dgf"
+      group:       "Other"
+    end:       
+      description: NULL
+      text:        NULL
+      md:          "t~end~"
+      group:       "Other"
+    f:         
+      description: NULL
+      text:        NULL
+      md:          "f~b~"
+      group:       "Other"
+    fe:        
+      description: NULL
+      text:        NULL
+      md:          "f~e~"
+      group:       "Other"
+    half.life: 
+      description: NULL
+      text:        NULL
+      md:          "t~half~"
+      group:       "Common Parameters"
+    kel.iv.last:
+      description: NULL
+      text:        NULL
+      md:          "k~el,iv,last~" 
+      group:       "Other"
+    kel.iv.obs:
+      description: NULL
+      text:        NULL
+      md:          "k~el,iv,obs~" 
+      group:       "Other"
+    kel.iv.pred:
+      description: NULL
+      text:        NULL
+      md:          "k~el,iv,pred~" 
+      group:       "Other"
+    kel.last:
+      description: NULL
+      text:        NULL
+      md:          "k~el,last~" 
+      group:       "Other"
+    kel.obs:
+      description: NULL
+      text:        NULL
+      md:          "k~el,obs~" 
+      group:       "Other"
+    kel.pred:
+      description: NULL
+      text:        NULL
+      md:          "k~el,pred~" 
+      group:       "Other"
+    lambda.z:
+      description: NULL
+      text:        "λz"
+      md:          "<ff:symbol>l</ff>~z~" 
+      group:       "Other"
+    lambda.z.n.points:
+      description: NULL
+      text:        "λz,n"
+      md:          "<ff:symbol>l</ff>~z,n~" 
+      group:       "Other"
+    lambda.z.time.first:
+      description: NULL
+      text:        "λz (t 1ˢᵗ)"
+      md:          "<ff:symbol>l</ff>~z~ (t 1^st^)" 
+      group:       "Other"
+    mrt.iv.last:
+      description: NULL
+      text:        NULL
+      md:          "MRT~iv,last~"
+      group:       "Other"
+    mrt.iv.obs:  
+      description: NULL
+      text:        NULL
+      md:          "MRT~iv,obs~"
+      group:       "Other"
+    mrt.iv.pred:
+      description: NULL
+      text:        NULL
+      md:          "MRT~iv,pred~"
+      group:       "Other"
+    mrt.last:
+      description: NULL
+      text:        NULL
+      md:          "MRT~last~"
+      group:       "Other"
+    mrt.md.obs:
+      description: NULL
+      text:        NULL
+      md:          "MRT~md,obs~"
+      group:       "Other"
+    mrt.md.pred:
+      description: NULL
+      text:        NULL
+      md:          "MRT~md,pred~"
+      group:       "Other"
+    mrt.obs:
+      description: NULL
+      text:        NULL
+      md:          "MRT~obs~"
+      group:       "Other"
+    mrt.pred:
+      description: NULL
+      text:        NULL
+      md:          "MRT~pred~"
+      group:       "Other"
+    ptr:     
+      description: NULL
+      text:        NULL
+      md:          "PTR" 
+      group:       "Other"
+    r.squared:
+      description: NULL
+      text:        "r²"
+      md:          "R^2^" 
+      group:       "Common Parameters"
+    span.ratio:
+      description: NULL
+      text:        NULL
+      md:          "SR"
+      group:       "Other"
+    sparse_auclast:
+      description: NULL
+      text:        NULL
+      md:          "AUC~last,sp~"
+      group:       "Common Parameters"
+    start:          
+      description: NULL
+      text:        NULL
+      md:          "t~start~"
+      group:       "Other"
+    swing:          
+      description: NULL
+      text:        NULL
+      md:          "SWING" 
+      group:       "Other"
+    tfirst: 
+      description: NULL
+      text:        "t 1ˢᵗ"
+      md:          "t~first~"
+      group:       "Other"
+    thalf.eff.iv.last:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,iv,last~"
+      group:       "Other"
+    thalf.eff.iv.obs:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,iv,obs~"
+      group:       "Other"
+    thalf.eff.iv.pred:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,iv,pred~"
+      group:       "Other"
+    thalf.eff.last:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,last~"
+      group:       "Other"
+    thalf.eff.obs:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,obs~"
+      group:       "Other"
+    thalf.eff.pred:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,pred~"
+      group:       "Other"
+    time_above:
+      # JMH how is the conconcentration specified
+      description: NULL
+      text:        NULL
+      md:          "t~ab~"
+      group:       "Other"
+    tlag:
+      description: NULL
+      text:        NULL
+      md:          "t~lag~"
+      group:       "Other"
+    tlast:
+      description: NULL
+      text:        NULL
+      md:          "t~last~"
+      group:       "Other"
+    vd.obs:
+      description: NULL
+      text:        NULL
+      md:          "V~d,obs~" 
+      group:       "Other"
+    vd.pred:
+      description: NULL
+      text:        NULL
+      md:          "V~d,pred~" 
+      group:       "Other"
+    vss.iv.last:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,iv,last~" 
+      group:       "Other"
+    vss.iv.obs:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,iv,obs~" 
+      group:       "Other"
+    vss.iv.pred:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,iv,pred~" 
+      group:       "Other"
+    vss.last:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,iv,last~" 
+      group:       "Other"
+    vss.md.obs:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,md,obs~" 
+      group:       "Other"
+    vss.md.pred:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,md,pred~" 
+      group:       "Other"
+    vss.obs:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,obs~" 
+      group:       "Other"
+    vss.pred:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,pred~" 
+      group:       "Other"
+    vz.obs:
+      description: NULL
+      text:        NULL
+      md:          "V~z,obs~" 
+      group:       "Other"
+    vz.pred:
+      description: NULL
+      text:        NULL
+      md:          "V~z,pred~" 
+      group:       "Other"
+  units:
+    # For reference this is the units vignette from PKNCA
+    #
+    # http://billdenney.github.io/pknca/articles/v07-unit-conversion.html
+    #
+    # Default value for whether or not to include units. This can 
+    # be overwritten in the app.
+    include_units: TRUE
+    # Add unit options here, they will appear in the order they are
+    # entered. The _def below is the default when a new analysis is
+    # initialize. It must be in the list.
+    # BILL how will PKNCA handle units like µg
+    conc:     ["ng/mL",   "µg/mL",  "g/L",    "molar",  "nM"]
+    conc_def:  "ng/mL"                                   
+    dose:     ["g",  "mg",  "mg/kg",   "µg", "µg/kg",   "ng",   "ng/kg"]
+    dose_def:  "mg/kg"
+    amt:      ["g",  "mg", "µg",  "ng", "g"]
+    amt_def:   "mg"                                       
+    time:     ["day",     "hr",      "min",    "sec"         ]
+    time_def:  "hr"
+    vol:      ["mL",     "L"]
+ #  # To specify another conversion rule just create a new entry
+ #  # These are convsion rules for the 
+ #  conversion:
+ #    - entry: 
+ #        type:  "clearance"
+ #        orig:  "(mg/kg)/(hr*mg/L)" 
+ #        std:   "L/hr/kg" 
+ #        fact:  NA
+ #        vol:   "L"
+ #        amt:   NULL
+ #        time:  "hr"
+ #    - entry: 
+ #        type:  "volume"
+ #        orig:  "mg/(ng/mL)" 
+ #        std:   "L" 
+ #        fact:  NA  
+ #        vol:   "L"
+ #        amt:   NULL
+ #        time:  NULL
+ #    - entry: 
+ #        type:  "volume"
+ #        orig:  "mg/(ng/mL)" 
+ #        std:   "mL" 
+ #        fact:  1000
+ #        vol:   "mL"
+ #        amt:   NULL
+ #        time:  NULL
+
