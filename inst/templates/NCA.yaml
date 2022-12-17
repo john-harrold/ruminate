@@ -5,6 +5,11 @@ MC:
   reporting:
     enabled: TRUE
     priority: 1
+  notifications:
+    ana_add_int_success: "Interval added: ===DETAILS==="
+  ph:
+    text_ana_interval_start: 0
+    text_ana_interval_stop: "number or Inf"
   # put different formatting options (widths, heights,
   # shinyWidgets button sizes, etc) here.
   formatting:
@@ -20,8 +25,19 @@ MC:
     # nca configuration
     nca_config_option:
       width: 150
-    slider_ana_interval:
-      width: 150
+
+    # These apply to the intervals table
+    intervals:  
+      width:  600
+      height: 175
+    intervals_start:  
+      width:  50
+    intervals_stop:  
+      width:  50
+    intervals_np_text:  
+      width:  375
+    intervals_delete:  
+      width:  75
     button_ana_del:
       size: "sm" 
       block: TRUE
@@ -37,9 +53,16 @@ MC:
     button_ana_new:
       size: "sm" 
       block: TRUE
+    button_ana_add_int:
+      size: "sm" 
+      block: TRUE
     button_ana_use_scenario:
       size: "sm" 
       block: TRUE
+    text_ana_interval_start:
+      width: 75 
+    text_ana_interval_stop:
+      width: 75 
     select_current_view:
       width: 200
     select_ana_col_id:
@@ -50,9 +73,17 @@ MC:
       width: 150
     select_ana_col_dose:
       width: 150
+    select_ana_col_dur: 
+      width: 150
     select_ana_col_conc:
       width: 150
+    select_ana_col_route:
+      width: 150
+    select_ana_col_cycle:
+      width: 150
     select_ana_col_time:
+      width: 150
+    select_ana_col_ntime:
       width: 150
     select_ana_col_group:
       width: 150
@@ -82,21 +113,28 @@ MC:
     copy_ana:                        "Copy"
     clip_ana:                        "Code"
     curr_anas_none:                  "No figures yet created"
-    ana_use_scenario:                "Use Analysis Type"
-    ana_interval:                    "Analysis time interval"
+    ana_use_scenario:                "Use Analysis Template"
+    ana_add_int:                     "Add Interval"
+    no_intervals:                    "No intervals added yet"             
+    text_ana_interval_start:         "Start"
+    text_ana_interval_stop:          "Stop"  
     select_current_view:             "Data from"
     select_current_ana:              "Current NCA"
     select_ana_scenario:             NULL  # "Type of Analysis:"
     select_ana_col_id:               "Subject ID"
     select_ana_col_time:             "Time"
+    select_ana_col_ntime:            "Nominal Time"
     select_ana_col_dose:             "Dose"
+    select_ana_col_dur:              "Dose Duration"
     select_ana_col_conc:             "Concentration"
+    select_ana_col_route:            "Route"
+    select_ana_col_cycle:            "Cycle"
     select_ana_col_group:            "Other Grouping"
     select_ana_units_time:           "Time"
     select_ana_units_dose:           "Dose"
     select_ana_units_conc:           "Concentration"
     select_ana_units_amt:            "Amount"
-    select_ana_nca_parameters:       "Amount"
+    select_ana_nca_parameters:       "Parameters"
     switch_ana_include_units:        "Include Units"
     select_ana_source_sampling:      "Data Sampling"
   # For details on the PKNCA options see this vignette:
@@ -242,26 +280,76 @@ MC:
   #
   # If you set it to NULL no attempt will be made to detect the column.
   detect_col:
-    id:    ["^(?i)id$",    "(?i)subject",    "(?i)animal"]
-    time:  ["^(?i)time",   "(?i)ntime"  ]
-    ntime: ["^(?i)ntime",  "(?i)time"   ]
-    conc:  ["^(?i)conc",   "^(?i)dv$",  ]
-    dose:  ["(?i)dose"]
+    id:     ["^(?i)id$",    "(?i)subject",    "(?i)animal"]
+    time:   ["^(?i)time",   "(?i)ntime"  ]
+    ntime:  ["^(?i)ntime",  "(?i)time"   ]
+    conc:   ["^(?i)conc",   "^(?i)dv$",  ]
+    dose:   ["(?i)dose"]
+    route:  ["(?i)route"]
+    cycle:  ["(?i)cycle",   "(?i)dose_num"]
     grouping: NULL
+    dur:      NULL
+  # Routes may be specified in the dataset in a more detailed or convenient 
+  # format than what is needed for analysis. Here you can specify patterns
+  # that can be used to detect routes. For details on the regular expressions
+  # that can be used see the detect_col section above. In general you can use
+  # the format of:
+  #
+  #   myroute: ["regex1", "regex2"]
+  #
+  # This will assign the route to 'myroute' in the ROUTE column if it matches 
+  # regex1 or regex2.
+  #
+  detect_route:
+    intravascular: ["^(?i)iv$"]
+    extravascular: ["^(?i)sc$", "^(?i)oral"]
   # These are default analysis scenarios that are shown in the App. They will
   # be shown in the order defined. Each scenario has the following attributes:
   #   - description: Free form textual description shown to the user
-  #   - parameters: List of nca parameters to be calculated 
+  #   - nca_parameters: List of nca parameters to be calculated 
   #   - sampling: Can be either "serial" or "sparse"
+  #   BILL: Get relevant scenarios from bill here
   ana_scenarios:
     sd_iv: 
       description: "Single Dose (IV)"
-      parameters: ["cmax", "auclast", "aucinf"] 
+      nca_parameters: ["cmax", "auclast", "aucinf.obs"] 
       sampling:   "serial"
+      intervals:
+        - row:   
+            start:         0
+            stop:          Inf
+            nca_parameters: ["aucinf.obs"]
+        - row:   
+            start:         0
+            stop:          24  
+            nca_parameters: ["cmax", "auclast"]
     md_iv: 
       description: "Multiple Dose IV"
-      parameters: ["cmax", "auclast", "aucinf"] 
+      nca_parameters: ["cmax", "auclast", "aucinf.obs"] 
       sampling:   "serial"
+      intervals:
+        - row:   
+            start:         0
+            stop:          Inf
+            nca_parameters: ["cmax", "auclast","aucinf.obs"]
+    sd_iv_sparse: 
+      description: "Single Dose (IV) Sparse Sampling"
+      nca_parameters: ["cmax", "sparse_auclast"] 
+      sampling:   "sparse"
+      intervals:
+        - row:   
+            start:          0
+            stop:           Inf
+            nca_parameters: ["cmax", "sparse_auclast"]
+    md_iv_sparse: 
+      description: "Multiple Dose IV Sparse Sampling"
+      nca_parameters: ["cmax", "sparse_auclast"] 
+      sampling:   "sparse"
+      intervals:
+        - row:   
+            start:          0
+            stop:           Inf
+            nca_parameters: ["cmax", "sparse_auclast"]
   # This is the default shown when the app loads or a new analysis is created
   ana_scenario_def: "sd_iv"
   # Here are all of the available NCA parameters. Each field is the name of
@@ -852,7 +940,50 @@ MC:
     time:     ["day",     "hr",      "min",    "sec"         ]
     time_def:  "hr"
     vol:      ["mL",     "L"]
- #  # To specify another conversion rule just create a new entry
+  data_format:
+    columns:
+     - entry:
+        sname:       "id"
+        Column:      "Subject ID"
+        Required:    "yes"
+        Description: "Unique subject identifier."
+     - entry:
+        sname:       "time"
+        Column:      "Time"
+        Required:    "yes"
+        Description: "Time since the first dose. Must be numeric."
+     - entry:
+        sname:       "ntime"
+        Column:      "Nominal Time"
+        Required:    "yes"
+        Description: "Time since the last dose in the cycle (same units as Time). Must be numeric."
+     - entry:
+        sname:       "conc"
+        Column:      "Concentration"
+        Required:    "yes"
+        Description: "Observed concentration. Must be numeric, no NA values. Missing values should be set to 0."
+     # BILL should this be the dose given at time zero or total dose given over a cycle
+     - entry:
+        sname:       "dose"
+        Column:      "Dose"
+        Required:    "yes"
+        Description: "Value of dose given (must be numeric)."
+     - entry:
+        sname:       "route"
+        Column:      "Route"
+        Required:    "yes"
+        Description: "Doseing route. It should be either 'extravascular' or 'intravascular' but ruminate will make an effort to figure out other values."
+     - entry:
+        sname:       "dur"
+        Column:      "Duration (optional)"
+        Required:    "no"
+        Description: "Doseing duration (same units as Time). If set to N/A a value of 0 will be assumed."
+     - entry:
+        sname:       "cycle"
+        Column:      "Dose cycle"
+        Required:    "yes"
+        Description: "Current dose cycle"
+##  # To specify another conversion rule just create a new entry
  #  # These are convsion rules for the 
  #  conversion:
  #    - entry: 

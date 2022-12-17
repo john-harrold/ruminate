@@ -89,7 +89,9 @@ NCA_Server <- function(id,
     #------------------------------------
     # User messages:
     output$ui_nca_msg = renderText({
-      input[["button_state_save"]]
+      input[["button_ana_add_int"]]
+      input[["button_ana_use_scenario"]]
+
       state = NCA_fetch_state(id              = id,
                              input           = input,
                              session         = session,
@@ -385,7 +387,7 @@ NCA_Server <- function(id,
       input$button_ana_copy
       input$button_ana_del
       input$select_current_ana
-      req(input$select_current_view)
+      #req(input$select_current_view)
 
 
       react_state[[id_UD]]
@@ -431,8 +433,8 @@ NCA_Server <- function(id,
         choicesOpt = choicesOpt)
     })
     #------------------------------------
-    # interval specification
-    output$ui_nca_ana_int = renderUI({
+    # interval stop 
+    output$ui_nca_ana_int_stop  = renderUI({
 
       react_state[[id_UD]]
       react_state[[id_DW]]
@@ -456,52 +458,59 @@ NCA_Server <- function(id,
 
       # Pulling out the current analysis to get the column information
       current_ana = NCA_fetch_current_ana(state)
+      value = current_ana[["interval_stop"]] 
 
-      # getting the dataset
-      dsview   = current_ana$ana_dsview
-      col_time = current_ana$col_time
-      time_vals = state[["NCA"]][["DSV"]][["ds"]][[dsview]][["DS"]][[col_time]]
+      uiele =
+        textInput(
+          inputId   = NS(id, "text_ana_interval_stop"),
+          label     = state[["MC"]][["labels"]][["text_ana_interval_stop"]],
+          width     = state[["MC"]][["formatting"]][["text_ana_interval_stop"]][["width"]],
+          placeholder = state[["MC"]][["ph"]][["text_ana_interval_stop"]],
+          value = value
+          )
+      uiele})
+    #------------------------------------
+    # interval start
+    output$ui_nca_ana_int_start = renderUI({
 
+      react_state[[id_UD]]
+      react_state[[id_DW]]
+      react_state[[id_ASM]]
 
-      # If this is true then something has gone wrong
-      # and we are unable to find the time column. In this
-      # case we will return an error:
-      if(is.null(time_vals)){
-        uiele = "Time column not found"
-      } else {
-
-        # Here we include 0 in the time values for the user to choose from
-        time_vals = sort(unique(c(0, time_vals)))
-
-        # By default the selected are the current values for this analysis:
-        selected = current_ana[["interval"]]
-
-        # If any of the selected values are NA or _not_ found in
-        # the time columns then we overwrite them here)
-        if(any(is.na(selected)) |
-           any(!(selected %in% time_vals))){
-
-          # Now we just select the entire range:
-          selected = c(min(time_vals), max(time_vals))
-        }
-
-        uiele =
-          shinyWidgets::sliderTextInput(
-            inputId   = NS(id, "slider_ana_interval"),
-            label     = state[["MC"]][["labels"]][["ana_interval"]],
-            width     = state[["MC"]][["formatting"]][["slider_ana_interval"]][["width"]],
-            choices   = time_vals,
-            selected  = selected
-            )
-      }
+      input[["button_ana_new"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["select_current_ana"]]
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
 
 
 
+      # Pulling out the current analysis to get the column information
+      current_ana = NCA_fetch_current_ana(state)
+      value = current_ana[["interval_start"]] 
 
+      uiele =
+        textInput(
+          inputId   = NS(id, "text_ana_interval_start"),
+          label     = state[["MC"]][["labels"]][["text_ana_interval_start"]],
+          width     = state[["MC"]][["formatting"]][["text_ana_interval_start"]][["width"]],
+          placeholder = state[["MC"]][["ph"]][["text_ana_interval_start"]],
+          value = value
+          )
       uiele})
     #------------------------------------
     # NCA parameters to compute
     output$ui_nca_ana_params = renderUI({
+      input$button_ana_use_scenario
+
       state = NCA_fetch_state(id              = id,
                              input           = input,
                              session         = session,
@@ -534,6 +543,8 @@ NCA_Server <- function(id,
     #------------------------------------
     # NCA parameters to compute
     output$ui_nca_ana_source_sampling = renderUI({
+      input$button_ana_use_scenario
+
       state = NCA_fetch_state(id              = id,
                              input           = input,
                              session         = session,
@@ -600,6 +611,7 @@ NCA_Server <- function(id,
 
           # Finding the value to use:
           value = NCA_find_col(
+            curr_ana = current_ana[["col_id"]],
             curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_id"]],
             patterns = state[["MC"]][["detect_col"]][["id"]],
             dscols   = dscols)
@@ -613,6 +625,64 @@ NCA_Server <- function(id,
             selected   = value,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
             width      = state[["MC"]][["formatting"]][["select_ana_col_id"]][["width"]],
+            inline     = TRUE)
+        }
+      }
+
+      uiele})
+    #------------------------------------
+    # nominal time column
+    output$ui_nca_ana_col_ntime = renderUI({
+
+      react_state[[id_UD]]
+      react_state[[id_DW]]
+      react_state[[id_ASM]]
+
+      input[["button_ana_new"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["button_ana_save"]]
+      input[["select_current_ana"]]
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+
+      current_ana = NCA_fetch_current_ana(state)
+      uiele = NULL
+
+      # This only generates the UI element if there is a data set
+      if(!is.null(current_ana[["ana_dsview"]])){
+        if(!is.null(state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]])){
+
+          # Pulling out the dataset list
+          ds =  state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]]
+
+          # These are the columns in the dataset:
+          dscols = names(ds[["DS"]])
+
+          # Finding the value to use:
+          value = NCA_find_col(
+            curr_ana = current_ana[["col_ntime"]],
+            curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_ntime"]],
+            patterns = state[["MC"]][["detect_col"]][["ntime"]],
+            dscols   = dscols)
+
+          # Creating the selection input
+          uiele =
+          shinyWidgets::pickerInput(
+            inputId    = NS(id, "select_ana_col_ntime"),
+            choices    = dscols,
+            label      = state[["MC"]][["labels"]][["select_ana_col_ntime"]],
+            selected   = value,
+            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            width      = state[["MC"]][["formatting"]][["select_ana_col_ntime"]][["width"]],
             inline     = TRUE)
         }
       }
@@ -657,6 +727,7 @@ NCA_Server <- function(id,
 
           # Finding the value to use:
           value = NCA_find_col(
+            curr_ana = current_ana[["col_time"]],
             curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_time"]],
             patterns = state[["MC"]][["detect_col"]][["time"]],
             dscols   = dscols)
@@ -714,6 +785,7 @@ NCA_Server <- function(id,
 
           # Finding the value to use:
           value = NCA_find_col(
+            curr_ana = current_ana[["col_dose"]],
             curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_dose"]],
             patterns = state[["MC"]][["detect_col"]][["dose"]],
             dscols   = dscols)
@@ -727,6 +799,181 @@ NCA_Server <- function(id,
             selected   = value,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
             width      = state[["MC"]][["formatting"]][["select_ana_col_dose"]][["width"]],
+            inline     = TRUE)
+        }
+      }
+
+      uiele})
+    #------------------------------------
+    # dur  column
+    output$ui_nca_ana_col_dur  = renderUI({
+
+      react_state[[id_UD]]
+      react_state[[id_DW]]
+      react_state[[id_ASM]]
+
+      input[["button_ana_new"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["button_ana_save"]]
+      input[["select_current_ana"]]
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+
+      current_ana = NCA_fetch_current_ana(state)
+      uiele = NULL
+
+      # This only generates the UI element if there is a data set
+      if(!is.null(current_ana[["ana_dsview"]])){
+        if(!is.null(state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]])){
+
+          # Pulling out the dataset list
+          ds =  state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]]
+
+          # These are the columns in the dataset:
+          dscols = names(ds[["DS"]])
+
+          # Finding the value to use:
+          value = NCA_find_col(
+            curr_ana = current_ana[["col_dur"]],
+            curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_dur"]],
+            patterns = state[["MC"]][["detect_col"]][["dur"]],
+            null_ok  = TRUE,
+            dscols   = dscols)
+
+          # Creating the selection input
+          uiele =
+          shinyWidgets::pickerInput(
+            inputId    = NS(id, "select_ana_col_dur"),
+            choices    = c("N/A", dscols),
+            label      = state[["MC"]][["labels"]][["select_ana_col_dur"]],
+            selected   = value,
+            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            width      = state[["MC"]][["formatting"]][["select_ana_col_dur"]][["width"]],
+            inline     = TRUE)
+        }
+      }
+
+      uiele})
+    #------------------------------------
+    # rotue column
+    output$ui_nca_ana_col_route = renderUI({
+
+      react_state[[id_UD]]
+      react_state[[id_DW]]
+      react_state[[id_ASM]]
+
+      input[["button_ana_new"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["button_ana_save"]]
+      input[["select_current_ana"]]
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+
+      current_ana = NCA_fetch_current_ana(state)
+      uiele = NULL
+
+      # This only generates the UI element if there is a data set
+      if(!is.null(current_ana[["ana_dsview"]])){
+        if(!is.null(state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]])){
+
+          # Pulling out the dataset list
+          ds =  state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]]
+
+          # These are the columns in the dataset:
+          dscols = names(ds[["DS"]])
+
+          # Finding the value to use:
+          value = NCA_find_col(
+            curr_ana = current_ana[["col_route"]],
+            curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_route"]],
+            patterns = state[["MC"]][["detect_col"]][["route"]],
+            dscols   = dscols)
+
+          # Creating the selection input
+          uiele =
+          shinyWidgets::pickerInput(
+            inputId    = NS(id, "select_ana_col_route"),
+            choices    = dscols,
+            label      = state[["MC"]][["labels"]][["select_ana_col_route"]],
+            selected   = value,
+            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            width      = state[["MC"]][["formatting"]][["select_ana_col_route"]][["width"]],
+            inline     = TRUE)
+        }
+      }
+
+      uiele})
+    #------------------------------------
+    # cycle column
+    output$ui_nca_ana_col_cycle = renderUI({
+
+      react_state[[id_UD]]
+      react_state[[id_DW]]
+      react_state[[id_ASM]]
+
+      input[["button_ana_new"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["button_ana_save"]]
+      input[["select_current_ana"]]
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+
+      current_ana = NCA_fetch_current_ana(state)
+      uiele = NULL
+
+      # This only generates the UI element if there is a data set
+      if(!is.null(current_ana[["ana_dsview"]])){
+        if(!is.null(state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]])){
+
+          # Pulling out the dataset list
+          ds =  state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]]
+
+          # These are the columns in the dataset:
+          dscols = names(ds[["DS"]])
+
+          # Finding the value to use:
+          value = NCA_find_col(
+            curr_ana = current_ana[["col_cycle"]],
+            curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_cycle"]],
+            patterns = state[["MC"]][["detect_col"]][["cycle"]],
+            dscols   = dscols)
+
+          # Creating the selection input
+          uiele =
+          shinyWidgets::pickerInput(
+            inputId    = NS(id, "select_ana_col_cycle"),
+            choices    = dscols,
+            label      = state[["MC"]][["labels"]][["select_ana_col_cycle"]],
+            selected   = value,
+            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            width      = state[["MC"]][["formatting"]][["select_ana_col_cycle"]][["width"]],
             inline     = TRUE)
         }
       }
@@ -771,6 +1018,7 @@ NCA_Server <- function(id,
 
           # Finding the value to use:
           value = NCA_find_col(
+            curr_ana = current_ana[["col_conc"]],
             curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_conc"]],
             patterns = state[["MC"]][["detect_col"]][["conc"]],
             dscols   = dscols)
@@ -828,6 +1076,7 @@ NCA_Server <- function(id,
 
           # Finding the value to use:
           value = NCA_find_col(
+            curr_ana = current_ana[["col_group"]],
             curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_group"]],
             patterns = state[["MC"]][["detect_col"]][["group"]],
             null_ok  = TRUE,
@@ -1088,6 +1337,28 @@ NCA_Server <- function(id,
 
       uiele})
     #------------------------------------
+    # Add interval button
+    output$ui_nca_ana_add_int      = renderUI({
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+      uiele = shinyWidgets::actionBttn(
+                inputId = NS(id, "button_ana_add_int"),
+                label   = state[["MC"]][["labels"]][["ana_add_int"]],
+                style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+                size    = state[["MC"]][["formatting"]][["button_ana_add_int"]][["size"]],
+                block   = state[["MC"]][["formatting"]][["button_ana_add_int"]][["block"]],
+                color   = "success",
+                icon    = icon("plus-sign", lib="glyphicon"))
+      uiele})
+    #------------------------------------
     # Scenario button
     output$ui_nca_ana_scenario_use = renderUI({
       state = NCA_fetch_state(id              = id,
@@ -1235,28 +1506,101 @@ NCA_Server <- function(id,
 
       uiele})
     #------------------------------------
+    # Current DW elements
+    output$hot_nca_intervals = rhandsontable::renderRHandsontable({
+      input$button_ana_add_int
+      input$button_ana_use_scenario
 
+      # This forces reaction to the delete button
+      input$hot_nca_intervals
+
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+      # Pulling out the current analysis
+      current_ana = NCA_fetch_current_ana(state)
+
+      uiele = NULL
+
+      # Pulling out the widths to make it easier to deal with them below
+      w_start     = state[["MC"]][["formatting"]][["intervals_start"]][["width"]]
+      w_stop      = state[["MC"]][["formatting"]][["intervals_stop"]][["width"]]
+      w_np_text   = state[["MC"]][["formatting"]][["intervals_np_text"]][["width"]]
+      w_delete    = state[["MC"]][["formatting"]][["intervals_delete"]][["width"]]
+
+      # Total for the no intervals table
+      w_total = w_start + w_stop + w_np_text + w_delete
+
+      # By default intervals here is NULL and when new intervals are added it 
+      # will become an dataframe:
+      if(is.null(current_ana[["intervals"]])){
+        df = data.frame("Intervals"= state[["MC"]][["labels"]][["no_intervals"]])
+        uiele = rhandsontable::rhandsontable(
+          df,
+          width  = state[["MC"]][["formatting"]][["intervals"]][["width"]],
+          height = state[["MC"]][["formatting"]][["intervals"]][["height"]],
+          rowHeaders = NULL
+          ) |>
+          hot_cols(colWidths = c(w_total)) 
+      } else {
+        # The user only sees np_text (pretty names) and not np_actual (actual
+        # names)
+        df =   current_ana[["intervals"]]
+
+
+        # This will force things like 0 to be 0 instead of 0.0 and Inf to show
+        # up correctly. 
+        df[["start"]] = as.character(df[["start"]])
+        df[["stop"]]  = as.character(df[["stop"]])
+
+        df = dplyr::select(df, "start", "stop", "np_text", "delete")
+        df = dplyr::rename(df, "Start"          = "start")
+        df = dplyr::rename(df, "Stop"           = "stop")
+        df = dplyr::rename(df, "NCA Parameter"  = "np_text")
+        df = dplyr::rename(df, "Delete"         = "delete")
+
+        uiele = rhandsontable::rhandsontable(
+          df,
+          width  = state[["MC"]][["formatting"]][["intervals"]][["width"]],
+          height = state[["MC"]][["formatting"]][["intervals"]][["height"]],
+          rowHeaders = NULL
+          ) |>
+          hot_col("Start" ,           readOnly = TRUE) |>
+          hot_col("Stop" ,            readOnly = TRUE) |>
+          hot_col("NCA Parameter" ,   readOnly = TRUE) |> 
+          hot_cols(colWidths = c(w_start, w_stop, w_np_text, w_delete)) 
+        
+
+      }
+    })
+    #------------------------------------
     # This can be used to trigger notifications
-   #toNotify <- reactive({
-   #  list(input$A,
-   #       input$B)
-   #})
-   #observeEvent(toNotify(), {
-   #  state = NCA_fetch_state(id              = id,
-   #                         input           = input,
-   #                         session         = session,
-   #                         FM_yaml_file    = FM_yaml_file,
-   #                         MOD_yaml_file   = MOD_yaml_file,
-   #                         id_ASM          = id_ASM,
-   #                         id_UD           = id_UD,
-   #                         id_DW           = id_DW,
-   #                         react_state     = react_state)
-   #
-   #  # Triggering optional notifications
-   #  notify_res =
-   #  FM_notify(state   = state,
-   #            session = session)
-   #})
+    toNotify <- reactive({
+      list(input$button_ana_add_int,
+           input$button_ana_use_scenario)
+    })
+    observeEvent(toNotify(), {
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+    
+      # Triggering optional notifications
+      notify_res =
+      FM_notify(state   = state,
+                session = session)
+    })
     #------------------------------------
     # Creating reaction if a variable has been specified
     if(!is.null(react_state)){
@@ -1458,10 +1802,159 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
     state = NCA_set_current_ana(state, current_ana)
   }
 
-  # JMH process scenario button selection here to overwrite the
-  # values in the current analysis
+  # Here we're processing any element delete requests
+  # - first we only do this if the hot_nca_intervals has been defined
+  if(!fetch_hold(state,"hot_nca_intervals")){
+    if(is.list(state[["NCA"]][["ui"]][["hot_nca_intervals"]])){
+      # - If that's the case we get the data frame for it:
+      hot_df = rhandsontable::hot_to_r(state[["NCA"]][["ui"]][["hot_nca_intervals"]])
+      # - Because the UI initialzes to a "no intervals" message we need
+      # to make sure there is a delete column
+      if("Delete" %in% names(hot_df)){
+        # - lastly we check to see if any have been selected for deletion:
+        if(any(hot_df$Delete == TRUE)){
+          # Pulling out the current analysis
+          current_ana = NCA_fetch_current_ana(state)
+
+          # Just keeping the rows that are _not_ marked for deletion:
+          current_ana[["intervals"]] = current_ana[["intervals"]][!hot_df$Delete, ]
+
+          # If we delete the last entry we set it to NULL so it will display
+          # the empty intervals message:
+          if(nrow(current_ana[["intervals"]]) == 0){
+            current_ana[["intervals"]] = NULL
+          }
+
+          # Storing any changes here:
+          state = NCA_set_current_ana(state, current_ana)
+  
+        }
+      }
+    }
+  }
+  #---------------------------------------------
+  # Process scenario button selection here to overwrite
+  # the current selection in the UI:
+  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_use_scenario"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_use_scenario"]])){
+    # Empty messages:
+    msgs = c()
 
 
+    # Current scenario:
+    ana_scenario = current_ana[["ana_scenario"]]
+    # Current scenario options:
+    scenario_def  =  state[["MC"]][["ana_scenarios"]][[ana_scenario]]
+
+    FM_le(state, paste0("loading analysis scenario: ", ana_scenario))
+
+    # Pulling out the current analysis
+    current_ana = NCA_fetch_current_ana(state)
+
+
+    # Overwriting the scenario components in the current analysis
+    current_ana[["nca_parameters"]] = scenario_def[["nca_parameters"]]
+    current_ana[["sampling"]]       = scenario_def[["sampling"]]
+
+
+    # Removing any previous intervals 
+    current_ana[["intervals"]]      = NULL
+
+    # Storing any changes here:
+    state = NCA_set_current_ana(state, current_ana)
+
+
+    # The current analysis will be further updated internally 
+    # in NCA_add_init()
+    for(int_idx in 1:length(scenario_def[["intervals"]])){
+      scenario_row = scenario_def[["intervals"]][[int_idx]]
+      interval_start = as.numeric(as.character(scenario_row$row[["start"]]))
+      interval_stop  = as.numeric(as.character(scenario_row$row[["stop"]]))
+      nca_parameters = scenario_row$row[["nca_parameters"]]
+
+      state = NCA_add_int(state=state,
+        interval_start = interval_start,
+        interval_stop  = interval_stop,
+        nca_parameters = nca_parameters) 
+    }
+
+
+
+    # Saving the button state to the counter
+    state[["NCA"]][["button_counters"]][["button_ana_use_scenario"]] =
+      state[["NCA"]][["ui"]][["button_ana_use_scenario"]]
+
+    # Updating any messages
+    state = FM_set_ui_msg(state, msgs)
+
+  }
+  #---------------------------------------------
+  # Process scenario button selection here to overwrite
+  # the current selection in the UI:
+  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_add_int"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_add_int"]])){
+
+    # Empty messages:
+    msgs = c()
+
+    # Default to adding the interval
+    ADD_INTERVAL = TRUE
+
+    # Pulling the interval specifications from the ui elements:
+    interval_start = as.numeric(as.character(state[["NCA"]][["ui"]][["text_ana_interval_start"]]))
+    interval_stop  = as.numeric(as.character(state[["NCA"]][["ui"]][["text_ana_interval_stop"]]))
+    nca_parameters = state[["NCA"]][["ui"]][["select_ana_nca_parameters"]]
+
+    # Some basic error checking
+    if(is.na(interval_start)){
+      ADD_INTERVAL = FALSE
+      msgs = c(msgs, "Unknown interval start time. Must be a number, 0, or Inf")
+    }
+    if(is.na(interval_stop)){
+      ADD_INTERVAL = FALSE
+      msgs = c(msgs, "Unknown interval stop time. Must be a number, 0, or Inf")
+    }
+
+    if(length(nca_parameters) == 1){
+      if(nca_parameters ==""){
+        ADD_INTERVAL = FALSE
+        msgs = c(msgs, "You must select at least one NCA parameter per interval.")
+      }
+    }
+
+    # If everything is good up top we add the interval
+    if(ADD_INTERVAL){
+      state = NCA_add_int(state=state,
+        interval_start = interval_start,
+        interval_stop  = interval_stop,
+        nca_parameters = nca_parameters) 
+
+      details = paste0("[", interval_start, ", ", 
+                            interval_stop, "] ",
+                            paste0(nca_parameters, collapse=", "))
+
+      # Adding a notification
+      notify_text = state[["MC"]][["notifications"]][["ana_add_int_success"]]
+      notify_text = stringr::str_replace(notify_text, "===DETAILS===", details)
+
+      FM_le(state, notify_text)
+
+      state = FM_set_notification(state, notify_text, "Interval Added", "success")
+    } else {
+      notify_text = paste(msgs, collapse="\n")
+      state = FM_set_notification(state, notify_text, "Interval Not Added", "failure")
+      FM_le(state, "interval was not added")
+    }
+
+
+
+    # Saving the button state to the counter
+    state[["NCA"]][["button_counters"]][["button_ana_add_int"]] =
+      state[["NCA"]][["ui"]][["button_ana_add_int"]]
+
+    # Updating any messages
+    state = FM_set_ui_msg(state, msgs)
+  }
   #---------------------------------------------
   # Here we react to changes between the UI and the current state
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["select_current_ana"]],
@@ -1609,13 +2102,15 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
                       "button_ana_del",
                       "button_ana_save",
                       "button_ana_copy",
+                      "button_ana_add_int",
                       "button_ana_use_scenario",
                       "switch_ana_include_units")
 
   # mapping name in UI to name in analysis
   ui_ana_map = list(
     "switch_ana_include_units"   = "include_units",
-    "slider_ana_interval"        = "interval",
+    "text_ana_interval_start"    = "interval_start",
+    "text_ana_interval_stop"     = "interval_stop",
     "slider_ana_source_sampling" = "sampling",
     "select_ana_nca_parameters"  = "nca_parameters",
     "select_ana_scenario"        = "ana_scenario",
@@ -1625,8 +2120,12 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
     "select_ana_units_amt"       = "units_amt",
     "select_ana_col_id"          = "col_id"   ,
     "select_ana_col_time"        = "col_time" ,
+    "select_ana_col_ntime"       = "col_ntime" ,
     "select_ana_col_dose"        = "col_dose" ,
+    "select_ana_col_dur"         = "col_dur" ,
     "select_ana_col_conc"        = "col_conc" ,
+    "select_ana_col_route"       = "col_route" ,
+    "select_ana_col_cycle"       = "col_cycle" ,
     "select_ana_col_group"       = "col_group"
   )
 
@@ -1636,12 +2135,14 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
   # use in the state:
   ui_ids          = c(button_counters,
                       names(ui_ana_map),
+                      "hot_nca_intervals",
                       "select_current_ana",
                       "select_current_view",
                       "text_ana_key",
                       "text_ana_notes")
 
   ui_hold         = c("select_current_ana",
+                      "hot_nca_intervals",
                       "select_current_view")
 
 
@@ -1927,10 +2428,16 @@ NCA_new_ana    = function(state){
          col_id          = "",          # The col_* values will be populated later
          col_conc        = "",
          col_dose        = "",
+         col_dur         = "",
+         col_route       = "",
+         col_cycle       = "",
          col_time        = "",
+         col_ntime       = "",
          col_group       = "",
          include_units   = "",
-         interval        = c(NA,NA),
+         intervals       = NULL,     # holds intervals added to the analysis
+         interval_start  = "0",      # Current interval in the interface.
+         interval_stop   = "Inf",    # Current interval in the interface.
          nca_parameters  = "",
          sampling        = "",
          units_conc      = "",
@@ -1961,11 +2468,23 @@ NCA_new_ana    = function(state){
   nca_def[["col_time"]] = NCA_find_col(
     patterns = state[["MC"]][["detect_col"]][["time"]],
     dscols   = dscols)
+  nca_def[["col_ntime"]] = NCA_find_col(
+    patterns = state[["MC"]][["detect_col"]][["ntime"]],
+    dscols   = dscols)
   nca_def[["col_dose"]] = NCA_find_col(
     patterns = state[["MC"]][["detect_col"]][["dose"]],
     dscols   = dscols)
+  nca_def[["col_dur"]] = NCA_find_col(
+    patterns = state[["MC"]][["detect_col"]][["dur"]],
+    dscols   = dscols)
   nca_def[["col_conc"]] = NCA_find_col(
     patterns = state[["MC"]][["detect_col"]][["conc"]],
+    dscols   = dscols)
+  nca_def[["col_route"]] = NCA_find_col(
+    patterns = state[["MC"]][["detect_col"]][["route"]],
+    dscols   = dscols)
+  nca_def[["col_cycle"]] = NCA_find_col(
+    patterns = state[["MC"]][["detect_col"]][["cycle"]],
     dscols   = dscols)
 
   # Setting the units switch for the analysis
@@ -1989,7 +2508,7 @@ NCA_new_ana    = function(state){
   ana_scenario_def = state[["MC"]][["ana_scenario_def"]]
 
   nca_def[["ana_scenario"]]   = ana_scenario_def
-  nca_def[["nca_parameters"]] = ana_scenarios[[ana_scenario_def]][["parameters"]]
+  nca_def[["nca_parameters"]] = ana_scenarios[[ana_scenario_def]][["nca_parameters"]]
   nca_def[["sampling"]]       = ana_scenarios[[ana_scenario_def]][["sampling"]]
 
 
@@ -2019,9 +2538,10 @@ state}
 
 #'@export
 #'@title Determines Default Column Name
-#'@description Takes the current value from the UI, an optional list of
+#'@description Based on the current analysis, value from the UI, an optional list of
 #'patterns to search, column names from a dataset, and an optional list of
-#'column names to exclude.
+#'column names to exclude it tries to find a default value for a column in the
+#'analysis (e.g. dose, concentration, etc).
 #'
 #' - Excluded columns are removed from dscols
 #'
@@ -2034,6 +2554,7 @@ state}
 #'
 #' - If nothing is found then the first value of dscols is returned.
 #'
+#'@param curr_ana Current value in the analysis
 #'@param curr_ui  Current value in UI
 #'@param patterns List of regular expression patterns to consider.
 #'@param dscols   Columns from the dataset.
@@ -2043,7 +2564,8 @@ state}
 #'@return Value List containing the details of the current analysis. The structure
 #'of this list is the same as the structure of \code{state$NCA$anas} in the output of
 #'\code{ANA_fetch_state()}.
-NCA_find_col             = function(curr_ui  = NULL,
+NCA_find_col             = function(curr_ana = NULL,
+                                    curr_ui  = NULL,
                                     patterns = NULL,
                                     dscols,
                                     excol=NULL,
@@ -2058,21 +2580,25 @@ NCA_find_col             = function(curr_ui  = NULL,
     # Removing excol from dscols
   }
 
-  if(!is.null(curr_ui)){
-    CURR_UI_HAS_DATA = FALSE
-    # Now we see if it has been defined already:
-    if(length(curr_ui)>1){
-      CURR_UI_HAS_DATA = TRUE
-    } else if(curr_ui != ""){
-      CURR_UI_HAS_DATA = TRUE
-    }
+  # JMH add curr_ana parsing here
 
-    if(CURR_UI_HAS_DATA){
-      # If it has we see if it's in the dataset columns. If we switched
-      # views we may have a view where this column doesnt exist
-      if(any(curr_ui %in% dscols)){
-        COL_FOUND = TRUE
-        value = curr_ui[curr_ui %in% dscols]
+  if(!COL_FOUND){
+    if(!is.null(curr_ui)){
+      CURR_UI_HAS_DATA = FALSE
+      # Now we see if it has been defined already:
+      if(length(curr_ui)>1){
+        CURR_UI_HAS_DATA = TRUE
+      } else if(curr_ui != ""){
+        CURR_UI_HAS_DATA = TRUE
+      }
+
+      if(CURR_UI_HAS_DATA){
+        # If it has we see if it's in the dataset columns. If we switched
+        # views we may have a view where this column doesnt exist
+        if(any(curr_ui %in% dscols)){
+          COL_FOUND = TRUE
+          value = curr_ui[curr_ui %in% dscols]
+        }
       }
     }
   }
@@ -2146,4 +2672,104 @@ NCA_fetch_PKNCA_meta    = function(){
 
 res}
 
+
+#'@export
+#'@title Applies Route Mapping to Dataset
+#'@description Compiles Metadata from PKNCA
+#'@param route_map List with names corresponding to the route replacement and
+#'       a vector of regular expressions to match.
+#'@param route_col Column name with the route data.
+#'@param DS        Dataframe containing the dataset.
+#'@return Dataset with the route mapping applied.
+#'
+#' #loading a dataset
+#' data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
+#' myDS = readxl::read_excel(path=data_file, sheet="DATA")        %>%
+#'
+#'  route_map = list(
+#'    intravascular = c("^(?i)iv$"),
+#'    extravascular = c("^(?i)sc$", "^(?i)oral")
+#'  )
+#'
+#' myDS = apply_route_map(myDS, route_col=ROUTE, route_map)
+#'
+#'
+apply_route_map  = function(route_map  = list(),
+                             route_col = NULL,
+                             DS        = NULL){
+  for(new_route in names(route_map)){
+    evalstr =
+    paste0(
+      "DS = ",
+      "dplyr::mutate(DS, ",route_col,"=",
+      "             ifelse(stringr::str_detect(pattern = paste0(route_map[[new_route]], collapse='|'), ",
+      "                                        string  = ", route_col,"),",
+      "                    new_route,",  route_col,"))"
+    )
+    eval(parse(text=evalstr))
+  }
+
+
+DS}
+
+
+#'@export
+#'@title Fetches Details About Data Requirements
+#'@description Use this to get information about data formats.
+#'@return list with details about the data formats
+#'@examples
+#' FM_fetch_current_mods()
+NCA_fetch_data_format = function(){
+
+  yaml_file = system.file(package="ruminate","templates","NCA.yaml")
+
+  MC = yaml::read_yaml(yaml_file)
+
+  res = NULL
+
+  for(ridx in 1:length(MC[["MC"]][["data_format"]][["columns"]])){
+    entry = MC[["MC"]][["data_format"]][["columns"]][[ridx]][["entry"]]
+    res = rbind(res, as.data.frame(entry))
+  }
+res}
+
+
+#'@export
+#'@title Adds Analysis Interval to Current Analysis
+#'@description Takes the start time, stop time, and NCA parameters and adds
+#'them to the intervals table
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@param interval_start Interval start time (numeric).
+#'@param interval_stop  Interval stop time (numeric).
+#'@param nca_parameters list of NCA parameters in the interval
+#'@return State with interval added to the current analysis.
+NCA_add_int = function(state, interval_start, interval_stop, nca_parameters){
+
+  # This is a summary table of the nca parameters with the
+  # PKNCA parameter name ("parameter") and a textual description ("text") 
+  np_summary = state[["NCA"]][["nca_parameters"]][["summary"]]
+
+  # Pulling out the rows for the currently selected parameters:
+  np_summary = np_summary[np_summary[["parameter"]] %in% nca_parameters, ]
+
+  params_string = paste0(nca_parameters,       collapse = ",")
+  names_string  = paste0(np_summary[["text"]], collapse = ", ")
+
+  # Pulling out the current analysis
+  current_ana = NCA_fetch_current_ana(state)
+
+
+  # This adds the row
+  current_ana[["intervals"]] = 
+  rbind( current_ana[["intervals"]],
+    data.frame("start"        = interval_start,
+               "stop"         = interval_stop,
+               "np_actual"    = params_string,
+               "np_text"      = names_string,
+               "delete"       = FALSE))
+  # Saving the current analysis with the interval added
+  state = NCA_set_current_ana(state, current_ana)
+
+
+state}
 

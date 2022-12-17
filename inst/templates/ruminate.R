@@ -16,7 +16,10 @@ CSS <- "
 }
 "
 #https://fontawesome.com/icons?from=io
+logo_url = "https://raw.githubusercontent.com/john-harrold/ruminate/main/man/figures/logo.png"
+#logo_url = paste0("file://", system.file(package = "ruminate","help","figures","logo.png"))
 
+intro_text = "Ruminate"
 ui <- dashboardPage(
   skin="black",
   dashboardHeader(title="ruminate"),
@@ -34,23 +37,22 @@ ui <- dashboardPage(
   ),
     tabItems(
        tabItem(tabName="nca", 
-               htmlOutput(NS("NCA",  "ui_nca_compact")),
+               htmlOutput(NS("NCA",  "NCA_ui_compact")),
                ),
        tabItem(tabName="loadsave",
                box(title="Load Dataset", width=12,
                  fluidRow(
                    column(width=6,
-                     htmlOutput(NS("UD",  "ui_ud_compact"))),
+                     htmlOutput(NS("UD",  "UD_ui_compact"))),
                    column(width=6,
                        tags$p(
                            tags$img(
                            class = "wrapfig",
-                           src   = "https://github.com/john-harrold/formods/raw/master/man/figures/logo.png",
-                           width = 100,
-                           alt = "formods logo" ),
-                         'Formods is a set of modules and an framework for developing modules which interact and create code to replicate analyses performed within an app. To experiment download this',
-                       tags$a("test dataset", href="https://github.com/john-harrold/formods/raw/master/inst/test_data/TEST_DATA.xlsx"),
-                              'and upload it into the App using the form on the left.'))
+                           src   = logo_url,
+                           width = 150,
+                           alt = "formods logo" ), 
+                       intro_text
+                       ))
                  )
                ),
                box(title="Save or Load Analysis", width=12,
