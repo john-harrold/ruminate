@@ -1,9 +1,5 @@
 library(formods)
 library(shinydashboard)
-
-library(devtools)
-load_all()
-
 library(prompter)
 
 #https://fontawesome.com/icons?from=io
@@ -95,10 +91,14 @@ ui <- dashboardPage(
           rhandsontable::rHandsontableOutput(NS("NCA", "hot_nca_intervals")),
           width=12)),
        fluidRow(
-         box(title="Analysis Options",
-           div(style="display:inline-block;vertical-align:top",
+         box(title="Run Analysis",
+           div(style="display:inline-block;vertical-align:bottom",
              "ui_nca_ana_source_sampling",
              htmlOutput(NS("NCA", "ui_nca_ana_source_sampling")),
+             ),
+           div(style="display:inline-block;vertical-align:bottom",
+             "ui_nca_ana_run",
+             htmlOutput(NS("NCA", "ui_nca_ana_run")), tags$br()
              ),
              width=12)),
        fluidRow(
@@ -149,6 +149,11 @@ ui <- dashboardPage(
            div(style="display:inline-block",
              "ui_nca_ana_units_amt",
              htmlOutput(NS("NCA", "ui_nca_ana_units_amt"))),
+             width=12)),
+       fluidRow(
+         box(title="NCA Results",
+             "ui_nca_ana_results",
+             htmlOutput(NS("NCA", "ui_nca_ana_results")),
              width=12)),
        fluidRow(
          box(title="Generated Code",

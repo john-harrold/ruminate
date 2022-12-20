@@ -70,7 +70,7 @@ NCA_Server <- function(id,
                              react_state     = react_state)
 
       if(is.null(state[["NCA"]][["code"]])){
-        uiele = "# No file loaded"
+        uiele = "# Run analysis to see code."
       } else {
         uiele = state[["NCA"]][["code"]]
       }
@@ -433,7 +433,7 @@ NCA_Server <- function(id,
         choicesOpt = choicesOpt)
     })
     #------------------------------------
-    # interval stop 
+    # interval stop
     output$ui_nca_ana_int_stop  = renderUI({
 
       react_state[[id_UD]]
@@ -458,7 +458,7 @@ NCA_Server <- function(id,
 
       # Pulling out the current analysis to get the column information
       current_ana = NCA_fetch_current_ana(state)
-      value = current_ana[["interval_stop"]] 
+      value = current_ana[["interval_stop"]]
 
       uiele =
         textInput(
@@ -495,7 +495,7 @@ NCA_Server <- function(id,
 
       # Pulling out the current analysis to get the column information
       current_ana = NCA_fetch_current_ana(state)
-      value = current_ana[["interval_start"]] 
+      value = current_ana[["interval_start"]]
 
       uiele =
         textInput(
@@ -541,7 +541,7 @@ NCA_Server <- function(id,
         inline     = TRUE)
       uiele})
     #------------------------------------
-    # NCA parameters to compute
+    # Data source sampling (sparse or serail)
     output$ui_nca_ana_source_sampling = renderUI({
       input$button_ana_use_scenario
 
@@ -569,6 +569,49 @@ NCA_Server <- function(id,
         width      = state[["MC"]][["formatting"]][["select_ana_source_sampling"]][["width"]],
         inline     = TRUE)
 
+      uiele})
+    #------------------------------------
+    # Data source sampling (sparse or serail)
+    output$ui_nca_ana_run             = renderUI({
+      input$button_ana_use_scenario
+
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+
+      uiele = shinyWidgets::actionBttn(
+                inputId = NS(id, "button_ana_run"),
+                label   = state[["MC"]][["labels"]][["run_ana"]],
+                style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+                size    = state[["MC"]][["formatting"]][["button_ana_run"]][["size"]],
+                block   = state[["MC"]][["formatting"]][["button_ana_run"]][["block"]],
+                color   = "success",
+                icon    = icon("arrow-down"))
+
+      uiele})
+    #------------------------------------
+    # Data source sampling (sparse or serail)
+    output$ui_nca_ana_results             = renderUI({
+      input$button_ana_run
+
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+      uiele = "results"
       uiele})
     #------------------------------------
     # Column Mapping
@@ -1537,7 +1580,7 @@ NCA_Server <- function(id,
       # Total for the no intervals table
       w_total = w_start + w_stop + w_np_text + w_delete
 
-      # By default intervals here is NULL and when new intervals are added it 
+      # By default intervals here is NULL and when new intervals are added it
       # will become an dataframe:
       if(is.null(current_ana[["intervals"]])){
         df = data.frame("Intervals"= state[["MC"]][["labels"]][["no_intervals"]])
@@ -1547,7 +1590,7 @@ NCA_Server <- function(id,
           height = state[["MC"]][["formatting"]][["intervals"]][["height"]],
           rowHeaders = NULL
           ) |>
-          hot_cols(colWidths = c(w_total)) 
+          hot_cols(colWidths = c(w_total))
       } else {
         # The user only sees np_text (pretty names) and not np_actual (actual
         # names)
@@ -1555,7 +1598,7 @@ NCA_Server <- function(id,
 
 
         # This will force things like 0 to be 0 instead of 0.0 and Inf to show
-        # up correctly. 
+        # up correctly.
         df[["start"]] = as.character(df[["start"]])
         df[["stop"]]  = as.character(df[["stop"]])
 
@@ -1573,9 +1616,9 @@ NCA_Server <- function(id,
           ) |>
           hot_col("Start" ,           readOnly = TRUE) |>
           hot_col("Stop" ,            readOnly = TRUE) |>
-          hot_col("NCA Parameter" ,   readOnly = TRUE) |> 
-          hot_cols(colWidths = c(w_start, w_stop, w_np_text, w_delete)) 
-        
+          hot_col("NCA Parameter" ,   readOnly = TRUE) |>
+          hot_cols(colWidths = c(w_start, w_stop, w_np_text, w_delete))
+
 
       }
     })
@@ -1595,7 +1638,7 @@ NCA_Server <- function(id,
                              id_UD           = id_UD,
                              id_DW           = id_DW,
                              react_state     = react_state)
-    
+
       # Triggering optional notifications
       notify_res =
       FM_notify(state   = state,
@@ -1683,17 +1726,55 @@ NCA_Server <- function(id,
 #' \item{MC:} Module components of the yaml file.
 #' \item{NCA:}  # JMH populate the rest of this list
 #' \itemize{
-#'   \item{isgood:} Boolean object indicating if the analysis was successfully run.
-#'   \item{checksum:} This is an MD5 sum of the (JMH update) element and can be
-#'   used to detect changes in the state.
-#'   \item{key:           Analysis key acts as a title/caption (user editable)}
-#'   \item{notes:         Analysis notes  (user editable)}
-#'   \item{id:            Character id (\code{ana_idx})}
-#'   \item{idx:           Numeric id (\code{1})}
-#'   \item{nca_config:}   List of PKNCA configuration options for this analysis.
-#'   \item{code:          Code to run the analysis from start to finish.}
-#'   \item{code_previous: Code to load and/or wrangle the dataset.}
-#'   \item{code_ana_only: Code to just to run the analysis}
+#'   \item{ana_cntr:}       Analysis counter.
+#'   \item{anas:}                    List of analyses: Each analysis has the following  structure:
+#'      \itemize{
+#'        \item{ana_dsview:}       JMH
+#'        \item{nca_res:}          Results of PKNCA (\code{NULL} at initialization or run failure).
+#'        \item{ana_scenario:}     JMH
+#'        \item{checksum:}         JMH
+#'        \item{code:}             Code to generate analysis from start to finish or error messages if code generation/analysis failed.
+#'        \item{code_ana_only:}    Code to just generate the analysis.
+#'        \item{code_previous:}    Code to load and/or wrangle the dataset.
+#'        \item{col_conc:}         Column from ana_dsview containing the concentration data.
+#'        \item{col_cycle:}        Column from ana_dsview containing the dose dose cycle/number.
+#'        \item{col_dose:}         Column from ana_dsview containing the dose amount.
+#'        \item{col_dur:}          Column from ana_dsview containing the infusion duration or N/A if unused.
+#'        \item{col_group:}        Columns from ana_dsview containing other grouping variables.
+#'        \item{col_id:}           Column from ana_dsview containing the subject IDs.
+#'        \item{col_ntime:}        Column from ana_dsview containing the nominal time values
+#'        \item{col_route:}        Column from ana_dsview containing the dosing route.
+#'        \item{col_time:}         Column from ana_dsview containing the time values.
+#'        \item{id:}               Character id (\code{ana_idx})
+#'        \item{idx:}              Numeric id (\code{1})
+#'        \item{include_units:}    JMH.
+#'        \item{interval_start:}   JMH.
+#'        \item{interval_stop:}    JMH.
+#'        \item{intervals:}        JMH.
+#'        \item{isgood:}           JMH.
+#'        \item{key:}              Analysis key acts as a title/caption (user editable)
+#'        \item{msgs:}             JMH.
+#'        \item{nca_config:}       JMH.
+#'        \item{nca_object_name:}  JMH.
+#'        \item{nca_parameters:}   JMH.
+#'        \item{nobj:}             JMH.
+#'        \item{notes:}            Analysis notes  (user editable)
+#'        \item{objs:}             List of names for objects used in the NCA genearated code. 
+#'        \item{sampling:}         Sampling method either "sparse" or "serial"
+#'        \item{units_amt:}        Amount units.
+#'        \item{units_conc:}       Concentration units.
+#'        \item{units_dose:}       Dosing units.
+#'        \item{units_time:}       Time units.
+#'   }
+#'   \item{button_counters:}       JMH.
+#'   \item{current_ana:}           Currently selected analysis (list name element from anas).
+#'   \item{DSV:}                   Available data source views (see \code{\link{FM_fetch_ds}})
+#'   \item{checksum:}              This is an MD5 sum of the (JMH update) element and can be
+#'   \item{nca_config:}            List of PKNCA configuration options for this analysis.
+#'   \item{ui:}                    JMH.
+#'   \item{ui_ana_map:}            JMH.
+#'   \item{ui_hold:}               JMH.
+#'   \item{ui_ids:}                JMH.
 #' }
 #' \item{MOD_TYPE:} Character data containing the type of module \code{"NCA"}
 #' \item{id:} Character data containing the module id module in the session variable.
@@ -1801,7 +1882,33 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
     # Storing any changes here:
     state = NCA_set_current_ana(state, current_ana)
   }
+  #---------------------------------------------
+  #---------------------------------------------
+  # This will sync the nca options in the UI to the values in the state
+  current_ana = NCA_fetch_current_ana(state)
+  for(nca_opt in names(current_ana[["nca_config"]])){
+    # Getting the ui_id for the current option:
+    ui_name = current_ana[["nca_config"]][[nca_opt]][["ui_id"]]
 
+    if(!is.null(state[["NCA"]][["ui"]][[ui_name]])){
+      if(state[["NCA"]][["ui"]][[ui_name]] != ""){
+
+        # We compare the values in the ui to the nca_config and if they are
+        # different we assign them
+        if(as.character(state[["NCA"]][["ui"]][[ui_name]]) !=
+           as.character(current_ana[["nca_config"]][[nca_opt]][["value"]])){
+
+           # Updating the current analysis with the ui from the state
+           current_ana[["nca_config"]][[nca_opt]][["value"]] =
+             state[["NCA"]][["ui"]][[ui_name]]
+          FM_le(state, paste0("setting NCA option: ", nca_opt, " = ", state[["NCA"]][["ui"]][[ui_name]]))
+        }
+      }
+    }
+  }
+  # Storing any changes here:
+  state = NCA_set_current_ana(state, current_ana)
+  #---------------------------------------------
   # Here we're processing any element delete requests
   # - first we only do this if the hot_nca_intervals has been defined
   if(!fetch_hold(state,"hot_nca_intervals")){
@@ -1827,7 +1934,7 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
 
           # Storing any changes here:
           state = NCA_set_current_ana(state, current_ana)
-  
+
         }
       }
     }
@@ -1857,14 +1964,14 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
     current_ana[["sampling"]]       = scenario_def[["sampling"]]
 
 
-    # Removing any previous intervals 
+    # Removing any previous intervals
     current_ana[["intervals"]]      = NULL
 
     # Storing any changes here:
     state = NCA_set_current_ana(state, current_ana)
 
 
-    # The current analysis will be further updated internally 
+    # The current analysis will be further updated internally
     # in NCA_add_init()
     for(int_idx in 1:length(scenario_def[["intervals"]])){
       scenario_row = scenario_def[["intervals"]][[int_idx]]
@@ -1875,7 +1982,7 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
       state = NCA_add_int(state=state,
         interval_start = interval_start,
         interval_stop  = interval_stop,
-        nca_parameters = nca_parameters) 
+        nca_parameters = nca_parameters)
     }
 
 
@@ -1915,6 +2022,13 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
       msgs = c(msgs, "Unknown interval stop time. Must be a number, 0, or Inf")
     }
 
+    if(!is.na(interval_start) & !is.na(interval_stop)){
+      if(interval_start > interval_stop){
+        ADD_INTERVAL = FALSE
+        msgs  = c(msgs, paste0("Interval start (", interval_start, ") should be less than the interval end (", interval_stop, ")"))
+      }
+    }
+
     if(length(nca_parameters) == 1){
       if(nca_parameters ==""){
         ADD_INTERVAL = FALSE
@@ -1927,9 +2041,9 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
       state = NCA_add_int(state=state,
         interval_start = interval_start,
         interval_stop  = interval_stop,
-        nca_parameters = nca_parameters) 
+        nca_parameters = nca_parameters)
 
-      details = paste0("[", interval_start, ", ", 
+      details = paste0("[", interval_start, ", ",
                             interval_stop, "] ",
                             paste0(nca_parameters, collapse=", "))
 
@@ -1954,6 +2068,80 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
 
     # Updating any messages
     state = FM_set_ui_msg(state, msgs)
+  }
+  #---------------------------------------------
+  # Run Analysis
+  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_run"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_run"]])){
+
+    FM_le(state, "running analysis")
+
+    # Pausing access to the screen
+    FM_pause_screen(state   = state,
+                    message = state[["MC"]][["labels"]][["busy"]][["run_nca"]],
+                    session = session)
+
+
+
+    msgs = c()
+    # Generating code
+    ncab_res = nca_builder(state)
+
+    # Appending messages
+    msgs = c(msgs, ncab_res[["msgs"]])
+    
+    
+    if(ncab_res[["isgood"]]){
+      # If everything is good we store stuff in the current analysis
+      current_ana = NCA_fetch_current_ana(state)
+      # This passes the generated code back to the current analysis
+      current_ana[["code"]]          = ncab_res[["code"]]
+      current_ana[["code_ana_only"]] = ncab_res[["code_ana_only"]]
+      current_ana[["code_previous"]] = ncab_res[["code_previous"]]
+      current_ana[["objs"]]          = ncab_res[["objs"]]
+      # Storing the current ana with the updated data:
+      state = NCA_set_current_ana(state, current_ana)
+    
+      # Now we're running NCA on the current analysis
+      rn_res = run_nca(state)
+    
+      # Capturing the results of the run
+      current_ana = NCA_fetch_current_ana(state)
+
+      # Exit status:
+      current_ana[["isgood"]]  = rn_res[["isgood"]]
+      # NCA results
+      current_ana[["nca_res"]] = rn_res[["nca_res"]]
+
+
+      # Storing the current ana with the updated data:
+      state = NCA_set_current_ana(state, current_ana)
+
+      # Capturing any messages as well
+      msgs = c(msgs, rn_res[["msgs"]])
+    }
+    
+    # Updating any messages
+    state = FM_set_ui_msg(state, msgs)
+
+
+    # Removing the pause
+    FM_resume_screen(state   = state,
+                     session = session)
+
+
+    browser()
+
+   #if(system.file(package = "shinybusy") !=""){
+   #  shinybusy::remove_modal_spinner()
+   #}
+
+
+
+
+    # Saving the button state to the counter
+    state[["NCA"]][["button_counters"]][["button_ana_run"]] =
+      state[["NCA"]][["ui"]][["button_ana_run"]]
   }
   #---------------------------------------------
   # Here we react to changes between the UI and the current state
@@ -2053,9 +2241,6 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
     # Updating any messages
     state = FM_set_ui_msg(state, msgs)
 
-    # JMH consider this in the context of NCA
-    ## Forcing a rebuild of the figure:
-    #state = NCA_build( state=state, del_row = NULL, cmd = NULL)
   }
   #---------------------------------------------
   # Include units switch
@@ -2100,6 +2285,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
 
   button_counters = c("button_ana_new",
                       "button_ana_del",
+                      "button_ana_run",
                       "button_ana_save",
                       "button_ana_copy",
                       "button_ana_add_int",
@@ -2416,9 +2602,11 @@ NCA_new_ana    = function(state){
          id              = nca_id,
          idx             = state[["NCA"]][["ana_cntr"]],
          nca_object_name = nca_object_name,
-         nobj            = NULL,
-         msgs            = c(),
+         objs            = list(),
+         nobj            = NULL,   # JMH is this even used?
+         msgs            = c("New analysis"),
          ana_dsview      = ana_dsview,
+         nca_res         = NULL, 
          nca_config      = state[["NCA"]][["nca_config"]][["default"]],
          checksum        = digest::digest(NULL, algo=c("md5")),
          ana_scenario    = "",
@@ -2444,7 +2632,6 @@ NCA_new_ana    = function(state){
          units_dose      = "",
          units_amt       = "",
          units_time      = "",
-         units_group     = "",
          notes           = "",
          isgood          = FALSE)
 
@@ -2746,7 +2933,7 @@ res}
 NCA_add_int = function(state, interval_start, interval_stop, nca_parameters){
 
   # This is a summary table of the nca parameters with the
-  # PKNCA parameter name ("parameter") and a textual description ("text") 
+  # PKNCA parameter name ("parameter") and a textual description ("text")
   np_summary = state[["NCA"]][["nca_parameters"]][["summary"]]
 
   # Pulling out the rows for the currently selected parameters:
@@ -2760,7 +2947,7 @@ NCA_add_int = function(state, interval_start, interval_stop, nca_parameters){
 
 
   # This adds the row
-  current_ana[["intervals"]] = 
+  current_ana[["intervals"]] =
   rbind( current_ana[["intervals"]],
     data.frame("start"        = interval_start,
                "stop"         = interval_stop,
@@ -2772,4 +2959,617 @@ NCA_add_int = function(state, interval_start, interval_stop, nca_parameters){
 
 
 state}
+
+#'@export
+#'@title Processes Current Analysis to be Run
+#'@description Takes the current analysis and checks different aspects to for
+#'any issues to make sure it's good to go.
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@return Current analysis list with isgood and msgs set
+NCA_process_current_ana = function(state){
+
+  omsgs  = c()
+  amsgs  = c()
+  isgood = TRUE
+  current_ana = NCA_fetch_current_ana(state)
+
+  # Analysis Dataset
+  ds =  state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]]
+
+  #---------------------------------------------
+  # Checking the NCA options
+  for(nca_opt in names(current_ana[["nca_config"]])){
+    opt_value  = current_ana[["nca_config"]][[nca_opt]][["value"]]
+    opt_type   = current_ana[["nca_config"]][[nca_opt]][["type"]]
+    opt_label  = current_ana[["nca_config"]][[nca_opt]][["label"]]
+    opt_pknca  = current_ana[["nca_config"]][[nca_opt]][["pknca_option"]]
+
+    # First we check all of the numeric types
+    if(opt_type == "numeric"){
+      opt_value_proc = as.numeric(as.character(opt_value))
+      if(is.na(opt_value_proc)){
+        isgood = FALSE
+        omsgs = c(omsgs, paste0(opt_label, " (", nca_opt, ") should be numeric (found:", opt_value, ")." ))
+      } else {
+        # Storing the pocessed value as _the_ value. This will ensure that
+        # numbers stored as text are actually numbers now:
+        current_ana[["nca_config"]][[nca_opt]][["value"]] = opt_value_proc
+
+
+        # Checking specific numeric boundaries: positive numbers
+        if(opt_pknca %in% c("adj.r.squared.factor", "min.span.ratio")){
+          if(opt_value_proc < 0 ){
+            isgood = FALSE
+            omsgs = c(omsgs, paste0(opt_label, " [", nca_opt, "] should be a positive number (found:", opt_value, ")." ))
+          }
+        }
+        # Checking specific numeric boundaries: positive integers
+        if(opt_pknca %in% c("min.hl.points")){
+          if(opt_value_proc < 0  | (as.integer(opt_value_proc)-opt_value_proc) != 0){
+            isgood = FALSE
+            omsgs = c(omsgs, paste0(opt_label, " [", nca_opt, "] should be a positive integer (found:", opt_value, ")" ))
+          }
+        }
+
+        # Checking specific numeric boundaries: [0,1]
+        if(opt_pknca %in% c("max.missing", "min.hl.r.squared")){
+          # max_missing is a fraction and should be between 0 and 1
+          if(opt_value_proc < 0 | opt_value_proc > 1){
+            isgood = FALSE
+            omsgs = c(omsgs, paste0(opt_label, " [", nca_opt, "] should be between 0 and 1 (found:", opt_value, ")." ))
+          }
+        }
+        # Checking specific numeric boundaries: percentage
+        if(opt_pknca %in% c("max.aucinf.pext")){
+          if(opt_value_proc < 0 | opt_value_proc > 100){
+            isgood = FALSE
+            omsgs = c(omsgs, paste0(opt_label, " [", nca_opt, "] should be a percentage 0 and 100 (found:", opt_value, ")." ))
+          }
+        }
+      }
+    } else if(opt_type == "mixed"){
+
+      # Mixed options can be strings or numbers so we calculate the
+      # numeric value here to use below
+      opt_value_num  = as.numeric(as.character(opt_value))
+      opt_value_str  =            as.character(opt_value)
+      if(opt_pknca %in% c("conc.na")){
+        OPT_ERR = FALSE
+        # If it's not a valid character value we check the numeric value
+        if(!(opt_value_str %in% c("drop"))){
+          # Here we check to make sure it's not NA and then if it's positive
+          if(is.na(opt_value_num)){
+            OPT_ERR = TRUE
+          } else if(opt_value_num < 0){
+            OPT_ERR = TRUE
+          }
+          if(OPT_ERR){
+            isgood = FALSE
+            omsgs = c(omsgs, paste0(opt_label, " [", nca_opt, '] should be "drop" or a positive numeric value (found:', opt_value, ")." ))
+          } else {
+            # Storing the processed numeric value as _the_ value.
+            current_ana[["nca_config"]][[nca_opt]][["value"]] = opt_value_num
+          }
+        } else {
+          # Storing the processed character value as _the_ value.
+          current_ana[["nca_config"]][[nca_opt]][["value"]] = opt_value_str
+        }
+      }
+      if(opt_pknca %in% c("conc.blq$first", "conc.blq$middle", "conc.blq$last")){
+        OPT_ERR = FALSE
+        # If it's not a valid character value we check the numeric value
+        if(!(opt_value_str %in% c("drop", "keep"))){
+          # Here we check to make sure it's not NA and then if it's positive
+          if(is.na(opt_value_num)){
+            OPT_ERR = TRUE
+          } else if(opt_value_num < 0){
+            OPT_ERR = TRUE
+          }
+          if(OPT_ERR){
+            isgood = FALSE
+            omsgs = c(omsgs, paste0(opt_label, " [", nca_opt, '] should be "drop", "keep" or a positive numeric value (found:', opt_value, ")." ))
+          } else {
+            # Storing the processed numeric value as _the_ value.
+            current_ana[["nca_config"]][[nca_opt]][["value"]] = opt_value_num
+          }
+        } else {
+          # Storing the processed character value as _the_ value.
+          current_ana[["nca_config"]][[nca_opt]][["value"]] = opt_value_str
+        }
+      }
+    } else if(opt_type == "character"){
+      if(opt_pknca %in% c("auc.method")){
+        if(!(opt_value %in% c("lin up/log down", "linear"))){
+          isgood = FALSE
+          omsgs = c(omsgs, paste0(opt_label, " [", nca_opt, '] should be either "lin up/log down" or "linear" (found:', opt_value, ")." ))
+        }
+      }
+    }
+  }
+
+  #---------------------------------------------
+  # Checking the analysis components
+
+  # Check interval start/stop
+  # JMH, BILL should I check for multiple instances of the same interval
+  # here?
+  if(is.null(current_ana[["intervals"]])){
+    isgood = FALSE
+    amsgs  = c(amsgs, paste0("No intervals have been defined."))
+  }
+
+  # First we look at the numeric columns
+  num_cols = c("col_conc", "col_time", "col_ntime", "col_dose")
+  if(current_ana[["col_dur"]] != "N/A"){
+    num_cols = c(num_cols, "col_dur")
+  }
+  for(col_name in num_cols){
+    col_vals = ds[["DS"]][[ current_ana[[col_name]] ]]
+    if(is.numeric(col_vals)){
+      # I'm assuming that the duration column shouldn't have any NA values.
+      if(col_name %in% c("col_dur")){
+        if(any(is.na(current_ana[[col_name]]))){
+          isgood = FALSE
+          amsgs = c(amsgs, paste0("Column: ", current_ana[[col_name]], " should not have NA values."))
+        }
+      }
+    } else {
+      isgood = FALSE
+      amsgs = c(amsgs, paste0("Column: ", current_ana[[col_name]], " is not numeric."))
+    }
+  }
+
+  # Checking route information:
+
+  # Applying the route mapping
+  route_map = state[["MC"]][["detect_route"]]
+  DS_routed = apply_route_map(route_map=route_map, route_col=current_ana[["col_route"]], DS = ds[["DS"]])
+
+  # These are acceptable routes
+  OK_ROUTES = c("intravascular", "extravascular")
+
+  # Checking for broken routes
+  if( any(!(DS_routed[[current_ana[["col_route"]]]] %in% OK_ROUTES))){
+    isgood = FALSE
+    amsgs = c(amsgs, paste0("Route  column, ", current_ana[["col_route"]], ", should be either: ", paste0(OK_ROUTES, collapse = ", ")))
+  }
+
+
+  #---------------------------------------------
+  # Saving the status and messages
+  current_ana[["isgood"]] = isgood
+  current_ana[["msgs"]]   = c(amsgs, omsgs)
+
+current_ana}
+
+#'@export
+#'@title Builds NCA Code from ui Elements
+#'@description Takes the current analysis in the state object and creates the
+#'code to run the analysis
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@return list containing the following elements
+#'\itemize{
+#'  \item{isgood:}        Return status of the function.
+#'  \item{cmd:}           Code to run the analysis.
+#'  \item{msgs:}          Messages to be passed back to the user.
+#'  \item{code_previous:} Code to generate the dataset.
+#'  \item{code_ana_only:} Code for the analysis.
+#'  \item{code:}          Complete code to run the analysis.
+#'  \item{obj:}           List with names of R objects used in then generated code. 
+#'}
+#'@return List containing the following elements
+nca_builder = function(state){
+
+  isgood        = TRUE
+  cmd           = c()
+  msgs          = c()
+  objs          = list()
+  code          = ""
+  code_ana_only = ""
+  code_previous = ""
+
+  # Checking and retrieving the current analysis
+  current_ana  = NCA_process_current_ana(state)
+
+  # These are the object names that will be generated with the code
+  nca_ds_object_name     = paste0(current_ana[["id"]], "_DS")
+  nca_rm_object_name     = paste0(current_ana[["id"]], "_route_map")
+  nca_drec_object_name   = paste0(current_ana[["id"]], "_dose_rec")
+  nca_ints_object_name   = paste0(current_ana[["id"]], "_intervals")
+  nca_dose_object_name   = paste0(current_ana[["id"]], "_dose")
+  nca_data_object_name   = paste0(current_ana[["id"]], "_data")
+  nca_conc_object_name   = paste0(current_ana[["id"]], "_conc")
+  nca_res_object_name    = paste0(current_ana[["id"]], "_res")
+  nca_units_object_name  = paste0(current_ana[["id"]], "_units")
+
+
+  # Object names used in the code below:
+  objs = list(
+    ds    = nca_ds_object_name,   
+    rm    = nca_rm_object_name,   
+    drec  = nca_drec_object_name, 
+    ints  = nca_ints_object_name, 
+    dose  = nca_dose_object_name, 
+    data  = nca_data_object_name, 
+    conc  = nca_conc_object_name, 
+    res   = nca_res_object_name,  
+    units = nca_units_object_name )
+
+  # We only proceed if were able to process the
+  # current analysis successfully
+  if(current_ana[["isgood"]]){
+
+    # Pulling out all the column information and
+    # grouping it for the command construction below
+    col_id    = current_ana[["col_id"]]
+    col_conc  = current_ana[["col_conc"]]
+    col_dose  = current_ana[["col_dose"]]
+    col_dur   = current_ana[["col_dur"]]
+    col_route = current_ana[["col_route"]]
+    col_cycle = current_ana[["col_cycle"]]
+    col_time  = current_ana[["col_time"]]
+    col_ntime = current_ana[["col_ntime"]]
+    col_group = current_ana[["col_group"]]
+
+    #--------------------------
+    # plus columns
+    # These are the columns that go
+    # after the pipe in the PKNCAconc
+    # command
+    plus_cols = c(col_cycle)
+    # Adding the optional grouping columns
+    if(col_group != ""){
+      plus_cols = c(plus_cols,
+                    col_group)
+    }
+    # ID is last
+    plus_cols = c(plus_cols, col_id)
+    #--------------------------
+    # These are the columns to keep in the
+    # dosing records below:
+    dose_select_cols = c(
+      col_id,
+      col_time,
+      col_ntime,
+      col_dose,
+      col_cycle,
+      col_route)
+    if(col_group != ""){
+      dose_select_cols = c(dose_select_cols, col_group)
+    }
+    #--------------------------
+    # Converting sampling into boolean
+    if(current_ana[["sampling"]] == "sparse"){
+      is_sparse = TRUE
+    }else{
+      is_sparse = FALSE
+    }
+    #--------------------------
+
+    # Pulling out the dataset for this analysis
+    ds_object_name = current_ana[["ana_dsview"]]
+    ds =  state[["NCA"]][["DSV"]][["ds"]][[ ds_object_name ]]
+
+    #--------------------------
+    # Adding the text description of the analysis
+    cmd = c(cmd, paste0("# ", current_ana[["key"]]))
+
+
+    #--------------------------
+    # Defining the pknca options. 
+    # These are the options that control PKNCA
+    blq_cmd = c(
+    "  conc.blq = list(",
+    paste0("    first  = ", autocast(current_ana[["nca_config"]][["conc_blq_first"]] [["value"]]), ","),
+    paste0("    middle = ", autocast(current_ana[["nca_config"]][["conc_blq_middle"]][["value"]]), ","),
+    paste0("    last   = ", autocast(current_ana[["nca_config"]][["conc_blq_last"]]  [["value"]])),
+    "    )"
+    )
+
+    cmd = c(cmd,
+    "# Setting the NCA options",
+    "PKNCA::PKNCA.options(")
+    for(nca_opt in names( current_ana[["nca_config"]])){
+      # We process all of the options except the blq values
+      # because they are added separately because 
+      # BILL MADE THEM BEHAVE DIFFERENTLY THAN THE OTHERS! :)
+      if(!(nca_opt %in% 
+          c("conc_blq_first",
+            "conc_blq_middle",
+            "conc_blq_last"))){
+        pknca_option  = current_ana[["nca_config"]][[nca_opt]][["pknca_option"]]
+        nca_opt_value = current_ana[["nca_config"]][[nca_opt]] [["value"]]
+        nca_opt_type  = current_ana[["nca_config"]][[nca_opt]] [["type"]]
+        if(nca_opt_type %in% c("character", "mixed")){
+          nca_opt_value = autocast(nca_opt_value)
+        }
+        cmd = c(cmd,
+          paste0("  ", pknca_option, " = ", nca_opt_value, ",")
+        )
+      }
+    }
+
+    # lastly we append the blq options.
+    cmd = c(cmd,
+    blq_cmd,
+    ")"
+    )
+
+    #--------------------------
+    # Defining the dataset
+    cmd = c(cmd, "# Creating a copy of the source dataset to use below")
+    cmd = c(cmd, paste0(nca_ds_object_name, " = ", ds_object_name))
+
+    # If we have a route mapping in the module yaml file
+    # we construct the code here to apply that.
+    if(is.list(state[["MC"]][["detect_route"]])){
+      cmd = c(cmd, "")
+      cmd = c(cmd, "# Applying route mapping")
+      cmd = c(cmd, paste0(nca_rm_object_name, " = list("))
+      rmaps = names(state[["MC"]][["detect_route"]])
+      for(rmap_idx in 1:length(rmaps)){
+        rmap_txt =paste0("  ",rmaps[[rmap_idx]],'=c("',
+                          paste0(state[["MC"]][["detect_route"]][[ rmaps[[rmap_idx]] ]] , collapse = '", "'),
+                          '")')
+        # we have to add commas to each list element
+        # definition except for the last one.
+        if(rmap_idx < length(rmaps)){
+          rmap_txt =paste0(rmap_txt, ",")
+        }
+        cmd = c(cmd, rmap_txt)
+      }
+      cmd = c(cmd, "  )")
+      cmd = c(cmd, "")
+      cmd = c(cmd, paste0(nca_ds_object_name,
+                  " = apply_route_map(route_map=", nca_rm_object_name, ", ",
+                  ' route_col = "', current_ana[["col_route"]], '", ',
+                  ' DS  = ', nca_ds_object_name, ")"))
+    }
+
+    # Creating dosing records
+    cmd=c(cmd,
+      "",
+      "# Creating dosing records by reducing the dataset to one row for each unique:",
+      "# Subject, Dose number, Grouping (optional) combination",
+      paste0(nca_drec_object_name, " = "),
+      paste0("  dplyr::group_by(", nca_ds_object_name,",", paste0(plus_cols, collapse=","),") |> "),
+      "  dplyr::filter(dplyr::row_number() == 1) |> ",
+      "  dplyr::ungroup() |>",
+      paste0("  dplyr::select(",paste0(dose_select_cols, collapse=", "),") |> "),
+      paste0("  dplyr::mutate(", col_time, " = ", col_time,"-", col_ntime ,")  # Calculating the dose time from on the nominal offset")
+      )
+
+    # Constructing dose_obj
+    cmd=c(cmd,
+      "",
+      "# NCA dosing object",
+      paste0(nca_dose_object_name, " = ",
+             "PKNCA::PKNCAdose(",
+             nca_drec_object_name,", ",
+             col_dose, "~",col_time,"|",
+             paste(plus_cols, collapse="+"), ", ",
+             'route = "', col_route, '"',
+             ")"
+        )
+      )
+
+    # Constructing conc_obj
+    col_dur_component =  NULL
+    if(col_dur != "N/A"){
+      col_dur_component = paste0('duration = "', col_dur, '"')
+    }
+    cmd=c(cmd,
+      "",
+      "# NCA concentration object",
+      paste0(
+        nca_conc_object_name, " = ",
+        "PKNCA::PKNCAconc(",
+          nca_ds_object_name, ",",
+          col_conc, "~",col_time,"|",
+          paste(plus_cols, collapse="+"), ", ",
+          'time.nominal = "',col_ntime,'", ',
+          'sparse = ', is_sparse,
+          col_dur_component,
+        ")"
+        )
+      )
+
+    # Building out the units component
+    if(current_ana[["include_units"]]){
+    cmd=c(cmd,
+      "",
+      "# NCA units table",
+      paste0(
+        nca_units_object_name, " = ",
+        "PKNCA::pknca_units_table(",
+        'concu = "',   current_ana[["units_conc"]],    '", ',
+        'doseu = "',   current_ana[["units_dose"]],    '", ',
+        'amountu = "', current_ana[["units_amt"]],     '", ',
+        'timeu = "',   current_ana[["units_time"]],    '"',
+        ")"
+        )
+      )
+    }
+
+
+    #--------------------------
+    # Creating the intervals:
+    # First we collect all of the parameters we want to collect
+    nca_params_found = c()
+    for(intidx in 1:nrow(current_ana[["intervals"]])){
+      params_from_str =   
+        stringr::str_split(
+          string   = current_ana[["intervals"]][intidx, ][["np_actual"]], 
+          pattern  = "," ,
+          simplify = TRUE)
+      nca_params_found = c(nca_params_found, params_from_str)
+    }
+
+
+    # This will build the components of the intervals data frame:
+    int_df_comp = list()
+    for(intidx in 1:nrow(current_ana[["intervals"]])){
+      int_df_comp[["start"]] = c( int_df_comp[["start"]], toString(current_ana[["intervals"]][intidx, ][["start"]]))
+      int_df_comp[["end"]]  = c( int_df_comp[["end"]],  toString(current_ana[["intervals"]][intidx, ][["stop"]]))
+
+      # These are the parameters for the current interval:
+      params_from_str =   
+        stringr::str_split(
+          string   = current_ana[["intervals"]][intidx, ][["np_actual"]], 
+          pattern  = "," ,
+          simplify = TRUE)
+      # Now we loop through 
+      for(param in nca_params_found){
+        if(param %in% params_from_str){
+          int_df_comp[[param]] = c( int_df_comp[[param]], "TRUE")
+        } else {
+          int_df_comp[[param]] = c( int_df_comp[[param]], "FALSE")
+        }
+      }
+    }
+
+
+    cmd = c(cmd,
+      "",
+      "# Dataframe containing the analysis intervals",
+      paste0(nca_ints_object_name, " = "),
+      "  data.frame("
+      )
+
+    comps     = names(int_df_comp)
+    last_comp = rev(comps)[1]
+    for(comp in comps){
+      if(comp != last_comp){
+        comma_str = ","
+      } else {
+        comma_str = ""
+      }
+
+      cmd = c(cmd,
+      paste0("    ",comp,"=c(",paste0(int_df_comp[[comp]], collapse=", "), ")", comma_str)
+      )
+
+    }
+
+    cmd = c(cmd,
+      "  )"
+      )
+    #--------------------------
+    # Creating the data object
+    PKNCAdata_args = c(
+      paste0("  data.conc = ", nca_conc_object_name),
+      paste0("  data.dose = ", nca_dose_object_name),
+      paste0("  intervals = ", nca_ints_object_name)
+      )
+    if(current_ana[["include_units"]]){
+      PKNCAdata_args = c(
+        PKNCAdata_args,
+        paste0("  units = ", nca_units_object_name)
+      )
+    }
+    cmd = c(cmd,
+      "",
+      "# Pulling everything together to create the data object.",
+      paste0(
+        nca_data_object_name, " = " ,
+        "PKNCA::PKNCAdata(",
+         "",
+         paste0(PKNCAdata_args, collapse = ",\n"),
+        ")"
+        )
+      )
+
+    # Running the NCA
+    cmd = c(cmd,
+      "",
+      "# Running the NCA",
+      paste0(
+        nca_res_object_name, " = ",
+        "PKNCA::pk.nca(",
+          nca_data_object_name,
+        ")"
+        )
+      )
+
+    # Working out the little code elements:
+    code_ana_only = paste(cmd, collapse="\n")
+    code_previous = ds[["code"]]
+    code          = paste(c(ds[["code"]], cmd), collapse="\n")
+
+  } else {
+    isgood = FALSE
+  }
+
+ #myDS = ds$DS
+ #eval(parse(text=code_ana_only))
+ #a = paste(code, collapse = "\n")
+ #browser()
+
+  # saving any messages:
+  msgs = c(msgs, current_ana[["msgs"]])
+
+
+  res = list(isgood        = isgood,
+             code_previous = code_previous,
+             code_ana_only = code_ana_only,
+             code          = code,
+             objs          = objs,
+             cmd           = cmd,
+             msgs          = msgs)
+
+res}
+
+#'@export
+#'@title Runs NCA for the Current Analysis
+#'@description Takes the current state and runs the current analysis in that
+#'state.
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@return List with the following components:
+#' \itemize{
+#'  \item{isgood:}    Return status of the function.
+#'  \item{msgs:}      Error messages if any issues were encountered. 
+#'  \item{nca_res:}   PKNCA results if run was successful.
+#'}
+run_nca = function(state){
+
+  msgs     = c()
+  nca_res  = NULL
+
+  current_ana = NCA_fetch_current_ana(state)
+  dsview      = current_ana[["ana_dsview"]]
+  DS          = state[["NCA"]][["DSV"]][["ds"]][[dsview]][["DS"]]
+
+  # Source to run
+  cmd = current_ana[["code_ana_only"]]
+
+  # NCA environment environment:
+  tc_env = list()
+  tc_env[[dsview]] = DS
+
+  # Object to capture
+  capture =  current_ana[["objs"]][["res"]]
+
+  # Running the analysis and trapping any errors
+  nca_run_res = FM_tc(cmd, tc_env, capture)
+
+  # Capturing the exit status
+  isgood = nca_run_res[["isgood"]]
+
+  if(isgood){
+    # pulling out the results
+    nca_res = nca_run_res[["capture"]][[  current_ana[["objs"]][["res"]]  ]]
+  } else {
+    # If the run failed we capture the error messages to be passed back to the
+    # user:
+    msgs = c(msgs, nca_run_res[["msgs"]])
+  }
+ 
+  res = list(isgood   = isgood,
+             msgs     = msgs,
+             nca_res  = nca_res)
+  
+
+res}
+
+
 

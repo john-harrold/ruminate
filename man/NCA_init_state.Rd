@@ -4,7 +4,7 @@
 \alias{NCA_init_state}
 \title{Initialize NCA Module State}
 \usage{
-NCA_init_state(FM_yaml_file, MOD_yaml_file, id)
+NCA_init_state(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session)
 }
 \arguments{
 \item{FM_yaml_file}{App configuration file with FM as main section.}
@@ -12,6 +12,10 @@ NCA_init_state(FM_yaml_file, MOD_yaml_file, id)
 \item{MOD_yaml_file}{Module configuration file with MC as main section.}
 
 \item{id}{ID string for the module.}
+
+\item{id_UD}{ID string for the upload data module used to handle uploads or the name of the list element in react_state where the data set is stored.}
+
+\item{id_DW}{ID string for the data wrangling module to process any uploaded data}
 }
 \value{
 list containing an empty NCA state

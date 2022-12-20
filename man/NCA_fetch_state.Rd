@@ -40,11 +40,57 @@ has the following structure:
 \itemize{
 \item{yaml:} Full contents of the supplied yaml file.
 \item{MC:} Module components of the yaml file.
-\item{NCA:}
+\item{NCA:}  # JMH populate the rest of this list
 \itemize{
-\item{isgood:} Boolean object indicating if the file was successfully loaded.
-\item{checksum:} This is an MD5 sum of the contents element and can be
-used to detect changes in the state.
+\item{ana_cntr:}       Analysis counter.
+\item{anas:}                    List of analyses: Each analysis has the following  structure:
+\itemize{
+\item{ana_dsview:}       JMH
+\item{nca_res:}          Results of PKNCA (\code{NULL} at initialization or run failure).
+\item{ana_scenario:}     JMH
+\item{checksum:}         JMH
+\item{code:}             Code to generate analysis from start to finish or error messages if code generation/analysis failed.
+\item{code_ana_only:}    Code to just generate the analysis.
+\item{code_previous:}    Code to load and/or wrangle the dataset.
+\item{col_conc:}         Column from ana_dsview containing the concentration data.
+\item{col_cycle:}        Column from ana_dsview containing the dose dose cycle/number.
+\item{col_dose:}         Column from ana_dsview containing the dose amount.
+\item{col_dur:}          Column from ana_dsview containing the infusion duration or N/A if unused.
+\item{col_group:}        Columns from ana_dsview containing other grouping variables.
+\item{col_id:}           Column from ana_dsview containing the subject IDs.
+\item{col_ntime:}        Column from ana_dsview containing the nominal time values
+\item{col_route:}        Column from ana_dsview containing the dosing route.
+\item{col_time:}         Column from ana_dsview containing the time values.
+\item{id:}               Character id (\code{ana_idx})
+\item{idx:}              Numeric id (\code{1})
+\item{include_units:}    JMH.
+\item{interval_start:}   JMH.
+\item{interval_stop:}    JMH.
+\item{intervals:}        JMH.
+\item{isgood:}           JMH.
+\item{key:}              Analysis key acts as a title/caption (user editable)
+\item{msgs:}             JMH.
+\item{nca_config:}       JMH.
+\item{nca_object_name:}  JMH.
+\item{nca_parameters:}   JMH.
+\item{nobj:}             JMH.
+\item{notes:}            Analysis notes  (user editable)
+\item{objs:}             List of names for objects used in the NCA genearated code.
+\item{sampling:}         Sampling method either "sparse" or "serial"
+\item{units_amt:}        Amount units.
+\item{units_conc:}       Concentration units.
+\item{units_dose:}       Dosing units.
+\item{units_time:}       Time units.
+}
+\item{button_counters:}       JMH.
+\item{current_ana:}           Currently selected analysis (list name element from anas).
+\item{DSV:}                   Available data source views (see \code{\link{FM_fetch_ds}})
+\item{checksum:}              This is an MD5 sum of the (JMH update) element and can be
+\item{nca_config:}            List of PKNCA configuration options for this analysis.
+\item{ui:}                    JMH.
+\item{ui_ana_map:}            JMH.
+\item{ui_hold:}               JMH.
+\item{ui_ids:}                JMH.
 }
 \item{MOD_TYPE:} Character data containing the type of module \code{"NCA"}
 \item{id:} Character data containing the module id module in the session variable.

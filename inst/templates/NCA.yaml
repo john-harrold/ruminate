@@ -41,6 +41,9 @@ MC:
     button_ana_del:
       size: "sm" 
       block: TRUE
+    button_ana_run:
+      size: "sm" 
+      block: TRUE
     button_ana_save:
       size: "sm" 
       block: TRUE
@@ -98,6 +101,7 @@ MC:
     select_ana_scenario:
       width: 150
   errors:
+    nca_run_filed: "Unable to run PKNCA. Please, see below for details."
     bad_input: "Input error message"
   tooltips:
     # Set to FALSE to disable tool tips for this module
@@ -108,6 +112,7 @@ MC:
   labels:
     ana_key:                         "title/caption"
     new_ana:                         "New"
+    run_ana:                         "Run NCA"
     save_ana:                        "Save"
     del_ana:                         "Delete"
     copy_ana:                        "Copy"
@@ -117,7 +122,7 @@ MC:
     ana_add_int:                     "Add Interval"
     no_intervals:                    "No intervals added yet"             
     text_ana_interval_start:         "Start"
-    text_ana_interval_stop:          "Stop"  
+    text_ana_interval_stop:          "End"  
     select_current_view:             "Data from"
     select_current_ana:              "Current NCA"
     select_ana_scenario:             NULL  # "Type of Analysis:"
@@ -137,6 +142,8 @@ MC:
     select_ana_nca_parameters:       "Parameters"
     switch_ana_include_units:        "Include Units"
     select_ana_source_sampling:      "Data Sampling"
+    busy:
+      run_nca:                       "Running NCA be patient."
   # For details on the PKNCA options see this vignette:
   # https://billdenney.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html
   # This section contains information about different options, metadata about
@@ -160,7 +167,7 @@ MC:
       # BILL I need a better label for this
       label:         "r² (Adj) factor"
       tooltip:       "The adjusted r² for the calculation of λz has this factor times the number of data points added to it. It allows for more data points to be preferred in the calculation of half-life."
-      type:          numeric
+      type:          "numeric"
       value:         0.0001
       options:       NULL
       pknca_option:  adj.r.squared.factor
@@ -168,7 +175,7 @@ MC:
       group:         General
       label:         "Max Missing (frac)"
       tooltip:       "The maximum fraction of the data that may be missing (‘NA’) to calculate summary statistics."
-      type:          numeric
+      type:          "numeric"
       value:         0.5
       options:       NULL
       pknca_option:  max.missing
@@ -176,7 +183,7 @@ MC:
       group:         AUC     
       label:         Method
       tooltip:       "The method used to calculate the AUC and related statistics."
-      type:          character
+      type:          "character"
       value:         "lin up/log down"
       options:       ["lin up/log down", "linear"]
       pknca_option:  auc.method
@@ -184,7 +191,7 @@ MC:
       group:         Missing and BLQ Values 
       label:         Missing Values
       tooltip:       "Determines how missing (NA) values are generally handled. Can be either drop or a numeric value to use. "
-      type:          ["numeric", "character"]
+      type:          "mixed"
       value:         "drop"
       options:       NULL
       pknca_option:  conc.na
@@ -192,7 +199,7 @@ MC:
       group:         Missing and BLQ Values 
       label:         First Value BLQ
       tooltip:       "Indicates what to do if the first observation is BLQ. It can either be drop, keep, or a numeric value to use."
-      type:          ["numeric", "character"]
+      type:          "mixed"
       value:         "keep"
       options:       NULL
       pknca_option:  conc.blq$first
@@ -200,7 +207,7 @@ MC:
       group:         Missing and BLQ Values 
       label:         Middle Values BLQ
       tooltip:       "Indicates what to do if a value between the first and last observations is BLQ. It can either be drop, keep, or a numeric value to use."
-      type:          ["numeric", "character"]
+      type:          "mixed"
       value:         "drop"
       options:       NULL
       pknca_option:  conc.blq$middle
@@ -208,7 +215,7 @@ MC:
       group:         "Missing and BLQ Values"
       label:         "Last Value BLQ"
       tooltip:       "Indicates what to do if the last observation is BLQ. It can either be drop, keep, or a numeric value to use."
-      type:          ["numeric", "character"]
+      type:          "mixed"
       value:         "keep"
       options:       NULL
       pknca_option:  conc.blq$last
@@ -216,7 +223,7 @@ MC:
       group:         "General"
       label:         "Multiple tmax use first"
       tooltip:       "If there is more than one concentration equal to Cmax, should the time selected for Tmax be the first value? If TRUE, the first will be selected. If FALSE, the last will be selected."
-      type:          ["logical"]
+      type:          "logical"
       value:         TRUE  
       options:       [TRUE, FALSE]
       pknca_option:  first.tmax
@@ -224,7 +231,7 @@ MC:
       group:         "Half-Life"
       label:         "Allow tmax in half-life"
       tooltip:       "Should the concentration and time at Tmax be allowed in the half-life calculation? TRUE is yes and FALSE is no."
-      type:          ["logical"]
+      type:          "logical"
       value:         FALSE 
       options:       [TRUE, FALSE]
       pknca_option:  allow.tmax.in.half.life
@@ -232,7 +239,7 @@ MC:
       group:         "Half-Life"
       label:         "Min points"
       tooltip:       "What is the minimum number of points required to calculate half-life?"
-      type:          ["logical"]
+      type:          "numeric"
       value:         3     
       options:       [ 2, 3, 4, 5 ]      
       pknca_option:  min.hl.points
@@ -241,15 +248,15 @@ MC:
       label:         "Min span ratio"
       # BILL this is a bit cryptic
       tooltip:       "What is the minimum span ratio required to consider a half-life valid?"
-      type:          ["logical"]
+      type:          "logical"
       value:         2     
       options:       NULL 
       pknca_option:  min.span.ratio  
     min_hl_r_squared:
       group:         "Half-Life"
-      label:         "Min span ratio"
+      label:         "Min r² value"
       tooltip:       "What is the minimum r² value to consider a half-life calculation valid?"
-      type:          ["numeric"]
+      type:          "numeric"
       value:         0.9   
       options:       NULL 
       pknca_option:  min.hl.r.squared
@@ -257,12 +264,12 @@ MC:
       group:         "AUC"
       label:         "Max allowed extrap (%)"
       tooltip:       "What is the maximum percent extrapolation to consider an AUC∞ valid?"
-      type:          ["numeric"]
+      type:          "numeric"
       value:         20     
       options:       NULL
       pknca_option:  max.aucinf.pext
   # Prefix used to create NCA analysis objects in generated code
-  nca_object_name: "ana"
+  nca_object_name: "myANA_"
   # The following patterns are used when detecting columns in your dataset
   # automatically. You can create a multiple patterns. They will be processed
   # in order from left to right. The first pattern to match will return that
@@ -321,7 +328,7 @@ MC:
             nca_parameters: ["aucinf.obs"]
         - row:   
             start:         0
-            stop:          24  
+            stop:          21  
             nca_parameters: ["cmax", "auclast"]
     md_iv: 
       description: "Multiple Dose IV"

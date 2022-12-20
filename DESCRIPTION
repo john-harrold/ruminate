@@ -8,17 +8,19 @@ Description: Exploration of pharmacometrics data data involves  both general too
 License: BSD_2_clause + file LICENSE
 Encoding: UTF-8
 LazyData: FALSE
+Depends:
+  R (>= 4.2.0)
 Imports:
   shiny,
   formods,
   PKNCA,
   shinyWidgets
 Suggests:
-    knitr,
-    shinyBS,
-    shinydashboard,
-    rmarkdown,
-    testthat (>= 3.0.0)
+  knitr,
+  shinyBS,
+  shinydashboard,
+  rmarkdown,
+  testthat (>= 3.0.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
 Config/testthat/edition: 3
