@@ -45,13 +45,11 @@ has the following structure:
 \item{ana_cntr:}       Analysis counter.
 \item{anas:}                    List of analyses: Each analysis has the following  structure:
 \itemize{
-\item{ana_dsview:}       JMH
-\item{nca_res:}          Results of PKNCA (\code{NULL} at initialization or run failure).
+\item{ana_dsview:}       Dataset view/ID (name from DSV) selected as a data source for this analysis.
 \item{ana_scenario:}     JMH
 \item{checksum:}         JMH
 \item{code:}             Code to generate analysis from start to finish or error messages if code generation/analysis failed.
-\item{code_ana_only:}    Code to just generate the analysis.
-\item{code_previous:}    Code to load and/or wrangle the dataset.
+\item{code_components:}  List containing the different components from code
 \item{col_conc:}         Column from ana_dsview containing the concentration data.
 \item{col_cycle:}        Column from ana_dsview containing the dose dose cycle/number.
 \item{col_dose:}         Column from ana_dsview containing the dose amount.
@@ -63,19 +61,19 @@ has the following structure:
 \item{col_time:}         Column from ana_dsview containing the time values.
 \item{id:}               Character id (\code{ana_idx})
 \item{idx:}              Numeric id (\code{1})
-\item{include_units:}    JMH.
-\item{interval_start:}   JMH.
-\item{interval_stop:}    JMH.
-\item{intervals:}        JMH.
-\item{isgood:}           JMH.
+\item{include_units:}    Boolean variable indicating in units should included in the analysis.        be
+\item{interval_start:}   Beginning of the analysis interval from the UI.
+\item{interval_stop:}    End of the analysis interval from the UI.
+\item{intervals:}        List of the intervals to include.
+\item{isgood:}           Current status of the analysis.
 \item{key:}              Analysis key acts as a title/caption (user editable)
-\item{msgs:}             JMH.
-\item{nca_config:}       JMH.
-\item{nca_object_name:}  JMH.
-\item{nca_parameters:}   JMH.
-\item{nobj:}             JMH.
+\item{msgs:}             Messages generated when checking configuration and analysis options.
+\item{nca_config:}       List of NCA configuration options for this analysis.
+\item{nca_object_name:}  Prefix for NCA objects associated with this analyis.
+\item{nca_parameters:}   NCA parameters selected for calculation in the UI.
+\item{nobj:}             List of object names for the different components of an analysis (nca results, pknca objects, etc)
 \item{notes:}            Analysis notes  (user editable)
-\item{objs:}             List of names for objects used in the NCA genearated code.
+\item{objs:}             List of names and values for objects created with generated code.
 \item{sampling:}         Sampling method either "sparse" or "serial"
 \item{units_amt:}        Amount units.
 \item{units_conc:}       Concentration units.
@@ -88,7 +86,7 @@ has the following structure:
 \item{checksum:}              This is an MD5 sum of the (JMH update) element and can be
 \item{nca_config:}            List of PKNCA configuration options for this analysis.
 \item{ui:}                    JMH.
-\item{ui_ana_map:}            JMH.
+\item{ui_ana_map:}            Map between UI element names and analysis in the object you get from \code{\link{NCA_fetch_current_ana()}}
 \item{ui_hold:}               JMH.
 \item{ui_ids:}                JMH.
 }

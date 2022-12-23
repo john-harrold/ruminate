@@ -56,6 +56,16 @@ ui <- dashboardPage(
            "ui_nca_msg",
            verbatimTextOutput(NS("NCA", "ui_nca_msg")), width=12)),
        fluidRow(
+         box(title="Run Analysis",
+           div(style="display:inline-block;vertical-align:bottom",
+             "ui_nca_ana_source_sampling",
+             htmlOutput(NS("NCA", "ui_nca_ana_source_sampling")),
+             ),
+           div(style="display:inline-block;vertical-align:bottom",
+             "ui_nca_ana_run",
+             htmlOutput(NS("NCA", "ui_nca_ana_run")), tags$br()
+             ),
+             width=6),
          box(title="Scenarios",
            div(style="display:inline-block;vertical-align:bottom",
              "ui_nca_ana_scenario_use",
@@ -65,7 +75,7 @@ ui <- dashboardPage(
              "ui_nca_ana_scenario",
              htmlOutput(NS("NCA", "ui_nca_ana_scenario"))
              ),
-             width=12)),
+             width=6)),
        fluidRow(
          box(title="Current Intervals",
            div(style="display:inline-block;vertical-align:bottom",
@@ -90,17 +100,6 @@ ui <- dashboardPage(
            "hot_nca_intervals",
           rhandsontable::rHandsontableOutput(NS("NCA", "hot_nca_intervals")),
           width=12)),
-       fluidRow(
-         box(title="Run Analysis",
-           div(style="display:inline-block;vertical-align:bottom",
-             "ui_nca_ana_source_sampling",
-             htmlOutput(NS("NCA", "ui_nca_ana_source_sampling")),
-             ),
-           div(style="display:inline-block;vertical-align:bottom",
-             "ui_nca_ana_run",
-             htmlOutput(NS("NCA", "ui_nca_ana_run")), tags$br()
-             ),
-             width=12)),
        fluidRow(
          box(title="Column Identification",
            div(style="display:inline-block",
@@ -151,19 +150,34 @@ ui <- dashboardPage(
              htmlOutput(NS("NCA", "ui_nca_ana_units_amt"))),
              width=12)),
        fluidRow(
-         box(title="NCA Results",
-             "ui_nca_ana_results",
-             htmlOutput(NS("NCA", "ui_nca_ana_results")),
-             width=12)),
+         tabBox(
+           title = NULL,
+           # The id lets us use input$tabset1 on the server to find the current tab
+           id = "tabset1", # height = "250px",
+           tabPanel(id="panel_figure", title=tagList(shiny::icon("chart-line"), "Figures"),
+             tagList(
+             "ui_nca_ana_results_fig",
+             htmlOutput(NS("NCA", "ui_nca_ana_results_fig"))
+             )
+           ),
+           tabPanel(id="panel_table",  title=tagList(shiny::icon("table"), "Tables"),   
+             tagList(
+             "ui_nca_ana_results_tab",
+             htmlOutput(NS("NCA", "ui_nca_ana_results_tab"))
+             )
+           ),
+           tabPanel(id="panel_config", title=tagList(shiny::icon("gear"), "Config."),  
+            tagList(
+             "ui_nca_ana_options",
+             htmlOutput(NS("NCA", "ui_nca_ana_options"))
+             )
+             ),
+       width=12)
+           ),
        fluidRow(
          box(title="Generated Code",
            "NCA_ui_ace_code",
            shinyAce::aceEditor(NS("NCA", "NCA_ui_ace_code")), width=12)),
-       fluidRow(
-         box(title="PKNCA Options",
-             "ui_nca_ana_options",
-             htmlOutput(NS("NCA", "ui_nca_ana_options")),
-             width=12)),
        fluidRow(
          box(title="Current Module State",
            verbatimTextOutput("ui_state"),width=12))

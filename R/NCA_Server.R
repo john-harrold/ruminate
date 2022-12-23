@@ -57,8 +57,9 @@ NCA_Server <- function(id,
     # Generated data reading code
     observe({
       # Reacting to file changes
-      input$input_data_file
-      input$input_select_sheet
+      input[["button_ana_add_int"]]
+      input[["button_ana_use_scenario"]]
+      input[["button_ana_run"]]
       state = NCA_fetch_state(id              = id,
                              input           = input,
                              session         = session,
@@ -69,10 +70,12 @@ NCA_Server <- function(id,
                              id_DW           = id_DW,
                              react_state     = react_state)
 
-      if(is.null(state[["NCA"]][["code"]])){
+      current_ana = NCA_fetch_current_ana(state)
+
+      if(is.null(current_ana[["code"]])){
         uiele = "# Run analysis to see code."
       } else {
-        uiele = state[["NCA"]][["code"]]
+        uiele = current_ana[["code"]]
       }
 
 
@@ -91,6 +94,7 @@ NCA_Server <- function(id,
     output$ui_nca_msg = renderText({
       input[["button_ana_add_int"]]
       input[["button_ana_use_scenario"]]
+      input[["button_ana_run"]]
 
       state = NCA_fetch_state(id              = id,
                              input           = input,
@@ -597,8 +601,8 @@ NCA_Server <- function(id,
 
       uiele})
     #------------------------------------
-    # Data source sampling (sparse or serail)
-    output$ui_nca_ana_results             = renderUI({
+    # Figure Results
+    output$ui_nca_ana_results_fig             = renderUI({
       input$button_ana_run
 
       state = NCA_fetch_state(id              = id,
@@ -611,7 +615,32 @@ NCA_Server <- function(id,
                              id_DW           = id_DW,
                              react_state     = react_state)
 
-      uiele = "results"
+      uiele = tagList(
+             "figure results",
+             htmlOutput(NS(id, "ui_nca_ana_results_fig_select")),
+             plotOutput(NS(id, "ui_nca_ana_results_fig_figure")),
+             htmlOutput(NS(id, "ui_nca_ana_results_fig_controls")))
+      uiele})
+    #------------------------------------
+    # Tabular Results
+    output$ui_nca_ana_results_tab             = renderUI({
+      input$button_ana_run
+
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+      uiele = tagList(
+             "table results",
+             htmlOutput(NS(id, "ui_nca_ana_results_tab_select")),
+             htmlOutput(NS(id, "ui_nca_ana_results_tab_table")),
+             htmlOutput(NS(id, "ui_nca_ana_results_tab_controls")))
       uiele})
     #------------------------------------
     # Column Mapping
@@ -1551,8 +1580,11 @@ NCA_Server <- function(id,
     #------------------------------------
     # Current DW elements
     output$hot_nca_intervals = rhandsontable::renderRHandsontable({
-      input$button_ana_add_int
-      input$button_ana_use_scenario
+      input[["button_ana_add_int"]]
+      input[["button_ana_use_scenario"]]
+      input[["button_ana_new"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
 
       # This forces reaction to the delete button
       input$hot_nca_intervals
@@ -1678,6 +1710,38 @@ NCA_Server <- function(id,
       })
     }
     #------------------------------------
+    # Copying code to clipboard 
+    observeEvent(input$button_ana_clip, {
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+      FM_le(state, "clipping code")
+      # This is all conditional on the whether clipr is installed $
+      # and if the app isn't deployed
+      if((system.file(package="clipr") != "") &
+         !state[["yaml"]][["FM"]][["deployed"]]){
+
+        current_ana = NCA_fetch_current_ana(state)
+
+        if(is.null(current_ana[["code"]])){
+          uiele = "# Run analysis to see code."
+        } else {
+          uiele = current_ana[["code"]]
+        }
+
+        clipr::write_clip(uiele)
+
+      }
+
+    })
+    #------------------------------------
     # Removing holds
     remove_hold_listen  <- reactive({
       list(input$select_current_ana,
@@ -1729,13 +1793,11 @@ NCA_Server <- function(id,
 #'   \item{ana_cntr:}       Analysis counter.
 #'   \item{anas:}                    List of analyses: Each analysis has the following  structure:
 #'      \itemize{
-#'        \item{ana_dsview:}       JMH
-#'        \item{nca_res:}          Results of PKNCA (\code{NULL} at initialization or run failure).
+#'        \item{ana_dsview:}       Dataset view/ID (name from DSV) selected as a data source for this analysis.
 #'        \item{ana_scenario:}     JMH
 #'        \item{checksum:}         JMH
 #'        \item{code:}             Code to generate analysis from start to finish or error messages if code generation/analysis failed.
-#'        \item{code_ana_only:}    Code to just generate the analysis.
-#'        \item{code_previous:}    Code to load and/or wrangle the dataset.
+#'        \item{code_components:}  List containing the different components from code
 #'        \item{col_conc:}         Column from ana_dsview containing the concentration data.
 #'        \item{col_cycle:}        Column from ana_dsview containing the dose dose cycle/number.
 #'        \item{col_dose:}         Column from ana_dsview containing the dose amount.
@@ -1747,19 +1809,19 @@ NCA_Server <- function(id,
 #'        \item{col_time:}         Column from ana_dsview containing the time values.
 #'        \item{id:}               Character id (\code{ana_idx})
 #'        \item{idx:}              Numeric id (\code{1})
-#'        \item{include_units:}    JMH.
-#'        \item{interval_start:}   JMH.
-#'        \item{interval_stop:}    JMH.
-#'        \item{intervals:}        JMH.
-#'        \item{isgood:}           JMH.
+#'        \item{include_units:}    Boolean variable indicating in units should included in the analysis.        be
+#'        \item{interval_start:}   Beginning of the analysis interval from the UI.
+#'        \item{interval_stop:}    End of the analysis interval from the UI.
+#'        \item{intervals:}        List of the intervals to include.
+#'        \item{isgood:}           Current status of the analysis.
 #'        \item{key:}              Analysis key acts as a title/caption (user editable)
-#'        \item{msgs:}             JMH.
-#'        \item{nca_config:}       JMH.
-#'        \item{nca_object_name:}  JMH.
-#'        \item{nca_parameters:}   JMH.
-#'        \item{nobj:}             JMH.
+#'        \item{msgs:}             Messages generated when checking configuration and analysis options.
+#'        \item{nca_config:}       List of NCA configuration options for this analysis.
+#'        \item{nca_object_name:}  Prefix for NCA objects associated with this analyis.
+#'        \item{nca_parameters:}   NCA parameters selected for calculation in the UI.
+#'        \item{nobj:}             List of object names for the different components of an analysis (nca results, pknca objects, etc)
 #'        \item{notes:}            Analysis notes  (user editable)
-#'        \item{objs:}             List of names for objects used in the NCA genearated code. 
+#'        \item{objs:}             List of names and values for objects created with generated code.
 #'        \item{sampling:}         Sampling method either "sparse" or "serial"
 #'        \item{units_amt:}        Amount units.
 #'        \item{units_conc:}       Concentration units.
@@ -1772,7 +1834,7 @@ NCA_Server <- function(id,
 #'   \item{checksum:}              This is an MD5 sum of the (JMH update) element and can be
 #'   \item{nca_config:}            List of PKNCA configuration options for this analysis.
 #'   \item{ui:}                    JMH.
-#'   \item{ui_ana_map:}            JMH.
+#'   \item{ui_ana_map:}            Map between UI element names and analysis in the object you get from \code{\link{NCA_fetch_current_ana()}}
 #'   \item{ui_hold:}               JMH.
 #'   \item{ui_ids:}                JMH.
 #' }
@@ -2074,70 +2136,19 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_run"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_ana_run"]])){
 
-    FM_le(state, "running analysis")
+    FM_le(state, "running nca and generating subsequent figures and tables")
 
     # Pausing access to the screen
     FM_pause_screen(state   = state,
                     message = state[["MC"]][["labels"]][["busy"]][["run_nca"]],
                     session = session)
 
-
-
-    msgs = c()
-    # Generating code
-    ncab_res = nca_builder(state)
-
-    # Appending messages
-    msgs = c(msgs, ncab_res[["msgs"]])
-    
-    
-    if(ncab_res[["isgood"]]){
-      # If everything is good we store stuff in the current analysis
-      current_ana = NCA_fetch_current_ana(state)
-      # This passes the generated code back to the current analysis
-      current_ana[["code"]]          = ncab_res[["code"]]
-      current_ana[["code_ana_only"]] = ncab_res[["code_ana_only"]]
-      current_ana[["code_previous"]] = ncab_res[["code_previous"]]
-      current_ana[["objs"]]          = ncab_res[["objs"]]
-      # Storing the current ana with the updated data:
-      state = NCA_set_current_ana(state, current_ana)
-    
-      # Now we're running NCA on the current analysis
-      rn_res = run_nca(state)
-    
-      # Capturing the results of the run
-      current_ana = NCA_fetch_current_ana(state)
-
-      # Exit status:
-      current_ana[["isgood"]]  = rn_res[["isgood"]]
-      # NCA results
-      current_ana[["nca_res"]] = rn_res[["nca_res"]]
-
-
-      # Storing the current ana with the updated data:
-      state = NCA_set_current_ana(state, current_ana)
-
-      # Capturing any messages as well
-      msgs = c(msgs, rn_res[["msgs"]])
-    }
-    
-    # Updating any messages
-    state = FM_set_ui_msg(state, msgs)
-
+    # This will build the code and run the different components:
+    state = run_nca_components(state)
 
     # Removing the pause
     FM_resume_screen(state   = state,
                      session = session)
-
-
-    browser()
-
-   #if(system.file(package = "shinybusy") !=""){
-   #  shinybusy::remove_modal_spinner()
-   #}
-
-
-
 
     # Saving the button state to the counter
     state[["NCA"]][["button_counters"]][["button_ana_run"]] =
@@ -2264,7 +2275,7 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
  #}
   #---------------------------------------------
   # Passing any messages back to the user
-  state = FM_set_ui_msg(state, msgs)
+  #state = FM_set_ui_msg(state, msgs, append=TRUE)
 
   #---------------------------------------------
   # Saving the state
@@ -2606,12 +2617,11 @@ NCA_new_ana    = function(state){
          nobj            = NULL,   # JMH is this even used?
          msgs            = c("New analysis"),
          ana_dsview      = ana_dsview,
-         nca_res         = NULL, 
+         nca_res         = NULL,
          nca_config      = state[["NCA"]][["nca_config"]][["default"]],
          checksum        = digest::digest(NULL, algo=c("md5")),
          ana_scenario    = "",
-         code_ana_only   = NULL,
-         code_previous   = NULL,
+         code_components = NULL,
          code            = NULL,
          col_id          = "",          # The col_* values will be populated later
          col_conc        = "",
@@ -2622,6 +2632,8 @@ NCA_new_ana    = function(state){
          col_time        = "",
          col_ntime       = "",
          col_group       = "",
+         curr_fg_ind_obs = "",       # Current fg_ind_obs to be dispalyed
+         curr_tb_ind_obs = "",       # Current tb_ind_obs to be dispalyed
          include_units   = "",
          intervals       = NULL,     # holds intervals added to the analysis
          interval_start  = "0",      # Current interval in the interface.
@@ -3147,53 +3159,45 @@ current_ana}
 #'@description Takes the current analysis in the state object and creates the
 #'code to run the analysis
 #'@param state NCA state from \code{NCA_fetch_state()}
+#' JMH update the return list below
 #'@return list containing the following elements
 #'\itemize{
-#'  \item{isgood:}        Return status of the function.
-#'  \item{cmd:}           Code to run the analysis.
-#'  \item{msgs:}          Messages to be passed back to the user.
-#'  \item{code_previous:} Code to generate the dataset.
-#'  \item{code_ana_only:} Code for the analysis.
-#'  \item{code:}          Complete code to run the analysis.
-#'  \item{obj:}           List with names of R objects used in then generated code. 
+#'  \item{isgood:}           Return status of the function.
+#'  \item{msgs:}             Messages to be passed back to the user.
+#'  \item{code_previous:}    Code to generate the dataset.
+#'  \item{code_ana_only:}    Code for the analysis.
+#'  \item{code_fg_ind_obs:}  Code to generate figure(s) of individual observations
+#'  \item{code_tb_ind_obs:}  Code to generate table(s) of individual observations
+#'  \item{code:}             Complete code to run the analysis.
+#'  \item{obj:}              List with names of R objects used in then generated code.
 #'}
-#'@return List containing the following elements
 nca_builder = function(state){
 
-  isgood        = TRUE
-  cmd           = c()
-  msgs          = c()
-  objs          = list()
-  code          = ""
-  code_ana_only = ""
-  code_previous = ""
+  isgood             = TRUE
+  cmd                = c()
+  msgs               = c()
+  objs               = list()
+  code               = ""
+  code_ana_only      = ""
+  code_previous      = ""
+  code_tb_ind_obs    = ""
+  code_fg_ind_obs    = ""
 
   # Checking and retrieving the current analysis
   current_ana  = NCA_process_current_ana(state)
 
   # These are the object names that will be generated with the code
-  nca_ds_object_name     = paste0(current_ana[["id"]], "_DS")
-  nca_rm_object_name     = paste0(current_ana[["id"]], "_route_map")
-  nca_drec_object_name   = paste0(current_ana[["id"]], "_dose_rec")
-  nca_ints_object_name   = paste0(current_ana[["id"]], "_intervals")
-  nca_dose_object_name   = paste0(current_ana[["id"]], "_dose")
-  nca_data_object_name   = paste0(current_ana[["id"]], "_data")
-  nca_conc_object_name   = paste0(current_ana[["id"]], "_conc")
-  nca_res_object_name    = paste0(current_ana[["id"]], "_res")
-  nca_units_object_name  = paste0(current_ana[["id"]], "_units")
-
-
-  # Object names used in the code below:
-  objs = list(
-    ds    = nca_ds_object_name,   
-    rm    = nca_rm_object_name,   
-    drec  = nca_drec_object_name, 
-    ints  = nca_ints_object_name, 
-    dose  = nca_dose_object_name, 
-    data  = nca_data_object_name, 
-    conc  = nca_conc_object_name, 
-    res   = nca_res_object_name,  
-    units = nca_units_object_name )
+  nca_ds_object_name          = paste0(current_ana[["id"]], "_DS")
+  nca_rm_object_name          = paste0(current_ana[["id"]], "_route_map")
+  nca_drec_object_name        = paste0(current_ana[["id"]], "_dose_rec")
+  nca_ints_object_name        = paste0(current_ana[["id"]], "_intervals")
+  nca_dose_object_name        = paste0(current_ana[["id"]], "_dose")
+  nca_data_object_name        = paste0(current_ana[["id"]], "_data")
+  nca_conc_object_name        = paste0(current_ana[["id"]], "_conc")
+  nca_res_object_name         = paste0(current_ana[["id"]], "_res")
+  nca_units_object_name       = paste0(current_ana[["id"]], "_units")
+  nca_fg_ind_obs_object_name  = paste0(current_ana[["id"]], "_figure_ind_obs")
+  nca_tb_ind_obs_object_name  = paste0(current_ana[["id"]], "_table_ind_obs")
 
   # We only proceed if were able to process the
   # current analysis successfully
@@ -3256,7 +3260,7 @@ nca_builder = function(state){
 
 
     #--------------------------
-    # Defining the pknca options. 
+    # Defining the pknca options.
     # These are the options that control PKNCA
     blq_cmd = c(
     "  conc.blq = list(",
@@ -3271,9 +3275,9 @@ nca_builder = function(state){
     "PKNCA::PKNCA.options(")
     for(nca_opt in names( current_ana[["nca_config"]])){
       # We process all of the options except the blq values
-      # because they are added separately because 
+      # because they are added separately because
       # BILL MADE THEM BEHAVE DIFFERENTLY THAN THE OTHERS! :)
-      if(!(nca_opt %in% 
+      if(!(nca_opt %in%
           c("conc_blq_first",
             "conc_blq_middle",
             "conc_blq_last"))){
@@ -3397,9 +3401,9 @@ nca_builder = function(state){
     # First we collect all of the parameters we want to collect
     nca_params_found = c()
     for(intidx in 1:nrow(current_ana[["intervals"]])){
-      params_from_str =   
+      params_from_str =
         stringr::str_split(
-          string   = current_ana[["intervals"]][intidx, ][["np_actual"]], 
+          string   = current_ana[["intervals"]][intidx, ][["np_actual"]],
           pattern  = "," ,
           simplify = TRUE)
       nca_params_found = c(nca_params_found, params_from_str)
@@ -3413,12 +3417,12 @@ nca_builder = function(state){
       int_df_comp[["end"]]  = c( int_df_comp[["end"]],  toString(current_ana[["intervals"]][intidx, ][["stop"]]))
 
       # These are the parameters for the current interval:
-      params_from_str =   
+      params_from_str =
         stringr::str_split(
-          string   = current_ana[["intervals"]][intidx, ][["np_actual"]], 
+          string   = current_ana[["intervals"]][intidx, ][["np_actual"]],
           pattern  = "," ,
           simplify = TRUE)
-      # Now we loop through 
+      # Now we loop through
       for(param in nca_params_found){
         if(param %in% params_from_str){
           int_df_comp[[param]] = c( int_df_comp[[param]], "TRUE")
@@ -3491,10 +3495,34 @@ nca_builder = function(state){
         )
       )
 
+    # code for figures and tables
+    # JMH add other UI optoins to function calls here:
+    code_fg_ind_obs   = c(
+      "",
+      "# Generating figures of indiviudal profiles",
+      paste0(nca_fg_ind_obs_object_name,
+             "= mk_figure_ind_obs(",
+             nca_res_object_name,
+             ")"))
+
+    code_tb_ind_obs   = c(
+      "",
+      "# Generating tables of indiviudal profiles",
+      paste0(nca_tb_ind_obs_object_name,
+             "= mk_table_ind_obs(",
+             nca_res_object_name,
+             ")"))
+
     # Working out the little code elements:
-    code_ana_only = paste(cmd, collapse="\n")
-    code_previous = ds[["code"]]
-    code          = paste(c(ds[["code"]], cmd), collapse="\n")
+    code_ana_only   = paste(cmd, collapse="\n")
+    code_fg_ind_obs = paste(code_fg_ind_obs, collapse="\n")
+    code_tb_ind_obs = paste(code_tb_ind_obs, collapse="\n")
+    code_previous   = ds[["code"]]
+    code            = paste(code_previous,
+                            code_ana_only,
+                            code_fg_ind_obs,
+                            code_tb_ind_obs,
+                            collapse="\n")
 
   } else {
     isgood = FALSE
@@ -3508,68 +3536,466 @@ nca_builder = function(state){
   # saving any messages:
   msgs = c(msgs, current_ana[["msgs"]])
 
+  state = FM_set_ui_msg(state, msgs)
 
-  res = list(isgood        = isgood,
-             code_previous = code_previous,
-             code_ana_only = code_ana_only,
-             code          = code,
-             objs          = objs,
-             cmd           = cmd,
-             msgs          = msgs)
+  # Saving the state information
+  current_ana[["isgood"]]            = isgood
+  current_ana[["code"]]              = code
+  current_ana[["code_components"]]   = list(
+    code_previous   = code_previous,
+    code_ana_only   = code_ana_only,
+    code_fg_ind_obs = code_fg_ind_obs,
+    code_tb_ind_obs = code_tb_ind_obs)
+  current_ana[[ "objs" ]][[ "ds"        ]][[ "name" ]]   = nca_ds_object_name
+  current_ana[[ "objs" ]][[ "rm"        ]][[ "name" ]]   = nca_rm_object_name
+  current_ana[[ "objs" ]][[ "drec"      ]][[ "name" ]]   = nca_drec_object_name
+  current_ana[[ "objs" ]][[ "ints"      ]][[ "name" ]]   = nca_ints_object_name
+  current_ana[[ "objs" ]][[ "dose"      ]][[ "name" ]]   = nca_dose_object_name
+  current_ana[[ "objs" ]][[ "data"      ]][[ "name" ]]   = nca_data_object_name
+  current_ana[[ "objs" ]][[ "conc"      ]][[ "name" ]]   = nca_conc_object_name
+  current_ana[[ "objs" ]][[ "res"       ]][[ "name" ]]   = nca_res_object_name
+  current_ana[[ "objs" ]][[ "fg_ind_obs"]][[ "name" ]]   = nca_fg_ind_obs_object_name
+  current_ana[[ "objs" ]][[ "tb_ind_obs"]][[ "name" ]]   = nca_tb_ind_obs_object_name
+  current_ana[[ "objs" ]][[ "units"     ]][[ "name" ]]   = nca_units_object_name
 
-res}
+  # Storing the current ana with the updated data:
+  state = NCA_set_current_ana(state, current_ana)
+
+state}
 
 #'@export
 #'@title Runs NCA for the Current Analysis
 #'@description Takes the current state and runs the current analysis in that
 #'state.
 #'@param state NCA state from \code{NCA_fetch_state()}
+#'@param components List of components to run. By default it will run all of
+#'the following. If you just need to regenerate a figure based on the current
+#'nca results you can just specify that component. These are the valid
+#'components:
+#' \itemize{
+#'  \item{nca:}               Run NCA analysis
+#'  \item{fg_ind_obs:}    Build the figure(s) with the indiviudal observations.
+#'  \item{tb_ind_obs:}     Build the table(s) with the indiviudal observations.
+#'}
 #'@return List with the following components:
 #' \itemize{
 #'  \item{isgood:}    Return status of the function.
-#'  \item{msgs:}      Error messages if any issues were encountered. 
+#'  \item{msgs:}      Error messages if any issues were encountered.
 #'  \item{nca_res:}   PKNCA results if run was successful.
 #'}
-run_nca = function(state){
+run_nca_components = function(
+  state,
+  components=c("nca",
+               "fg_ind_obs",
+               "tb_ind_obs")){
 
-  msgs     = c()
-  nca_res  = NULL
+  # Generating code. The following will be added
+  # to the current analysis
+  #   - code and code components
+  #   - exit status of generation
+  #   - any messages that were generated
+  state = nca_builder(state)
 
+  valid_components = c("nca", "fg_ind_obs", "tb_ind_obs")
+
+
+  # Short name for objects created when running NCA
+  obs_sns_nca  = c("res", "drec", "rm", "ints",
+                   "dose", "data", "conc", "units")
+
+
+
+  # Pulling out the current analysis to use and update below
   current_ana = NCA_fetch_current_ana(state)
-  dsview      = current_ana[["ana_dsview"]]
-  DS          = state[["NCA"]][["DSV"]][["ds"]][[dsview]][["DS"]]
+  #---------------------------------------------
+  # Running NCA
+  if("nca" %in% components){
+    if(current_ana[["isgood"]]){
 
-  # Source to run
-  cmd = current_ana[["code_ana_only"]]
+      # Pulling out the dataset for the analysis
+      dsview      = current_ana[["ana_dsview"]]
+      DS          = state[["NCA"]][["DSV"]][["ds"]][[dsview]][["DS"]]
 
-  # NCA environment environment:
-  tc_env = list()
-  tc_env[[dsview]] = DS
+      # Source to run
+      cmd = current_ana[["code_components"]][["code_ana_only"]]
 
-  # Object to capture
-  capture =  current_ana[["objs"]][["res"]]
+      # NCA environment environment:
+      tc_env = list()
+      tc_env[[dsview]] = DS
 
-  # Running the analysis and trapping any errors
-  nca_run_res = FM_tc(cmd, tc_env, capture)
+      # Creating the vector of object names to capture:
+      capture = c()
+      for(obs_sn in obs_sns_nca){
+        capture = c(
+         capture,
+         current_ana[["objs"]][[obs_sn]][["name"]]
+        )
+      }
 
-  # Capturing the exit status
-  isgood = nca_run_res[["isgood"]]
+      # Running the analysis and trapping any errors
+      nca_run_res = FM_tc(cmd, tc_env, capture)
 
-  if(isgood){
-    # pulling out the results
-    nca_res = nca_run_res[["capture"]][[  current_ana[["objs"]][["res"]]  ]]
-  } else {
-    # If the run failed we capture the error messages to be passed back to the
-    # user:
-    msgs = c(msgs, nca_run_res[["msgs"]])
+      # Capturing the exit status
+      if(nca_run_res[["isgood"]]){
+        # Pulling out the capture objects and saving them
+        # to the current analysis
+        for(obs_sn in obs_sns_nca){
+          current_ana[["objs"]][[obs_sn]][["value"]] =
+          nca_run_res[["capture"]][[  current_ana[["objs"]][[obs_sn]][["name"]]  ]]
+        }
+      } else {
+        # If the run failed we capture the error messages to be passed back to the
+        # user:
+        nca_run_res[["msgs"]]
+        state = FM_set_ui_msg(state, nca_run_res[["msgs"]], append=TRUE)
+
+        # We flag the analysis as bad:
+        current_ana[["isgood"]] = FALSE
+      }
+    }
   }
- 
-  res = list(isgood   = isgood,
-             msgs     = msgs,
-             nca_res  = nca_res)
-  
+  #---------------------------------------------
+
+  # This list maps the component name to the key
+  # with the code for that component
+  fig_tabs = list("fg_ind_obs" = list(code="code_fg_ind_obs", current="curr_fg_ind_obs"),
+                  "tb_ind_obs" = list(code="code_tb_ind_obs", current="curr_tb_ind_obs"))
+  for(fig_tab in names(fig_tabs)){
+    if(current_ana[["isgood"]]){
+      if(fig_tab %in% components){
+        # Figure or table generation code:
+        cmd = current_ana[["code_components"]][[  fig_tabs[[fig_tab]][["code"]]  ]]
+
+        # Object name created to capture:
+        capture = current_ana[["objs"]][[fig_tab]][["name"]]
+
+        # In the environment environment we define the dataset as well
+        # as the objects created in the NCA analysis:
+        tc_env = list()
+        tc_env[[dsview]] = DS
+        for(obs_sn in obs_sns_nca){
+          tc_env[[  current_ana[["objs"]][[obs_sn]][["name"]]  ]] =
+          current_ana[["objs"]][[obs_sn]][["value"]]
+        }
+
+        # Running the table or figure generation code:
+        nca_run_res = FM_tc(cmd, tc_env, capture)
+
+        # Capturing the results
+        if(nca_run_res[["isgood"]]){
+          # Pulling out the captured object and saving it
+          current_ana[["objs"]][[fig_tab]][["value"]] = 
+            nca_run_res[["capture"]][[  current_ana[["objs"]][[fig_tab]][["name"]]  ]]
+
+          # JMH update curr_xx_ind_obs here
+          #browser()
+        } else {
+          # If the run failed we capture the error messages to be passed back to the
+          # user:
+          nca_run_res[["msgs"]]
+          state = FM_set_ui_msg(state, nca_run_res[["msgs"]], append=TRUE)
+
+          # We flag the analysis as bad:
+          current_ana[["isgood"]] = FALSE
+        }
+      }
+    }
+
+    # If we encounter a failure anywhere above we attach a generic message
+    # about the current figure or table
+    if(!current_ana[["isgood"]]){
+      err_msgs = paste0(c("Unable to create: ", fig_tab, "see above for details."))
+      state = FM_set_ui_msg(state, err_msgs, append=TRUE)
+    }
+  }
+
+
+  # Saving any changes to the analysis
+  state = NCA_set_current_ana(state, current_ana)
+
+state}
+
+
+
+
+#'@export
+#'@title Creates Tables of Individual Observations from PKNCA Result
+#'@description Takes the output of PKNCA and creates a tabular view of the
+#'individual observation data. This can be spread out of over several tables
+#'(pages) if necessary.
+#'@param nca_res Output of PKNCA.
+#'@param digits   Number of significant figures to report (set to \code{NULL}
+#'to disable rounding)
+#'@param max_col Maximum number of columns to have on a page. Spillover will
+#'be wrapped to multiple pages.
+#'@param rows_by Can be either "time" or "id". If it is "time", there will be a
+#'column for time and separate column for each subject ID. If rows_by is set
+#'to "id" there will be a column for ID and a column for each individual time.
+#'@return list containing the following elements
+#'\itemize{
+#'}
+mk_table_ind_obs = function(
+  nca_res   ,
+  digits     = 3,
+  max_col    = 9,
+  rows_by    = "time"){
+
+
+  # Extracting the needed column names:
+  col_id   = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
+  col_time = nca_res[["data"]][["conc"]][["columns"]][["time"]]
+  col_conc = nca_res[["data"]][["conc"]][["columns"]][["concentration"]]
+
+  # Plucking out the units for time and conc
+  time_units = ""
+  conc_units = ""
+  if(!is.null(nca_res[["data"]][["units"]])){
+    # Perhaps there is a better way to extract these things but this is the
+    # most obvious to me :)
+    time_units = nca_res[["data"]][["units"]][nca_res[["data"]][["units"]][["PPTESTCD"]] == "start", ][["PPORRESU"]]
+    conc_units = nca_res[["data"]][["units"]][nca_res[["data"]][["units"]][["PPTESTCD"]] == "cmax",  ][["PPORRESU"]]
+  }
+
+  # Retaining only the needed columns
+  cols_keep = c(col_id, col_time, col_conc)
+
+  # These are the columns that contain the
+  # row headers for the table
+
+  # This is the original dataset along with what looks like
+  # some extra columns added by PKNCA
+  all_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]])) |>
+    dplyr::select(dplyr::all_of(cols_keep)) |>
+    dplyr::rename(CONC = dplyr::all_of(col_conc))|>
+    dplyr::rename(TIME = dplyr::all_of(col_time))|>
+    dplyr::rename(ID   = dplyr::all_of(col_id))
+
+
+  # Applying significant digits
+  if(!is.null(digits)){
+    # For concentration data it is pretty
+    # straight forward
+    all_data[["CONC"]] = as.character(signif(all_data[["CONC"]], digits))
+    all_data[["TIME"]] = as.character(floor(all_data[["TIME"]]) + signif(all_data[["TIME"]] %% 1, digits))
+  }
+
+
+  if(rows_by == "time"){
+    row_header_cols = c("TIME")
+    col_header_label = "Concentration ===CONCUNITS=== for ID"
+    all_data = tidyr::pivot_wider(all_data, names_from="ID", values_from="CONC")
+  } else  if(rows_by == "id"){
+    row_header_cols = c("ID")
+    col_header_label = "Concentration ===CONCUNITS=== for ID Observation Time ===TIMEUNITS==="
+    all_data = tidyr::pivot_wider(all_data, names_from="TIME", values_from="CONC")
+  }
+
+  col_header_label = stringr::str_replace(col_header_label, "===CONCUNITS===", paste0("(", conc_units, ")"))
+  col_header_label = stringr::str_replace(col_header_label, "===TIMEUNITS===", paste0("(", time_units, ")"))
+
+
+  # Splitting the data into header columns and observations
+  rh_data   = dplyr::select(all_data,  dplyr::all_of(row_header_cols))
+  conc_data = dplyr::select(all_data, -dplyr::all_of(row_header_cols))
+
+
+  # This converts everything to text:
+  conc_data         = dplyr::mutate_all(conc_data, as.character)
+
+
+  # Number of concentration data columns per table
+  ndata_col = max_col - ncol(rh_data)
+  offset = 0
+  tables   = list()
+  tbl_idx  = 1
+  while(offset+1< ncol(conc_data)){
+
+    # These are the columns where we'll chop up the conc
+    # data into columns
+    c_start = offset+1
+    c_stop  = min((offset+max_col),ncol(conc_data))
+
+    tbl_data = conc_data[, c(c_start:c_stop)]
+
+    # This will hold keywords for any notes for the table.
+    notes = c()
+
+    # Now we can check this table for NAs and BLQs
+    if(any(tbl_data == 0)){
+      notes = c(notes, "BLQ")
+    }
+    if(any(is.na(tbl_data))){
+      notes = c(notes, "NA")
+    }
+
+    # Attaching the row header data:
+    tp_df = cbind(rh_data, tbl_data)
+
+    tbl_key = paste0("Table_", tbl_idx)
+
+
+    line_thick = officer::fp_border(color="black", width=2)
+    line_thin  = officer::fp_border(color="black", width=0.5)
+
+    # Creating a flextable version of the table
+    tp_ft = flextable::flextable(tp_df)                                |>
+      flextable::border_remove()                                       |>
+      flextable::delete_part(part="header")                            |>
+      flextable::add_header_row(
+        values = c(paste0("(", time_units,")"), names(tbl_data)))      |>
+      flextable::add_header_row(
+        values = c("Time", col_header_label),
+        colwidths = c(ncol(rh_data), ncol(tbl_data)))                  |>
+      flextable::vline(border=line_thin, j=1,  part="all")             |>
+      #flextable::vline_left(border=line_thick,  part="all")            |>
+      #flextable::vline(border=line_thick, j=ncol(tp_df), part="all")   |>
+      flextable::align(align="center", part="header")                  |>
+      flextable::align(align="center", part="body")                    |>
+      flextable::bold(part="header")                                   |>
+      flextable::hline_top(border=line_thick, part="header")           |>
+      flextable::hline_bottom(border=line_thin, part="header")         |>
+      flextable::hline_bottom(border=line_thick, part="body")
+
+    tables[[tbl_key]] = list(
+      df    = tp_df,
+      ft    = tp_ft,
+      notes = notes
+    )
+
+    # updating the offset and table counters
+    offset  = offset+max_col
+    tbl_idx = tbl_idx + 1
+  }
+
+  res = list(
+    all_data = all_data,
+    tables = tables
+  )
+
 
 res}
 
+#'@export
+#'@title Creates Figures of Individual Observations from PKNCA Result
+#'@description Takes the output of PKNCA and creates `ggplot` figures faceted
+#'by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
+#'@param nca_res Output of PKNCA.
+#'@param nfrows    Number of facet rows per page.
+#'@param nfcols    Number of facet cols per page.
+#'@return list containing the following elements
+#'\itemize{
+#'}
+mk_figure_ind_obs = function(
+  nca_res       ,
+  OBS_LAB         = "Concentration ===CONCUNITS===",
+  TIME_LAB        = "Time ===TIMEUNITS===",
+  OBS_STRING      = "Observation",
+  BLQ_STRING      = "BLQ",
+  NA_STRING       = "Missing",
+  log_scale       = TRUE,
+  scales          = "fixed",
+  nfrows          = 4,
+  nfcols          = 3){
 
+  # Plucking out the units for time and conc
+  time_units = ""
+  conc_units = ""
+  if(!is.null(nca_res[["data"]][["units"]])){
+    # Perhaps there is a better way to extract these things but this is the
+    # most obvious to me :)
+    time_units = nca_res[["data"]][["units"]][nca_res[["data"]][["units"]][["PPTESTCD"]] == "start", ][["PPORRESU"]]
+    conc_units = nca_res[["data"]][["units"]][nca_res[["data"]][["units"]][["PPTESTCD"]] == "cmax",  ][["PPORRESU"]]
+  }
+
+  OBS_LAB  = stringr::str_replace(OBS_LAB,  "===CONCUNITS===", paste0("(", conc_units, ")"))
+  TIME_LAB = stringr::str_replace(TIME_LAB, "===TIMEUNITS===", paste0("(", time_units, ")"))
+
+  col_id    = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
+  col_time  = nca_res[["data"]][["conc"]][["columns"]][["time"]]
+  col_conc  = nca_res[["data"]][["conc"]][["columns"]][["concentration"]]
+  col_group = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_vars"]]
+
+  # Retaining only the needed columns
+  cols_keep = unique(c(col_id, col_time, col_conc, col_group))
+
+  # If this value is NULL it will be set to the lowest value for that
+  # individual
+
+  # This is the original dataset along with what looks like
+  # some extra columns added by PKNCA
+  all_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]])) |>
+    dplyr::select(dplyr::all_of(cols_keep)) |>
+    dplyr::rename(CONC = dplyr::all_of(col_conc))                |>   # Renaming columns to standard values
+    dplyr::rename(TIME = dplyr::all_of(col_time))                |>
+    dplyr::rename(ID   = dplyr::all_of(col_id))                  |>
+    dplyr::group_by(!!as.name(col_group))                        |>
+    dplyr::mutate(NONOBS = min(CONC[CONC>0 & !is.na(CONC)]))     |>   # Creating a concentration for non-observations (0 and NA below)
+    dplyr::ungroup()                                             |>
+    dplyr::mutate(PKNCA_DATA_TYPE = OBS_STRING)                  |>   # This sets all data types to "Observation":w
+    dplyr::mutate(PKNCA_DATA_TYPE = ifelse(CONC==0,                   # Setting the BLQ Flag
+                                           BLQ_STRING,
+                                           PKNCA_DATA_TYPE))     |>
+    dplyr::mutate(PKNCA_DATA_TYPE = ifelse(is.na(CONC),               # Setting the Missing Flag
+                                           NA_STRING,
+                                           PKNCA_DATA_TYPE))     |>
+    dplyr::mutate(CONC            = ifelse(is.na(CONC),               # Setting missing values to values for plotting
+                                           NONOBS,
+                                           CONC))                |>
+    dplyr::mutate(CONC            = ifelse(CONC == 0,                 # Setting missing values to values for plotting
+                                           NONOBS,
+                                           CONC))
+
+
+
+  # Subjects remaining to plot
+  subs_left = unique(all_data[["ID"]])
+  # Number of subjects per plot:
+  subs_pp   = nfrows*nfcols
+
+  # This is a list where we'll store the figures
+  figures = list()
+
+  fig_idx=1
+  while(length(subs_left) > 0){
+
+    fig_key = paste0("Figure_", fig_idx)
+
+    # Figuring out how many subjects to plot on the
+    # current figure
+    if(length(subs_left) < subs_pp){
+      last_sub = length(subs_left)
+    } else {
+      last_sub = subs_pp
+    }
+    subs_current = subs_left[c(1:last_sub)]
+
+    # This dataset contains the subset of the current subjects for plotting.
+    plot_ds = dplyr::filter(all_data, ID %in% subs_current)
+
+    p = ggplot2::ggplot(data = plot_ds)
+    p = p + ggplot2::geom_line( ggplot2::aes(x=.data[["TIME"]], y=.data[["CONC"]], group=!!as.name(col_group)), linetype='dashed', color='grey')
+    p = p + ggplot2::geom_point(ggplot2::aes(x=.data[["TIME"]], y=.data[["CONC"]], group=!!as.name(col_group), color=.data[["PKNCA_DATA_TYPE"]]))
+    p = p + ggplot2::facet_wrap(.~.data[["ID"]], ncol=nfcols, nrow=nfrows, scales=scales)
+    p = p + ggplot2::theme_light()
+    if(log_scale){
+      p = p + ggplot2::scale_y_log10()
+    }
+    p = p + ggplot2::xlab(TIME_LAB)
+    p = p + ggplot2::ylab(OBS_LAB)
+    p = p + ggplot2::labs(color="Data Type")
+    p = p + ggplot2::theme(legend.position="bottom")
+
+    figures[[fig_key]] = p
+
+    # Removing the plotted subjects from the list
+    subs_left = subs_left[!(subs_left %in% subs_current)]
+    fig_idx = fig_idx+1
+  }
+
+  res = list(
+    figures = figures
+  )
+
+
+res}
 

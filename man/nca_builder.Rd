@@ -7,21 +7,21 @@
 nca_builder(state)
 }
 \arguments{
-\item{state}{NCA state from \code{NCA_fetch_state()}}
+\item{state}{NCA state from \code{NCA_fetch_state()}
+JMH update the return list below}
 }
 \value{
 list containing the following elements
 \itemize{
-\item{isgood:}        Return status of the function.
-\item{cmd:}           Code to run the analysis.
-\item{msgs:}          Messages to be passed back to the user.
-\item{code_previous:} Code to generate the dataset.
-\item{code_ana_only:} Code for the analysis.
-\item{code:}          Complete code to run the analysis.
-\item{obj:}           List with names of R objects used in then generated code.
+\item{isgood:}           Return status of the function.
+\item{msgs:}             Messages to be passed back to the user.
+\item{code_previous:}    Code to generate the dataset.
+\item{code_ana_only:}    Code for the analysis.
+\item{code_fg_ind_obs:}  Code to generate figure(s) of individual observations
+\item{code_tb_ind_obs:}  Code to generate table(s) of individual observations
+\item{code:}             Complete code to run the analysis.
+\item{obj:}              List with names of R objects used in then generated code.
 }
-
-List containing the following elements
 }
 \description{
 Takes the current analysis in the state object and creates the
