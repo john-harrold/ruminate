@@ -1,6 +1,7 @@
 library(formods)
 library(shinydashboard)
 library(prompter)
+library(plotly)
 
 #https://fontawesome.com/icons?from=io
 

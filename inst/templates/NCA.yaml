@@ -25,7 +25,9 @@ MC:
     # nca configuration
     nca_config_option:
       width: 150
-
+    # Width of the figure preview (must be numeric)
+    preview:    
+      width:  800
     # These apply to the intervals table
     intervals:  
       width:  600
@@ -103,12 +105,17 @@ MC:
   errors:
     nca_run_filed: "Unable to run PKNCA. Please, see below for details."
     bad_input: "Input error message"
+    nca_no_fig: "There are no figures to display. You must run the analysis first"
   tooltips:
     # Set to FALSE to disable tool tips for this module
     include: TRUE
     notes:             "Optional analysis notes that will be carried over and used in other elements (e.g. reporting)."
     ana_key:           "Unique description used for referencing analysis and in other elements (e.g. reporting)."
     show_code:         "Show analysis code"
+  figures:
+    fg_ind_obs:
+      choice:  "Individual Profiles"   
+      subtext: "Faceted view of individual time-course"
   labels:
     ana_key:                         "title/caption"
     new_ana:                         "New"
@@ -141,6 +148,7 @@ MC:
     select_ana_units_amt:            "Amount"
     select_ana_nca_parameters:       "Parameters"
     switch_ana_include_units:        "Include Units"
+    switch_ana_fig_interactive:      "Interactive"
     select_ana_source_sampling:      "Data Sampling"
     busy:
       run_nca:                       "Running NCA be patient."

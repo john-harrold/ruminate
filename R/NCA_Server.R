@@ -596,14 +596,39 @@ NCA_Server <- function(id,
                 style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
                 size    = state[["MC"]][["formatting"]][["button_ana_run"]][["size"]],
                 block   = state[["MC"]][["formatting"]][["button_ana_run"]][["block"]],
-                color   = "success",
+                color   = "primary",
                 icon    = icon("arrow-down"))
 
       uiele})
     #------------------------------------
     # Figure Results
     output$ui_nca_ana_results_fig             = renderUI({
-      input$button_ana_run
+      input[["button_ana_run"]]
+      input[["button_ana_new"]]
+      input[["button_ana_save"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["select_current_ana"]]
+
+
+      uiele = tagList(
+             htmlOutput(  NS(id, "ui_nca_ana_results_fig_general")),
+             htmlOutput(  NS(id, "ui_nca_ana_results_fig_controls")),
+             htmlOutput(  NS(id, "ui_nca_ana_results_fig_plot")))
+
+
+
+      uiele})
+    #------------------------------------
+    # Figure Results (select figure)
+    output$ui_nca_ana_results_fig_plot               = renderUI({
+      input[["button_ana_run"]]
+      input[["button_ana_new"]]
+      input[["button_ana_save"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["select_current_ana"]]
+      input[["switch_ana_fig_interactive"]]
 
       state = NCA_fetch_state(id              = id,
                              input           = input,
@@ -615,11 +640,186 @@ NCA_Server <- function(id,
                              id_DW           = id_DW,
                              react_state     = react_state)
 
-      uiele = tagList(
-             "figure results",
-             htmlOutput(NS(id, "ui_nca_ana_results_fig_select")),
-             plotOutput(NS(id, "ui_nca_ana_results_fig_figure")),
-             htmlOutput(NS(id, "ui_nca_ana_results_fig_controls")))
+      current_ana = NCA_fetch_current_ana(state)
+
+      # pvh          = state[["MC"]][["formatting"]][["preview"]][["height"]]
+      # pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
+      # pv_div_style = paste0("height:",pvh,"px;width:",pvw,"px;display:inline-block;vertical-align:top")
+      
+      pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
+      pv_div_style = paste0("px;width:",pvw,"px;display:inline-block;vertical-align:top")
+      if(current_ana[["fig_interactive"]]){
+        uiele = tagList(
+           div(style=pv_div_style, plotly::plotlyOutput(NS(id, "ui_nca_ana_results_fig_plotly"))))
+      } else {
+        uiele = tagList(
+           div(style=pv_div_style, plotOutput(  NS(id, "ui_nca_ana_results_fig_ggplot"))))
+      }
+    uiele})
+    #------------------------------------
+    # Figure Results (select figure)
+    output$ui_nca_ana_results_fig_general            = renderUI({
+      input[["button_ana_run"]]
+      input[["button_ana_new"]]
+      input[["button_ana_save"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["select_current_ana"]]
+
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+      current_ana = NCA_fetch_current_ana(state)
+
+      uiele = NULL
+
+      # We only generate the ui element if the
+      # analysis is in a good state
+      if(current_ana[["isgood"]]){
+
+        choices = c()
+        cnames  = c()
+        subtext = c()
+
+        for(fig_id in names(state[["MC"]][["figures"]])){
+          choices = c(choices, fig_id)
+          cnames  = c(cnames,  state[["MC"]][["figures"]][[fig_id]][["choice"]])
+          subtext = c(subtext, state[["MC"]][["figures"]][[fig_id]][["subtext"]])
+        }
+
+        # Applying names
+        names(choices) = cnames
+
+        # Adding the subtext
+        choicesOpt = list(
+          subtext = subtext)
+
+
+        # If the current_ana figure view exists we default to that
+        # otherwise we just choose the first choice.
+        if(current_ana[["fig_view"]] %in% choices){
+          selected = current_ana[["fig_view"]]
+        } else {
+          selected = choices[1]
+        }
+
+        uiele_picker =  shinyWidgets::pickerInput(
+             inputId    = NS(id, "select_ana_fig_view"),
+             choices    = choices,
+             selected   = selected,
+             width      = "fit",
+             inline     = TRUE,
+             choicesOpt = choicesOpt)
+
+      uiele_switch =
+      shinyWidgets::materialSwitch(
+         inputId = NS(id, "switch_ana_fig_interactive"),
+         label   = state[["MC"]][["labels"]][["switch_ana_fig_interactive"]],
+         value   = current_ana[["fig_interactive"]],
+         inline  = TRUE,
+         status  = "success"
+      )
+
+        uiele = tagList(uiele_picker, uiele_switch)
+      } else {
+        uiele = state[["MC"]][["errors"]][["nca_no_fig"]]
+      }
+
+      uiele})
+
+    #------------------------------------
+    # Figure Results ggplot
+    output$ui_nca_ana_results_fig_ggplot             = renderPlot({
+      input[["button_ana_run"]]
+      input[["button_ana_new"]]
+      input[["button_ana_save"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["select_current_ana"]]
+      input[["switch_ana_fig_interactive"]]
+
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+      current_ana = NCA_fetch_current_ana(state)
+
+      #fobj = NCA_fetch_current_obj(state, "figure")
+
+
+
+      uiele = NULL
+      # We only return a non-NULL result if the current analysis is good
+      # and an interactive figure has _not_ been selected
+      if(current_ana[["isgood"]]){
+        # Pulling out the current figure
+        fobj = NCA_fetch_current_obj(state, "figure")
+        if(!is.null(fobj)){
+         uiele = fobj 
+        }
+      }
+      uiele})
+
+    #------------------------------------
+    # Figure Results plotly
+    output$ui_nca_ana_results_fig_plotly             = plotly::renderPlotly({
+      input[["button_ana_run"]]
+      input[["button_ana_new"]]
+      input[["button_ana_save"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["select_current_ana"]]
+      input[["switch_ana_fig_interactive"]]
+
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+      current_ana = NCA_fetch_current_ana(state)
+
+      uiele = NULL
+      # We only return a non-NULL result if the current analysis is good
+      # and an interactive figure has been selected
+      if(current_ana[["isgood"]]){
+         fobj = NCA_fetch_current_obj(state, "figure")
+        if(!is.null(fobj)){
+          uiele = plotly::ggplotly(fobj)
+        }
+      }
+      uiele})
+    #------------------------------------
+    # Figure Results (plot controls)
+    output$ui_nca_ana_results_fig_controls           = renderUI({
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+      uiele = tagList("plot controls")
       uiele})
     #------------------------------------
     # Tabular Results
@@ -1682,6 +1882,7 @@ NCA_Server <- function(id,
       # Here we list the ui inputs that will result in a state change:
       toListen <- reactive({
         list(
+             input$button_ana_run,
              input$button_ana_new,
              input$button_ana_save,
              input$button_ana_copy,
@@ -1710,7 +1911,7 @@ NCA_Server <- function(id,
       })
     }
     #------------------------------------
-    # Copying code to clipboard 
+    # Copying code to clipboard
     observeEvent(input$button_ana_clip, {
       state = NCA_fetch_state(id              = id,
                              input           = input,
@@ -2301,6 +2502,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
                       "button_ana_copy",
                       "button_ana_add_int",
                       "button_ana_use_scenario",
+                      "switch_ana_fig_interactive",
                       "switch_ana_include_units")
 
   # mapping name in UI to name in analysis
@@ -2308,7 +2510,8 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
     "switch_ana_include_units"   = "include_units",
     "text_ana_interval_start"    = "interval_start",
     "text_ana_interval_stop"     = "interval_stop",
-    "slider_ana_source_sampling" = "sampling",
+    "switch_ana_source_sampling" = "sampling",
+    "switch_ana_fig_interactive" = "fig_interactive",
     "select_ana_nca_parameters"  = "nca_parameters",
     "select_ana_scenario"        = "ana_scenario",
     "select_ana_units_time"      = "units_time",
@@ -2323,7 +2526,9 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
     "select_ana_col_conc"        = "col_conc" ,
     "select_ana_col_route"       = "col_route" ,
     "select_ana_col_cycle"       = "col_cycle" ,
-    "select_ana_col_group"       = "col_group"
+    "select_ana_col_group"       = "col_group",
+    "select_ana_fig_view"        = "fig_view",
+    "select_ana_tab_view"        = "tab_view"
   )
 
   # We add all of the button counters as well as
@@ -2621,6 +2826,9 @@ NCA_new_ana    = function(state){
          nca_config      = state[["NCA"]][["nca_config"]][["default"]],
          checksum        = digest::digest(NULL, algo=c("md5")),
          ana_scenario    = "",
+         fig_view        = "",
+         fig_interactive = TRUE,
+         tab_view        = "",
          code_components = NULL,
          code            = NULL,
          col_id          = "",          # The col_* values will be populated later
@@ -2692,6 +2900,9 @@ NCA_new_ana    = function(state){
   # and also for the counters:
   state[["NCA"]][["button_counters"]][["switch_ana_include_units"]] =
       state[["MC"]][["units"]][["include_units"]]
+
+  state[["NCA"]][["button_counters"]][["switch_ana_fig_interactive"]] =
+      state[["MC"]][["units"]][["fig_interactive"]]
 
   # add the default units
   nca_def[["units_conc"]] = state[["MC"]][["units"]][["conc_def"]]
@@ -3605,110 +3816,158 @@ run_nca_components = function(
 
 
 
+  # Messages to pass back to the user
+  msgs = c()
+
   # Pulling out the current analysis to use and update below
   current_ana = NCA_fetch_current_ana(state)
-  #---------------------------------------------
-  # Running NCA
-  if("nca" %in% components){
-    if(current_ana[["isgood"]]){
 
-      # Pulling out the dataset for the analysis
-      dsview      = current_ana[["ana_dsview"]]
-      DS          = state[["NCA"]][["DSV"]][["ds"]][[dsview]][["DS"]]
+  # If current_ana i bad then something in the nca_builder() failed.
+  # We want to pass those back to the user.
+  if(current_ana[["isgood"]]){
+    #---------------------------------------------
+    # Running NCA
+    if("nca" %in% components){
+      if(current_ana[["isgood"]]){
 
-      # Source to run
-      cmd = current_ana[["code_components"]][["code_ana_only"]]
+        # Pulling out the dataset for the analysis
+        dsview      = current_ana[["ana_dsview"]]
+        DS          = state[["NCA"]][["DSV"]][["ds"]][[dsview]][["DS"]]
 
-      # NCA environment environment:
-      tc_env = list()
-      tc_env[[dsview]] = DS
+        # Source to run
+        cmd = current_ana[["code_components"]][["code_ana_only"]]
 
-      # Creating the vector of object names to capture:
-      capture = c()
-      for(obs_sn in obs_sns_nca){
-        capture = c(
-         capture,
-         current_ana[["objs"]][[obs_sn]][["name"]]
-        )
-      }
-
-      # Running the analysis and trapping any errors
-      nca_run_res = FM_tc(cmd, tc_env, capture)
-
-      # Capturing the exit status
-      if(nca_run_res[["isgood"]]){
-        # Pulling out the capture objects and saving them
-        # to the current analysis
-        for(obs_sn in obs_sns_nca){
-          current_ana[["objs"]][[obs_sn]][["value"]] =
-          nca_run_res[["capture"]][[  current_ana[["objs"]][[obs_sn]][["name"]]  ]]
-        }
-      } else {
-        # If the run failed we capture the error messages to be passed back to the
-        # user:
-        nca_run_res[["msgs"]]
-        state = FM_set_ui_msg(state, nca_run_res[["msgs"]], append=TRUE)
-
-        # We flag the analysis as bad:
-        current_ana[["isgood"]] = FALSE
-      }
-    }
-  }
-  #---------------------------------------------
-
-  # This list maps the component name to the key
-  # with the code for that component
-  fig_tabs = list("fg_ind_obs" = list(code="code_fg_ind_obs", current="curr_fg_ind_obs"),
-                  "tb_ind_obs" = list(code="code_tb_ind_obs", current="curr_tb_ind_obs"))
-  for(fig_tab in names(fig_tabs)){
-    if(current_ana[["isgood"]]){
-      if(fig_tab %in% components){
-        # Figure or table generation code:
-        cmd = current_ana[["code_components"]][[  fig_tabs[[fig_tab]][["code"]]  ]]
-
-        # Object name created to capture:
-        capture = current_ana[["objs"]][[fig_tab]][["name"]]
-
-        # In the environment environment we define the dataset as well
-        # as the objects created in the NCA analysis:
+        # NCA environment environment:
         tc_env = list()
         tc_env[[dsview]] = DS
+
+        # Creating the vector of object names to capture:
+        capture = c()
         for(obs_sn in obs_sns_nca){
-          tc_env[[  current_ana[["objs"]][[obs_sn]][["name"]]  ]] =
-          current_ana[["objs"]][[obs_sn]][["value"]]
+          capture = c(
+           capture,
+           current_ana[["objs"]][[obs_sn]][["name"]]
+          )
         }
 
-        # Running the table or figure generation code:
+        # Running the analysis and trapping any errors
         nca_run_res = FM_tc(cmd, tc_env, capture)
 
-        # Capturing the results
+        # Capturing the exit status
         if(nca_run_res[["isgood"]]){
-          # Pulling out the captured object and saving it
-          current_ana[["objs"]][[fig_tab]][["value"]] = 
-            nca_run_res[["capture"]][[  current_ana[["objs"]][[fig_tab]][["name"]]  ]]
-
-          # JMH update curr_xx_ind_obs here
-          #browser()
+          # Pulling out the capture objects and saving them
+          # to the current analysis
+          for(obs_sn in obs_sns_nca){
+            current_ana[["objs"]][[obs_sn]][["value"]] =
+            nca_run_res[["capture"]][[  current_ana[["objs"]][[obs_sn]][["name"]]  ]]
+          }
         } else {
           # If the run failed we capture the error messages to be passed back to the
           # user:
-          nca_run_res[["msgs"]]
-          state = FM_set_ui_msg(state, nca_run_res[["msgs"]], append=TRUE)
+          msgs = c(msgs, nca_run_res[["msgs"]] )
 
           # We flag the analysis as bad:
           current_ana[["isgood"]] = FALSE
         }
       }
     }
+    #---------------------------------------------
 
-    # If we encounter a failure anywhere above we attach a generic message
-    # about the current figure or table
-    if(!current_ana[["isgood"]]){
-      err_msgs = paste0(c("Unable to create: ", fig_tab, "see above for details."))
-      state = FM_set_ui_msg(state, err_msgs, append=TRUE)
+    # This list maps the component name to the key
+    # with the code for that component
+    fig_tabs = list("fg_ind_obs" = list(code      = "code_fg_ind_obs",
+                                        current   = "curr_fg_ind_obs",
+                                        list_name = "figures"),
+                    "tb_ind_obs" = list(code      ="code_tb_ind_obs",
+                                        current   ="curr_tb_ind_obs",
+                                        list_name = "tables"))
+    for(fig_tab in names(fig_tabs)){
+      if(current_ana[["isgood"]]){
+        if(fig_tab %in% components){
+          # Figure or table generation code:
+          cmd = current_ana[["code_components"]][[  fig_tabs[[fig_tab]][["code"]]  ]]
+
+          # Object name created to capture:
+          capture = current_ana[["objs"]][[fig_tab]][["name"]]
+
+          # In the environment environment we define the dataset as well
+          # as the objects created in the NCA analysis:
+          tc_env = list()
+          tc_env[[dsview]] = DS
+          for(obs_sn in obs_sns_nca){
+            tc_env[[  current_ana[["objs"]][[obs_sn]][["name"]]  ]] =
+            current_ana[["objs"]][[obs_sn]][["value"]]
+          }
+
+          # Running the table or figure generation code:
+          nca_run_res = FM_tc(cmd, tc_env, capture)
+
+          # Capturing the results. There are two points of failure here. One
+          # is that the code can fail to execute. That should mark the current
+          # analysis as bad and pass those failures on to the user.
+          if(nca_run_res[["isgood"]]){
+            # Pulling out the captured object
+            tmp_res = nca_run_res[["capture"]][[  current_ana[["objs"]][[fig_tab]][["name"]]  ]]
+
+            # This pulls out any names for figures, tables, etc:
+            list_names = names(tmp_res[[  fig_tabs[[fig_tab]][["list_name"]] ]])
+
+            # We store the result for the current component
+            current_ana[["objs"]][[fig_tab]][["value"]] = tmp_res
+
+            # There should be at least one element here:
+            if(!is.null(list_names)){
+              # This checks the currently selected list element for this
+              # component. If it doesn't exist we replace that value with the
+              # first element:
+              if(!(current_ana[[ fig_tabs[[fig_tab]][["current"]] ]] %in% list_names)){
+                current_ana[[ fig_tabs[[fig_tab]][["current"]] ]] = list_names[1]
+              }
+            } else {
+              # The second point of failure is that the component simply has
+              # no figures, tables, etc. This might mean that there are none
+              # that are valid for this current component. So for that we just
+              # set a message so if that component is selected it says there
+              # isn't anything to show:
+
+              # If we don't see an element not we set the list name to null
+              current_ana[["objs"]][[fig_tab]][["value"]][[
+                fig_tabs[[fig_tab]][["list_name"]] ]] = NULL
+
+              # We also attach a message to be returned to the user
+              current_ana[["objs"]][[fig_tab]][["value"]][["msgs"]] = c(
+                current_ana[["objs"]][[fig_tab]][["value"]][["msgs"]],
+                paste0("No ", fig_tabs[[fig_tab]][["list_name"]],
+                       " elements found when generating: ", fig_tab)
+              )
+            }
+          } else {
+            # If the run failed we capture the error messages to be passed back to the
+            # user:
+            msgs = c(msgs, nca_run_res[["msgs"]] )
+
+            # We flag the analysis as bad:
+            current_ana[["isgood"]] = FALSE
+          }
+        }
+      }
+
+      # If we encounter a failure anywhere above we attach a generic message
+      # about the current figure or table
+      if(!current_ana[["isgood"]]){
+        err_msgs = paste0(c("Unable to create: ", fig_tab, "see above for details."))
+        msgs = c(msgs, err_msgs)
+      }
     }
+  } else {
+    msgs = c(msgs, current_ana[["msgs"]] )
+
   }
 
+  #If there is something wrong we set that in the messages
+  if(!current_ana[["isgood"]]){
+    state = FM_set_ui_msg(state, msgs)
+  }
 
   # Saving any changes to the analysis
   state = NCA_set_current_ana(state, current_ana)
@@ -3999,3 +4258,52 @@ mk_figure_ind_obs = function(
 
 res}
 
+#'@export
+#'@title Fetches the Current Analysis Object 
+#'@description Takes the current state and object type and returns the
+#'currently selected object. For example if you have specified figure, it will
+#'look at the output figure selected and the figure number of that figure and
+#'return the ggplot object for that. 
+#'by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@param obj_type Type of object to return (either "table" or "figure").
+#'@return list containing the following elements
+#'\itemize{
+#'}
+NCA_fetch_current_obj = function(state, obj_type){
+
+  obj = NULL
+  current_ana = NCA_fetch_current_ana(state)
+  if(current_ana[["isgood"]]){
+    if(obj_type == "figure"){
+      # We process this based on the fig_view 
+      if( current_ana[["fig_view"]] == "fg_ind_obs"){
+
+        # This is the current facet page selected in the interface:
+        curr_fg_ind_obs = current_ana[["curr_fg_ind_obs"]]
+        if( curr_fg_ind_obs  %in% 
+           names(current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]])){
+
+           # Pulling out the ggplot object
+           obj = current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]][[ curr_fg_ind_obs ]]
+
+        } else {
+          # This should never happen but in the off chance it does I want some
+          # messaging to the console/log
+          FM_le(state, 
+                paste("Error in fg_ind_obs: figure: ", 
+                      current_ana[["curr_fg_ind_obs"]],
+                      " not found in ", 
+                      paste(names(current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]]), collapse=", ")
+                 ))
+        }
+
+
+
+      }
+    }
+    if(obj_type == "table"){
+    }
+  }
+
+obj}

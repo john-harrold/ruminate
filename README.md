@@ -23,7 +23,7 @@ data. This is done by creating a Shiny interface to different tools for
 data transformation (`dplyr` and `tidyr`), plotting (`ggplot2`), and
 noncompartmental analysis (`PKNCA`). These results can be reported in
 Excel, Word or PowerPoint. The state of the app can be saved and loaded
-at a later date. When saved a script is generated to reproduce the
+at a later date. When saved, a script is generated to reproduce the
 different actions in the Shiny interface.
 
 # Installation
