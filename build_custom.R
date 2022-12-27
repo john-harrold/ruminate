@@ -1,8 +1,6 @@
 # building documentation
 devtools::document(roclets = c('rd', 'collate', 'namespace', 'vignette'))
 
-options(pkgdown.internet = FALSE)
-
 # Rebuilding the pkgdown site
 pkgdown::build_site()
 

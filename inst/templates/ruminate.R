@@ -19,8 +19,27 @@ CSS <- "
 #https://fontawesome.com/icons?from=io
 logo_url = "https://raw.githubusercontent.com/john-harrold/ruminate/main/man/figures/logo.png"
 #logo_url = paste0("file://", system.file(package = "ruminate","help","figures","logo.png"))
+data_url =
+"https://github.com/john-harrold/formods/raw/master/inst/test_data/TEST_DATA.xlsx"
 
-intro_text = "Ruminate"
+intro_text = tags$p(
+"Ruminate is a shiny module for pharmacometric data process,
+visualization, and analysis. It consists of separate shiny modules that
+provide interfaces into common R packages and provides the underlying code
+to facilitate usage of those packages and to provide reproducable analyses. 
+To give it a try you can Download the test dataset ", 
+tags$a("here", href=data_url),".")
+
+# intro_text = "Ruminate is a shiny module for pharmacometric data process,
+# visualization, and analysis. It consists of separate shiny modules that
+# provide interfaces into common R packages. The data transformation tools act
+# as an interface to {dplyr} and {tidyr}, the visualization module acts as an
+# interface to {ggplot}, and the NCA module acts as an interface to {PKNCA}. It
+# offers reporting of the components in Word, PowerPoint and Excel. The
+# internals of ruminate generate code on the fly and allow you view the code for
+# each module element. It will also generate a script that when you save an
+# analysis to reproduce all you didn within the interface."
+
 ui <- dashboardPage(
   skin="black",
   dashboardHeader(title="ruminate"),

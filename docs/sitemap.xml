@@ -19,10 +19,25 @@
     <loc>/reference/NCA_Server.html</loc>
   </url>
   <url>
+    <loc>/reference/NCA_add_int.html</loc>
+  </url>
+  <url>
     <loc>/reference/NCA_append_report.html</loc>
   </url>
   <url>
+    <loc>/reference/NCA_fetch_PKNCA_meta.html</loc>
+  </url>
+  <url>
     <loc>/reference/NCA_fetch_code.html</loc>
+  </url>
+  <url>
+    <loc>/reference/NCA_fetch_current_ana.html</loc>
+  </url>
+  <url>
+    <loc>/reference/NCA_fetch_current_obj.html</loc>
+  </url>
+  <url>
+    <loc>/reference/NCA_fetch_data_format.html</loc>
   </url>
   <url>
     <loc>/reference/NCA_fetch_ds.html</loc>
@@ -31,9 +46,39 @@
     <loc>/reference/NCA_fetch_state.html</loc>
   </url>
   <url>
+    <loc>/reference/NCA_find_col.html</loc>
+  </url>
+  <url>
     <loc>/reference/NCA_init_state.html</loc>
   </url>
   <url>
+    <loc>/reference/NCA_new_ana.html</loc>
+  </url>
+  <url>
+    <loc>/reference/NCA_process_current_ana.html</loc>
+  </url>
+  <url>
+    <loc>/reference/NCA_set_current_ana.html</loc>
+  </url>
+  <url>
+    <loc>/reference/apply_route_map.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/mk_figure_ind_obs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/mk_table_ind_obs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/nca_builder.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ruminate.html</loc>
+  </url>
+  <url>
+    <loc>/reference/run_nca_components.html</loc>
   </url>
 </urlset>

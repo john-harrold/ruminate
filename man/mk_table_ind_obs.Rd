@@ -4,10 +4,19 @@
 \alias{mk_table_ind_obs}
 \title{Creates Tables of Individual Observations from PKNCA Result}
 \usage{
-mk_table_ind_obs(nca_res, digits = 3, max_col = 9, rows_by = "time")
+mk_table_ind_obs(
+  nca_res,
+  not_sampled = "NS",
+  blq = "BLQ",
+  digits = 3,
+  max_col = 9,
+  rows_by = "time"
+)
 }
 \arguments{
 \item{nca_res}{Output of PKNCA.}
+
+\item{not_sampled}{Character string to use for missing data when pivoting.}
 
 \item{digits}{Number of significant figures to report (set to \code{NULL}
 to disable rounding)}

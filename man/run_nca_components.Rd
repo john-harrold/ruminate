@@ -4,10 +4,7 @@
 \alias{run_nca_components}
 \title{Runs NCA for the Current Analysis}
 \usage{
-run_nca_components(
-  state,
-  components = c("nca", "figure_ind_obs", "table_ind_obs")
-)
+run_nca_components(state, components = c("nca", "fg_ind_obs", "tb_ind_obs"))
 }
 \arguments{
 \item{state}{NCA state from \code{NCA_fetch_state()}}
@@ -18,8 +15,8 @@ nca results you can just specify that component. These are the valid
 components:
 \itemize{
 \item{nca:}               Run NCA analysis
-\item{figure_ind_obs:}    Build the figure(s) with the indiviudal observations.
-\item{table_ind_obs:}     Build the table(s) with the indiviudal observations.
+\item{fg_ind_obs:}    Build the figure(s) with the indiviudal observations.
+\item{tb_ind_obs:}     Build the table(s) with the indiviudal observations.
 }}
 }
 \value{
