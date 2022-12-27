@@ -10,16 +10,13 @@ MC:
     priority: 1
   notifications:
     ana_add_int_success: "Interval added: ===DETAILS==="
-  ph:
-    text_ana_interval_start: 0
-    text_ana_interval_stop: "number or Inf"
-  # put different formatting options (widths, heights,
+  # Put different formatting options (widths, heights,
   # shinyWidgets button sizes, etc) here.
   formatting:
     # Dimensions of code snippet box
     code:
-      width:  500
-      height: 150
+      width:  800
+      height: 300
     # Dimensions of the notes text area
     notes:      
       width:  "520px"
@@ -163,6 +160,10 @@ MC:
     ana_key:           "Unique description used for referencing analysis and in other elements (e.g. reporting)."
     show_code:         "Show analysis code"
     nca_intervals:     "Current NCA intervals"
+    ph:
+      text_ana_interval_start: 0
+      text_ana_interval_stop:  "number or Inf"
+      notes:                   "Optional NCA notes that will be carried over and used in other elements (e.g. reporting)."
   figures:
     fg_ind_obs:
       choice:  "Individual Profiles"   

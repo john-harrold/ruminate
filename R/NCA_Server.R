@@ -291,7 +291,7 @@ NCA_Server <- function(id,
       uiele = textInput(inputId      = NS(id, "text_ana_key"),
                         label        = NULL,
                         value        = value,
-                        placeholder  = state[["MC"]][["labels"]][["ph"]][["ana_key"]])
+                        placeholder  = state[["MC"]][["tooltips"]][["ph"]][["ana_key"]])
 
       uiele})
     #------------------------------------
@@ -326,7 +326,7 @@ NCA_Server <- function(id,
                            height       = state[["MC"]][["formatting"]][["notes"]][["height"]],
                            label        = NULL,
                            value        = value,
-                           placeholder  = state[["MC"]][["labels"]][["ph"]][["notes"]])
+                           placeholder  = state[["MC"]][["tooltips"]][["ph"]][["notes"]])
 
 
       uiele})
@@ -509,7 +509,7 @@ NCA_Server <- function(id,
           inputId   = NS(id, "text_ana_interval_stop"),
           label     = state[["MC"]][["labels"]][["text_ana_interval_stop"]],
           width     = state[["MC"]][["formatting"]][["text_ana_interval_stop"]][["width"]],
-          placeholder = state[["MC"]][["ph"]][["text_ana_interval_stop"]],
+          placeholder = state[["MC"]][["ph"]][["tooltips"]][["text_ana_interval_stop"]],
           value = value
           )
       uiele})
@@ -546,7 +546,7 @@ NCA_Server <- function(id,
           inputId   = NS(id, "text_ana_interval_start"),
           label     = state[["MC"]][["labels"]][["text_ana_interval_start"]],
           width     = state[["MC"]][["formatting"]][["text_ana_interval_start"]][["width"]],
-          placeholder = state[["MC"]][["ph"]][["text_ana_interval_start"]],
+          placeholder = state[["MC"]][["ph"]][["tooltips"]][["text_ana_interval_start"]],
           value = value
           )
       uiele})
