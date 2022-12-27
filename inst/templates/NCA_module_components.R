@@ -177,8 +177,8 @@ ui <- dashboardPage(
            ),
        fluidRow(
          box(title="Generated Code",
-           "NCA_ui_ace_code",
-           shinyAce::aceEditor(NS("NCA", "NCA_ui_ace_code")), width=12)),
+           "ui_nca_code",
+           shinyAce::aceEditor(NS("NCA", "ui_nca_code")), width=12)),
        fluidRow(
          box(title="Current Module State",
            verbatimTextOutput("ui_state"),width=12))

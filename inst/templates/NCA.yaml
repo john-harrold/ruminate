@@ -2,6 +2,9 @@ MC:
   code: # module specific code options
     readOnly: TRUE
     mode:     r
+  compact:
+    code:    TRUE 
+    clip:    TRUE 
   reporting:
     enabled: TRUE
     priority: 1
@@ -19,15 +22,27 @@ MC:
       height: 150
     # Dimensions of the notes text area
     notes:      
-      width:  "300px"
+      width:  "520px"
       height: "75px"
     # Width of textInput and selectInput UI elements in the
     # nca configuration
     nca_config_option:
       width: 150
     # Width of the figure preview (must be numeric)
+    # The options nrow and ncol refer to the default number of rows and
+    # columns when faceting. The options nrow_opt and nrow_col are values the
+    # user can select. 
+    # 
     preview:    
-      width:  800
+      width:           "100%"
+      height:          "600px"
+      nrow:            4
+      ncol:            6
+      nrow_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+      ncol_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+      logy:            TRUE
+      fig_type:        "report"
+      tab_type:        "report"
     # These apply to the intervals table
     intervals:  
       width:  600
@@ -40,36 +55,62 @@ MC:
       width:  375
     intervals_delete:  
       width:  75
-    button_ana_del:
-      size: "sm" 
-      block: TRUE
     button_ana_run:
       size: "sm" 
       block: TRUE
+    button_ana_del:
+      size: "sm" 
+      block: TRUE
+      tooltip: "Delete the current analysis."
+      tooltip_position: "right"
     button_ana_save:
       size: "sm" 
       block: TRUE
+      tooltip: "Save the caption and notes and apply the data view for the current analysis."
+      tooltip_position: "right"
     button_ana_clip:
       size: "sm" 
       block: TRUE
+      tooltip: "Copy the code to generate the current analysis to the clipboard."
+      tooltip_position: "right"
+    button_fg_ind_obs_save:
+      size: "sm" 
+      block: TRUE
+     #tooltip: "tooltip"
+     #tooltip_position: "right"
+    button_tb_ind_obs_save:
+      size: "sm" 
+      block: TRUE
+     #tooltip: "tooltip"
+     #tooltip_position: "right"
     button_ana_copy:
       size: "sm" 
       block: TRUE
+      tooltip: "Make a copy of the current analysis."
+      tooltip_position: "right"
     button_ana_new:
       size: "sm" 
       block: TRUE
+      tooltip: "Create a new analysis."
+      tooltip_position: "right"
     button_ana_add_int:
       size: "sm" 
       block: TRUE
     button_ana_use_scenario:
       size: "sm" 
       block: TRUE
+    check_fg_ind_obs:
+      width: 75
     text_ana_interval_start:
       width: 75 
     text_ana_interval_stop:
       width: 75 
     select_current_view:
       width: 200
+    select_ana_fig_view:
+      width: 250
+    select_ana_tab_view:
+      width: 250
     select_ana_col_id:
       width: 150
     select_ana_source_sampling: 
@@ -102,20 +143,34 @@ MC:
       width: 150
     select_ana_scenario:
       width: 150
+    select_fg_ind_obs_ncol:
+      width: 50
+    select_fg_ind_obs_nrow:
+      width: 50
+    select_fg_ind_obs_page:
+      width: 100
+    select_tb_ind_obs_page:
+      width: 100
   errors:
     nca_run_filed: "Unable to run PKNCA. Please, see below for details."
     bad_input: "Input error message"
     nca_no_fig: "There are no figures to display. You must run the analysis first"
+    nca_no_tab: "There are no tables to display. You must run the analysis first"
   tooltips:
     # Set to FALSE to disable tool tips for this module
     include: TRUE
     notes:             "Optional analysis notes that will be carried over and used in other elements (e.g. reporting)."
     ana_key:           "Unique description used for referencing analysis and in other elements (e.g. reporting)."
     show_code:         "Show analysis code"
+    nca_intervals:     "Current NCA intervals"
   figures:
     fg_ind_obs:
       choice:  "Individual Profiles"   
       subtext: "Faceted view of individual time-course"
+  tables:  
+    tb_ind_obs:
+      choice:  "Paginated Individual Data"       
+      subtext: "Listings of subject-level time-course data"
   labels:
     ana_key:                         "title/caption"
     new_ana:                         "New"
@@ -124,12 +179,26 @@ MC:
     del_ana:                         "Delete"
     copy_ana:                        "Copy"
     clip_ana:                        "Code"
+    fg_ind_obs_save:                 "Apply changes"
+    tb_ind_obs_save:                 "Apply changes"
     curr_anas_none:                  "No figures yet created"
-    ana_use_scenario:                "Use Analysis Template"
+    no_dataset:                      "No datasets available to analyze. You need to load a dataset to use this module."
+    ana_use_scenario:                "Analysis Template"
     ana_add_int:                     "Add Interval"
     no_intervals:                    "No intervals added yet"             
+    panel_analysis_opts:             "Analysis Options"
+    panel_figures:                   "Figures"
+    panel_tables:                    "Tables"
+    panel_nca_config:                "Configuration"
     text_ana_interval_start:         "Start"
     text_ana_interval_stop:          "End"  
+    head_intervals:                  "Analysis Time Intervals"
+    head_intervals_current:          "Current Intervals"
+    head_analysis_template:          "Use Analysis Template"
+    head_intervals_create:           "Create an Interval"
+    head_col_mapping:                "Identify Columns"
+    head_run_analysis:               "Run Analysis"
+    head_units:                      "Units"
     select_current_view:             "Data from"
     select_current_ana:              "Current NCA"
     select_ana_scenario:             NULL  # "Type of Analysis:"
@@ -147,8 +216,18 @@ MC:
     select_ana_units_conc:           "Concentration"
     select_ana_units_amt:            "Amount"
     select_ana_nca_parameters:       "Parameters"
+    select_fg_ind_obs_nrow:          "Rows"
+    select_fg_ind_obs_ncol:          "Columns"
+    select_fg_ind_obs_page:          "Show Page"
+    select_tb_ind_obs_page:          "Show Page"
+    check_fg_ind_obs_logy:           "Log 10 y-scale"
     switch_ana_include_units:        "Include Units"
+    switch_ana_fig:                  NULL          
     switch_ana_fig_interactive:      "Interactive"
+    switch_ana_fig_report:           "Report Preview"     
+    switch_ana_tab:                  NULL          
+    switch_ana_tab_interactive:      "Interactive"
+    switch_ana_tab_report:           "Report Preview"
     select_ana_source_sampling:      "Data Sampling"
     busy:
       run_nca:                       "Running NCA be patient."
@@ -998,31 +1077,3 @@ MC:
         Column:      "Dose cycle"
         Required:    "yes"
         Description: "Current dose cycle"
-##  # To specify another conversion rule just create a new entry
- #  # These are convsion rules for the 
- #  conversion:
- #    - entry: 
- #        type:  "clearance"
- #        orig:  "(mg/kg)/(hr*mg/L)" 
- #        std:   "L/hr/kg" 
- #        fact:  NA
- #        vol:   "L"
- #        amt:   NULL
- #        time:  "hr"
- #    - entry: 
- #        type:  "volume"
- #        orig:  "mg/(ng/mL)" 
- #        std:   "L" 
- #        fact:  NA  
- #        vol:   "L"
- #        amt:   NULL
- #        time:  NULL
- #    - entry: 
- #        type:  "volume"
- #        orig:  "mg/(ng/mL)" 
- #        std:   "mL" 
- #        fact:  1000
- #        vol:   "mL"
- #        amt:   NULL
- #        time:  NULL
-

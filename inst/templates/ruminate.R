@@ -5,6 +5,7 @@ library(shinydashboard)
 library(ggpubr)
 library(plotly)
 library(shinybusy)
+library(prompter)
 library(utils)
 
 CSS <- "
@@ -37,7 +38,10 @@ ui <- dashboardPage(
   ),
     tabItems(
        tabItem(tabName="nca", 
-               htmlOutput(NS("NCA",  "NCA_ui_compact")),
+               box(title="Run Non-Compartmental Analysis", width=12,
+               fluidRow( prompter::use_prompt(),
+               column(width=12,
+               htmlOutput(NS("NCA",  "NCA_ui_compact"))))),
                ),
        tabItem(tabName="loadsave",
                box(title="Load Dataset", width=12,
@@ -60,7 +64,10 @@ ui <- dashboardPage(
                ),
        tabItem(tabName="wrangle",
                box(title="Transform and Create Views of Your Data", width=12,
-               htmlOutput(NS("DW",  "DW_ui_compact")))),
+               fluidRow(
+               column(width=12,
+               htmlOutput(NS("DW",  "DW_ui_compact")))))
+               ),
        tabItem(tabName="plot",
                box(title="Visualize Data", width=12,
                htmlOutput(NS("FG",  "FG_ui_compact"))))
@@ -77,10 +84,11 @@ server <- function(input, output, session) {
   #FM_load_test_state(session=session, react_state=react_FM, input=input)
 
   # Module servers
-  ASM_Server(id="ASM",                                           react_state=react_FM)
-  UD_Server( id="UD", id_ASM = "ASM",                            react_state=react_FM)
-  DW_Server( id="DW", id_ASM = "ASM",id_UD = "UD",               react_state=react_FM)
-  FG_Server( id="FG", id_ASM = "ASM",id_UD = "UD", id_DW = "DW", react_state=react_FM)
+  ASM_Server(id="ASM",                                              react_state=react_FM)
+  UD_Server( id="UD",  id_ASM = "ASM",                              react_state=react_FM)
+  DW_Server( id="DW",  id_ASM = "ASM",  id_UD = "UD",               react_state=react_FM)
+  FG_Server( id="FG",  id_ASM = "ASM",  id_UD = "UD", id_DW = "DW", react_state=react_FM)
+  NCA_Server(id="NCA", id_ASM = "ASM",  id_UD = "UD", id_DW = "DW", react_state=react_FM)
 }
 
 shinyApp(ui, server)
