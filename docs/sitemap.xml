@@ -76,9 +76,15 @@
     <loc>/reference/nca_builder.html</loc>
   </url>
   <url>
+    <loc>/reference/ruminate-package.html</loc>
+  </url>
+  <url>
     <loc>/reference/ruminate.html</loc>
   </url>
   <url>
     <loc>/reference/run_nca_components.html</loc>
+  </url>
+  <url>
+    <loc>/reference/run_ruminate.html</loc>
   </url>
 </urlset>

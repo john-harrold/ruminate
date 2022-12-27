@@ -1,14 +1,25 @@
+#' ruminate: Shiny app and module to facilitate pharamacometrics analysis
+#'
+#' This is done by creating a Shiny interface to different tools for data
+#' transformation (`dplyr` and `tidyr`), plotting (`ggplot2`), and
+#' noncompartmental analysis (`PKNCA`). These results can be reported in Excel,
+#' Word or PowerPoint. The state of the app can be saved and loaded at a later
+#' date. When saved, a script is generated to reproduce the different actions in
+#' the Shiny interface.
+#'
+#' @seealso \url{https://ruminate.ubiquity.tools/}
+#' @docType package
+#' @name ruminate
+"_PACKAGE"
 #'@import rhandsontable
 #'@import shiny
 #'@importFrom digest digest
 #'@importFrom shinyAce aceEditor updateAceEditor
 
-
 # JMH
 # Load state notes:
 # - Replace current state with loaded state
 # - Change button values to current or zero
-
 
 #'@export
 #'@title Fetch Non-Compartmental Analysis State
@@ -5078,5 +5089,5 @@ obj}
 #'@return Nothing.
 #'\itemize{
 #'}
-ruminate = function(){
+run_ruminate = function(){
   shiny::runApp(system.file(package="ruminate", "templates","ruminate.R"))}

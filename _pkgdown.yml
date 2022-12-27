@@ -16,12 +16,15 @@ template:
     bg: "#F4EACA"
     fg: "#00445B"
 reference:
-# # - contents:
-# #   - ruminate
-#   - title: "NCA Module functions"
-#   - contents:
-#     - autocast
-#     - starts_with("NCA_")
+#  - contents:
+#    - appply_route_map
+#    - mk_figure_ind_obs
+#    - mk_table_ind_obs
+#    - nca_builder
+#    - nca_components
+#  - title: "NCA Module functions"
+#  - contents:
+#    - starts_with("NCA_")
 navbar:
   left:
   - text: "Functions"
