@@ -11,6 +11,7 @@
 #' @docType package
 #' @name ruminate
 "_PACKAGE"
+
 #'@import rhandsontable
 #'@import shiny
 #'@importFrom digest digest
@@ -18,8 +19,8 @@
 
 # JMH
 # Load state notes:
-# - Replace current state with loaded state
-# - Change button values to current or zero
+# - Add reporting elements
+# - Create NCA_test_mksession()
 
 #'@export
 #'@title Fetch Non-Compartmental Analysis State
@@ -1835,6 +1836,66 @@ NCA_Server <- function(id,
 
       uiele})
     #------------------------------------
+    # group column
+    output$ui_nca_ana_col_analyte = renderUI({
+
+      react_state[[id_UD]]
+      react_state[[id_DW]]
+      react_state[[id_ASM]]
+
+      input[["button_ana_new"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["button_ana_save"]]
+      input[["select_current_ana"]]
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+
+      current_ana = NCA_fetch_current_ana(state)
+      uiele = NULL
+      if(!is.null(current_ana[["ana_dsview"]])){
+        if(!is.null(state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]])){
+
+          # Pulling out the dataset list
+          ds =  state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]]
+
+          # These are the columns in the dataset:
+          dscols = names(ds[["DS"]])
+
+          # Finding the value to use:
+          value = NCA_find_col(
+            curr_ana = current_ana[["col_analyte"]],
+            curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_analyte"]],
+            patterns = state[["MC"]][["detect_col"]][["analyte"]],
+            null_ok  = TRUE,
+            dscols   = dscols)
+
+          #JMH add multiple option to NCA_find_col
+          # react to dose, id and time and remove those options
+
+          # Creating the selection input
+          uiele =
+          shinyWidgets::pickerInput(
+            inputId    = NS(id, "select_ana_col_analyte"),
+            choices    = c("N/A", dscols),
+            label      = state[["MC"]][["labels"]][["select_ana_col_analyte"]],
+            selected   = value,
+            multiple   = FALSE,
+            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            width      = state[["MC"]][["formatting"]][["select_ana_col_analyte"]][["width"]],
+            inline     = TRUE)
+        }
+      }
+      uiele})
+    #------------------------------------
     # Specifying Units
     # include units checkbox
     output$ui_nca_ana_check_units = renderUI({
@@ -2444,6 +2505,7 @@ NCA_Server <- function(id,
           #tagList(rhandsontable::rHandsontableOutput(NS(id, "hot_nca_intervals"))),
           tags$br(),
           tags$h3(state[["MC"]][["labels"]][["head_col_mapping"]]),
+          tags$h4(state[["MC"]][["labels"]][["head_col_mapping_required"]]),
            div(style="display:inline-block",
              htmlOutput(NS("NCA", "ui_nca_ana_col_id"))),
            div(style="display:inline-block",
@@ -2453,15 +2515,19 @@ NCA_Server <- function(id,
            div(style="display:inline-block",
              htmlOutput(NS("NCA", "ui_nca_ana_col_conc"))),
            div(style="display:inline-block",
-             htmlOutput(NS("NCA", "ui_nca_ana_col_group"))),
-           div(style="display:inline-block",
              htmlOutput(NS("NCA", "ui_nca_ana_col_dose"))),
            div(style="display:inline-block",
              htmlOutput(NS("NCA", "ui_nca_ana_col_route"))),
            div(style="display:inline-block",
-             htmlOutput(NS("NCA", "ui_nca_ana_col_dur"))),
-           div(style="display:inline-block",
              htmlOutput(NS("NCA", "ui_nca_ana_col_cycle"))),
+          tags$br(),
+          tags$h4(state[["MC"]][["labels"]][["head_col_mapping_optional"]]),
+           div(style="display:inline-block",
+             htmlOutput(NS("NCA", "ui_nca_ana_col_group"))),
+           div(style="display:inline-block",
+             htmlOutput(NS("NCA", "ui_nca_ana_col_analyte"))),
+           div(style="display:inline-block",
+             htmlOutput(NS("NCA", "ui_nca_ana_col_dur"))),
           tags$br(),
           tags$h3(state[["MC"]][["labels"]][["head_units"]]),
           div(style="display:inline-block",
@@ -2498,25 +2564,25 @@ NCA_Server <- function(id,
               title = NULL,
               # The id lets us use input$tabset1 on the server to find the current tab
               id = NS(id, "tabset_nca_optons"), # height = "250px",
-              tabPanel(id=NS(id, "panel_analysis_opts"), 
-                       title=tagList(shiny::icon("magnifying-glass-chart"), 
+              tabPanel(id=NS(id, "panel_analysis_opts"),
+                       title=tagList(shiny::icon("magnifying-glass-chart"),
                                      state[["MC"]][["labels"]][["panel_analysis_opts"]]),
                 tagList(
                 uiele_nca_options
                 # htmlOutput(NS(id, "ui_nca_ana_results_fig"))
                 )
               ),
-              tabPanel(id=NS(id, "panel_figure"), 
-                       title=tagList(shiny::icon("chart-line"), 
+              tabPanel(id=NS(id, "panel_figure"),
+                       title=tagList(shiny::icon("chart-line"),
                                      state[["MC"]][["labels"]][["panel_figures"]]),
                 htmlOutput(NS(id, "ui_nca_ana_results_fig"))
               ),
-              tabPanel(id=NS(id, "panel_tables"),  
-                       title=tagList(shiny::icon("table"), 
+              tabPanel(id=NS(id, "panel_tables"),
+                       title=tagList(shiny::icon("table"),
                                      state[["MC"]][["labels"]][["panel_tables"]]),
                 htmlOutput(NS(id, "ui_nca_ana_results_tab"))
               ),
-              tabPanel(id=NS(id, "panel_nca_config"), 
+              tabPanel(id=NS(id, "panel_nca_config"),
                        title=tagList(shiny::icon("gear"),
                                      state[["MC"]][["labels"]][["panel_nca_config"]]),
                 htmlOutput(NS(id, "ui_nca_ana_options"))
@@ -2768,11 +2834,11 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
     if(state[["NCA"]][["isgood"]]){
       state[["NCA"]][["DSV"]] = FM_fetch_ds(state, session, c(id_UD, id_DW))
     } else {
-      state = NCA_init_state(FM_yaml_file, 
-                             MOD_yaml_file, 
-                             id, 
-                             id_UD, 
-                             id_DW, 
+      state = NCA_init_state(FM_yaml_file,
+                             MOD_yaml_file,
+                             id,
+                             id_UD,
+                             id_DW,
                              session)
     }
   }
@@ -3246,6 +3312,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
     "select_ana_col_route"       = "col_route" ,
     "select_ana_col_cycle"       = "col_cycle" ,
     "select_ana_col_group"       = "col_group",
+    "select_ana_col_analyte"     = "col_analyte",
     "select_ana_fig_view"        = "fig_view",
     "select_ana_tab_view"        = "tab_view"
   )
@@ -3457,7 +3524,7 @@ res}
 
 #'@export
 #'@title Fetch Module Datasets
-#'@description Fetches the datasets contained in the model
+#'@description Fetches the datasets contained in the module 
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@return Character object vector with the lines of code
 #'@return list containing the following elements
@@ -3612,6 +3679,9 @@ NCA_new_ana    = function(state){
   nca_def[["col_dur"]] = NCA_find_col(
     patterns = state[["MC"]][["detect_col"]][["dur"]],
     dscols   = dscols)
+  nca_def[["col_analyte"]] = NCA_find_col(
+    patterns = state[["MC"]][["detect_col"]][["analyte"]],
+    dscols   = dscols)
   nca_def[["col_conc"]] = NCA_find_col(
     patterns = state[["MC"]][["detect_col"]][["conc"]],
     dscols   = dscols)
@@ -3684,19 +3754,19 @@ state}
 
 #'@export
 #'@title Determines Default Column Name
-#'@description Based on the current analysis, value from the UI, an optional list of
-#'patterns to search, column names from a dataset, and an optional list of
-#'column names to exclude it tries to find a default value for a column in the
-#'analysis (e.g. dose, concentration, etc).
+#'@description Based on the current analysis, value from the UI, an optional
+#'list of patterns to search, and column names from a dataset this function
+#'tries to find a default value for a column in the analysis (e.g. subject id,
+#'dose, concentration, etc).
 #'
-#' - Excluded columns are removed from dscols
+#'Generally the following is done:
 #'
-#' - If curr_ui has a none NULL non "" value it is compared to dscols. If it
+#' - If curr_ui has a non-NULL, non-"" value it is compared to dscols. If it
 #'   is found there that value is returned.
 #'
-#' - If not then the patterns are considered. IF they are not null they are
-#'   compared sequentially to the columns names. The first match found is
-#'   returned.
+#' - If not then the patterns are considered. If the patterns from the YAML
+#'   file are not NULL they are compared sequentially to the columns names.
+#'   The first match found is returned.
 #'
 #' - If nothing is found then the first value of dscols is returned.
 #'
@@ -3704,27 +3774,18 @@ state}
 #'@param curr_ui  Current value in UI
 #'@param patterns List of regular expression patterns to consider.
 #'@param dscols   Columns from the dataset.
-#'@param excol    Columns to exclude from consideration (default: \code{NULL}).
 #'@param null_ok  Logical value indicating if a null result (nothing found) is
 #'       OK (default: \code{FALSE})
-#'@return Value List containing the details of the current analysis. The structure
-#'of this list is the same as the structure of \code{state$NCA$anas} in the output of
-#'\code{ANA_fetch_state()}.
+#'@return Name of column found based on the rules above.}
 NCA_find_col             = function(curr_ana = NULL,
                                     curr_ui  = NULL,
                                     patterns = NULL,
                                     dscols,
-                                    excol=NULL,
                                     null_ok = FALSE){
 
-  value = NULL
-
+  value     = NULL
   COL_FOUND = FALSE
 
-  if(!is.null(excol)){
-    browser()
-    # Removing excol from dscols
-  }
 
   # JMH add curr_ana parsing here
 
@@ -3781,7 +3842,7 @@ value}
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@return List containing the details of the current analysis. The structure
 #'of this list is the same as the structure of \code{state$NCA$anas} in the output of
-#'\code{ANA_fetch_state()}.
+#'\code{NCA_fetch_state()}.
 NCA_fetch_current_ana    = function(state){
 
   # Current analysis ID
@@ -4079,7 +4140,6 @@ NCA_process_current_ana = function(state){
   }
 
   # Checking route information:
-
   # Applying the route mapping
   route_map = state[["MC"]][["detect_route"]]
   DS_routed = apply_route_map(route_map=route_map, route_col=current_ana[["col_route"]], DS = ds[["DS"]])
@@ -4093,7 +4153,50 @@ NCA_process_current_ana = function(state){
     amsgs = c(amsgs, paste0("Route  column, ", current_ana[["col_route"]], ", should be either: ", paste0(OK_ROUTES, collapse = ", ")))
   }
 
+  # Checking column specifications for uniqueness. We need
+  # only 1 observation for each TIME, GROUP, ANALYTE combination
+  unique_cols = c()
+  # The time, cycle and id columns are required:
+  if(current_ana[["col_time"]] != ""){
+    unique_cols = c(unique_cols,  current_ana[["col_time"]]  )
+  }
+  if(current_ana[["col_id"]] != ""){
+    unique_cols = c(unique_cols,  current_ana[["col_id"]]  )
+  }
+  if(current_ana[["col_cycle"]] != ""){
+    unique_cols = c(unique_cols,  current_ana[["col_cycle"]]  )
+  }
+  # Group can be empty as well
+  if(current_ana[["col_group"]] != ""){
+    unique_cols = c(unique_cols,  current_ana[["col_group"]]  )
+  }
+  # analyte is select 1 so if it's not used it will be N/A
+  if(current_ana[["col_analyte"]] != "N/A"){
+    unique_cols = c(unique_cols,  current_ana[["col_analyte"]]  )
+  }
 
+  tmp_ds =  ds[["DS"]] |>
+    dplyr::group_by_at(unique_cols) |>
+    dplyr::mutate(NUNIQUE = length(!!as.name(current_ana[["col_id"]])))
+
+  if(any(tmp_ds[["NUNIQUE"]]> 1)){
+    isgood = FALSE
+    amsgs = c(amsgs, paste0("The combination of", 
+                            state[["MC"]][["labels"]][["select_ana_col_id"]],      ", ",
+                            state[["MC"]][["labels"]][["select_ana_col_time"]],    ", ",
+                            state[["MC"]][["labels"]][["select_ana_col_cycle"]],   ", ",
+                            state[["MC"]][["labels"]][["select_ana_col_analyte"]], ", ",
+                            state[["MC"]][["labels"]][["select_ana_col_group"]], 
+                            "columns must be unique."))
+    amsgs = c(amsgs, paste0("This can commonly happen when you have multiple analyte and forgot to specify the analyte column. "))
+    amsgs = c(amsgs, paste0("Current values are:"))
+    amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_id"]],      ": ", current_ana[["col_id"]]       ))
+    amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_time"]],    ": ", current_ana[["col_time"]]     ))
+    amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_cycle"]],   ": ", current_ana[["col_cycle"]]    ))
+    amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_analyte"]], ": ", current_ana[["col_analyte"]]  ))
+    amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_group"]],   ": ", paste0(current_ana[["col_group"]], collapse="\n")    ))
+  }
+  
   #---------------------------------------------
   # Saving the status and messages
   current_ana[["isgood"]] = isgood
@@ -4150,17 +4253,18 @@ nca_builder = function(state){
   # current analysis successfully
   if(current_ana[["isgood"]]){
 
-    # Pulling out all the column information and
-    # grouping it for the command construction below
-    col_id    = current_ana[["col_id"]]
-    col_conc  = current_ana[["col_conc"]]
-    col_dose  = current_ana[["col_dose"]]
-    col_dur   = current_ana[["col_dur"]]
-    col_route = current_ana[["col_route"]]
-    col_cycle = current_ana[["col_cycle"]]
-    col_time  = current_ana[["col_time"]]
-    col_ntime = current_ana[["col_ntime"]]
-    col_group = current_ana[["col_group"]]
+    # Pulling out all the column information to
+    # use in the command construction below
+    col_id        = current_ana[["col_id"]]
+    col_conc      = current_ana[["col_conc"]]
+    col_dose      = current_ana[["col_dose"]]
+    col_dur       = current_ana[["col_dur"]]
+    col_analyte   = current_ana[["col_analyte"]]
+    col_route     = current_ana[["col_route"]]
+    col_cycle     = current_ana[["col_cycle"]]
+    col_time      = current_ana[["col_time"]]
+    col_ntime     = current_ana[["col_ntime"]]
+    col_group     = current_ana[["col_group"]]
 
     #--------------------------
     # plus columns
@@ -4187,6 +4291,12 @@ nca_builder = function(state){
       col_route)
     if(col_group != ""){
       dose_select_cols = c(dose_select_cols, col_group)
+    }
+    if(col_dur != "N/A"){
+      dose_select_cols = c(dose_select_cols, col_dur)
+    }
+    if(col_analyte != "N/A"){
+      dose_select_cols = c(dose_select_cols, col_analyte)
     }
     #--------------------------
     # Converting sampling into boolean
@@ -4307,7 +4417,12 @@ nca_builder = function(state){
     # Constructing conc_obj
     col_dur_component =  NULL
     if(col_dur != "N/A"){
-      col_dur_component = paste0('duration = "', col_dur, '"')
+      col_dur_component = paste0(', duration = "', col_dur, '"')
+    }
+
+    col_analyte_component = NULL
+    if(col_analyte != "N/A"){
+    col_analyte_component =paste0("/",col_analyte)
     }
     cmd=c(cmd,
       "",
@@ -4317,7 +4432,9 @@ nca_builder = function(state){
         "PKNCA::PKNCAconc(",
           nca_ds_object_name, ",",
           col_conc, "~",col_time,"|",
-          paste(plus_cols, collapse="+"), ", ",
+          paste(plus_cols, collapse="+"),
+          col_analyte_component,
+          ", ",
           'time.nominal = "',col_ntime,'", ',
           'sparse = ', is_sparse,
           col_dur_component,
@@ -4736,6 +4853,7 @@ state}
 #'(pages) if necessary.
 #'@param nca_res Output of PKNCA.
 #'@param not_sampled Character string to use for missing data when pivoting.
+#'@param blq         Character string to use to indicate BLQ data.
 #'@param digits   Number of significant figures to report (set to \code{NULL}
 #'to disable rounding)
 #'@param max_col Maximum number of columns to have on a page. Spillover will
@@ -4756,9 +4874,10 @@ mk_table_ind_obs = function(
 
 
   # Extracting the needed column names:
-  col_id   = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
-  col_time = nca_res[["data"]][["conc"]][["columns"]][["time"]]
-  col_conc = nca_res[["data"]][["conc"]][["columns"]][["concentration"]]
+  col_id      = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
+  col_time    = nca_res[["data"]][["conc"]][["columns"]][["time"]]
+  col_conc    = nca_res[["data"]][["conc"]][["columns"]][["concentration"]]
+  col_analyte = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_analyte"]]
 
   # Plucking out the units for time and conc
   time_units = ""
@@ -4771,7 +4890,7 @@ mk_table_ind_obs = function(
   }
 
   # Retaining only the needed columns
-  cols_keep = c(col_id, col_time, col_conc)
+  cols_keep = c(col_id, col_time, col_analyte, col_conc)
 
   # These are the columns that contain the
   # row headers for the table
@@ -4784,6 +4903,20 @@ mk_table_ind_obs = function(
     dplyr::rename(TIME = dplyr::all_of(col_time))|>
     dplyr::rename(ID   = dplyr::all_of(col_id))
 
+  # BILL how does PKNCA handle units with multiple analytes?
+  # If we have an analyte column we rename it:
+  row_header_cols    = c()
+  row_header_label   = c()
+  row_header_lengths = c()
+  analyte_units    = NULL
+  if(length(col_analyte) == 1){
+    all_data = dplyr::rename(all_data, ANALYTE=col_analyte) |>
+               dplyr::arrange(!!as.name("ANALYTE"), !!as.name("TIME"))
+    row_header_cols    = c("ANALYTE")
+    row_header_label   = c("Analyte")
+    row_header_lengths = c(1)
+    analyte_units    = " "
+  }
 
   # Applying significant digits
   if(!is.null(digits)){
@@ -4791,18 +4924,27 @@ mk_table_ind_obs = function(
     # straight forward
     all_data[["CONC"]] = as.character(signif(all_data[["CONC"]], digits))
     all_data[["TIME"]] = as.character(floor(all_data[["TIME"]]) + signif(all_data[["TIME"]] %% 1, digits))
+  } else {
+    all_data[["CONC"]] = as.character(all_data[["CONC"]])
+    all_data[["TIME"]] = as.character(all_data[["TIME"]])
   }
 
-
   if(rows_by == "time"){
-    row_header_cols = c("TIME")
+    row_header_cols = c("TIME",  row_header_cols)
+    row_header_label   = c("Time", row_header_label)
+    row_header_lengths = c(     1, row_header_lengths)
+    units_data = c(paste0("(", time_units,")"), analyte_units)
     col_header_label = "Concentration ===CONCUNITS=== for ID"
     all_data = tidyr::pivot_wider(all_data, names_from="ID", values_from="CONC", values_fill=not_sampled)
   } else  if(rows_by == "id"){
-    row_header_cols = c("ID")
+    row_header_cols    = c("ID", row_header_cols)
+    row_header_label   = c("ID", row_header_label)
+    row_header_lengths = c(   1, row_header_lengths)
+    units_data = c("--", analyte_units)
     col_header_label = "Concentration ===CONCUNITS=== for ID Observation Time ===TIMEUNITS==="
     all_data = tidyr::pivot_wider(all_data, names_from="TIME", values_from="CONC", values_fill=not_sampled)
   }
+
 
   col_header_label = stringr::str_replace(col_header_label, "===CONCUNITS===", paste0("(", conc_units, ")"))
   col_header_label = stringr::str_replace(col_header_label, "===TIMEUNITS===", paste0("(", time_units, ")"))
@@ -4853,19 +4995,17 @@ mk_table_ind_obs = function(
 
     tbl_key = paste0("Table_", tbl_idx)
 
-
     line_thick = officer::fp_border(color="black", width=2)
     line_thin  = officer::fp_border(color="black", width=0.5)
-
     # Creating a flextable version of the table
     tp_ft = flextable::flextable(tp_df)                                |>
       flextable::border_remove()                                       |>
       flextable::delete_part(part="header")                            |>
       flextable::add_header_row(
-        values = c(paste0("(", time_units,")"), names(tbl_data)))      |>
+        values = c(units_data, names(tbl_data)))                       |>
       flextable::add_header_row(
-        values = c("Time", col_header_label),
-        colwidths = c(ncol(rh_data), ncol(tbl_data)))                  |>
+        values    = c(row_header_label,   col_header_label),
+        colwidths = c(row_header_lengths, ncol(tbl_data   )))          |>
       flextable::vline(border=line_thin, j=1,  part="all")             |>
       #flextable::vline_left(border=line_thick,  part="all")            |>
       #flextable::vline(border=line_thick, j=ncol(tp_df), part="all")   |>
@@ -4900,8 +5040,15 @@ res}
 #'@description Takes the output of PKNCA and creates `ggplot` figures faceted
 #'by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
 #'@param nca_res Output of PKNCA.
-#'@param nfrows    Number of facet rows per page.
-#'@param nfcols    Number of facet cols per page.
+#'@param OBS_LAB    Label of the observation axis with optional ===CONCUNITS=== placeholder for units. 
+#'@param TIME_LAB   Label of the time axis with optional ===TIMEUNITS=== placeholder for units. 
+#'@param OBS_STRING Label for observation data.
+#'@param BLQ_STRING Label for BLQ data. 
+#'@param NA_STRING  Label for missing data.
+#'@param log_sacle  Boolean variable to control y-scale (\code{TRUE}: Log 10, \code{FALSE}: linear).
+#'@param scale      String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}.
+#'@param nfrows     Number of facet rows per page.
+#'@param nfcols     Number of facet cols per page.
 #'@return list containing the following elements
 #'\itemize{
 #'}
@@ -4930,13 +5077,15 @@ mk_figure_ind_obs = function(
   OBS_LAB  = stringr::str_replace(OBS_LAB,  "===CONCUNITS===", paste0("(", conc_units, ")"))
   TIME_LAB = stringr::str_replace(TIME_LAB, "===TIMEUNITS===", paste0("(", time_units, ")"))
 
-  col_id    = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
-  col_time  = nca_res[["data"]][["conc"]][["columns"]][["time"]]
-  col_conc  = nca_res[["data"]][["conc"]][["columns"]][["concentration"]]
-  col_group = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_vars"]]
+  col_id      = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
+  col_time    = nca_res[["data"]][["conc"]][["columns"]][["time"]]
+  col_conc    = nca_res[["data"]][["conc"]][["columns"]][["concentration"]]
+  col_group   = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_vars"]]
+  col_analyte = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_analyte"]]
+
 
   # Retaining only the needed columns
-  cols_keep = unique(c(col_id, col_time, col_conc, col_group))
+  cols_keep = unique(c(col_id, col_time, col_conc, col_group, col_analyte))
 
   # If this value is NULL it will be set to the lowest value for that
   # individual
@@ -4975,6 +5124,21 @@ mk_figure_ind_obs = function(
   # This is a list where we'll store the figures
   figures = list()
 
+  if(length(col_analyte) > 0){
+    col_group_all = c(col_group, col_analyte)
+  } else {
+    col_group_all = c(col_group)
+  }
+
+
+  # Constructing the mutate command based on the col_group_all above
+  mucmd = c(
+    "all_data = dplyr::mutate(all_data, GROUP_ALL = paste0(",
+    paste(col_group_all, collapse=",':',"),
+    "))"
+  )
+  eval(parse(text=paste0(mucmd, collapse="")))
+
   fig_idx=1
   while(length(subs_left) > 0){
 
@@ -4992,9 +5156,28 @@ mk_figure_ind_obs = function(
     # This dataset contains the subset of the current subjects for plotting.
     plot_ds = dplyr::filter(all_data, ID %in% subs_current)
 
+
     p = ggplot2::ggplot(data = plot_ds)
-    p = p + ggplot2::geom_line( ggplot2::aes(x=.data[["TIME"]], y=.data[["CONC"]], group=!!as.name(col_group)), linetype='dashed', color='grey')
-    p = p + ggplot2::geom_point(ggplot2::aes(x=.data[["TIME"]], y=.data[["CONC"]], group=!!as.name(col_group), color=.data[["PKNCA_DATA_TYPE"]]))
+
+    p = p + ggplot2::geom_line( ggplot2::aes(x=.data[["TIME"]],
+                                             y=.data[["CONC"]],
+                                             group=.data[["GROUP_ALL"]]),
+                                             linetype='dashed', color='grey')
+
+    if(length(col_analyte) == 1){
+      # If there is an analyte we set the shape based on the analyte column
+      p = p + ggplot2::geom_point(ggplot2::aes(x     = .data[["TIME"]],
+                                               y     = .data[["CONC"]],
+                                               shape = !!as.name(col_analyte),
+                                               group = .data[["GROUP_ALL"]],
+                                               color = .data[["PKNCA_DATA_TYPE"]]))
+
+    } else {
+      p = p + ggplot2::geom_point(ggplot2::aes(x     = .data[["TIME"]],
+                                               y     = .data[["CONC"]],
+                                               group = .data[["GROUP_ALL"]],
+                                               color = .data[["PKNCA_DATA_TYPE"]]))
+    }
     p = p + ggplot2::facet_wrap(.~.data[["ID"]], ncol=nfcols, nrow=nfrows, scales=scales)
     p = p + ggplot2::theme_light()
     if(log_scale){

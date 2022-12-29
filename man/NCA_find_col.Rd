@@ -9,7 +9,6 @@ NCA_find_col(
   curr_ui = NULL,
   patterns = NULL,
   dscols,
-  excol = NULL,
   null_ok = FALSE
 )
 }
@@ -22,28 +21,25 @@ NCA_find_col(
 
 \item{dscols}{Columns from the dataset.}
 
-\item{excol}{Columns to exclude from consideration (default: \code{NULL}).}
-
 \item{null_ok}{Logical value indicating if a null result (nothing found) is
 OK (default: \code{FALSE})}
 }
 \value{
-Value List containing the details of the current analysis. The structure
-of this list is the same as the structure of \code{state$NCA$anas} in the output of
-\code{ANA_fetch_state()}.
+Name of column found based on the rules above.}
 }
 \description{
-Based on the current analysis, value from the UI, an optional list of
-patterns to search, column names from a dataset, and an optional list of
-column names to exclude it tries to find a default value for a column in the
-analysis (e.g. dose, concentration, etc).
+Based on the current analysis, value from the UI, an optional
+list of patterns to search, and column names from a dataset this function
+tries to find a default value for a column in the analysis (e.g. subject id,
+dose, concentration, etc).
+
+Generally the following is done:
 \itemize{
-\item Excluded columns are removed from dscols
-\item If curr_ui has a none NULL non "" value it is compared to dscols. If it
+\item If curr_ui has a non-NULL, non-"" value it is compared to dscols. If it
 is found there that value is returned.
-\item If not then the patterns are considered. IF they are not null they are
-compared sequentially to the columns names. The first match found is
-returned.
+\item If not then the patterns are considered. If the patterns from the YAML
+file are not NULL they are compared sequentially to the columns names.
+The first match found is returned.
 \item If nothing is found then the first value of dscols is returned.
 }
 }

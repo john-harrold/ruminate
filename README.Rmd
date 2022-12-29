@@ -59,7 +59,6 @@ Note that because `ruminate` depends on `formods` you will need to first install
 
 
 ``` r 
-library(shiny)
 library(ruminate)
-ruminate()
+run_ruminate()
 ```

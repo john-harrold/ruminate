@@ -18,6 +18,8 @@ mk_table_ind_obs(
 
 \item{not_sampled}{Character string to use for missing data when pivoting.}
 
+\item{blq}{Character string to use to indicate BLQ data.}
+
 \item{digits}{Number of significant figures to report (set to \code{NULL}
 to disable rounding)}
 

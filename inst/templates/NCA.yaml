@@ -130,6 +130,8 @@ MC:
       width: 150
     select_ana_col_group:
       width: 150
+    select_ana_col_analyte:
+      width: 150
     select_ana_units_dose:
       width: 150
     select_ana_units_time:
@@ -193,11 +195,14 @@ MC:
     panel_nca_config:                "Configuration"
     text_ana_interval_start:         "Start"
     text_ana_interval_stop:          "End"  
+    # Headings used in the UI
     head_intervals:                  "Analysis Time Intervals"
     head_intervals_current:          "Current Intervals"
     head_analysis_template:          "Use Analysis Template"
     head_intervals_create:           "Create an Interval"
     head_col_mapping:                "Identify Columns"
+    head_col_mapping_required:       "Required"
+    head_col_mapping_optional:       "Optional"
     head_run_analysis:               "Run Analysis"
     head_units:                      "Units"
     select_current_view:             "Data from"
@@ -212,6 +217,7 @@ MC:
     select_ana_col_route:            "Route"
     select_ana_col_cycle:            "Cycle"
     select_ana_col_group:            "Other Grouping"
+    select_ana_col_analyte:          "Analyte"
     select_ana_units_time:           "Time"
     select_ana_units_dose:           "Dose"
     select_ana_units_conc:           "Concentration"
@@ -375,15 +381,16 @@ MC:
   #
   # If you set it to NULL no attempt will be made to detect the column.
   detect_col:
-    id:     ["^(?i)id$",    "(?i)subject",    "(?i)animal"]
-    time:   ["^(?i)time",   "(?i)ntime"  ]
-    ntime:  ["^(?i)ntime",  "(?i)time"   ]
-    conc:   ["^(?i)conc",   "^(?i)dv$",  ]
-    dose:   ["(?i)dose"]
-    route:  ["(?i)route"]
-    cycle:  ["(?i)cycle",   "(?i)dose_num"]
-    grouping: NULL
-    dur:      NULL
+    id:      ["^(?i)id$",    "(?i)subject",    "(?i)animal"]
+    time:    ["^(?i)time",   "(?i)ntime"  ]
+    ntime:   ["^(?i)ntime",  "(?i)time"   ]
+    conc:    ["^(?i)conc",   "^(?i)dv$",  ]
+    dose:    ["(?i)dose"]
+    route:   ["(?i)route"]
+    cycle:   ["(?i)cycle",   "(?i)dose_num"]
+    group:   NULL
+    analyte: NULL
+    dur:     NULL
   # Routes may be specified in the dataset in a more detailed or convenient 
   # format than what is needed for analysis. Here you can specify patterns
   # that can be used to detect routes. For details on the regular expressions

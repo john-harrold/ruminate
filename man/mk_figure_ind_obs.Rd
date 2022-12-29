@@ -20,9 +20,23 @@ mk_figure_ind_obs(
 \arguments{
 \item{nca_res}{Output of PKNCA.}
 
+\item{OBS_LAB}{Label of the observation axis with optional ===CONCUNITS=== placeholder for units.}
+
+\item{TIME_LAB}{Label of the time axis with optional ===TIMEUNITS=== placeholder for units.}
+
+\item{OBS_STRING}{Label for observation data.}
+
+\item{BLQ_STRING}{Label for BLQ data.}
+
+\item{NA_STRING}{Label for missing data.}
+
 \item{nfrows}{Number of facet rows per page.}
 
 \item{nfcols}{Number of facet cols per page.}
+
+\item{log_sacle}{Boolean variable to control y-scale (\code{TRUE}: Log 10, \code{FALSE}: linear).}
+
+\item{scale}{String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}.}
 }
 \value{
 list containing the following elements

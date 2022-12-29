@@ -12,7 +12,7 @@ NCA_fetch_current_ana(state)
 \value{
 List containing the details of the current analysis. The structure
 of this list is the same as the structure of \code{state$NCA$anas} in the output of
-\code{ANA_fetch_state()}.
+\code{NCA_fetch_state()}.
 }
 \description{
 Takes an NCA state and returns the current active analysis
