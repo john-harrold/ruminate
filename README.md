@@ -51,7 +51,6 @@ install the development version of `formods`.
 # Getting started
 
 ``` r
-library(shiny)
 library(ruminate)
-ruminate()
+run_ruminate()
 ```

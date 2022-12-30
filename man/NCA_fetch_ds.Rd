@@ -32,5 +32,5 @@ the R-object for that dataset. Each element has the following structure:
 }
 }
 \description{
-Fetches the datasets contained in the model
+Fetches the datasets contained in the module
 }

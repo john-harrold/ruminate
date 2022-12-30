@@ -25,7 +25,7 @@ NCA_find_col(
 OK (default: \code{FALSE})}
 }
 \value{
-Name of column found based on the rules above.}
+Name of column found based on the rules above.
 }
 \description{
 Based on the current analysis, value from the UI, an optional

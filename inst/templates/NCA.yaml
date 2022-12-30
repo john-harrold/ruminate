@@ -7,7 +7,14 @@ MC:
     clip:    TRUE 
   reporting:
     enabled: TRUE
+    # Priority of reporting relative to other modules (higher numbers are
+    # reported first)
     priority: 1
+    # This represents the order in which figures and tables will be reported:
+    figures:
+      - figure_ind_obs 
+    tables:  
+      - table_ind_obs 
   notifications:
     ana_add_int_success: "Interval added: ===DETAILS==="
   # Put different formatting options (widths, heights,

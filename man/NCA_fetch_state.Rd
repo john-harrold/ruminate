@@ -71,7 +71,6 @@ has the following structure:
 \item{nca_config:}       List of NCA configuration options for this analysis.
 \item{nca_object_name:}  Prefix for NCA objects associated with this analyis.
 \item{nca_parameters:}   NCA parameters selected for calculation in the UI.
-\item{nobj:}             List of object names for the different components of an analysis (nca results, pknca objects, etc)
 \item{notes:}            Analysis notes  (user editable)
 \item{objs:}             List of names and values for objects created with generated code.
 \item{sampling:}         Sampling method either "sparse" or "serial"

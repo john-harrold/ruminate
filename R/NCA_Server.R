@@ -18,9 +18,11 @@
 #'@importFrom shinyAce aceEditor updateAceEditor
 
 # JMH
-# Load state notes:
+# Notes:
 # - Add reporting elements
 # - Create NCA_test_mksession()
+# - Add NCA tabular results
+# - Add NCA graphic results
 
 #'@export
 #'@title Fetch Non-Compartmental Analysis State
@@ -2753,7 +2755,6 @@ NCA_Server <- function(id,
 #'        \item{nca_config:}       List of NCA configuration options for this analysis.
 #'        \item{nca_object_name:}  Prefix for NCA objects associated with this analyis.
 #'        \item{nca_parameters:}   NCA parameters selected for calculation in the UI.
-#'        \item{nobj:}             List of object names for the different components of an analysis (nca results, pknca objects, etc)
 #'        \item{notes:}            Analysis notes  (user editable)
 #'        \item{objs:}             List of names and values for objects created with generated code.
 #'        \item{sampling:}         Sampling method either "sparse" or "serial"
@@ -3134,6 +3135,65 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
     state[["NCA"]][["current_ana"]]  =  state[["NCA"]][["ui"]][["select_current_ana"]]
   }
   #---------------------------------------------
+  # Copy Analysis
+  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_copy"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_copy"]])){
+
+    FM_le(state, "copying current analysis")
+
+    # Pausing access to the screen because the rebuilding portion below can
+    # take a while and we don't want the user mucking around with things while
+    # that is happening.
+    FM_pause_screen(state   = state,
+                    message = state[["MC"]][["labels"]][["busy"]][["run_nca"]],
+                    session = session)
+
+    # This creates a copy of the current analysis which will become the old
+    # one :).
+    old_ana = NCA_fetch_current_ana(state)
+
+    # Creating a new analysis and pulling it out of the
+    # state object:
+    state = NCA_new_ana(state)
+    current_ana = NCA_fetch_current_ana(state)
+
+
+    # Now we take the current (new one we just created) analysis and
+    # we populate it with all the individual elements except
+    # the following:
+    exnames    = c("id", "key", "idx", "nca_object_name", "objs")
+    # This is all the names
+    copy_names = names(old_ana)
+    # And this removes the exclusions:
+    copy_names = copy_names[!(copy_names %in% exnames)]
+
+    for(ana_name in copy_names){
+      current_ana[[ana_name]] = old_ana[[ana_name]]
+    }
+
+    # Now we save the copy of the new analysis that has been updated with
+    # the elements of the old analysis. This has to be done before we rerun
+    # the components below:
+    state = NCA_set_current_ana(state, current_ana)
+
+    # Lastly we need to rebuild the analysis elements so all the id in
+    # the generated code are correct. It's a little slow but it ensures the
+    # objs list element is correct
+    state = run_nca_components(state)
+
+    # Setting hold for all the elements
+    state = set_hold(state, inputId = NULL)
+
+    # Removing the pause
+    FM_resume_screen(state   = state,
+                     session = session)
+
+    # Saving the button state to the counter
+    state[["NCA"]][["button_counters"]][["button_ana_copy"]] =
+      state[["NCA"]][["ui"]][["button_ana_copy"]]
+
+  }
+  #---------------------------------------------
   # New Analysis
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_new"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_ana_new"]])){
@@ -3156,6 +3216,7 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
     # Updating any messages
     state = FM_set_ui_msg(state, msgs)
   }
+  #---------------------------------------------
   # Delete analysis
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_del"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_ana_del"]])){
@@ -3188,6 +3249,7 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
     # Updating any messages
     state = FM_set_ui_msg(state, msgs)
   }
+  #---------------------------------------------
   # Save analysis
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_save"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_ana_save"]])){
@@ -3233,26 +3295,6 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
     state = FM_set_ui_msg(state, msgs)
 
   }
-  #---------------------------------------------
-  # Include units switch
- #if(has_changed(ui_val   = state[["NCA"]][["ui"]][["switch_ana_include_units"]],
- #               old_val  = state[["NCA"]][["button_counters"]][["switch_ana_include_units"]])){
- #
- #  # Pulling out the current analysis
- #  current_ana = NCA_fetch_current_ana(state)
- #
- #  # updating the switch
- #  current_ana[["include_units"]] = state[["NCA"]][["ui"]][["switch_ana_include_units"]]
- #
- #  # Updating the analysis in the state
- #  state = NCA_set_current_ana(state, current_ana)
- #
- #  FM_le(state, paste0("include units set to: ", current_ana[["include_units"]]))
- #
- #  # Updating the change tracking
- #  state[["NCA"]][["button_counters"]][["switch_ana_include_units"]] =
- #    state[["NCA"]][["ui"]][["switch_ana_include_units"]]
- #}
   #---------------------------------------------
   # Passing any messages back to the user
   #state = FM_set_ui_msg(state, msgs, append=TRUE)
@@ -3524,7 +3566,7 @@ res}
 
 #'@export
 #'@title Fetch Module Datasets
-#'@description Fetches the datasets contained in the module 
+#'@description Fetches the datasets contained in the module
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@return Character object vector with the lines of code
 #'@return list containing the following elements
@@ -3609,10 +3651,9 @@ NCA_new_ana    = function(state){
          idx             = state[["NCA"]][["ana_cntr"]],
          nca_object_name = nca_object_name,
          objs            = list(),
-         nobj            = NULL,   # JMH is this even used?
          msgs            = c("New analysis"),
          ana_dsview      = ana_dsview,
-         nca_res         = NULL,
+         nca_res         = NULL,    # JMH is this even used?
          nca_config      = state[["NCA"]][["nca_config"]][["default"]],
          checksum        = digest::digest(NULL, algo=c("md5")),
          ana_scenario    = "",
@@ -3776,7 +3817,7 @@ state}
 #'@param dscols   Columns from the dataset.
 #'@param null_ok  Logical value indicating if a null result (nothing found) is
 #'       OK (default: \code{FALSE})
-#'@return Name of column found based on the rules above.}
+#'@return Name of column found based on the rules above.
 NCA_find_col             = function(curr_ana = NULL,
                                     curr_ui  = NULL,
                                     patterns = NULL,
@@ -4181,14 +4222,14 @@ NCA_process_current_ana = function(state){
 
   if(any(tmp_ds[["NUNIQUE"]]> 1)){
     isgood = FALSE
-    amsgs = c(amsgs, paste0("The combination of", 
+    amsgs = c(amsgs, paste0("The combination of ",
                             state[["MC"]][["labels"]][["select_ana_col_id"]],      ", ",
                             state[["MC"]][["labels"]][["select_ana_col_time"]],    ", ",
                             state[["MC"]][["labels"]][["select_ana_col_cycle"]],   ", ",
-                            state[["MC"]][["labels"]][["select_ana_col_analyte"]], ", ",
-                            state[["MC"]][["labels"]][["select_ana_col_group"]], 
-                            "columns must be unique."))
-    amsgs = c(amsgs, paste0("This can commonly happen when you have multiple analyte and forgot to specify the analyte column. "))
+                            state[["MC"]][["labels"]][["select_ana_col_analyte"]], ", and ",
+                            state[["MC"]][["labels"]][["select_ana_col_group"]],
+                            " columns must be unique."))
+    amsgs = c(amsgs, paste0("This can commonly happen when you have multiple analytes and forgot to specify the analyte column. "))
     amsgs = c(amsgs, paste0("Current values are:"))
     amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_id"]],      ": ", current_ana[["col_id"]]       ))
     amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_time"]],    ": ", current_ana[["col_time"]]     ))
@@ -4196,7 +4237,7 @@ NCA_process_current_ana = function(state){
     amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_analyte"]], ": ", current_ana[["col_analyte"]]  ))
     amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_group"]],   ": ", paste0(current_ana[["col_group"]], collapse="\n")    ))
   }
-  
+
   #---------------------------------------------
   # Saving the status and messages
   current_ana[["isgood"]] = isgood
@@ -4628,6 +4669,8 @@ nca_builder = function(state){
   # add this conditionally:
   if(current_ana[["include_units"]]){
     current_ana[[ "objs" ]][[ "units"     ]][[ "name" ]]   = nca_units_object_name
+  } else {
+    current_ana[[ "objs" ]][[ "units"     ]] = NULL
   }
 
   # Storing the current ana with the updated data:
@@ -4670,18 +4713,21 @@ run_nca_components = function(
 
   valid_components = c("nca", "fg_ind_obs", "tb_ind_obs")
 
+  # Pulling out the current analysis to use and update below
+  current_ana = NCA_fetch_current_ana(state)
 
-  # Short name for objects created when running NCA
+  # Short name for objects created when running NCA.
+  # These are all of the possible names:
   obs_sns_nca  = c("res", "drec", "rm", "ints",
                    "dose", "data", "conc", "units")
 
-
+  # Sometimes only a subset are generated. For example when units is
+  # unchecked. So this will only keep those that exist for this analysis:
+  obs_sns_nca = obs_sns_nca[obs_sns_nca %in% names(current_ana[["objs"]])]
 
   # Messages to pass back to the user
   msgs = c()
 
-  # Pulling out the current analysis to use and update below
-  current_ana = NCA_fetch_current_ana(state)
 
   # If current_ana i bad then something in the nca_builder() failed.
   # We want to pass those back to the user.
@@ -4933,21 +4979,37 @@ mk_table_ind_obs = function(
     row_header_cols = c("TIME",  row_header_cols)
     row_header_label   = c("Time", row_header_label)
     row_header_lengths = c(     1, row_header_lengths)
-    units_data = c(paste0("(", time_units,")"), analyte_units)
+    if(time_units == ""){
+      units_data = c("", analyte_units)
+    } else {
+      units_data = c(paste0("(", time_units,")"), analyte_units)
+    }
     col_header_label = "Concentration ===CONCUNITS=== for ID"
     all_data = tidyr::pivot_wider(all_data, names_from="ID", values_from="CONC", values_fill=not_sampled)
   } else  if(rows_by == "id"){
     row_header_cols    = c("ID", row_header_cols)
     row_header_label   = c("ID", row_header_label)
     row_header_lengths = c(   1, row_header_lengths)
-    units_data = c("--", analyte_units)
+    if(time_units == ""){
+      units_data = c("", analyte_units)
+    } else {
+      units_data = c("--", analyte_units)
+    }
     col_header_label = "Concentration ===CONCUNITS=== for ID Observation Time ===TIMEUNITS==="
     all_data = tidyr::pivot_wider(all_data, names_from="TIME", values_from="CONC", values_fill=not_sampled)
   }
 
+  if(conc_units == ""){
+    col_header_label = stringr::str_replace(col_header_label, "===CONCUNITS===", "")
+  } else {
+    col_header_label = stringr::str_replace(col_header_label, "===CONCUNITS===", paste0("(", conc_units, ")"))
+  }
 
-  col_header_label = stringr::str_replace(col_header_label, "===CONCUNITS===", paste0("(", conc_units, ")"))
-  col_header_label = stringr::str_replace(col_header_label, "===TIMEUNITS===", paste0("(", time_units, ")"))
+  if(time_units == ""){
+    col_header_label = stringr::str_replace(col_header_label, "===TIMEUNITS===", "")
+  } else {
+    col_header_label = stringr::str_replace(col_header_label, "===TIMEUNITS===", paste0("(", time_units, ")"))
+  }
 
 
   # Splitting the data into header columns and observations
@@ -5040,10 +5102,10 @@ res}
 #'@description Takes the output of PKNCA and creates `ggplot` figures faceted
 #'by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
 #'@param nca_res Output of PKNCA.
-#'@param OBS_LAB    Label of the observation axis with optional ===CONCUNITS=== placeholder for units. 
-#'@param TIME_LAB   Label of the time axis with optional ===TIMEUNITS=== placeholder for units. 
+#'@param OBS_LAB    Label of the observation axis with optional ===CONCUNITS=== placeholder for units.
+#'@param TIME_LAB   Label of the time axis with optional ===TIMEUNITS=== placeholder for units.
 #'@param OBS_STRING Label for observation data.
-#'@param BLQ_STRING Label for BLQ data. 
+#'@param BLQ_STRING Label for BLQ data.
 #'@param NA_STRING  Label for missing data.
 #'@param log_sacle  Boolean variable to control y-scale (\code{TRUE}: Log 10, \code{FALSE}: linear).
 #'@param scale      String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}.
@@ -5074,8 +5136,17 @@ mk_figure_ind_obs = function(
     conc_units = nca_res[["data"]][["units"]][nca_res[["data"]][["units"]][["PPTESTCD"]] == "cmax",  ][["PPORRESU"]]
   }
 
-  OBS_LAB  = stringr::str_replace(OBS_LAB,  "===CONCUNITS===", paste0("(", conc_units, ")"))
-  TIME_LAB = stringr::str_replace(TIME_LAB, "===TIMEUNITS===", paste0("(", time_units, ")"))
+  if(conc_units == ""){
+    OBS_LAB  = stringr::str_replace(OBS_LAB,  "===CONCUNITS===", "")
+  } else {
+    OBS_LAB  = stringr::str_replace(OBS_LAB,  "===CONCUNITS===", paste0("(", conc_units, ")"))
+  }
+
+  if(time_units == ""){
+    TIME_LAB = stringr::str_replace(TIME_LAB, "===TIMEUNITS===", "")
+  } else {
+    TIME_LAB = stringr::str_replace(TIME_LAB, "===TIMEUNITS===", paste0("(", time_units, ")"))
+  }
 
   col_id      = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
   col_time    = nca_res[["data"]][["conc"]][["columns"]][["time"]]
