@@ -80,12 +80,7 @@ ui <- dashboardPage(
        fluidRow(
          box(title="Current Intervals",
            div(style="display:inline-block;vertical-align:bottom",
-             "ui_nca_ana_int_start",
-             htmlOutput(NS("NCA", "ui_nca_ana_int_start")),
-             ),
-           div(style="display:inline-block;vertical-align:bottom",
-             "ui_nca_ana_int_stop",
-             htmlOutput(NS("NCA", "ui_nca_ana_int_stop")),
+             htmlOutput(NS("NCA", "ui_nca_ana_int_range"))
              ),
            div(style="display:inline-block;vertical-align:bottom",
              "ui_nca_ana_params",

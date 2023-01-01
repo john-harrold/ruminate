@@ -61,6 +61,9 @@
     <loc>/reference/NCA_set_current_ana.html</loc>
   </url>
   <url>
+    <loc>/reference/NCA_test_mksession.html</loc>
+  </url>
+  <url>
     <loc>/reference/apply_route_map.html</loc>
   </url>
   <url>
@@ -71,6 +74,9 @@
   </url>
   <url>
     <loc>/reference/mk_table_ind_obs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/mk_table_nca_params.html</loc>
   </url>
   <url>
     <loc>/reference/nca_builder.html</loc>

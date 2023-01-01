@@ -114,10 +114,10 @@
 values from the yaml file as well as any changes made by the user. The list
 has the following structure:</p><ul><li><p>yaml: Full contents of the supplied yaml file.</p></li>
 <li><p>MC: Module components of the yaml file.</p></li>
-<li><p>NCA:  # JMH populate the rest of this list</p><ul><li><p>ana_cntr:       Analysis counter.</p></li>
+<li><p>NCA:</p><ul><li><p>ana_cntr:       Analysis counter.</p></li>
 <li><p>anas:                    List of analyses: Each analysis has the following  structure:</p><ul><li><p>ana_dsview:       Dataset view/ID (name from DSV) selected as a data source for this analysis.</p></li>
-<li><p>ana_scenario:     JMH</p></li>
-<li><p>checksum:         JMH</p></li>
+<li><p>ana_scenario:     Analysis scenario selected in the UI</p></li>
+<li><p>checksum:         checksum of the analysis (used to detect changes in the analysis).</p></li>
 <li><p>code:             Code to generate analysis from start to finish or error messages if code generation/analysis failed.</p></li>
 <li><p>code_components:  List containing the different components from code</p></li>
 <li><p>col_conc:         Column from ana_dsview containing the concentration data.</p></li>
@@ -149,15 +149,26 @@ has the following structure:</p><ul><li><p>yaml: Full contents of the supplied y
 <li><p>units_dose:       Dosing units.</p></li>
 <li><p>units_time:       Time units.</p></li>
 </ul></li>
-<li><p>button_counters:       JMH.</p></li>
 <li><p>current_ana:           Currently selected analysis (list name element from anas).</p></li>
 <li><p>DSV:                   Available data source views (see <code>FM_fetch_ds</code>)</p></li>
-<li><p>checksum:              This is an MD5 sum of the (JMH update) element and can be</p></li>
+<li><p>checksum:              This is an MD5 sum of the module (checksum of the analysis checksums).</p></li>
 <li><p>nca_config:            List of PKNCA configuration options for this analysis.</p></li>
-<li><p>ui:                    JMH.</p></li>
+<li><p>nca_parameters:        List with two elements</p><ul><li><p>choices:          List consisting of "Common Parameters" and
+"Other" (used for grouping in the UI).
+Each of these is a list of text parameter
+names with a value of the PKNCA parameter
+name.</p></li>
+<li><p>summary:          Summary table with the following columns:</p><ul><li><p>parameter:      PKNCA Paramter name.</p></li>
+<li><p>text:           Name used in text output.</p></li>
+<li><p>md:             Name used markdown output.</p></li>
+<li><p>latex:          Name used in latex output.</p></li>
+<li><p>description:    Verbose textual description of the parameter.</p></li>
+</ul></li>
+</ul></li>
+<li><p>ui:                    Current value of form elements in the UI.</p></li>
 <li><p>ui_ana_map:            Map between UI element names and analysis in the object you get from <code><a href="NCA_fetch_current_ana.html">NCA_fetch_current_ana()</a></code></p></li>
-<li><p>ui_hold:               JMH.</p></li>
-<li><p>ui_ids:                JMH.</p></li>
+<li><p>ui_ids:                Vector of UI elements for the module.</p></li>
+<li><p>ui_hold:               List of hold elements to disable updates before a full ui referesh is complete.</p></li>
 </ul></li>
 <li><p>MOD_TYPE: Character data containing the type of module <code>"NCA"</code></p></li>
 <li><p>id: Character data containing the module id module in the session variable.</p></li>

@@ -40,14 +40,14 @@ has the following structure:
 \itemize{
 \item{yaml:} Full contents of the supplied yaml file.
 \item{MC:} Module components of the yaml file.
-\item{NCA:}  # JMH populate the rest of this list
+\item{NCA:}
 \itemize{
 \item{ana_cntr:}       Analysis counter.
 \item{anas:}                    List of analyses: Each analysis has the following  structure:
 \itemize{
 \item{ana_dsview:}       Dataset view/ID (name from DSV) selected as a data source for this analysis.
-\item{ana_scenario:}     JMH
-\item{checksum:}         JMH
+\item{ana_scenario:}     Analysis scenario selected in the UI
+\item{checksum:}         checksum of the analysis (used to detect changes in the analysis).
 \item{code:}             Code to generate analysis from start to finish or error messages if code generation/analysis failed.
 \item{code_components:}  List containing the different components from code
 \item{col_conc:}         Column from ana_dsview containing the concentration data.
@@ -59,11 +59,11 @@ has the following structure:
 \item{col_ntime:}        Column from ana_dsview containing the nominal time values
 \item{col_route:}        Column from ana_dsview containing the dosing route.
 \item{col_time:}         Column from ana_dsview containing the time values.
-\item{id:}               Character id (\code{ana_idx})
-\item{idx:}              Numeric id (\code{1})
-\item{include_units:}    Boolean variable indicating in units should included in the analysis.        be
-\item{interval_start:}   Beginning of the analysis interval from the UI.
-\item{interval_stop:}    End of the analysis interval from the UI.
+\item{id:}               Character id (\code{ana_idx}).
+\item{idx:}              Numeric id (\code{1}).
+\item{include_units:}    Boolean variable indicating in units should included in the analysis.
+\item{interval_range:}   Vector with the first element representing he beginning of the interval
+and the second element containing the end of the interval.
 \item{intervals:}        List of the intervals to include.
 \item{isgood:}           Current status of the analysis.
 \item{key:}              Analysis key acts as a title/caption (user editable)
@@ -79,15 +79,30 @@ has the following structure:
 \item{units_dose:}       Dosing units.
 \item{units_time:}       Time units.
 }
-\item{button_counters:}       JMH.
 \item{current_ana:}           Currently selected analysis (list name element from anas).
 \item{DSV:}                   Available data source views (see \code{\link{FM_fetch_ds}})
-\item{checksum:}              This is an MD5 sum of the (JMH update) element and can be
+\item{checksum:}              This is an MD5 sum of the module (checksum of the analysis checksums).
 \item{nca_config:}            List of PKNCA configuration options for this analysis.
-\item{ui:}                    JMH.
+\item{nca_parameters:}        List with two elements
+\itemize{
+\item{choices:}          List consisting of "Common Parameters" and
+"Other" (used for grouping in the UI).
+Each of these is a list of text parameter
+names with a value of the PKNCA parameter
+name.
+\item{summary:}          Summary table with the following columns:
+\itemize{
+\item{parameter:}      PKNCA Paramter name.
+\item{text:}           Name used in text output.
+\item{md:}             Name used markdown output.
+\item{latex:}          Name used in latex output.
+\item{description:}    Verbose textual description of the parameter.
+}
+}
+\item{ui:}                    Current value of form elements in the UI.
 \item{ui_ana_map:}            Map between UI element names and analysis in the object you get from \code{\link{NCA_fetch_current_ana()}}
-\item{ui_hold:}               JMH.
-\item{ui_ids:}                JMH.
+\item{ui_ids:}                Vector of UI elements for the module.
+\item{ui_hold:}               List of hold elements to disable updates before a full ui referesh is complete.
 }
 \item{MOD_TYPE:} Character data containing the type of module \code{"NCA"}
 \item{id:} Character data containing the module id module in the session variable.

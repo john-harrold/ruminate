@@ -5,6 +5,14 @@
 \alias{ruminate}
 \alias{ruminate-package}
 \title{ruminate: Shiny app and module to facilitate pharamacometrics analysis}
+\usage{
+ruminate()
+}
+\value{
+Nothing.
+\itemize{
+}
+}
 \description{
 This is done by creating a Shiny interface to different tools for data
 transformation (\code{dplyr} and \code{tidyr}), plotting (\code{ggplot2}), and
@@ -12,6 +20,8 @@ noncompartmental analysis (\code{PKNCA}). These results can be reported in Excel
 Word or PowerPoint. The state of the app can be saved and loaded at a later
 date. When saved, a script is generated to reproduce the different actions in
 the Shiny interface.
+
+Runs the pharmacometrics ruminate app.
 }
 \seealso{
 \url{https://ruminate.ubiquity.tools/}

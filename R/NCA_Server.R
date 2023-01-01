@@ -491,8 +491,8 @@ NCA_Server <- function(id,
       }
     })
     #------------------------------------
-    # interval stop
-    output$ui_nca_ana_int_stop  = renderUI({
+    # interval range
+    output$ui_nca_ana_int_range = renderUI({
 
       react_state[[id_UD]]
       react_state[[id_DW]]
@@ -502,6 +502,11 @@ NCA_Server <- function(id,
       input[["button_ana_del"]]
       input[["button_ana_copy"]]
       input[["select_current_ana"]]
+
+      # We need the time column defined to use this element
+      req(input[["select_ana_col_time"]])
+
+
       state = NCA_fetch_state(id              = id,
                              input           = input,
                              session         = session,
@@ -515,54 +520,46 @@ NCA_Server <- function(id,
 
 
       # Pulling out the current analysis to get the column information
+      uiele = NULL
       current_ana = NCA_fetch_current_ana(state)
-      value = current_ana[["interval_stop"]]
-
-      uiele =
-        textInput(
-          inputId   = NS(id, "text_ana_interval_stop"),
-          label     = state[["MC"]][["labels"]][["text_ana_interval_stop"]],
-          width     = state[["MC"]][["formatting"]][["text_ana_interval_stop"]][["width"]],
-          placeholder = state[["MC"]][["ph"]][["tooltips"]][["text_ana_interval_stop"]],
-          value = value
-          )
-      uiele})
-    #------------------------------------
-    # interval start
-    output$ui_nca_ana_int_start = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
-
-      input[["button_ana_new"]]
-      input[["button_ana_del"]]
-      input[["button_ana_copy"]]
-      input[["select_current_ana"]]
-      state = NCA_fetch_state(id              = id,
-                             input           = input,
-                             session         = session,
-                             FM_yaml_file    = FM_yaml_file,
-                             MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
-                             react_state     = react_state)
+      if(!is.null(current_ana[["ana_dsview"]])){
+        if(!is.null(state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]])){
+          value_start = current_ana[["interval_range"]][1]
+          value_stop  = current_ana[["interval_range"]][2]
 
 
+          ds =  state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]]
+          # This is all the times in the dataset:
+          time_choices = unique(sort(ds[["DS"]][[current_ana[["col_time"]] ]]))
 
-      # Pulling out the current analysis to get the column information
-      current_ana = NCA_fetch_current_ana(state)
-      value = current_ana[["interval_start"]]
+          # Now we need to convert it to text and add infinity as an option
+          time_choices = c(as.character(time_choices), "Inf")
 
-      uiele =
-        textInput(
-          inputId   = NS(id, "text_ana_interval_start"),
-          label     = state[["MC"]][["labels"]][["text_ana_interval_start"]],
-          width     = state[["MC"]][["formatting"]][["text_ana_interval_start"]][["width"]],
-          placeholder = state[["MC"]][["ph"]][["tooltips"]][["text_ana_interval_start"]],
-          value = value
-          )
+          # Now we're going figure out if the interval in the current analysis
+          # exists in the current choices:
+          if((value_start %in% time_choices)){
+             idx_start = which(value_start == time_choices)
+          } else {
+             idx_start = 1
+          }
+
+          if((value_stop %in% time_choices)){
+             idx_stop  = which(value_stop  == time_choices)
+          } else {
+             idx_stop  = length(time_choices)
+          }
+
+          uiele =
+            shinyWidgets::sliderTextInput(
+            inputId   = NS(id, "select_ana_interval_range"),
+            label     = state[["MC"]][["labels"]][["select_ana_interval_range"]],
+            width     = state[["MC"]][["formatting"]][["select_ana_interval_range"]][["width"]],
+            choices   = time_choices,
+            selected  = time_choices[c(idx_start, idx_stop)]
+           )
+        }
+      }
+
       uiele})
     #------------------------------------
     # NCA parameters to compute
@@ -2491,10 +2488,7 @@ NCA_Server <- function(id,
           tags$h3(state[["MC"]][["labels"]][["head_intervals"]]),
           tags$h4(state[["MC"]][["labels"]][["head_intervals_create"]]),
           div(style="display:inline-block;vertical-align:bottom",
-            htmlOutput(NS(id, "ui_nca_ana_int_start"))
-            ),
-          div(style="display:inline-block;vertical-align:bottom",
-            htmlOutput(NS(id, "ui_nca_ana_int_stop"))
+            htmlOutput(NS(id, "ui_nca_ana_int_range"))
             ),
           div(style="display:inline-block;vertical-align:bottom",
             htmlOutput(NS(id, "ui_nca_ana_params"))
@@ -2561,12 +2555,12 @@ NCA_Server <- function(id,
 
         uiele_preview = tagList(
           div(
-            tabBox(
+            shinydashboard::tabBox(
               width = 10,
               title = NULL,
               # The id lets us use input$tabset1 on the server to find the current tab
               id = NS(id, "tabset_nca_optons"), # height = "250px",
-              tabPanel(id=NS(id, "panel_analysis_opts"),
+              shiny::tabPanel(id=NS(id, "panel_analysis_opts"),
                        title=tagList(shiny::icon("magnifying-glass-chart"),
                                      state[["MC"]][["labels"]][["panel_analysis_opts"]]),
                 tagList(
@@ -2574,17 +2568,17 @@ NCA_Server <- function(id,
                 # htmlOutput(NS(id, "ui_nca_ana_results_fig"))
                 )
               ),
-              tabPanel(id=NS(id, "panel_figure"),
+              shiny::tabPanel(id=NS(id, "panel_figure"),
                        title=tagList(shiny::icon("chart-line"),
                                      state[["MC"]][["labels"]][["panel_figures"]]),
                 htmlOutput(NS(id, "ui_nca_ana_results_fig"))
               ),
-              tabPanel(id=NS(id, "panel_tables"),
+              shiny::tabPanel(id=NS(id, "panel_tables"),
                        title=tagList(shiny::icon("table"),
                                      state[["MC"]][["labels"]][["panel_tables"]]),
                 htmlOutput(NS(id, "ui_nca_ana_results_tab"))
               ),
-              tabPanel(id=NS(id, "panel_nca_config"),
+              shiny::tabPanel(id=NS(id, "panel_nca_config"),
                        title=tagList(shiny::icon("gear"),
                                      state[["MC"]][["labels"]][["panel_nca_config"]]),
                 htmlOutput(NS(id, "ui_nca_ana_options"))
@@ -2724,14 +2718,14 @@ NCA_Server <- function(id,
 #' \itemize{
 #' \item{yaml:} Full contents of the supplied yaml file.
 #' \item{MC:} Module components of the yaml file.
-#' \item{NCA:}  # JMH populate the rest of this list
+#' \item{NCA:}
 #' \itemize{
 #'   \item{ana_cntr:}       Analysis counter.
 #'   \item{anas:}                    List of analyses: Each analysis has the following  structure:
 #'      \itemize{
 #'        \item{ana_dsview:}       Dataset view/ID (name from DSV) selected as a data source for this analysis.
-#'        \item{ana_scenario:}     JMH
-#'        \item{checksum:}         JMH
+#'        \item{ana_scenario:}     Analysis scenario selected in the UI
+#'        \item{checksum:}         checksum of the analysis (used to detect changes in the analysis).
 #'        \item{code:}             Code to generate analysis from start to finish or error messages if code generation/analysis failed.
 #'        \item{code_components:}  List containing the different components from code
 #'        \item{col_conc:}         Column from ana_dsview containing the concentration data.
@@ -2743,11 +2737,11 @@ NCA_Server <- function(id,
 #'        \item{col_ntime:}        Column from ana_dsview containing the nominal time values
 #'        \item{col_route:}        Column from ana_dsview containing the dosing route.
 #'        \item{col_time:}         Column from ana_dsview containing the time values.
-#'        \item{id:}               Character id (\code{ana_idx})
-#'        \item{idx:}              Numeric id (\code{1})
-#'        \item{include_units:}    Boolean variable indicating in units should included in the analysis.        be
-#'        \item{interval_start:}   Beginning of the analysis interval from the UI.
-#'        \item{interval_stop:}    End of the analysis interval from the UI.
+#'        \item{id:}               Character id (\code{ana_idx}).
+#'        \item{idx:}              Numeric id (\code{1}).
+#'        \item{include_units:}    Boolean variable indicating in units should included in the analysis.   
+#'        \item{interval_range:}   Vector with the first element representing he beginning of the interval 
+#'                                 and the second element containing the end of the interval.
 #'        \item{intervals:}        List of the intervals to include.
 #'        \item{isgood:}           Current status of the analysis.
 #'        \item{key:}              Analysis key acts as a title/caption (user editable)
@@ -2763,15 +2757,31 @@ NCA_Server <- function(id,
 #'        \item{units_dose:}       Dosing units.
 #'        \item{units_time:}       Time units.
 #'   }
-#'   \item{button_counters:}       JMH.
+# '  \item{button_counters:}       List of counters to detect button clicks.
 #'   \item{current_ana:}           Currently selected analysis (list name element from anas).
 #'   \item{DSV:}                   Available data source views (see \code{\link{FM_fetch_ds}})
-#'   \item{checksum:}              This is an MD5 sum of the (JMH update) element and can be
+#'   \item{checksum:}              This is an MD5 sum of the module (checksum of the analysis checksums).
 #'   \item{nca_config:}            List of PKNCA configuration options for this analysis.
-#'   \item{ui:}                    JMH.
+#'   \item{nca_parameters:}        List with two elements
+#'      \itemize{
+#'        \item{choices:}          List consisting of "Common Parameters" and
+#'                                 "Other" (used for grouping in the UI).
+#'                                 Each of these is a list of text parameter
+#'                                 names with a value of the PKNCA parameter
+#'                                 name.
+#'        \item{summary:}          Summary table with the following columns:
+#'        \itemize{
+#'          \item{parameter:}      PKNCA Paramter name.
+#'          \item{text:}           Name used in text output.
+#'          \item{md:}             Name used markdown output.
+#'          \item{latex:}          Name used in latex output.
+#'          \item{description:}    Verbose textual description of the parameter.
+#'        }
+#'      }
+#'   \item{ui:}                    Current value of form elements in the UI.
 #'   \item{ui_ana_map:}            Map between UI element names and analysis in the object you get from \code{\link{NCA_fetch_current_ana()}}
-#'   \item{ui_hold:}               JMH.
-#'   \item{ui_ids:}                JMH.
+#'   \item{ui_ids:}                Vector of UI elements for the module.
+#'   \item{ui_hold:}               List of hold elements to disable updates before a full ui referesh is complete.
 #' }
 #' \item{MOD_TYPE:} Character data containing the type of module \code{"NCA"}
 #' \item{id:} Character data containing the module id module in the session variable.
@@ -2877,7 +2887,6 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
 
       if(SAVE_ANA_NAME){
         ana_name = state[["NCA"]][["ui_ana_map"]][[ui_name]]
-
         # Messaging detected change
         if(has_changed(ui_val  = state[["NCA"]][["ui"]][[ui_name]],
                        old_val = current_ana[[ana_name]])){
@@ -3041,8 +3050,19 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
     ADD_INTERVAL = TRUE
 
     # Pulling the interval specifications from the ui elements:
-    interval_start = as.numeric(as.character(state[["NCA"]][["ui"]][["text_ana_interval_start"]]))
-    interval_stop  = as.numeric(as.character(state[["NCA"]][["ui"]][["text_ana_interval_stop"]]))
+    if(length(state[["NCA"]][["ui"]][["select_ana_interval_range"]])==2){
+      interval_start = state[["NCA"]][["ui"]][["select_ana_interval_range"]][1]
+      interval_stop  = state[["NCA"]][["ui"]][["select_ana_interval_range"]][2]
+    } else {
+      ADD_INTERVAL = FALSE
+      interval_start = NA
+      interval_stop  = NA
+      msgs = c(msgs, "Interval range should be of lenght 2")
+    }
+    interval_start = as.numeric(as.character(interval_start))
+    interval_stop  = as.numeric(as.character(interval_stop))
+
+    # Pulling out the NCA parameters
     nca_parameters = state[["NCA"]][["ui"]][["select_ana_nca_parameters"]]
 
     # Some basic error checking
@@ -3092,7 +3112,6 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
       state = FM_set_notification(state, notify_text, "Interval Not Added", "failure")
       FM_le(state, "interval was not added")
     }
-
 
     # Saving the button state to the counter
     state[["NCA"]][["button_counters"]][["button_ana_add_int"]] =
@@ -3329,8 +3348,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
   # mapping name in UI to name used in the analysis
   ui_ana_map = list(
     "switch_ana_include_units"   = "include_units",
-    "text_ana_interval_start"    = "interval_start",
-    "text_ana_interval_stop"     = "interval_stop",
+    "select_ana_interval_range"  = "interval_range",
     "select_fg_ind_obs_ncol"     = "fg_ind_obs_ncol",
     "select_fg_ind_obs_nrow"     = "fg_ind_obs_nrow",
     "select_fg_ind_obs_page"     = "curr_fg_ind_obs",
@@ -3470,7 +3488,6 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
     ui_ids          = ui_ids,
     ui_hold         = ui_hold,
     session         = session)
-
 
   # This table summarizes the options
   state[["NCA"]][["nca_config"]][["summary"]] = nc_summary
@@ -3675,12 +3692,11 @@ NCA_new_ana    = function(state){
          col_time        = "",
          col_ntime       = "",
          col_group       = "",
-         curr_fg_ind_obs = "",       # Current fg_ind_obs to be dispalyed
-         curr_tb_ind_obs = "",       # Current tb_ind_obs to be dispalyed
-         include_units   = "",
-         intervals       = NULL,     # holds intervals added to the analysis
-         interval_start  = "0",      # Current interval in the interface.
-         interval_stop   = "Inf",    # Current interval in the interface.
+         curr_fg_ind_obs = "",               # Current fg_ind_obs to be dispalyed
+         curr_tb_ind_obs = "",               # Current tb_ind_obs to be dispalyed
+         include_units   = "",              
+         intervals       = NULL,             # holds intervals added to the analysis
+         interval_range  = c("0", "Inf"),    # Current interval in the interface.
          nca_parameters  = "",
          sampling        = "",
          tab_view        = "",
@@ -5343,5 +5359,305 @@ obj}
 #'@return Nothing.
 #'\itemize{
 #'}
-run_ruminate = function(){
+ruminate = function(){
   shiny::runApp(system.file(package="ruminate", "templates","ruminate.R"))}
+
+
+#'@export
+#'@title Title
+#'@description Description
+#'@param nca_res Output of PKNCA.
+#'@param type    Type of table to generate. Can be either \code{"individual"} or \code{"summary"]}.
+#'@param nps NCA parameter summary table with the following columns.
+#'   \itemize{
+#'     \item{parameter:}      PKNCA Paramter name.
+#'     \item{text:}           Name used in text output.
+#'     \item{md:}             Name used markdown output.
+#'     \item{latex:}          Name used in latex output.
+#'     \item{description:}    Verbose textual description of the parameter.
+#'   }
+#'@param digits   Number of significant figures to report (set to \code{NULL}
+#'to disable rounding)
+#'@param max_col Maximum number of columns to have on a page. Spillover will
+#'be wrapped to multiple pages.
+#'@return list containing the following elements
+#'\itemize{
+#'}
+mk_table_nca_params = function(
+  nca_res   ,
+  type        = "individual",
+  nca_params  = NULL,
+# not_sampled = "NS",
+# blq         = "BLQ",
+  nps         = NULL,
+  infinity    = list(text  = "inf",
+                     md    = "∞"),
+  digits      = 3,
+  max_col     = 9){
+
+  # Pulling out the different pieces from the PKNCA object
+  raw_nca   = as.data.frame(nca_res)
+  intervals = nca_res[["data"]][["intervals"]]
+
+  # Extracting the needed column names:
+ #col_id      = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
+ #col_time    = nca_res[["data"]][["conc"]][["columns"]][["time"]]
+ #col_conc    = nca_res[["data"]][["conc"]][["columns"]][["concentration"]]
+  col_group   = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_vars"]]
+ #col_analyte = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_analyte"]]
+
+  # This holds a summary of the interval information. Essentially it contains
+  # any parameter name where there was a request output (for any interval):
+  int_sum   = c()
+  ints_all = names(intervals)[!(names(intervals) %in% c("start", "end"))]
+  for(iname in ints_all){
+    if(any(intervals[[iname]])){
+      int_sum = c(int_sum, iname)
+    }
+  }
+
+  # These are just the NCA data the user requested:
+  nca_data = dplyr::filter(raw_nca, .data[["PPTESTCD"]] %in% int_sum)
+
+  # Applying significant digits
+  if(!is.null(digits)){
+    nca_data[["PPORRES"]] = signif(digits=digits,  nca_data[["PPORRES"]])
+  }
+
+  browser()
+  res = list(
+#   raw_nca = raw_nca,
+#   tables  = tables
+  )
+
+res}
+
+
+
+#'@export
+#'@title Populate Session Data for Module Testing
+#'@description Populates the supplied session variable for testing.
+#'@param session Shiny session variable (in app) or a list (outside of app)
+#'@param id An ID string that corresponds with the ID used to call the modules UI elements
+#'@param id_UD An ID string that corresponds with the ID used to call the UD modules UI elements
+#'@param id_DW An ID string that corresponds with the ID used to call the DW modules UI elements
+#'@return list with the following elements
+#' \itemize{
+#'   \item{isgood:} Boolean indicating the exit status of the function.
+#'   \item{session:} The value Shiny session variable (in app) or a list (outside of app) after initialization.
+#'   \item{input:} The value of the shiny input at the end of the session initialization.
+#'   \item{state:} App state.
+#'   \item{rsc:} The \code{react_state} components.
+#'}
+#'@examples
+#' sess_res = NCA_test_mksession(session=list())
+NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW"){
+
+  isgood = TRUE
+  rsc    = NULL
+  input  = list()
+
+  # Populating the session with UD and DW components
+  sess_res = DW_test_mksession(session=session, id=id_DW, id_UD = id_UD)
+  if(!("ShinySession" %in% class(session))){
+    session = sess_res[["session"]]
+  }
+
+  # Pulling out the react state components
+  rsc         = sess_res$rsc
+  react_state = rsc
+
+  # YAML files for the fetch calls below
+  FM_yaml_file  = system.file(package = "formods",  "templates", "formods.yaml")
+  MOD_yaml_file = system.file(package = "ruminate", "templates", "NCA.yaml")
+
+  # empty input
+  input = list()
+
+  # Creating an empty state object
+  state = NCA_fetch_state(id             = id,
+                         input           = input,
+                         session         = session,
+                         FM_yaml_file    = FM_yaml_file,
+                         MOD_yaml_file   = MOD_yaml_file,
+                         id_ASM          = id_ASM,
+                         id_UD           = id_UD,
+                         id_DW           = id_DW,
+                         react_state     = react_state)
+
+
+
+  # JMH populate the test session/state here later
+ ##------------------------------------
+ ## Creating "Individual profiles by cohort" data view
+ #state[["FG"]][["ui"]][["text_fig_key"]]        = "Individual profiles by cohort"
+ #state[["FG"]][["ui"]][["select_current_view"]] = "DW_myDS_1"
+ #current_fig = FG_fetch_current_fig(state)
+ #current_fig[["key"]]         = state[["FG"]][["ui"]][["text_fig_key"]]
+ #current_fig[["fig_dsview"]]  = state[["FG"]][["ui"]][["select_current_view"]]
+ #state = FG_set_current_fig(state, current_fig)
+ #
+ ## Adding the lines
+ #state[["FG"]][["ui"]][["select_fg_element"]]          = "line"
+ #state[["FG"]][["ui"]][["select_component_x"]]         = "TIME_DY"
+ #state[["FG"]][["ui"]][["select_component_y"]]         = "DV"
+ #state[["FG"]][["ui"]][["select_component_color"]]     = "CMT"
+ #state[["FG"]][["ui"]][["select_component_group"]]     = "IDCMT"
+ #
+ #fgb_res  = fers_builder(state)
+ #state = FG_build( state,
+ #  cmd     = fgb_res[["cmd"]],
+ #  element = fgb_res[["element"]],
+ #  desc    = fgb_res[["desc"]])
+ #
+ ## faceting by cohort
+ #state[["FG"]][["ui"]][["select_fg_element"]]          = "facet"
+ #state[["FG"]][["ui"]][["select_component_facet"]]     = "Cohort"
+ #
+ #fgb_res  = fers_builder(state)
+ #state = FG_build( state,
+ #  cmd     = fgb_res[["cmd"]],
+ #  element = fgb_res[["element"]],
+ #  desc    = fgb_res[["desc"]])
+ #
+ ## setting the log scale
+ #state[["FG"]][["ui"]][["select_fg_element"]]          = "scales"
+ #state[["FG"]][["ui"]][["select_component_yscale"]]    = "log10"
+ #
+ #fgb_res  = fers_builder(state)
+ #state = FG_build( state,
+ #  cmd     = fgb_res[["cmd"]],
+ #  element = fgb_res[["element"]],
+ #  desc    = fgb_res[["desc"]])
+ #
+ #
+ #
+ ##------------------------------------
+ ## Plotting the 3 mg SD IV cohort
+ ## Updating the key and data view
+ #state = FG_new_fig(state)
+ #state[["FG"]][["ui"]][["text_fig_key"]]        = "3 mg SD IV"
+ #state[["FG"]][["ui"]][["select_current_view"]] = "DW_myDS_2"
+ #current_fig = FG_fetch_current_fig(state)
+ #current_fig[["key"]]         = state[["FG"]][["ui"]][["text_fig_key"]]
+ #current_fig[["fig_dsview"]]  = state[["FG"]][["ui"]][["select_current_view"]]
+ #state = FG_set_current_fig(state, current_fig)
+ #
+ ## Adding the lines
+ #state[["FG"]][["ui"]][["select_fg_element"]]          = "line"
+ #state[["FG"]][["ui"]][["select_component_x"]]         = "TIME_DY"
+ #state[["FG"]][["ui"]][["select_component_y"]]         = "DV"
+ #state[["FG"]][["ui"]][["select_component_group"]]     = "ID"
+ #
+ #fgb_res  = fers_builder(state)
+ #state = FG_build( state,
+ #  cmd     = fgb_res[["cmd"]],
+ #  element = fgb_res[["element"]],
+ #  desc    = fgb_res[["desc"]])
+ #
+ #
+ ## setting the log scale
+ #state[["FG"]][["ui"]][["select_fg_element"]]          = "scales"
+ #state[["FG"]][["ui"]][["select_component_yscale"]]    = "log10"
+ #
+ #fgb_res  = fers_builder(state)
+ #state = FG_build( state,
+ #  cmd     = fgb_res[["cmd"]],
+ #  element = fgb_res[["element"]],
+ #  desc    = fgb_res[["desc"]])
+ #
+ ##------------------------------------
+ ## Plotting the 3 mg MD SC first dose cohort
+ ## Updating the key and data view
+ #state = FG_new_fig(state)
+ #state[["FG"]][["ui"]][["text_fig_key"]]        = "3 mg SC first dose"
+ #state[["FG"]][["ui"]][["select_current_view"]] = "DW_myDS_3"
+ #current_fig = FG_fetch_current_fig(state)
+ #current_fig[["key"]]         = state[["FG"]][["ui"]][["text_fig_key"]]
+ #current_fig[["fig_dsview"]]  = state[["FG"]][["ui"]][["select_current_view"]]
+ #state = FG_set_current_fig(state, current_fig)
+ #
+ ## Adding the lines
+ #state[["FG"]][["ui"]][["select_fg_element"]]          = "line"
+ #state[["FG"]][["ui"]][["select_component_x"]]         = "TIME_DY"
+ #state[["FG"]][["ui"]][["select_component_y"]]         = "DV"
+ #state[["FG"]][["ui"]][["select_component_group"]]     = "ID"
+ #
+ #fgb_res  = fers_builder(state)
+ #state = FG_build( state,
+ #  cmd     = fgb_res[["cmd"]],
+ #  element = fgb_res[["element"]],
+ #  desc    = fgb_res[["desc"]])
+ #
+ #
+ ## setting the log scale
+ #state[["FG"]][["ui"]][["select_fg_element"]]          = "scales"
+ #state[["FG"]][["ui"]][["select_component_yscale"]]    = "log10"
+ #
+ #fgb_res  = fers_builder(state)
+ #state = FG_build( state,
+ #  cmd     = fgb_res[["cmd"]],
+ #  element = fgb_res[["element"]],
+ #  desc    = fgb_res[["desc"]])
+ #
+ ##------------------------------------
+ ## Boxplots of parameters
+ ## Updating the key and data view
+ #state = FG_new_fig(state)
+ #state[["FG"]][["ui"]][["text_fig_key"]]        = "Parameter distribution by Cohort"
+ #state[["FG"]][["ui"]][["select_current_view"]] = "DW_myDS_4"
+ #current_fig = FG_fetch_current_fig(state)
+ #current_fig[["key"]]         = state[["FG"]][["ui"]][["text_fig_key"]]
+ #current_fig[["fig_dsview"]]  = state[["FG"]][["ui"]][["select_current_view"]]
+ #state = FG_set_current_fig(state, current_fig)
+ #
+ ## Adding the boxplots
+ #state[["FG"]][["ui"]][["select_fg_element"]]          = "boxplot"
+ #state[["FG"]][["ui"]][["select_component_x"]]         = "parameter"
+ #state[["FG"]][["ui"]][["select_component_y"]]         = "values"
+ #state[["FG"]][["ui"]][["select_component_fill"]]      = "Cohort"
+ ## The select_component* ui elements are recycled in the UI and would
+ ## normally be reset to "" when a new figure element is loaded. For the
+ ## purposes here we need to reset those manually.
+ #state[["FG"]][["ui"]][["select_component_group"]]     = ""
+ #state[["FG"]][["ui"]][["select_component_color"]]     = ""
+ #
+ #fgb_res  = fers_builder(state)
+ #state = FG_build( state,
+ #  cmd     = fgb_res[["cmd"]],
+ #  element = fgb_res[["element"]],
+ #  desc    = fgb_res[["desc"]])
+ #
+ ## setting the log scale
+ #state[["FG"]][["ui"]][["select_fg_element"]]          = "scales"
+ #state[["FG"]][["ui"]][["select_component_yscale"]]    = "log10"
+ #
+ #fgb_res  = fers_builder(state)
+ #state = FG_build( state,
+ #  cmd     = fgb_res[["cmd"]],
+ #  element = fgb_res[["element"]],
+ #  desc    = fgb_res[["desc"]])
+ ##------------------------------------
+
+  # This functions works both in a shiny app and outside of one
+  # if we're in a shiny app then the 'session' then the class of
+  # session will be a ShinySession. Otherwise it'll be a list if
+  # we're not in the app (ie just running test examples) then
+  # we need to set the state manually
+  if(("ShinySession" %in% class(session))){
+    FM_set_mod_state(session, id, state)
+  } else {
+    session = FM_set_mod_state(session, id, state)
+  }
+
+  # Required for proper reaction:
+  #rsc[[id]]  = list(FG = list(checksum=state[["FG"]][["checksum"]]))
+
+  res = list(
+    isgood  = isgood,
+    session = session,
+    input   = input,
+    state   = state,
+    rsc     = rsc
+  )
+}

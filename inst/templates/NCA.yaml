@@ -41,7 +41,7 @@ MC:
       width:           "100%"
       height:          "600px"
       nrow:            4
-      ncol:            6
+      ncol:            4
       nrow_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
       ncol_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
       logy:            TRUE
@@ -105,6 +105,8 @@ MC:
       block: TRUE
     check_fg_ind_obs:
       width: 75
+    select_ana_interval_range:  
+      width:  200
     text_ana_interval_start:
       width: 75 
     text_ana_interval_stop:
@@ -202,6 +204,7 @@ MC:
     panel_nca_config:                "Configuration"
     text_ana_interval_start:         "Start"
     text_ana_interval_stop:          "End"  
+    select_ana_interval_range:       "Interval Range"  
     # Headings used in the UI
     head_intervals:                  "Analysis Time Intervals"
     head_intervals_current:          "Current Intervals"
@@ -681,7 +684,7 @@ MC:
       description: NULL
       text:        NULL
       md:          "c~0~"
-      group:       "Other"
+      group:       "Common Parameters"
     cav:
       description: NULL
       text:        NULL
@@ -1043,11 +1046,11 @@ MC:
     conc:     ["ng/mL",   "µg/mL",  "g/L",    "molar",  "nM"]
     conc_def:  "ng/mL"                                   
     dose:     ["g",  "mg",  "mg/kg",   "µg", "µg/kg",   "ng",   "ng/kg"]
-    dose_def:  "mg/kg"
-    amt:      ["g",  "mg", "µg",  "ng", "g"]
+    dose_def:  "mg"
+    amt:      ["g",  "mg", "µg",  "ng", "g", "moles", "µmoles", "nmoles"]
     amt_def:   "mg"                                       
     time:     ["day",     "hr",      "min",    "sec"         ]
-    time_def:  "hr"
+    time_def:  "day"
     vol:      ["mL",     "L"]
   data_format:
     columns:

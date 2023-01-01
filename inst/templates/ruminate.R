@@ -1,12 +1,22 @@
-library(formods)
+#library(formods)
 
 # These are suggested packages
-library(shinydashboard)
-library(ggpubr)
-library(plotly)
-library(shinybusy)
-library(prompter)
-library(utils)
+#library(shinydashboard)
+#library(ggpubr)
+#library(plotly)
+#library(shinybusy)
+#library(prompter)
+#library(utils)
+
+
+# You can copy these locally and customize them for your own needs. Simply
+# change the assignment to the local copy you've modified.
+formods.yaml  = system.file(package="formods","templates", "formods.yaml")
+ASM.yaml      = system.file(package="formods","templates", "ASM.yaml")
+UD.yaml       = system.file(package="formods","templates", "UD.yaml")
+DW.yaml       = system.file(package="formods","templates", "DW.yaml")
+FG.yaml       = system.file(package="formods","templates", "FG.yaml")
+
 
 CSS <- "
 .wrapfig {
@@ -40,30 +50,30 @@ tags$a("here", href=data_url),".")
 # each module element. It will also generate a script that when you save an
 # analysis to reproduce all you didn within the interface."
 
-ui <- dashboardPage(
+ui <- shinydashboard::dashboardPage(
   skin="black",
-  dashboardHeader(title="ruminate"),
-  dashboardSidebar(
-     sidebarMenu(
-       menuItem("Load/Save",       tabName="loadsave",    icon=icon("arrow-down-up-across-line")) ,
-       menuItem("Transform Data",  tabName="wrangle",     icon=icon("shuffle")),
-       menuItem("Visualize",       tabName="plot",        icon=icon("chart-line")),
-       menuItem("NCA",             tabName="nca",         icon=icon("chart-area"))
+  shinydashboard::dashboardHeader(title="ruminate"),
+  shinydashboard::dashboardSidebar(
+     shinydashboard::sidebarMenu(
+       shinydashboard::menuItem("Load/Save",       tabName="loadsave",    icon=icon("arrow-down-up-across-line")) ,
+       shinydashboard::menuItem("Transform Data",  tabName="wrangle",     icon=icon("shuffle")),
+       shinydashboard::menuItem("Visualize",       tabName="plot",        icon=icon("chart-line")),
+       shinydashboard::menuItem("NCA",             tabName="nca",         icon=icon("chart-area"))
      )
   ),
-  dashboardBody(
+  shinydashboard::dashboardBody(
   tags$head(
     tags$style(HTML(CSS))
   ),
-    tabItems(
-       tabItem(tabName="nca", 
-               box(title="Run Non-Compartmental Analysis", width=12,
+    shinydashboard::tabItems(
+       shinydashboard::tabItem(tabName="nca", 
+               shinydashboard::box(title="Run Non-Compartmental Analysis", width=12,
                fluidRow( prompter::use_prompt(),
                column(width=12,
                htmlOutput(NS("NCA",  "NCA_ui_compact"))))),
                ),
-       tabItem(tabName="loadsave",
-               box(title="Load Dataset", width=12,
+       shinydashboard::tabItem(tabName="loadsave",
+               shinydashboard::box(title="Load Dataset", width=12,
                  fluidRow(
                    column(width=6,
                      htmlOutput(NS("UD",  "UD_ui_compact"))),
@@ -78,17 +88,17 @@ ui <- dashboardPage(
                        ))
                  )
                ),
-               box(title="Save or Load Analysis", width=12,
+               shinydashboard::box(title="Save or Load Analysis", width=12,
                    htmlOutput(NS("ASM", "ui_asm_compact")))
                ),
-       tabItem(tabName="wrangle",
-               box(title="Transform and Create Views of Your Data", width=12,
+       shinydashboard::tabItem(tabName="wrangle",
+               shinydashboard::box(title="Transform and Create Views of Your Data", width=12,
                fluidRow(
                column(width=12,
                htmlOutput(NS("DW",  "DW_ui_compact")))))
                ),
-       tabItem(tabName="plot",
-               box(title="Visualize Data", width=12,
+       shinydashboard::tabItem(tabName="plot",
+               shinydashboard::box(title="Visualize Data", width=12,
                htmlOutput(NS("FG",  "FG_ui_compact"))))
       )
     )
@@ -100,14 +110,24 @@ server <- function(input, output, session) {
   # changes in the module state outside of the module
   react_FM = reactiveValues()
 
-  #FM_load_test_state(session=session, react_state=react_FM, input=input)
-
   # Module servers
-  ASM_Server(id="ASM",                                              react_state=react_FM)
-  UD_Server( id="UD",  id_ASM = "ASM",                              react_state=react_FM)
-  DW_Server( id="DW",  id_ASM = "ASM",  id_UD = "UD",               react_state=react_FM)
-  FG_Server( id="FG",  id_ASM = "ASM",  id_UD = "UD", id_DW = "DW", react_state=react_FM)
-  NCA_Server(id="NCA", id_ASM = "ASM",  id_UD = "UD", id_DW = "DW", react_state=react_FM)
+  formods::ASM_Server(id="ASM",                                              
+                      react_state=react_FM, 
+                      FM_yaml_file=formods.yaml)
+  formods::UD_Server( id="UD",  id_ASM = "ASM",                              
+                     react_state=react_FM, 
+                     FM_yaml_file=formods.yaml)
+  formods::DW_Server( id="DW",       id_ASM = "ASM",  
+                      id_UD = "UD",               
+                     react_state=react_FM, 
+                     FM_yaml_file=formods.yaml)
+  formods::FG_Server( id="FG",     id_ASM = "ASM",  
+                     id_UD = "UD", id_DW = "DW", 
+                     react_state=react_FM, 
+                     FM_yaml_file=formods.yaml)
+  NCA_Server(id="NCA",     id_ASM = "ASM",  
+             id_UD = "UD", id_DW = "DW", 
+             react_state=react_FM)
 }
 
 shinyApp(ui, server)
