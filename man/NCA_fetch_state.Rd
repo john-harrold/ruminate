@@ -51,7 +51,6 @@ has the following structure:
 \item{code:}             Code to generate analysis from start to finish or error messages if code generation/analysis failed.
 \item{code_components:}  List containing the different components from code
 \item{col_conc:}         Column from ana_dsview containing the concentration data.
-\item{col_cycle:}        Column from ana_dsview containing the dose dose cycle/number.
 \item{col_dose:}         Column from ana_dsview containing the dose amount.
 \item{col_dur:}          Column from ana_dsview containing the infusion duration or N/A if unused.
 \item{col_group:}        Columns from ana_dsview containing other grouping variables.

@@ -7,17 +7,24 @@
 mk_table_nca_params(
   nca_res,
   type = "individual",
-  nca_params = NULL,
+  grouping = "interval",
+  not_calc = "NC",
+  obnd = NULL,
   nps = NULL,
-  infinity = list(text = "inf", md = "∞"),
+  infinity = list(text = "∞", md = "∞"),
   digits = 3,
-  max_col = 9
+  max_row = NULL,
+  max_col = NULL
 )
 }
 \arguments{
 \item{nca_res}{Output of PKNCA.}
 
 \item{type}{Type of table to generate. Can be either \code{"individual"} or \code{"summary"]}.}
+
+\item{grouping}{How to group columns in tables. Can be either \code{"interval"} or \code{"parameter"]}.}
+
+\item{obnd}{onbrand reporting object.}
 
 \item{nps}{NCA parameter summary table with the following columns.
 \itemize{
@@ -37,6 +44,11 @@ be wrapped to multiple pages.}
 \value{
 list containing the following elements
 \itemize{
+\item{raw_nca:} Raw PKNCA output.
+\item{isgood:}  Boolean indicating the exit status of the function.
+\item{msgs:}    Vector of text messages describing any errors that were found.
+\item{tables:}  Named list of tables. Each list element is of the output
+format from \code{build_span()}.
 }
 }
 \description{

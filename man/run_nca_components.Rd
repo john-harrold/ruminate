@@ -4,7 +4,10 @@
 \alias{run_nca_components}
 \title{Runs NCA for the Current Analysis}
 \usage{
-run_nca_components(state, components = c("nca", "fg_ind_obs", "tb_ind_obs"))
+run_nca_components(
+  state,
+  components = c("nca", "fg_ind_obs", "tb_ind_obs", "tb_ind_params")
+)
 }
 \arguments{
 \item{state}{NCA state from \code{NCA_fetch_state()}}

@@ -45,11 +45,11 @@ install.packages("ruminate")
 --->
 
 
-You can install the development version from [GitHub](https://github.com/john-harrold/) with the following:
+You can install the development version from [GitHub](https://github.com/john-harrold/ruminate/) with the following:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("john-harrold/formods", dependencies=TRUE)
+devtools::install_github("john-harrold/formods",  dependencies=TRUE)
 devtools::install_github("john-harrold/ruminate", dependencies=TRUE)
 ```
 
@@ -60,5 +60,5 @@ Note that because `ruminate` depends on `formods` you will need to first install
 
 ``` r 
 library(ruminate)
-run_ruminate()
+ruminate()
 ```

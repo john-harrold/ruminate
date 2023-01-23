@@ -1,5 +1,6 @@
 MC: 
   code: # module specific code options
+    packages: ["PKNCA", "dplyr", "stringr", "ruminate"]
     readOnly: TRUE
     mode:     r
   compact:
@@ -14,7 +15,10 @@ MC:
     figures:
       - figure_ind_obs 
     tables:  
+      - table_ind_params
       - table_ind_obs 
+    # Number of significant digits
+    digits: 3
   notifications:
     ana_add_int_success: "Interval added: ===DETAILS==="
   # Put different formatting options (widths, heights,
@@ -77,12 +81,12 @@ MC:
       block: TRUE
       tooltip: "Copy the code to generate the current analysis to the clipboard."
       tooltip_position: "right"
-    button_fg_ind_obs_save:
+    button_fg_save:
       size: "sm" 
       block: TRUE
      #tooltip: "tooltip"
      #tooltip_position: "right"
-    button_tb_ind_obs_save:
+    button_tb_save:
       size: "sm" 
       block: TRUE
      #tooltip: "tooltip"
@@ -131,8 +135,6 @@ MC:
       width: 150
     select_ana_col_route:
       width: 150
-    select_ana_col_cycle:
-      width: 150
     select_ana_col_time:
       width: 150
     select_ana_col_ntime:
@@ -157,7 +159,7 @@ MC:
       width: 50
     select_fg_ind_obs_page:
       width: 100
-    select_tb_ind_obs_page:
+    select_tb_page:
       width: 100
   errors:
     nca_run_filed: "Unable to run PKNCA. Please, see below for details."
@@ -175,14 +177,27 @@ MC:
       text_ana_interval_start: 0
       text_ana_interval_stop:  "number or Inf"
       notes:                   "Optional NCA notes that will be carried over and used in other elements (e.g. reporting)."
+  # This controls the figure and table selection for an analysis. The order of
+  # the keys (e.g., tb_ind_params, tb_sum_params, etc) controls the
+  # order they are dispalyed in the selector and the text controls what's show
+  # in the interface.
   figures:
     fg_ind_obs:
       choice:  "Individual Profiles"   
       subtext: "Faceted view of individual time-course"
   tables:  
+    tb_ind_params:
+      choice:  "Indiviudal NCA Parameters"       
+      subtext: "Listings of subject-level NCA parmaeters"
+    tb_sum_params:
+      choice:  "Summarized NCA Parameters"       
+      subtext: "Listings of NCA parmaeters summarized by group/analyte"
     tb_ind_obs:
-      choice:  "Paginated Individual Data"       
+      choice:  "Individual Data"       
       subtext: "Listings of subject-level time-course data"
+    tb_nca_raw:
+      choice:  "Raw NCA Output"       
+      subtext: "Output from PKNCA with requested and dependent parameters"
   labels:
     ana_key:                         "title/caption"
     new_ana:                         "New"
@@ -191,8 +206,8 @@ MC:
     del_ana:                         "Delete"
     copy_ana:                        "Copy"
     clip_ana:                        "Code"
-    fg_ind_obs_save:                 "Apply changes"
-    tb_ind_obs_save:                 "Apply changes"
+    fg_save:                         "Apply changes"
+    tb_save:                         "Apply changes"
     curr_anas_none:                  "No figures yet created"
     no_dataset:                      "No datasets available to analyze. You need to load a dataset to use this module."
     ana_use_scenario:                "Analysis Template"
@@ -225,7 +240,6 @@ MC:
     select_ana_col_dur:              "Dose Duration"
     select_ana_col_conc:             "Concentration"
     select_ana_col_route:            "Route"
-    select_ana_col_cycle:            "Cycle"
     select_ana_col_group:            "Other Grouping"
     select_ana_col_analyte:          "Analyte"
     select_ana_units_time:           "Time"
@@ -236,7 +250,7 @@ MC:
     select_fg_ind_obs_nrow:          "Rows"
     select_fg_ind_obs_ncol:          "Columns"
     select_fg_ind_obs_page:          "Show Page"
-    select_tb_ind_obs_page:          "Show Page"
+    select_tb_page:                  "Show Page"
     check_fg_ind_obs_logy:           "Log 10 y-scale"
     switch_ana_include_units:        "Include Units"
     switch_ana_fig:                  NULL          
@@ -482,8 +496,13 @@ MC:
   #                 
   #  - md:          Markdown formatted value of text.
   #
+  #  - group:       This is how the paramters will be grouped in the UI that
+  #                 is generated.
+  #
   # To limit the options the user sees you simply need to comment out the
-  # parameters you do not want in the App.
+  # parameters you do not want in the App. Alterantively you can use the
+  # grouping below to have the most common parameters together at the top and
+  # the remaining in case they are needed. 
   #
   # BILL can you go through the text and md elements below and make any
   # changes you think make sense. For example is there a better way to label
@@ -683,7 +702,7 @@ MC:
     c0:
       description: NULL
       text:        NULL
-      md:          "c~0~"
+      md:          "C~0~"
       group:       "Common Parameters"
     cav:
       description: NULL
@@ -753,32 +772,32 @@ MC:
     cmax:   
       description: NULL
       text:        NULL
-      md:          "CL~max~" 
+      md:          "C~max~" 
       group:       "Common Parameters"
     cmax.dn:   
       description: NULL
       text:        NULL
-      md:          "CL~max,dn~" 
+      md:          "C~max,dn~" 
       group:       "Other"
     cmin:   
       description: NULL
       text:        NULL
-      md:          "CL~min~" 
+      md:          "C~min~" 
       group:       "Other"
     cmin.dn:   
       description: NULL
       text:        NULL
-      md:          "CL~min,dn~" 
+      md:          "C~min,dn~" 
       group:       "Other"
     ctrough:
       description: NULL
       text:        NULL
-      md:          "CL~tr~" 
+      md:          "C~tr~" 
       group:       "Other"
     ctrough.dn:   
       description: NULL
       text:        NULL
-      md:          "CL~tr,dn~" 
+      md:          "C~tr,dn~" 
       group:       "Other"
     deg.fluc:  
       description: NULL

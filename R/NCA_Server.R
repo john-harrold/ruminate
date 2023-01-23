@@ -13,9 +13,13 @@
 "_PACKAGE"
 
 #'@import rhandsontable
+#'@import dplyr
+#'@import tidyr
+#'@import tidyr
 #'@import shiny
 #'@importFrom digest digest
 #'@importFrom shinyAce aceEditor updateAceEditor
+#'@importFrom stringr str_replace str_detect str_split
 
 # JMH
 # Notes:
@@ -60,12 +64,6 @@ NCA_Server <- function(id,
                       react_state  = NULL) {
   moduleServer(id, function(input, output, session) {
 
-
-    #------------------------------------
-    # Create ui outputs here:
-    output$ZZ_ui_element = renderUI({
-      uiele = NULL
-      uiele})
 
     #------------------------------------
     # Generated data reading code
@@ -683,6 +681,8 @@ NCA_Server <- function(id,
 
       # Update on save
       input[["button_tb_ind_obs_save"]]
+      input[["button_tb_ind_params_save"]]
+      input[["button_tb_sum_params_save"]]
 
       # Don't build out the table until the tab_view has been created
       req(input[["select_ana_tab_view"]])
@@ -703,14 +703,19 @@ NCA_Server <- function(id,
       if(current_ana[["isgood"]]){
         fobj = NCA_fetch_current_obj(state, "table")
 
-        pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
-        pvh          = state[["MC"]][["formatting"]][["preview"]][["height"]]
-        pv_div_style = paste0("height:",pvh,";width:",pvw,";display:inline-block;vertical-align:top")
-
-        if(current_ana[["tab_type"]] == "report"){
-          uiele = flextable::htmltools_value(fobj[["ft"]])
+       #pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
+       #pvh          = state[["MC"]][["formatting"]][["preview"]][["height"]]
+       #pv_div_style = paste0("height:",pvh,";width:",pvw,";display:inline-block;vertical-align:top")
+        # If we fetched everything then we return the table
+        if(fobj[["isgood"]]){
+          if(current_ana[["tab_type"]] == "report"){
+            uiele = flextable::htmltools_value(fobj[["ft"]])
+          } else {
+            uiele = DT::DTOutput(NS(id, "ui_nca_ana_results_tab_table_dt"))
+          }
         } else {
-          uiele = DT::DTOutput(NS(id, "ui_nca_ana_results_tab_table_dt"))
+          # Otherwise we return messages to the user
+          uiele = fobj[["msgs"]]
         }
       }
 
@@ -728,6 +733,8 @@ NCA_Server <- function(id,
 
       # Update on save
       input[["button_tb_ind_obs_save"]]
+      input[["button_tb_ind_params_save"]]
+      input[["button_tb_sum_params_save"]]
 
       # Don't build out the table until the tab_view has been created
       req(input[["select_ana_tab_view"]])
@@ -899,18 +906,15 @@ NCA_Server <- function(id,
 
       current_ana = NCA_fetch_current_ana(state)
 
-      #fobj = NCA_fetch_current_obj(state, "figure")
-
-
-
       uiele = NULL
       # We only return a non-NULL result if the current analysis is good
-      # and an interactive figure has _not_ been selected
+      # This should only be called if an interactive as _not_ been selected
+      # so we just need to return the ggplot object.
       if(current_ana[["isgood"]]){
         # Pulling out the current figure
         fobj = NCA_fetch_current_obj(state, "figure")
         if(!is.null(fobj)){
-         uiele = fobj
+         uiele = fobj[["ggplot"]]
         }
       }
       uiele})
@@ -942,11 +946,12 @@ NCA_Server <- function(id,
 
       uiele = NULL
       # We only return a non-NULL result if the current analysis is good
-      # and an interactive figure has been selected
+      # and this should only be called if an interactive figure has been
+      # selected. For that we need the ggplotly output of the ggplot object:
       if(current_ana[["isgood"]]){
          fobj = NCA_fetch_current_obj(state, "figure")
         if(!is.null(fobj)){
-          uiele = plotly::ggplotly(fobj)
+          uiele = plotly::ggplotly(fobj[["ggplot"]])
         }
       }
       uiele})
@@ -979,7 +984,6 @@ NCA_Server <- function(id,
 
       current_ana = NCA_fetch_current_ana(state)
 
-
       # If the current analysis state is bad then we return NULL and wait for
       # the user to fix it.
       if(current_ana[["isgood"]]){
@@ -988,10 +992,10 @@ NCA_Server <- function(id,
           uiele_save =
           shinyWidgets::actionBttn(
             inputId = NS(id, "button_fg_ind_obs_save"),
-            label   = state[["MC"]][["labels"]][["fg_ind_obs_save"]],
+            label   = state[["MC"]][["labels"]][["fg_save"]],
             style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
-            size    = state[["MC"]][["formatting"]][["button_fg_ind_obs_save"]][["size"]],
-            block   = state[["MC"]][["formatting"]][["button_fg_ind_obs_save"]][["block"]],
+            size    = state[["MC"]][["formatting"]][["button_fg_save"]][["size"]],
+            block   = state[["MC"]][["formatting"]][["button_fg_save"]][["block"]],
             color   = "primary",
             icon    = icon("arrow-down"))
 
@@ -1045,6 +1049,8 @@ NCA_Server <- function(id,
       req(input[["select_ana_tab_view"]])
 
       input[["button_tb_ind_obs_save"]]
+      input[["button_tb_ind_params_save"]]
+      input[["button_tb_sum_params_save"]]
       state = NCA_fetch_state(id             = id,
                              input           = input,
                              session         = session,
@@ -1059,24 +1065,51 @@ NCA_Server <- function(id,
 
       current_ana = NCA_fetch_current_ana(state)
 
-      if(current_ana[["isgood"]]){
-        page_values = names(current_ana[["objs"]][["tb_ind_obs"]][["value"]][["tables"]])
-        if(current_ana[["curr_tb_ind_obs"]] %in% page_values){
-          selected_page = current_ana[["curr_tb_ind_obs"]]
-        } else {
-          selected_page = page_values[1]
-        }
-        names(page_values) = 1:length(page_values)
+      # JMH here: Generalize for all tables and add 
+      #    - tb_ind_params 
+      #    - tb_sum_params
 
-        uiele =
-        shinyWidgets::pickerInput(
-          inputId    = NS(id, "select_tb_ind_obs_page"),
-          choices    = page_values,
-          label      = state[["MC"]][["labels"]][["select_tb_ind_obs_page"]],
-          selected   = selected_page,
-          options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
-          width      = state[["MC"]][["formatting"]][["select_tb_ind_obs_page"]][["width"]]
-          )
+      if(current_ana[["isgood"]]){
+        if(current_ana[["tab_view"]] == "tb_ind_obs"){
+          page_values = names(current_ana[["objs"]][["tb_ind_obs"]][["value"]][["tables"]])
+          if(current_ana[["curr_tb_ind_obs"]] %in% page_values){
+            selected_page = current_ana[["curr_tb_ind_obs"]]
+          } else {
+            selected_page = page_values[1]
+          }
+          names(page_values) = 1:length(page_values)
+         
+          uiele =
+          shinyWidgets::pickerInput(
+            inputId    = NS(id, "select_tb_ind_obs_page"),
+            choices    = page_values,
+            label      = state[["MC"]][["labels"]][["select_tb_page"]],
+            selected   = selected_page,
+            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            width      = state[["MC"]][["formatting"]][["select_tb_page"]][["width"]]
+            )
+        }
+        if(current_ana[["tab_view"]] == "tb_ind_params"){
+          page_values = names(current_ana[["objs"]][["tb_ind_params"]][["value"]][["tables"]])
+          if(current_ana[["curr_tb_ind_params"]] %in% page_values){
+            selected_page = current_ana[["curr_tb_ind_params"]]
+          } else {
+            selected_page = page_values[1]
+          }
+          names(page_values) = 1:length(page_values)
+         
+          uiele =
+          shinyWidgets::pickerInput(
+            inputId    = NS(id, "select_tb_ind_params_page"),
+            choices    = page_values,
+            label      = state[["MC"]][["labels"]][["select_tb_page"]],
+            selected   = selected_page,
+            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            width      = state[["MC"]][["formatting"]][["select_tb_page"]][["width"]]
+            )
+        }
+        if(current_ana[["tab_view"]] == "tb_sum_params"){
+        }
       }
     uiele})
     #------------------------------------
@@ -1182,23 +1215,57 @@ NCA_Server <- function(id,
 
       current_ana = NCA_fetch_current_ana(state)
 
+      # this is the common ui to select pages that's used below
+      uiele_page = htmlOutput(NS(id, "ui_nca_ana_results_tab_pages"))
 
       # If the current analysis state is bad then we return NULL and wait for
       # the user to fix it.
       if(current_ana[["isgood"]]){
         if(current_ana[["tab_view"]] == "tb_ind_obs"){
-
           uiele_save =
           shinyWidgets::actionBttn(
             inputId = NS(id, "button_tb_ind_obs_save"),
-            label   = state[["MC"]][["labels"]][["tb_ind_obs_save"]],
+            label   = state[["MC"]][["labels"]][["tb_save"]],
             style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
-            size    = state[["MC"]][["formatting"]][["button_tb_ind_obs_save"]][["size"]],
-            block   = state[["MC"]][["formatting"]][["button_tb_ind_obs_save"]][["block"]],
+            size    = state[["MC"]][["formatting"]][["button_tb_save"]][["size"]],
+            block   = state[["MC"]][["formatting"]][["button_tb_save"]][["block"]],
             color   = "primary",
             icon    = icon("arrow-down"))
 
-          uiele_page = htmlOutput(NS(id, "ui_nca_ana_results_tab_pages"))
+          dvstyle = "display:inline-block"
+          uiele = tagList(div(style=dvstyle, uiele_save),
+                          div(style=dvstyle, uiele_page))
+        }
+        if(current_ana[["tab_view"]] == "tb_nca_raw"){
+          # Currently there are no controls for the raw NCA output
+        }
+        if(current_ana[["tab_view"]] == "tb_ind_params"){
+          uiele_save =
+          shinyWidgets::actionBttn(
+            inputId = NS(id, "button_tb_ind_params_save"),
+            label   = state[["MC"]][["labels"]][["tb_save"]],
+            style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+            size    = state[["MC"]][["formatting"]][["button_tb_save"]][["size"]],
+            block   = state[["MC"]][["formatting"]][["button_tb_save"]][["block"]],
+            color   = "primary",
+            icon    = icon("arrow-down"))
+
+          dvstyle = "display:inline-block"
+          uiele = tagList(div(style=dvstyle, uiele_save),
+                          div(style=dvstyle, uiele_page))
+        }
+        if(current_ana[["tab_view"]] == "tb_sum_params"){
+          # JMH add controls
+          uiele_save =
+          shinyWidgets::actionBttn(
+            inputId = NS(id, "button_tb_sum_params_save"),
+            label   = state[["MC"]][["labels"]][["tb_save"]],
+            style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+            size    = state[["MC"]][["formatting"]][["button_tb_save"]][["size"]],
+            block   = state[["MC"]][["formatting"]][["button_tb_save"]][["block"]],
+            color   = "primary",
+            icon    = icon("arrow-down"))
+
           dvstyle = "display:inline-block"
           uiele = tagList(div(style=dvstyle, uiele_save),
                           div(style=dvstyle, uiele_page))
@@ -1650,64 +1717,6 @@ NCA_Server <- function(id,
             selected   = value,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
             width      = state[["MC"]][["formatting"]][["select_ana_col_route"]][["width"]],
-            inline     = TRUE)
-        }
-      }
-
-      uiele})
-    #------------------------------------
-    # cycle column
-    output$ui_nca_ana_col_cycle = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
-
-      input[["button_ana_new"]]
-      input[["button_ana_del"]]
-      input[["button_ana_copy"]]
-      input[["button_ana_save"]]
-      input[["select_current_ana"]]
-      state = NCA_fetch_state(id              = id,
-                             input           = input,
-                             session         = session,
-                             FM_yaml_file    = FM_yaml_file,
-                             MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
-                             react_state     = react_state)
-
-
-      current_ana = NCA_fetch_current_ana(state)
-      uiele = NULL
-
-      # This only generates the UI element if there is a data set
-      if(!is.null(current_ana[["ana_dsview"]])){
-        if(!is.null(state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]])){
-
-          # Pulling out the dataset list
-          ds =  state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]]
-
-          # These are the columns in the dataset:
-          dscols = names(ds[["DS"]])
-
-          # Finding the value to use:
-          value = NCA_find_col(
-            curr_ana = current_ana[["col_cycle"]],
-            curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_cycle"]],
-            patterns = state[["MC"]][["detect_col"]][["cycle"]],
-            dscols   = dscols)
-
-          # Creating the selection input
-          uiele =
-          shinyWidgets::pickerInput(
-            inputId    = NS(id, "select_ana_col_cycle"),
-            choices    = dscols,
-            label      = state[["MC"]][["labels"]][["select_ana_col_cycle"]],
-            selected   = value,
-            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
-            width      = state[["MC"]][["formatting"]][["select_ana_col_cycle"]][["width"]],
             inline     = TRUE)
         }
       }
@@ -2514,8 +2523,6 @@ NCA_Server <- function(id,
              htmlOutput(NS("NCA", "ui_nca_ana_col_dose"))),
            div(style="display:inline-block",
              htmlOutput(NS("NCA", "ui_nca_ana_col_route"))),
-           div(style="display:inline-block",
-             htmlOutput(NS("NCA", "ui_nca_ana_col_cycle"))),
           tags$br(),
           tags$h4(state[["MC"]][["labels"]][["head_col_mapping_optional"]]),
            div(style="display:inline-block",
@@ -2729,7 +2736,6 @@ NCA_Server <- function(id,
 #'        \item{code:}             Code to generate analysis from start to finish or error messages if code generation/analysis failed.
 #'        \item{code_components:}  List containing the different components from code
 #'        \item{col_conc:}         Column from ana_dsview containing the concentration data.
-#'        \item{col_cycle:}        Column from ana_dsview containing the dose dose cycle/number.
 #'        \item{col_dose:}         Column from ana_dsview containing the dose amount.
 #'        \item{col_dur:}          Column from ana_dsview containing the infusion duration or N/A if unused.
 #'        \item{col_group:}        Columns from ana_dsview containing other grouping variables.
@@ -2739,8 +2745,8 @@ NCA_Server <- function(id,
 #'        \item{col_time:}         Column from ana_dsview containing the time values.
 #'        \item{id:}               Character id (\code{ana_idx}).
 #'        \item{idx:}              Numeric id (\code{1}).
-#'        \item{include_units:}    Boolean variable indicating in units should included in the analysis.   
-#'        \item{interval_range:}   Vector with the first element representing he beginning of the interval 
+#'        \item{include_units:}    Boolean variable indicating in units should included in the analysis.
+#'        \item{interval_range:}   Vector with the first element representing he beginning of the interval
 #'                                 and the second element containing the end of the interval.
 #'        \item{intervals:}        List of the intervals to include.
 #'        \item{isgood:}           Current status of the analysis.
@@ -2975,10 +2981,6 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
     # Saving the button state to the counter
     state[["NCA"]][["button_counters"]][["button_fg_ind_obs_save"]] =
       state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]]
-
-
-    # Updating any messages
-    #state = FM_set_ui_msg(state, msgs)
   }
   #---------------------------------------------
   # Process scenario button selection here to overwrite
@@ -3347,34 +3349,39 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
 
   # mapping name in UI to name used in the analysis
   ui_ana_map = list(
-    "switch_ana_include_units"   = "include_units",
-    "select_ana_interval_range"  = "interval_range",
-    "select_fg_ind_obs_ncol"     = "fg_ind_obs_ncol",
-    "select_fg_ind_obs_nrow"     = "fg_ind_obs_nrow",
-    "select_fg_ind_obs_page"     = "curr_fg_ind_obs",
-    "select_tb_ind_obs_page"     = "curr_tb_ind_obs",
-    "check_fg_ind_obs_logy"      = "fg_ind_obs_logy",
-    "switch_ana_source_sampling" = "sampling",
-    "switch_ana_fig"             = "fig_type",
-    "switch_ana_tab"             = "tab_type",
-    "select_ana_nca_parameters"  = "nca_parameters",
-    "select_ana_scenario"        = "ana_scenario",
-    "select_ana_units_time"      = "units_time",
-    "select_ana_units_conc"      = "units_conc",
-    "select_ana_units_dose"      = "units_dose",
-    "select_ana_units_amt"       = "units_amt",
-    "select_ana_col_id"          = "col_id"   ,
-    "select_ana_col_time"        = "col_time" ,
-    "select_ana_col_ntime"       = "col_ntime" ,
-    "select_ana_col_dose"        = "col_dose" ,
-    "select_ana_col_dur"         = "col_dur" ,
-    "select_ana_col_conc"        = "col_conc" ,
-    "select_ana_col_route"       = "col_route" ,
-    "select_ana_col_cycle"       = "col_cycle" ,
-    "select_ana_col_group"       = "col_group",
-    "select_ana_col_analyte"     = "col_analyte",
-    "select_ana_fig_view"        = "fig_view",
-    "select_ana_tab_view"        = "tab_view"
+    "switch_ana_include_units"       = "include_units",
+    "select_ana_interval_range"      = "interval_range",
+    "select_fg_ind_obs_ncol"         = "fg_ind_obs_ncol",
+    "select_fg_ind_obs_nrow"         = "fg_ind_obs_nrow",
+    "select_fg_ind_obs_page"         = "curr_fg_ind_obs",
+    "select_tb_ind_obs_page"         = "curr_tb_ind_obs",
+    "select_tb_ind_params_page"      = "curr_tb_ind_params",
+    "select_tb_sum_params_page"      = "curr_tb_sum_params",
+    "fg_ind_obs_rpt"                 = "fg_ind_obs_rpt",           
+    "tb_ind_obs_rpt"                 = "tb_ind_obs_rpt",          
+    "tb_ind_params_rpt"              = "tb_ind_params_rpt",
+    "tb_sum_params_rpt"              = "tb_sum_params_rpt",   
+    "check_fg_ind_obs_logy"          = "fg_ind_obs_logy",
+    "switch_ana_source_sampling"     = "sampling",
+    "switch_ana_fig"                 = "fig_type",
+    "switch_ana_tab"                 = "tab_type",
+    "select_ana_nca_parameters"      = "nca_parameters",
+    "select_ana_scenario"            = "ana_scenario",
+    "select_ana_units_time"          = "units_time",
+    "select_ana_units_conc"          = "units_conc",
+    "select_ana_units_dose"          = "units_dose",
+    "select_ana_units_amt"           = "units_amt",
+    "select_ana_col_id"              = "col_id"   ,
+    "select_ana_col_time"            = "col_time" ,
+    "select_ana_col_ntime"           = "col_ntime" ,
+    "select_ana_col_dose"            = "col_dose" ,
+    "select_ana_col_dur"             = "col_dur" ,
+    "select_ana_col_conc"            = "col_conc" ,
+    "select_ana_col_route"           = "col_route" ,
+    "select_ana_col_group"           = "col_group",
+    "select_ana_col_analyte"         = "col_analyte",
+    "select_ana_fig_view"            = "fig_view",
+    "select_ana_tab_view"            = "tab_view"
   )
 
   # We add all of the button counters as well as
@@ -3500,6 +3507,11 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
   # Storing the analysis map
   state[["NCA"]][["ui_ana_map"]]              = ui_ana_map
 
+  # Creating an empty docx report. It has the style information
+  # needed for building tables
+  init_cmd = state[["yaml"]][["FM"]][["reporting"]][["content_init"]][["docx"]]
+  tcres = FM_tc(cmd = init_cmd, tc_env = list(), capture="rpt")
+  state[["NCA"]][["docx_rpt"]] = tcres[["capture"]][["rpt"]]
 
   # Finding the dataset
   DSV = FM_fetch_ds(state, session, c(id_UD, id_DW))
@@ -3663,49 +3675,54 @@ NCA_new_ana    = function(state){
   # This is the object that contains the different components of
   # the analysis list:
   nca_def =
-    list(key             = nca_id,
-         id              = nca_id,
-         idx             = state[["NCA"]][["ana_cntr"]],
-         nca_object_name = nca_object_name,
-         objs            = list(),
-         msgs            = c("New analysis"),
-         ana_dsview      = ana_dsview,
-         nca_res         = NULL,    # JMH is this even used?
-         nca_config      = state[["NCA"]][["nca_config"]][["default"]],
-         checksum        = digest::digest(NULL, algo=c("md5")),
-         ana_scenario    = "",
-         fig_view        = "",
-         fig_type        = "",
-         fg_ind_obs_nrow = "",
-         fg_ind_obs_ncol = "",
-         fg_ind_obs_logy = TRUE,
-         tab_view        = "",
-         tab_type        = "",
-         code_components = NULL,
-         code            = NULL,
-         col_id          = "",          # The col_* values will be populated later
-         col_conc        = "",
-         col_dose        = "",
-         col_dur         = "",
-         col_route       = "",
-         col_cycle       = "",
-         col_time        = "",
-         col_ntime       = "",
-         col_group       = "",
-         curr_fg_ind_obs = "",               # Current fg_ind_obs to be dispalyed
-         curr_tb_ind_obs = "",               # Current tb_ind_obs to be dispalyed
-         include_units   = "",              
-         intervals       = NULL,             # holds intervals added to the analysis
-         interval_range  = c("0", "Inf"),    # Current interval in the interface.
-         nca_parameters  = "",
-         sampling        = "",
-         tab_view        = "",
-         units_conc      = "",
-         units_dose      = "",
-         units_amt       = "",
-         units_time      = "",
-         notes           = "",
-         isgood          = FALSE)
+    list(key                     = nca_id,
+         id                      = nca_id,
+         idx                     = state[["NCA"]][["ana_cntr"]],
+         nca_object_name         = nca_object_name,
+         objs                    = list(),
+         msgs                    = c("New analysis"),
+         ana_dsview              = ana_dsview,
+         nca_res                 = NULL,    # JMH is this even used?
+         nca_config              = state[["NCA"]][["nca_config"]][["default"]],
+         checksum                = digest::digest(NULL, algo=c("md5")),
+         ana_scenario            = "",
+         fig_view                = "",
+         fig_type                = "",
+         fg_ind_obs_nrow         = "",
+         fg_ind_obs_ncol         = "",
+         fg_ind_obs_logy         = TRUE,
+         fg_ind_obs_rpt          = c("docx", "pptx"),
+         tb_ind_obs_rpt          = c("docx"),
+         tb_ind_params_rpt       = c("docx"),
+         tb_sum_params_rpt       = c("pptx"),
+         tab_view                = "",
+         tab_type                = "",
+         code_components         = NULL,
+         code                    = NULL,
+         col_id                  = "",          # The col_* values will be populated later
+         col_conc                = "",
+         col_dose                = "",
+         col_dur                 = "",
+         col_route               = "",
+         col_time                = "",
+         col_ntime               = "",
+         col_group               = "",
+         curr_fg_ind_obs         = "",               # Current figure page
+         curr_tb_ind_obs         = "",               # Current table page 
+         curr_tb_ind_params      = "",               # 
+         curr_tb_sum_params      = "",               # 
+         include_units           = "",
+         intervals               = NULL,             # holds intervals added to the analysis
+         interval_range          = c("0", "Inf"),    # Current interval in the interface.
+         nca_parameters          = "",
+         sampling                = "",
+         tab_view                = "",
+         units_conc              = "",
+         units_dose              = "",
+         units_amt               = "",
+         units_time              = "",
+         notes                   = "",
+         isgood                  = FALSE)
 
 
 # I think these were really only needed for the figure
@@ -3744,9 +3761,6 @@ NCA_new_ana    = function(state){
     dscols   = dscols)
   nca_def[["col_route"]] = NCA_find_col(
     patterns = state[["MC"]][["detect_col"]][["route"]],
-    dscols   = dscols)
-  nca_def[["col_cycle"]] = NCA_find_col(
-    patterns = state[["MC"]][["detect_col"]][["cycle"]],
     dscols   = dscols)
 
   # Setting the units switch for the analysis
@@ -4220,9 +4234,6 @@ NCA_process_current_ana = function(state){
   if(current_ana[["col_id"]] != ""){
     unique_cols = c(unique_cols,  current_ana[["col_id"]]  )
   }
-  if(current_ana[["col_cycle"]] != ""){
-    unique_cols = c(unique_cols,  current_ana[["col_cycle"]]  )
-  }
   # Group can be empty as well
   if(current_ana[["col_group"]] != ""){
     unique_cols = c(unique_cols,  current_ana[["col_group"]]  )
@@ -4241,7 +4252,6 @@ NCA_process_current_ana = function(state){
     amsgs = c(amsgs, paste0("The combination of ",
                             state[["MC"]][["labels"]][["select_ana_col_id"]],      ", ",
                             state[["MC"]][["labels"]][["select_ana_col_time"]],    ", ",
-                            state[["MC"]][["labels"]][["select_ana_col_cycle"]],   ", ",
                             state[["MC"]][["labels"]][["select_ana_col_analyte"]], ", and ",
                             state[["MC"]][["labels"]][["select_ana_col_group"]],
                             " columns must be unique."))
@@ -4249,7 +4259,6 @@ NCA_process_current_ana = function(state){
     amsgs = c(amsgs, paste0("Current values are:"))
     amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_id"]],      ": ", current_ana[["col_id"]]       ))
     amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_time"]],    ": ", current_ana[["col_time"]]     ))
-    amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_cycle"]],   ": ", current_ana[["col_cycle"]]    ))
     amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_analyte"]], ": ", current_ana[["col_analyte"]]  ))
     amsgs = c(amsgs, paste0("  ",  state[["MC"]][["labels"]][["select_ana_col_group"]],   ": ", paste0(current_ana[["col_group"]], collapse="\n")    ))
   }
@@ -4288,23 +4297,25 @@ nca_builder = function(state){
   code_ana_only      = ""
   code_previous      = ""
   code_tb_ind_obs    = ""
+  code_tb_ind_params = ""
   code_fg_ind_obs    = ""
 
   # Checking and retrieving the current analysis
   current_ana  = NCA_process_current_ana(state)
 
   # These are the object names that will be generated with the code
-  nca_ds_object_name          = paste0(current_ana[["id"]], "_DS")
-  nca_rm_object_name          = paste0(current_ana[["id"]], "_route_map")
-  nca_drec_object_name        = paste0(current_ana[["id"]], "_dose_rec")
-  nca_ints_object_name        = paste0(current_ana[["id"]], "_intervals")
-  nca_dose_object_name        = paste0(current_ana[["id"]], "_dose")
-  nca_data_object_name        = paste0(current_ana[["id"]], "_data")
-  nca_conc_object_name        = paste0(current_ana[["id"]], "_conc")
-  nca_res_object_name         = paste0(current_ana[["id"]], "_res")
-  nca_units_object_name       = paste0(current_ana[["id"]], "_units")
-  nca_fg_ind_obs_object_name  = paste0(current_ana[["id"]], "_figure_ind_obs")
-  nca_tb_ind_obs_object_name  = paste0(current_ana[["id"]], "_table_ind_obs")
+  nca_ds_object_name             = paste0(current_ana[["id"]], "_DS")
+  nca_rm_object_name             = paste0(current_ana[["id"]], "_route_map")
+  nca_drec_object_name           = paste0(current_ana[["id"]], "_dose_rec")
+  nca_ints_object_name           = paste0(current_ana[["id"]], "_intervals")
+  nca_dose_object_name           = paste0(current_ana[["id"]], "_dose")
+  nca_data_object_name           = paste0(current_ana[["id"]], "_data")
+  nca_conc_object_name           = paste0(current_ana[["id"]], "_conc")
+  nca_res_object_name            = paste0(current_ana[["id"]], "_res")
+  nca_units_object_name          = paste0(current_ana[["id"]], "_units")
+  nca_fg_ind_obs_object_name     = paste0(current_ana[["id"]], "_figure_ind_obs")
+  nca_tb_ind_obs_object_name     = paste0(current_ana[["id"]], "_table_ind_obs")
+  nca_tb_ind_params_object_name  = paste0(current_ana[["id"]], "_table_ind_params")
 
   # We only proceed if were able to process the
   # current analysis successfully
@@ -4318,17 +4329,13 @@ nca_builder = function(state){
     col_dur       = current_ana[["col_dur"]]
     col_analyte   = current_ana[["col_analyte"]]
     col_route     = current_ana[["col_route"]]
-    col_cycle     = current_ana[["col_cycle"]]
     col_time      = current_ana[["col_time"]]
     col_ntime     = current_ana[["col_ntime"]]
     col_group     = current_ana[["col_group"]]
 
     #--------------------------
     # plus columns
-    # These are the columns that go
-    # after the pipe in the PKNCAconc
-    # command
-    plus_cols = c(col_cycle)
+    plus_cols = c()
     # Adding the optional grouping columns
     if(col_group != ""){
       plus_cols = c(plus_cols,
@@ -4344,7 +4351,6 @@ nca_builder = function(state){
       col_time,
       col_ntime,
       col_dose,
-      col_cycle,
       col_route)
     if(col_group != ""){
       dose_select_cols = c(dose_select_cols, col_group)
@@ -4370,7 +4376,7 @@ nca_builder = function(state){
 
     #--------------------------
     # Adding the text description of the analysis
-    cmd = c(cmd, paste0("# ", current_ana[["key"]]))
+    cmd = c(cmd, "",  paste0("# ", current_ana[["key"]]))
 
 
     #--------------------------
@@ -4631,22 +4637,35 @@ nca_builder = function(state){
 
     code_tb_ind_obs   = c(
       "",
-      "# Generating tables of indiviudal profiles",
+      "# Generating tables of individual profiles",
       paste0(nca_tb_ind_obs_object_name,
              " = mk_table_ind_obs(",
              nca_res_object_name,
              ")"))
 
+    code_tb_ind_params   = c(
+      "",
+      "# Generating tables of individual NCA parameters",
+      paste0(nca_tb_ind_params_object_name,
+             " = mk_table_nca_params(",
+             "nca_res = ", nca_res_object_name, ", ",
+             "obnd = rpt, ",
+             "nps = nps, ",
+             "digits = ", state[["MC"]][["reporting"]][["digits"]],
+             ")"))
+
     # Working out the little code elements:
-    code_ana_only   = paste(cmd, collapse="\n")
-    code_fg_ind_obs = paste(code_fg_ind_obs, collapse="\n")
-    code_tb_ind_obs = paste(code_tb_ind_obs, collapse="\n")
-    code_previous   = ds[["code"]]
-    code            = paste(code_previous,
-                            code_ana_only,
-                            code_fg_ind_obs,
-                            code_tb_ind_obs,
-                            collapse="\n")
+    code_ana_only      = paste(cmd, collapse="\n")
+    code_fg_ind_obs    = paste(code_fg_ind_obs, collapse="\n")
+    code_tb_ind_obs    = paste(code_tb_ind_obs, collapse="\n")
+    code_tb_ind_params = paste(code_tb_ind_params, collapse="\n")
+    code_previous      = ds[["code"]]
+    code               = paste(code_previous,
+                               code_ana_only,
+                               code_fg_ind_obs,
+                               code_tb_ind_obs,
+                               code_tb_ind_params,
+                               collapse="\n")
 
   } else {
     isgood = FALSE
@@ -4666,20 +4685,23 @@ nca_builder = function(state){
   current_ana[["isgood"]]            = isgood
   current_ana[["code"]]              = code
   current_ana[["code_components"]]   = list(
-    code_previous   = code_previous,
-    code_ana_only   = code_ana_only,
-    code_fg_ind_obs = code_fg_ind_obs,
-    code_tb_ind_obs = code_tb_ind_obs)
-  current_ana[[ "objs" ]][[ "ds"        ]][[ "name" ]]   = nca_ds_object_name
-  current_ana[[ "objs" ]][[ "rm"        ]][[ "name" ]]   = nca_rm_object_name
-  current_ana[[ "objs" ]][[ "drec"      ]][[ "name" ]]   = nca_drec_object_name
-  current_ana[[ "objs" ]][[ "ints"      ]][[ "name" ]]   = nca_ints_object_name
-  current_ana[[ "objs" ]][[ "dose"      ]][[ "name" ]]   = nca_dose_object_name
-  current_ana[[ "objs" ]][[ "data"      ]][[ "name" ]]   = nca_data_object_name
-  current_ana[[ "objs" ]][[ "conc"      ]][[ "name" ]]   = nca_conc_object_name
-  current_ana[[ "objs" ]][[ "res"       ]][[ "name" ]]   = nca_res_object_name
-  current_ana[[ "objs" ]][[ "fg_ind_obs"]][[ "name" ]]   = nca_fg_ind_obs_object_name
-  current_ana[[ "objs" ]][[ "tb_ind_obs"]][[ "name" ]]   = nca_tb_ind_obs_object_name
+    code_previous      = code_previous,
+    code_ana_only      = code_ana_only,
+    code_fg_ind_obs    = code_fg_ind_obs,
+    code_tb_ind_obs    = code_tb_ind_obs,
+    code_tb_ind_params = code_tb_ind_params
+  )
+  current_ana[[ "objs" ]][[ "ds"           ]][[ "name" ]]   = nca_ds_object_name
+  current_ana[[ "objs" ]][[ "rm"           ]][[ "name" ]]   = nca_rm_object_name
+  current_ana[[ "objs" ]][[ "drec"         ]][[ "name" ]]   = nca_drec_object_name
+  current_ana[[ "objs" ]][[ "ints"         ]][[ "name" ]]   = nca_ints_object_name
+  current_ana[[ "objs" ]][[ "dose"         ]][[ "name" ]]   = nca_dose_object_name
+  current_ana[[ "objs" ]][[ "data"         ]][[ "name" ]]   = nca_data_object_name
+  current_ana[[ "objs" ]][[ "conc"         ]][[ "name" ]]   = nca_conc_object_name
+  current_ana[[ "objs" ]][[ "res"          ]][[ "name" ]]   = nca_res_object_name
+  current_ana[[ "objs" ]][[ "fg_ind_obs"   ]][[ "name" ]]   = nca_fg_ind_obs_object_name
+  current_ana[[ "objs" ]][[ "tb_ind_obs"   ]][[ "name" ]]   = nca_tb_ind_obs_object_name
+  current_ana[[ "objs" ]][[ "tb_ind_params"]][[ "name" ]]   = nca_tb_ind_params_object_name
 
   # If we don't include units then the object wont be available, so we only
   # add this conditionally:
@@ -4718,7 +4740,8 @@ run_nca_components = function(
   state,
   components=c("nca",
                "fg_ind_obs",
-               "tb_ind_obs")){
+               "tb_ind_obs",
+               "tb_ind_params")){
 
   # Generating code. The following will be added
   # to the current analysis
@@ -4727,7 +4750,7 @@ run_nca_components = function(
   #   - any messages that were generated
   state = nca_builder(state)
 
-  valid_components = c("nca", "fg_ind_obs", "tb_ind_obs")
+  #valid_components = c("nca", "fg_ind_obs", "tb_ind_obs", "tb_ind_params")
 
   # Pulling out the current analysis to use and update below
   current_ana = NCA_fetch_current_ana(state)
@@ -4745,7 +4768,7 @@ run_nca_components = function(
   msgs = c()
 
 
-  # If current_ana i bad then something in the nca_builder() failed.
+  # If current_ana is bad then something in the nca_builder() failed.
   # We want to pass those back to the user.
   if(current_ana[["isgood"]]){
     # Pulling out the dataset for the analysis
@@ -4761,6 +4784,8 @@ run_nca_components = function(
         # NCA environment environment:
         tc_env = list()
         tc_env[[dsview]] = DS
+        tc_env[["rpt"]]  = state[["NCA"]][["docx_rpt"]]
+        tc_env[["nps"]]  = state[["NCA"]][["nca_parameters"]][["summary"]]
 
         # Creating the vector of object names to capture:
         capture = c()
@@ -4796,12 +4821,15 @@ run_nca_components = function(
 
     # This list maps the component name to the key
     # with the code for that component
-    fig_tabs = list("fg_ind_obs" = list(code      = "code_fg_ind_obs",
-                                        current   = "curr_fg_ind_obs",
-                                        list_name = "figures"),
-                    "tb_ind_obs" = list(code      ="code_tb_ind_obs",
-                                        current   ="curr_tb_ind_obs",
-                                        list_name = "tables"))
+    fig_tabs = list("fg_ind_obs"   = list(code      = "code_fg_ind_obs",
+                                          current   = "curr_fg_ind_obs",
+                                          list_name = "figures"),
+                    "tb_ind_obs"   = list(code      ="code_tb_ind_obs",
+                                          current   ="curr_tb_ind_obs",
+                                          list_name = "tables"),
+                    "tb_ind_params" = list(code      ="code_tb_ind_params",
+                                           current   ="curr_tb_ind_params",
+                                           list_name = "tables"))
     for(fig_tab in names(fig_tabs)){
       if(current_ana[["isgood"]]){
         if(fig_tab %in% components){
@@ -4811,10 +4839,14 @@ run_nca_components = function(
           # Object name created to capture:
           capture = current_ana[["objs"]][[fig_tab]][["name"]]
 
-          # In the environment environment we define the dataset as well
+          # In the environment environment we define the dataset,
+          # the report template, the nca parameters summary(nps),
           # as the objects created in the NCA analysis:
           tc_env = list()
           tc_env[[dsview]] = DS
+          tc_env[["rpt"]]  = state[["NCA"]][["docx_rpt"]]
+          tc_env[["nps"]]  = state[["NCA"]][["nca_parameters"]][["summary"]]
+
           for(obs_sn in obs_sns_nca){
             tc_env[[  current_ana[["objs"]][[obs_sn]][["name"]]  ]] =
             current_ana[["objs"]][[obs_sn]][["value"]]
@@ -4841,6 +4873,15 @@ run_nca_components = function(
               # This checks the currently selected list element for this
               # component. If it doesn't exist we replace that value with the
               # first element:
+             ## JMH broken here:
+             #cat(paste0(fig_tab, "\n"))
+             #if(fig_tab == "tb_ind_params"){
+             #  NCA_1_res = tc_env$NCA_1_res
+             #  rpt = tc_env$rpt
+             #  nps = tc_env$nps
+             #
+             #  browser()
+             #}
               if(!(current_ana[[ fig_tabs[[fig_tab]][["current"]] ]] %in% list_names)){
                 current_ana[[ fig_tabs[[fig_tab]][["current"]] ]] = list_names[1]
               }
@@ -4884,6 +4925,8 @@ run_nca_components = function(
     msgs = c(msgs, current_ana[["msgs"]] )
 
   }
+
+
 
   #If there is something wrong we set that in the messages
   if(!current_ana[["isgood"]]){
@@ -4990,6 +5033,10 @@ mk_table_ind_obs = function(
     all_data[["CONC"]] = as.character(all_data[["CONC"]])
     all_data[["TIME"]] = as.character(all_data[["TIME"]])
   }
+
+  # Replacing all BLQ and NA values with the appropriate text
+  all_data[is.na(all_data[["CONC"]]), ][["CONC"]] = not_sampled
+  all_data[all_data[["CONC"]] == "0", ][["CONC"]] = blq
 
   if(rows_by == "time"){
     row_header_cols = c("TIME",  row_header_cols)
@@ -5303,7 +5350,11 @@ res}
 #'}
 NCA_fetch_current_obj = function(state, obj_type){
 
-  obj = NULL
+  obj    = list()
+  isgood = TRUE
+  msgs   = c()
+
+
   current_ana = NCA_fetch_current_ana(state)
   if(current_ana[["isgood"]]){
     if(obj_type == "figure"){
@@ -5316,7 +5367,7 @@ NCA_fetch_current_obj = function(state, obj_type){
            names(current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]])){
 
            # Pulling out the ggplot object
-           obj = current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]][[ curr_fg_ind_obs ]]
+           obj[["ggplot"]] = current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]][[ curr_fg_ind_obs ]]
 
         } else {
           # This can happen when you are switching between a faceting that has
@@ -5326,30 +5377,66 @@ NCA_fetch_current_obj = function(state, obj_type){
 
           # In that case we just return the first value:
           new_fg_ind_obs =names(current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]])[1]
-          obj = current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]][[ new_fg_ind_obs ]]
+          obj[["ggplot"]] = current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]][[ new_fg_ind_obs ]]
         }
+      } else {
+        isgood          = FALSE
+        msgs            = paste0("Unknown figure output: ", current_ana[["fig_view"]])
+        obj[["ggplot"]] = formods::FM_mk_error_fig(msgs)
       }
     }
     if(obj_type == "table"){
-      # We process this based on the fig_view
+      # We process this based on the tab_view
+      # Individual observations:
       if( current_ana[["tab_view"]] == "tb_ind_obs"){
         # This is the current table page selected in the interface:
         curr_tb_ind_obs = current_ana[["curr_tb_ind_obs"]]
         if( curr_tb_ind_obs  %in%
            names(current_ana[["objs"]][["tb_ind_obs"]][["value"]][["tables"]])){
-
-           # Pulling out the ggplot object
+           # Pulling out the current table object
            obj = current_ana[["objs"]][["tb_ind_obs"]][["value"]][["tables"]][[ curr_tb_ind_obs ]]
 
         } else {
           # In that case we just return the first value:
           new_tb_ind_obs =names(current_ana[["objs"]][["tb_ind_obs"]][["value"]][["tables"]])[1]
           obj = current_ana[["objs"]][["tb_ind_obs"]][["value"]][["tables"]][[ new_tb_ind_obs ]]
-
         }
+
+      # NCA raw:
+      } else if( current_ana[["tab_view"]] == "tb_nca_raw"){
+        # The raw output is just pulled from the raw results:
+        obj[["df"]]    = as.data.frame(current_ana[["objs"]][["res"]][["value"]])
+        obj[["ft"]]    = flextable::flextable(as.data.frame(current_ana[["objs"]][["res"]][["value"]]))
+        obj[["notes"]] = ""
+      # Table of individual NCA parameters
+      } else if( current_ana[["tab_view"]] == "tb_ind_params"){
+        # This is the current table page selected in the interface:
+        curr_tb_ind_params = current_ana[["curr_tb_ind_params"]]
+
+        if( curr_tb_ind_params  %in%
+           names(current_ana[["objs"]][["tb_ind_params"]][["value"]][["tables"]])){
+           # Pulling out the current table object
+           obj = current_ana[["objs"]][["tb_ind_params"]][["value"]][["tables"]][[ curr_tb_ind_params ]]
+        } else {
+          # In that case we just return the first value:
+          new_tb_ind_params =names(current_ana[["objs"]][["tb_ind_params"]][["value"]][["tables"]])[1]
+          obj = current_ana[["objs"]][["tb_ind_params"]][["value"]][["tables"]][[ new_tb_ind_params ]]
+        }
+      #  Summary of NCA Parameters
+      } else if( current_ana[["tab_view"]] == "tb_sum_params"){
+        # JMH add NCA parameters summary view
+        isgood = FALSE
+        msgs   = paste0("Placeholder for table not yet defined: ", current_ana[["tab_view"]])
+      } else{
+        isgood = FALSE
+        msgs   = paste0("Unknown table output: ", current_ana[["tab_view"]])
       }
     }
   }
+
+  # Appending msgs and isgood status
+  obj[["isgood"]] = isgood
+  obj[["msgs"]]   = msgs
 
 obj}
 
@@ -5367,7 +5454,9 @@ ruminate = function(){
 #'@title Title
 #'@description Description
 #'@param nca_res Output of PKNCA.
-#'@param type    Type of table to generate. Can be either \code{"individual"} or \code{"summary"]}.
+#'@param type     Type of table to generate. Can be either \code{"individual"} or \code{"summary"]}.
+#'@param grouping How to group columns in tables. Can be either \code{"interval"} or \code{"parameter"]}.
+#'@param obnd     onbrand reporting object.
 #'@param nps NCA parameter summary table with the following columns.
 #'   \itemize{
 #'     \item{parameter:}      PKNCA Paramter name.
@@ -5382,25 +5471,34 @@ ruminate = function(){
 #'be wrapped to multiple pages.
 #'@return list containing the following elements
 #'\itemize{
+#'   \item{raw_nca:} Raw PKNCA output.
+#'   \item{isgood:}  Boolean indicating the exit status of the function.
+#'   \item{msgs:}    Vector of text messages describing any errors that were found.
+#'   \item{tables:}  Named list of tables. Each list element is of the output
+#'   format from \code{build_span()}.
 #'}
 mk_table_nca_params = function(
   nca_res   ,
   type        = "individual",
-  nca_params  = NULL,
+  grouping    = "interval",
+  not_calc    = "NC",
 # not_sampled = "NS",
 # blq         = "BLQ",
+  obnd        = NULL,
   nps         = NULL,
-  infinity    = list(text  = "inf",
+  # JMH make sure this is used as intended below
+  infinity    = list(text  = "∞",
                      md    = "∞"),
   digits      = 3,
-  max_col     = 9){
+  max_row     = NULL,
+  max_col     = NULL){
 
   # Pulling out the different pieces from the PKNCA object
   raw_nca   = as.data.frame(nca_res)
   intervals = nca_res[["data"]][["intervals"]]
 
   # Extracting the needed column names:
- #col_id      = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
+  col_id      = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
  #col_time    = nca_res[["data"]][["conc"]][["columns"]][["time"]]
  #col_conc    = nca_res[["data"]][["conc"]][["columns"]][["concentration"]]
   col_group   = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_vars"]]
@@ -5419,20 +5517,184 @@ mk_table_nca_params = function(
   # These are just the NCA data the user requested:
   nca_data = dplyr::filter(raw_nca, .data[["PPTESTCD"]] %in% int_sum)
 
+  # Determining if we have multiple dose data or not:
+  if(unique(length(nca_data[["DOSE_NUM"]])) > 1){
+    IS_MD = TRUE
+  } else{
+    IS_MD = FALSE
+  }
+
+  # Determining if we have units
+  if(is.null(nca_res[["data"]][["units"]])){
+   HAS_UNITS = FALSE
+  } else{
+   HAS_UNITS = TRUE
+  }
+
   # Applying significant digits
   if(!is.null(digits)){
     nca_data[["PPORRES"]] = signif(digits=digits,  nca_data[["PPORRES"]])
   }
 
-  browser()
+  int_temp = "[===START===,===END===]"
+  nca_data = nca_data |>
+    dplyr::mutate(range = int_temp) |>
+    dplyr::mutate(range = stringr::str_replace(
+                          string      = .data[["range"]],
+                          pattern     = "===START===",
+                          replacement = as.character(.data[["start"]]))) |>
+    dplyr::mutate(range = stringr::str_replace(
+                          string      = .data[["range"]],
+                          pattern     = "===END===",
+                          replacement = as.character(.data[["end"]])))  |>
+    dplyr::mutate(range = stringr::str_replace(
+                          string      = .data[["range"]],
+                          pattern     = "Inf",
+                          replacement = infinity[["text"]]))
+
+
+  if(type == "summary"){
+    # JMH create summary table here
+  }
+  if(type == "indiviudal"){
+    # NAs come from parameters that were not calculated for whatever reason.
+    # Having NAs pop up in reports is kind of sloppy so here we replace them
+    # with the user value:
+    nca_data = nca_data |>
+      dplyr::mutate(PPORRES =as.character(.data[["PPORRES"]])) |>
+      dplyr::mutate(PPORRES = ifelse(.data[["PPORRES"]] == "NA",
+                                     not_calc,
+                                     .data[["PPORRES"]] ))
+  }
+
+
+  # We're going to group by everything except the id
+  rpt_name_group = c(col_group[!(col_group %in% col_id)])
+
+  nca_data = dplyr::mutate(nca_data,
+                           pnames=paste0(.data[["PPTESTCD"]],
+                                         ":",
+                                         .data[["range"]]))
+
+  # We're separating out the data from the other elements of the table
+  # like parameter names, intervals, etc so we'll have two different
+  # objects:
+  #   - tdata:
+  #        Data frame with the actual data to be reported.
+  #   - nca_data:
+  #        This has the same information in long format and can be
+  #        used to look up things like units when constructing the
+  #        headers for reporting.
+  col_keep = c(col_id, rpt_name_group, "pnames", "PPORRES")
+
+  tdata = nca_data |>
+    dplyr::mutate(PPORRES = ifelse(is.na(PPORRES), not_calc, PPORRES)) |>
+    dplyr::select(dplyr::all_of(col_keep)) |>
+    tidyr::pivot_wider(names_from="pnames",
+                       values_from="PPORRES")
+
+  # Creating a lookup table to group output and create headers
+  col_lookup = nca_data                     |>
+    dplyr::group_by(pnames)                 |>
+    dplyr::filter(row_number() == 1)        |>
+    dplyr::rename(parameter  = "PPTESTCD")
+
+  col_lookup_keep = c("range", "pnames", "parameter")
+  if(HAS_UNITS){
+    col_lookup_keep = c(col_lookup_keep, "units")
+    col_lookup = dplyr::rename(col_lookup, units="PPORRESU")
+  }
+
+  # This is lookup with information from the dataset:
+  col_lookup = dplyr::select(col_lookup,dplyr::all_of(col_lookup_keep))
+
+  # Now we need to merge in the column names used for reporting:
+  nps_found =
+       dplyr::filter(nps,  .data[["parameter"]] %in% col_lookup[["parameter"]])   |>
+       dplyr::right_join(col_lookup,  by=c("parameter"="parameter"))
+
+  if(grouping == "interval"){
+    nps_found = dplyr::arrange(nps_found, .data[["range"]], .data[["md"]])
+  }
+
+  if(grouping == "parameter"){
+    nps_found = dplyr::arrange(nps_found, .data[["md"]], .data[["range"]])
+  }
+
+
+  # Now we reorder the columns of tdata according to the grouping above:
+  tdata = dplyr::select(tdata,
+                        dplyr::all_of(c(col_id, rpt_name_group, nps_found[["pnames"]])))
+
+
+  # Rows that are common for each table:
+  row_common  = dplyr::select(tdata, dplyr::all_of(c(col_id, rpt_name_group)))
+
+  # The table body
+  table_body  = dplyr::select(tdata, dplyr::all_of((nps_found[["pnames"]])))
+
+  # Notes in the table to detect
+  notes_detect = c(not_calc)
+
+  # Identifies which of the common rows to highlight.
+
+  table_body_head = c()
+  row_common_head = c()
+
+  mult_str =  "⋅"
+
+  # here we're repalcing the multiplication sign in the units with 
+  # whatever is in the mult_str:
+  if(HAS_UNITS){
+    nps_found[["units"]] = stringr::str_replace(
+      string  = nps_found[["units"]],
+      pattern = "\\*",
+      replacement = mult_str)
+  }
+
+
+  # Headers are calculated differently with and without units:
+  if(HAS_UNITS){
+    table_body_head = matrix(
+      data = c(nps_found[["md"]], nps_found[["units"]], nps_found[["range"]]),
+      byrow = TRUE,
+      ncol  = nrow(nps_found))
+    row_common_head = matrix(
+      data  = c(names(row_common), rep("", ncol(row_common)*2)),
+      byrow = TRUE,
+      ncol  = ncol(row_common) )
+  } else {
+    table_body_head = matrix(
+      data = c(nps_found[["md"]], nps_found[["range"]]),
+      byrow = TRUE,
+      ncol  = nrow(nps_found))
+    row_common_head = matrix(
+      data  = c(names(row_common), rep("", ncol(row_common))),
+      byrow = TRUE,
+      ncol  = ncol(row_common) )
+  }
+
+
+
+  stres =
+  span_table(table_body      = table_body,
+             row_common      = row_common,
+             table_body_head = table_body_head,
+             row_common_head = row_common_head,
+             obnd            = obnd,
+             header_format   = "md",
+             max_row         = max_row,
+             max_col         = max_col,
+             notes_detect    = notes_detect)
+
   res = list(
-#   raw_nca = raw_nca,
-#   tables  = tables
+    raw_nca = raw_nca,
+    isgood = stres[["isgood"]],
+    tables = stres[["tables"]],
+    msgs   = stres[["msgs"]]
   )
 
 res}
-
-
 
 #'@export
 #'@title Populate Session Data for Module Testing
@@ -5661,3 +5923,597 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW"){
     rsc     = rsc
   )
 }
+
+
+
+#'@export
+#'@title Spread Large Table Over Smaller Tables
+#'@description Takes a large table and spreads it over smaller tables to
+#'paginate it. It will preserve common row  information on the left and
+#'separate columns according to maximum specifications. The final tables will
+#'have widths less than or equal to both max_col and max_width, and heights
+#'less than or equal to both max_row and max_height.
+#'
+#'@param table_body                Data frame with the body of the large table.
+#'@param row_common                Data frame with the common rows.
+#'@param table_body_head           Data frame or matrix with headers for the table body.
+#'@param row_common_head           Data frame or matrix with headers for the common rows.
+#'@param header_format             Format of the header either \code{"text"} (default) or \code{"md"} for markdown.
+#'@param obnd                      Optional onbrand object used to format markdown. The default \code{NULL} value will use default formatting.
+#'@param max_row                   Maximum number of rows in output tables (A value of \code{NULL} will set max_row to the number of rows in the table).
+#'@param max_col                   Maximum number of columns in output tables (A value of \code{NULL} will set max_col to number of columns in the table).
+#'@param max_width                 Maximum width of the final table in inches (A value of \code{NULL} will use 100 inches).
+#'@param max_height                Maximum height of the final table in inches (A value of \code{NULL} will use 100 inches).
+#'@param table_alignment           Character string specifying the alignment #'of the table (body and headers). Can be \code{"center"} (default), \code{"left"}, \code{"right"}, or \code{"justify"}
+#'@param inner_border              Border object for inner border lines defined using \code{officer::fp_border()}
+#'@param outer_border              Border object for outer border lines defined using \code{officer::fp_border()}
+#'@param set_header_inner_border_v Boolean value to enable or disable inner vertical borders for headers
+#'@param set_header_inner_border_h Boolean value to enable or disable inner horizontal borders for headers
+#'@param set_header_outer_border   Boolean value to enable or disable outer border for headers
+#'@param set_body_inner_border_v   Boolean value to enable or disable inner vertical borders for the body
+#'@param set_body_inner_border_h   Boolean value to enable or disable inner horizontal borders for the body
+#'@param set_body_outer_border     Boolean value to enable or disable outer border borders for the body
+#'@param notes_detect              Vector of strings to detect in output tables (example \code{c("NC", "BLQ")}).
+#'@seealso \code{\link{build_span} for the relationship of inputs.}
+#'@details
+#' The way the data frames relate to each other are mapped out below. The
+#' dimensions of the different data frames are identified below (nrow x ncol)
+#'
+#' ```
+#' #|-------------------------------------| ---
+#' #|                 |                   |  ^
+#' #|                 |                   |  |
+#' #| row_common_head |  table_body_head  |  | m
+#' #|      m x n      |       m x c       |  |
+#' #|                 |                   |  v
+#' #|-------------------------------------| ---
+#' #|                 |                   |  ^
+#' #|                 |                   |  |
+#' #|    row_common   |    table_body     |  | r
+#' #|      r x n      |      r x c        |  |
+#' #|                 |                   |  |
+#' #|                 |                   |  v
+#' #|-------------------------------------| ---
+#' #
+#' #|<--------------->|<----------------->|
+#' #        n                   c
+#' ```
+#'@return list with the following elements
+#' \itemize{
+#'   \item{isgood:} Boolean indicating the exit status of the function.
+#'   \item{msgs:}   Vector of text messages describing any errors that were found.
+#'   \item{tables:} Named list of tables. Each list element is of the output
+#'   format from \code{build_span()}.
+#'}
+#'@example inst/test_scripts/span_tables.R
+span_table = function(table_body                = NULL,
+                      row_common                = NULL,
+                      table_body_head           = NULL,
+                      row_common_head           = NULL ,
+                      header_format             = "text",
+                      obnd                      = NULL,
+                      max_row                   = 20,
+                      max_col                   = 10,
+                      max_height                = 7,
+                      max_width                 = 6.5,
+                      table_alignment           = "center",
+                      inner_border              = officer::fp_border(color="black", width = .3),
+                      outer_border              = officer::fp_border(color="black", width = 2),
+                      set_header_inner_border_v = TRUE,
+                      set_header_inner_border_h = TRUE,
+                      set_header_outer_border   = TRUE ,
+                      set_body_inner_border_v   = TRUE,
+                      set_body_inner_border_h   = FALSE,
+                      set_body_outer_border     = TRUE ,
+                       notes_detect              = NULL){
+
+  isgood = TRUE
+  msgs   = c()
+
+  # Checking user input:
+  if(is.null(table_body)){
+      isgood = FALSE
+      msgs = c(msgs, "table_body must be specified.")
+  }
+  if(is.null(row_common)){
+      isgood = FALSE
+      msgs = c(msgs, "row_common must be specified.")
+  }
+
+  if(isgood){
+    if(is.null(max_row)){
+      max_row = nrow(table_body) }
+    if(is.null(max_col)){
+      max_col = ncol(table_body) }
+    if(is.null(max_height)){
+      max_height = 100 }
+    if(is.null(max_width)){
+      max_width = 100 }
+    if(!is.null(table_body_head)){
+      if(ncol(table_body_head) !=
+         ncol(table_body)){
+        isgood = FALSE
+        msgs = c(msgs, "table_body and table_body_head have a different number of columns.")
+      }
+    }
+
+    if(!is.null(row_common_head)){
+      if(ncol(row_common_head) !=
+         ncol(row_common)){
+        isgood = FALSE
+        msgs = c(msgs, "row_common and row_common_head have a different number of columns.")
+      }
+    }
+
+    if(nrow(row_common) != nrow(table_body)){
+        isgood = FALSE
+        msgs = c(msgs, "row_common and table_body have a different number of rows.")
+    }
+
+    if(!is.null(row_common_head) & is.null(table_body_head)){
+          isgood = FALSE
+          msgs = c(msgs, "You must specify both or neither:")
+          msgs = c(msgs, "  row_common_head: specified")
+          msgs = c(msgs, "  table_body_head: not specified")
+    }
+
+    if(is.null(row_common_head) & !is.null(table_body_head)){
+          isgood = FALSE
+          msgs = c(msgs, "You must specify both or neither:")
+          msgs = c(msgs, "  row_common_head: not specified")
+          msgs = c(msgs, "  table_body_head: specified")
+    }
+
+    if(!is.null(row_common_head) & !is.null(table_body_head)){
+      if(nrow(row_common_head) != nrow(table_body_head)){
+          isgood = FALSE
+          msgs = c(msgs, "row_common_head and table_body_head must have the same number of rows.")
+      }
+    }
+  }
+
+  # JMH Add checks for max_height and max_width here:
+  if(isgood){
+    # Building the table with 1 row and 1 column to see if the row_common is
+    # too wide or the headers are too tall.
+    bsr = build_span(
+      table_body                = table_body,
+      row_common                = row_common,
+      table_body_head           = table_body_head,
+      row_common_head           = row_common_head,
+      header_format             = header_format,
+      obnd                      = obnd,
+      row_sel                   = c(1:1),
+      col_sel                   = c(1:1),
+      table_alignment           = table_alignment,
+      inner_border              = inner_border,
+      outer_border              = outer_border,
+      set_header_inner_border_v = set_header_inner_border_v,
+      set_header_inner_border_h = set_header_inner_border_h,
+      set_header_outer_border   = set_header_outer_border,
+      set_body_inner_border_v   = set_body_inner_border_v,
+      set_body_inner_border_h   = set_body_inner_border_h,
+      set_body_outer_border     = set_body_outer_border,
+      notes_detect              = notes_detect)
+
+    tmp_dim = flextable::flextable_dim(bsr[["ft"]])
+    if(max_width - tmp_dim$widths < 0){
+      isgood = FALSE
+      msgs = c(msgs, paste0("row_common is too wide and there isn't enough room for data."))
+      msgs = c(msgs, paste0("  Too many grouping variables can cause this." ))
+    }
+    if(max_height - tmp_dim$heights < 0){
+      isgood = FALSE
+      msgs = c(msgs, paste0("table_body_head/row_common_head is too tall and there isn't enough room for data."))
+      msgs = c(msgs, paste0("  Too many header rows can cause this." ))
+    }
+  }
+
+  # This means that everything checks out and we're good to go.
+  tables = list()
+  if(isgood){
+    tb_idx = 1
+
+    row_offset = 0
+    while(row_offset < nrow(table_body)){
+      row_sel_start = row_offset+1
+
+      if(max_row+row_offset <= nrow(table_body)){
+        row_sel_stop  = max_row+row_offset
+      } else {
+        row_sel_stop  = nrow(table_body)
+      }
+
+      row_sel = c(row_sel_start:row_sel_stop)
+
+      col_offset = 0
+      while(col_offset < ncol(table_body)){
+
+        # We start 1 after the offset
+        col_sel_start = col_offset+1
+
+        # This is the intervals before the last column
+        if((max_col+col_offset) <=( ncol(table_body) - ncol(row_common))){
+          col_sel_stop  = max_col+col_offset - ncol(row_common)
+        } else {
+          # And this goes to the last column
+          col_sel_stop  = ncol(table_body)
+        }
+
+        col_sel = unique(c(col_sel_start:col_sel_stop))
+
+        tb_key = paste0("Table ", tb_idx)
+        #cat(paste0("row: ", toString(c(min(row_sel), max(row_sel))), ", col: ", toString(c(min(col_sel),max(col_sel))), "\n"))
+
+        # First we build the table based on row_sel and col_sel from max
+        # values specified:
+        bsr = build_span(
+          table_body                = table_body,
+          row_common                = row_common,
+          table_body_head           = table_body_head,
+          row_common_head           = row_common_head,
+          header_format             = header_format,
+          obnd                      = obnd,
+          row_sel                   = row_sel,
+          col_sel                   = col_sel,
+          table_alignment           = table_alignment,
+          inner_border              = inner_border,
+          outer_border              = outer_border,
+          set_header_inner_border_v = set_header_inner_border_v,
+          set_header_inner_border_h = set_header_inner_border_h,
+          set_header_outer_border   = set_header_outer_border,
+          set_body_inner_border_v   = set_body_inner_border_v,
+          set_body_inner_border_h   = set_body_inner_border_h,
+          set_body_outer_border     = set_body_outer_border,
+          notes_detect              = notes_detect)
+
+        resize = FALSE
+        # Now we test to make sure it falls within the max width and max
+        # height values:
+        ftdims = flextable::flextable_dim(bsr[["ft"]])
+
+        #----------------------------------------
+        # Trimming columns to fit within max_width
+        if(ftdims[["widths"]] > max_width){
+          resize = TRUE
+
+          tmp_dim = dim(bsr[["ft"]])
+
+          # This finds the number of columns to remove off the bottom:
+          ntrim = 0
+          while(sum(tmp_dim$widths) > max_width){
+            ntrim = ntrim + 1
+            tmp_dim$widths = head(tmp_dim$widths, -1)
+          }
+
+          # This trims off those elements
+          col_sel = col_sel[1:(length(col_sel) - ntrim)]
+        }
+        #----------------------------------------
+        # Trimming rows to fit within max_height
+        if(ftdims[["heights"]] > max_height){
+          resize = TRUE
+          tmp_dim = dim(bsr[["ft"]])
+
+          # This finds the number of rows to remove off the bottom:
+          ntrim = 0
+          while(sum(tmp_dim$heights) > max_height){
+            ntrim = ntrim + 1
+            tmp_dim$heights = head(tmp_dim$heights, -1)
+          }
+
+          # This trims off those elements
+          row_sel = row_sel[1:(length(row_sel) - ntrim)]
+        }
+        #----------------------------------------
+        # This triggers rebuilding of the table to fit within the specified
+        # dimensions
+        if(resize){
+          bsr = build_span(
+            table_body                = table_body,
+            row_common                = row_common,
+            table_body_head           = table_body_head,
+            row_common_head           = row_common_head,
+            header_format             = header_format,
+            obnd                      = obnd,
+            row_sel                   = row_sel,
+            col_sel                   = col_sel,
+            table_alignment           = table_alignment,
+            inner_border              = inner_border,
+            outer_border              = outer_border,
+            set_header_inner_border_v = set_header_inner_border_v,
+            set_header_inner_border_h = set_header_inner_border_h,
+            set_header_outer_border   = set_header_outer_border,
+            set_body_inner_border_v   = set_body_inner_border_v,
+            set_body_inner_border_h   = set_body_inner_border_h,
+            set_body_outer_border     = set_body_outer_border,
+            notes_detect              = notes_detect)
+        }
+        # Storing the information about the current table.
+        tables[[tb_key]] = bsr
+        tables[[tb_key]][["tb_idx"]] = tb_idx
+
+        tb_idx = 1+tb_idx
+        col_offset = max(col_sel)
+      }
+      row_offset = max(row_sel)
+    }
+  }
+
+  # If an error was encountered above we want to pack that into a tabular
+  # output. This way it can cascade to an end user
+  if(!isgood){
+    df = data.frame("span_table_Failed" = msgs)
+    ft = flextable::flextable(df)
+    tables = list(Error = list(
+              df = df,
+              ft = ft,
+              tb_idx = 1))
+  }
+
+  res = list(isgood = isgood,
+             tables = tables,
+             msgs   = msgs)
+
+res}
+
+#'@export
+#'@title Spread Large Table Over Smaller Tables
+#'@description Takes a large table and spreads it over smaller tables to
+#'paginate it. It will preserve common row  information on the left and
+#'separate columns according to maximum specifications.
+#'@param table_body                Data frame with the body of the large table.
+#'@param row_common                Data frame with the common rows.
+#'@param table_body_head           Data frame or matrix with headers for the table body.
+#'@param row_common_head           Data frame or matrix with headers for the common rows.
+#'@param header_format             Format of the header either \code{"text"} (default) or \code{"md"} for markdown.
+#'@param obnd                      Optional onbrand object used to format markdown. The default \code{NULL} value will use default formatting.
+#'@param col_sel                   Indices of columns to build to the table with.
+#'@param row_sel                   Indices of rows to build to the table with.
+#'@param table_alignment           Character string specifying the alignment #'of the table (body and headers). Can be \code{"center"} (default), \code{"left"}, \code{"right"}, or \code{"justify"}
+#'@param inner_border              Border object for inner border lines defined using \code{officer::fp_border()}
+#'@param outer_border              Border object for outer border lines defined using \code{officer::fp_border()}
+#'@param set_header_inner_border_v Boolean value to enable or disable inner vertical borders for headers
+#'@param set_header_inner_border_h Boolean value to enable or disable inner horizontal borders for headers
+#'@param set_header_outer_border   Boolean value to enable or disable outer border for headers
+#'@param set_body_inner_border_v   Boolean value to enable or disable inner vertical borders for the body
+#'@param set_body_inner_border_h   Boolean value to enable or disable inner horizontal borders for the body
+#'@param set_body_outer_border     Boolean value to enable or disable outer border borders for the body
+#'@param notes_detect              Vector of strings to detect in output tables (example \code{c("NC", "BLQ")}).
+#'@details
+#' The way the data frames relate to each other are mapped out below. The
+#' dimensions of the different data frames are identified below (nrow x ncol)
+#'
+#'
+#' ```
+#' #                            col_sel
+#' #                      |<--------------->|
+#' #
+#' #|--------------------------------------------| ---
+#' #|                 |   .                 .    |  ^
+#' #|                 |   .                 .    |  |
+#' #| row_common_head |   . table_body_head .    |  | m
+#' #|      m x n      |   .      m x c      .    |  |
+#' #|                 |   .                 .    |  v
+#' #|--------------------------------------------| ---
+#' #|                 |   .                 .    |  ^
+#' #|                 |   .                 .    |  |
+#' #|    row_common   |   .   table_body    .    |  |
+#' #|      r x n      |   .     r x c       .    |  |
+#' #|                 |   .                 .    |  |
+#' #|.................|..........................|  |     -
+#' #|                 |   ./  /  /  /  /  / .    |  |     ^
+#' #|                 |   .  /  /  /  /  /  .    |  | r   |
+#' #|                 |   . /  /  /  /  /  /.    |  |     | row_sel
+#' #|                 |   ./  /  /  /  /  / .    |  |     |
+#' #|                 |   .  /  /  /  /  /  .    |  |     v
+#' #|.................|...../../../../../../.... |  |     -
+#' #|                 |   .                 .    |  |
+#' #|                 |   .                 .    |  v
+#' #|--------------------------------------------| ---
+#' #
+#' #|<--------------->|<------------------------>|
+#' #        n                    c
+#' ```
+#'@example inst/test_scripts/span_tables.R
+#'@return list with the following elements
+#' \itemize{
+#'   \item{df:}     Data frame with the built table.
+#'   \item{ft:}     The data frame as a flextable object.
+#'   \item{notes:}  Note placeholders found in the table.
+#'}
+build_span  = function(table_body                = NULL,
+                       row_common                = NULL,
+                       table_body_head           = NULL,
+                       row_common_head           = NULL ,
+                       header_format             = "text",
+                       obnd                      = NULL,
+                       row_sel                   = NULL,
+                       col_sel                   = NULL,
+                       table_alignment           = "center",
+                       inner_border              = officer::fp_border(color="black", width = .3),
+                       outer_border              = officer::fp_border(color="black", width = 2),
+                       set_header_inner_border_v = TRUE,
+                       set_header_inner_border_h = TRUE,
+                       set_header_outer_border   = TRUE ,
+                       set_body_inner_border_v   = TRUE,
+                       set_body_inner_border_h   = FALSE,
+                       set_body_outer_border     = TRUE ,
+                       notes_detect              = NULL){
+
+  # Constructing the data frame with the chunk of the table:
+  df = cbind(row_common[row_sel, ],
+             table_body[row_sel, col_sel])
+
+  # Finding notes in the current df
+  notes = c()
+  if(!is.null(notes_detect)){
+    for(note in notes_detect){
+      if(any(note == df)){
+        notes = c(notes, note)
+      }
+    }
+  }
+
+  # Building the flextable and remove default formatting
+  ft = flextable::flextable(df) |>
+       flextable::border_remove()
+
+  if(!is.null(row_common_head) &
+     !is.null(table_body_head)){
+
+    # This clears out the default headers for the table
+    ft = flextable::delete_part(ft, part="header")
+
+
+    # This should contain the portion of the body header
+    # for the current data frame
+    tmp_bh = table_body_head[, col_sel]
+
+    # Merging the common header with the portion for the current
+    # data frame:
+    ft_head = cbind(row_common_head, tmp_bh)
+
+    for(hidx in nrow(ft_head):1){
+
+      cv  = c()
+      ccw = c()
+
+      tmp_hrow = unlist(as.vector(ft_head[hidx, ]))
+
+      # Here we're collapsing rows that look like this:
+      # A, A, A, B, B, B, B, A, A, C, C, Q into
+      # cv  = ("A", "B", "A", "C", "Q")
+      # ccw = ( 3 ,  4 ,  2 ,  2,   1 )
+
+      tot_cctr   = 1
+      tmp_cv     = tmpcv = tmp_hrow[1]
+      tmp_ctr    = 0
+      while(tot_cctr <= length(tmp_hrow)){
+        if(tmp_cv != tmp_hrow[tot_cctr]){
+          cv      = c(cv, tmp_cv)
+          ccw     = c(ccw, tmp_ctr)
+          tmp_cv  = tmp_hrow[tot_cctr]
+          tmp_ctr = 0
+        }
+
+        tmp_ctr   = tmp_ctr  + 1
+
+        if(tot_cctr == length(tmp_hrow)){
+          cv      = c(cv, tmp_cv)
+          ccw     = c(ccw, tmp_ctr)
+        }
+
+        tot_cctr  = tot_cctr + 1
+      }
+
+      # This adds the header row
+      ft = flextable::add_header_row(ft, values=cv, colwidths=ccw)
+
+    }
+
+    # Applying the markdown formatting to the headers if requested:
+    if(header_format == "md"){
+      ft = ft_apply_md(ft, obnd, part="header")
+    }
+  }
+
+
+
+  if(set_body_outer_border){
+    ft = flextable::border_outer(ft, border=outer_border, part="all") }
+
+  # Here we add all the specified borders:
+  if(set_header_inner_border_v){
+    ft = flextable::border_inner_v(ft, border=inner_border, part="header") }
+
+  if(set_header_inner_border_h){
+    ft = flextable::border_inner_h(ft, border=inner_border, part="header") }
+
+
+  if(set_body_inner_border_v){
+    ft = flextable::border_inner_v(ft, border=inner_border, part="body") }
+
+  if(set_body_inner_border_h){
+    ft = flextable::border_inner_h(ft, border=inner_border, part="body") }
+
+  # Applying alignment to the entire table
+  ft = flextable::align(   ft, part="all", align=table_alignment)
+
+  # Combining header elements
+  ft = flextable::merge_v(ft, part="header")
+  ft = flextable::merge_h(ft, part="header")
+
+  # This fixes odd border issues with merged cells
+  ft <- flextable::fix_border_issues(x = ft)
+
+  res  = list(df    = df,
+              ft    = ft,
+              notes = notes)
+res}
+
+
+
+
+#'@export
+#'@title Render Markdown in flextable Object
+#'@description Takes a flextable object and renders any markdown in the
+#'specified part.
+#'@param ft                        Flextable object.
+#'@param obnd                      Optional onbrand object used to format markdown. The default \code{NULL} value will use default formatting.
+#'@param part                      Part of the table can be one of \code{"all"}, \code{"body"} (default), \code{"header"}, or \code{"footer"}
+#'@return flextable with markdown applied
+ft_apply_md = function(ft, obnd=NULL, part = "body"){
+
+  # This defines the defatul format for the header:
+  if(is.null(obnd)){
+    dft = NULL
+  } else {
+    dft      = onbrand::fetch_md_def(obnd, style="Table_Labels")$md_def
+  }
+
+  if(part == "all"){
+    parts = c("body", "header", "footer")
+  } else {
+    parts = part
+  }
+
+  for(tmppart in parts){
+    part_data = ft[[tmppart]]$data
+
+    # If the part has no data then we skip it. This can happen for example if
+    # all is selected and there is no footer present
+    if(nrow(part_data) > 0){
+
+      # Now we walk through each element of the current table part and apply
+      # markdown to that element:
+      for(hcol in 1:ncol(part_data)){
+        for(hrow in 1:nrow(part_data)){
+          # To have markdown there has to be at least 3 characters and we only
+          # apply it to character data
+          if(is.character(part_data[hrow,hcol])){
+          if(nchar(part_data[hrow,hcol])>2){
+            # Here we apply markdown using either the default format from
+            # onbrand or the value specified in the onbrand object
+            if(is.null(dft)){
+              new_value = onbrand::md_to_oo(as.character(part_data[hrow, hcol]))$oo
+            } else {
+              new_value = onbrand::md_to_oo(as.character(part_data[hrow, hcol], dft))$oo
+            }
+            ft = flextable::compose(ft,
+              i = hrow, j = hcol,
+              part = tmppart,
+              value = new_value
+            )
+          }
+          }
+        }
+      }
+    }
+  }
+ft}
+
+
+
+
+

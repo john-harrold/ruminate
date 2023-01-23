@@ -67,6 +67,12 @@
     <loc>/reference/apply_route_map.html</loc>
   </url>
   <url>
+    <loc>/reference/build_span.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ft_apply_md.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
@@ -92,5 +98,11 @@
   </url>
   <url>
     <loc>/reference/run_ruminate.html</loc>
+  </url>
+  <url>
+    <loc>/reference/span_table.html</loc>
+  </url>
+  <url>
+    <loc>/reference/span_tables.html</loc>
   </url>
 </urlset>
