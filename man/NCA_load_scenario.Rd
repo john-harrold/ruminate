@@ -2,7 +2,7 @@
 % Please edit documentation in R/NCA_Server.R
 \name{NCA_load_scenario}
 \alias{NCA_load_scenario}
-\title{Render Markdown in flextable Object}
+\title{Loads Pre-Defined Scenario}
 \usage{
 NCA_load_scenario(state, ana_scenario)
 }
@@ -16,6 +16,6 @@ NCA state object with the scenario loaded and relevant notifications
 set.
 }
 \description{
-Takes a flextable object and renders any markdown in the
-specified part.
+Loads a pre-defined analysis scneario from the NCA YAML config
+file.
 }

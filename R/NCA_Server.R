@@ -6524,15 +6524,14 @@ ft_apply_md = function(ft, obnd=NULL, part = "body"){
 ft}
 
 #'@export
-#'@title Render Markdown in flextable Object
-#'@description Takes a flextable object and renders any markdown in the
-#'specified part.
+#'@title Loads Pre-Defined Scenario
+#'@description Loads a pre-defined analysis scneario from the NCA YAML config
+#'file.
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@param ana_scenario  Short name of the analysis scenario to load from the config file.
 #'@return NCA state object with the scenario loaded and relevant notifications
 #'set. 
 NCA_load_scenario = function(state, ana_scenario){
-
 
     formods::FM_le(state, paste0("loading analysis scenario: ", ana_scenario))
 
@@ -6550,7 +6549,6 @@ NCA_load_scenario = function(state, ana_scenario){
 
     # Storing any changes here:
     state = NCA_set_current_ana(state, current_ana)
-
 
     # The current analysis will be further updated internally
     # in NCA_add_init()
@@ -6570,6 +6568,3 @@ NCA_load_scenario = function(state, ana_scenario){
     state = FM_set_notification(state, notify_text, "NCA scenario set", "info")
 
 state}
-
-
-
