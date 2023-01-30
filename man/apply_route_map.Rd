@@ -16,7 +16,7 @@ a vector of regular expressions to match.}
 }
 \value{
 Dataset with the route mapping applied.
-
+library(readxl)
 #loading a dataset
 data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
 myDS = readxl::read_excel(path=data_file, sheet="DATA")        \%>\%

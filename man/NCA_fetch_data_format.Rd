@@ -13,5 +13,5 @@ list with details about the data formats
 Use this to get information about data formats.
 }
 \examples{
-FM_fetch_current_mods()
+NCA_fetch_data_format()
 }

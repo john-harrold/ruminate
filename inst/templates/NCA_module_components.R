@@ -193,10 +193,10 @@ server <- function(input, output, session) {
    # changes in the module state outside of the module
    react_FM = reactiveValues()
 
-   #UD_test_mksession(session)
+   # This will prepopulate with datasets
    DW_test_mksession(session)
 
- # # Module server
+   # Module server
    NCA_Server(id="NCA", react_state=react_FM)
 #
    # Current state outside of the module

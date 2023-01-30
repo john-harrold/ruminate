@@ -16,10 +16,13 @@
 #'@import dplyr
 #'@import tidyr
 #'@import tidyr
+#'@import formods
 #'@import shiny
+#'@import officer
 #'@importFrom digest digest
 #'@importFrom shinyAce aceEditor updateAceEditor
 #'@importFrom stringr str_replace str_detect str_split
+#'@importFrom utils head
 
 # JMH
 # Notes:
@@ -157,7 +160,7 @@ NCA_Server <- function(id,
                 icon    = icon("plus"))
 
       # Optinally adding the tooltip:
-      uiele = FM_add_ui_tooltip(state, uiele,
+      uiele = formods::FM_add_ui_tooltip(state, uiele,
                tooltip             = state[["MC"]][["formatting"]][["button_ana_new"]][["tooltip"]],
                position    = state[["MC"]][["formatting"]][["button_ana_new"]][["tooltip_position"]])
 
@@ -185,7 +188,7 @@ NCA_Server <- function(id,
                 icon    = icon("arrow-down"))
 
       # Optinally adding the tooltip:
-      uiele = FM_add_ui_tooltip(state, uiele,
+      uiele = formods::FM_add_ui_tooltip(state, uiele,
                tooltip             = state[["MC"]][["formatting"]][["button_ana_save"]][["tooltip"]],
                position    = state[["MC"]][["formatting"]][["button_ana_save"]][["tooltip_position"]])
 
@@ -215,7 +218,7 @@ NCA_Server <- function(id,
                   color   = "royal",
                   icon    = icon("clipboard", lib="font-awesome"))
         # Optinally adding the tooltip:
-        uiele = FM_add_ui_tooltip(state, uiele,
+        uiele = formods::FM_add_ui_tooltip(state, uiele,
                  tooltip             = state[["MC"]][["formatting"]][["button_ana_clip"]][["tooltip"]],
                  position    = state[["MC"]][["formatting"]][["button_ana_clip"]][["tooltip_position"]])
       }
@@ -242,7 +245,7 @@ NCA_Server <- function(id,
                 icon    = icon("minus"))
 
       # Optinally adding the tooltip:
-      uiele = FM_add_ui_tooltip(state, uiele,
+      uiele = formods::FM_add_ui_tooltip(state, uiele,
                tooltip             = state[["MC"]][["formatting"]][["button_ana_del"]][["tooltip"]],
                position    = state[["MC"]][["formatting"]][["button_ana_del"]][["tooltip_position"]])
       uiele})
@@ -268,7 +271,7 @@ NCA_Server <- function(id,
                 icon    = icon("copy"))
 
       # Optinally adding the tooltip:
-      uiele = FM_add_ui_tooltip(state, uiele,
+      uiele = formods::FM_add_ui_tooltip(state, uiele,
                tooltip             = state[["MC"]][["formatting"]][["button_ana_copy"]][["tooltip"]],
                position    = state[["MC"]][["formatting"]][["button_ana_copy"]][["tooltip_position"]])
       uiele})
@@ -470,10 +473,10 @@ NCA_Server <- function(id,
           current_view_id= current_ana[["ana_dsview"]]
         } else {
           current_view_id = ds_catalog[["object"]][1]
-          FM_le(state, paste0("ui_nca_curr_views: dataset view missing."   ))
-          FM_le(state, paste0("ana_key: ",     current_ana[["key"]]       ))
-          FM_le(state, paste0("ana_dsview: ",  current_ana[["ana_dsview"]]))
-          FM_le(state, paste0("switching to view:", current_view_id ))
+          formods::FM_le(state, paste0("ui_nca_curr_views: dataset view missing."   ))
+          formods::FM_le(state, paste0("ana_key: ",     current_ana[["key"]]       ))
+          formods::FM_le(state, paste0("ana_dsview: ",  current_ana[["ana_dsview"]]))
+          formods::FM_le(state, paste0("switching to view:", current_view_id ))
         }
 
         choices        = ds_catalog[["object"]]
@@ -1065,8 +1068,8 @@ NCA_Server <- function(id,
 
       current_ana = NCA_fetch_current_ana(state)
 
-      # JMH here: Generalize for all tables and add 
-      #    - tb_ind_params 
+      # JMH here: Generalize for all tables and add
+      #    - tb_ind_params
       #    - tb_sum_params
 
       if(current_ana[["isgood"]]){
@@ -1078,7 +1081,7 @@ NCA_Server <- function(id,
             selected_page = page_values[1]
           }
           names(page_values) = 1:length(page_values)
-         
+
           uiele =
           shinyWidgets::pickerInput(
             inputId    = NS(id, "select_tb_ind_obs_page"),
@@ -1097,7 +1100,7 @@ NCA_Server <- function(id,
             selected_page = page_values[1]
           }
           names(page_values) = 1:length(page_values)
-         
+
           uiele =
           shinyWidgets::pickerInput(
             inputId    = NS(id, "select_tb_ind_params_page"),
@@ -2398,9 +2401,9 @@ NCA_Server <- function(id,
                              react_state     = react_state)
 
       # Triggering optional notifications
-      notify_res =
-      FM_notify(state   = state,
-                session = session)
+      notify_res = formods::FM_notify(
+        state   = state,
+        session = session)
     })
     # Creates the ui for the compact view of the module
     #------------------------------------
@@ -2637,7 +2640,7 @@ NCA_Server <- function(id,
                              id_DW           = id_DW,
                              react_state     = react_state)
 
-        FM_le(state, "reaction state updated")
+        formods::FM_le(state, "reaction state updated")
         #react_state[[id]] = state
         state_list = list(
          checksum = state[["NCA"]][["checksum"]],
@@ -2659,7 +2662,7 @@ NCA_Server <- function(id,
                              id_DW           = id_DW,
                              react_state     = react_state)
 
-      FM_le(state, "clipping code")
+      formods::FM_le(state, "clipping code")
       # This is all conditional on the whether clipr is installed $
       # and if the app isn't deployed
       if((system.file(package="clipr") != "") &
@@ -2697,7 +2700,7 @@ NCA_Server <- function(id,
                              id_DW           = id_DW,
                              react_state     = react_state)
 
-      FM_le(state, "removing holds")
+      formods::FM_le(state, "removing holds")
       # Removing all holds
       for(hname in names(state[["NCA"]][["ui_hold"]])){
         remove_hold(state, session, hname)
@@ -2719,6 +2722,7 @@ NCA_Server <- function(id,
 #'@param id_ASM ID string for the app state management module used to save and load app states
 #'@param id_UD ID string for the upload data module used to save and load app states
 #'@param id_DW ID string for the data wrangling module used to save and load app states
+#'@param react_state Variable passed to server to allow reaction outside of module (\code{NULL})
 #'@return list containing the current state of the app including default
 #'values from the yaml file as well as any changes made by the user. The list
 #'has the following structure:
@@ -2765,7 +2769,7 @@ NCA_Server <- function(id,
 #'   }
 # '  \item{button_counters:}       List of counters to detect button clicks.
 #'   \item{current_ana:}           Currently selected analysis (list name element from anas).
-#'   \item{DSV:}                   Available data source views (see \code{\link{FM_fetch_ds}})
+#'   \item{DSV:}                   Available data source views (see \code{\link[formods]{FM_fetch_ds}})
 #'   \item{checksum:}              This is an MD5 sum of the module (checksum of the analysis checksums).
 #'   \item{nca_config:}            List of PKNCA configuration options for this analysis.
 #'   \item{nca_parameters:}        List with two elements
@@ -2785,7 +2789,7 @@ NCA_Server <- function(id,
 #'        }
 #'      }
 #'   \item{ui:}                    Current value of form elements in the UI.
-#'   \item{ui_ana_map:}            Map between UI element names and analysis in the object you get from \code{\link{NCA_fetch_current_ana()}}
+#'   \item{ui_ana_map:}            Map between UI element names and analysis in the object you get from \code{\link{NCA_fetch_current_ana}}
 #'   \item{ui_ids:}                Vector of UI elements for the module.
 #'   \item{ui_hold:}               List of hold elements to disable updates before a full ui referesh is complete.
 #' }
@@ -2794,12 +2798,14 @@ NCA_Server <- function(id,
 #' \item{FM_yaml_file:} App configuration file with FM as main section.
 #' \item{MOD_yaml_file:}  Module configuration file with MC as main section.
 #'}
-NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_ASM, id_UD, id_DW, react_state){
+NCA_fetch_state = function(id, input, session, 
+                           FM_yaml_file, MOD_yaml_file, 
+                           id_ASM, id_UD, id_DW, react_state){
 
   # Template for an empty dataset
   #---------------------------------------------
   # Getting the current state
-  state = FM_fetch_mod_state(session, id)
+  state = formods::FM_fetch_mod_state(session, id)
   # If the state has not yet been defined then we
   # initialize it
   if(is.null(state)){
@@ -2846,10 +2852,10 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
   }
 
   if(UPDATE_DS){
-    FM_le(state, "Updating DS")
+    formods::FM_le(state, "Updating DS")
     # updating the "DSV" components
     if(state[["NCA"]][["isgood"]]){
-      state[["NCA"]][["DSV"]] = FM_fetch_ds(state, session, c(id_UD, id_DW))
+      state[["NCA"]][["DSV"]] = formods::FM_fetch_ds(state, session, c(id_UD, id_DW))
     } else {
       state = NCA_init_state(FM_yaml_file,
                              MOD_yaml_file,
@@ -2896,7 +2902,7 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
         # Messaging detected change
         if(has_changed(ui_val  = state[["NCA"]][["ui"]][[ui_name]],
                        old_val = current_ana[[ana_name]])){
-           FM_le(state, paste0("setting analysis: ", ana_name, " = ", paste(state[["NCA"]][["ui"]][[ui_name]], collapse=", ")))
+          formods::FM_le(state, paste0("setting analysis: ", ana_name, " = ", paste(state[["NCA"]][["ui"]][[ui_name]], collapse=", ")))
         }
 
         current_ana[[ana_name]] = state[["NCA"]][["ui"]][[ui_name]]
@@ -2928,7 +2934,7 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
              # Updating the current analysis with the ui from the state
              current_ana[["nca_config"]][[nca_opt]][["value"]] =
                state[["NCA"]][["ui"]][[ui_name]]
-            FM_le(state, paste0("setting NCA option: ", nca_opt, " = ", state[["NCA"]][["ui"]][[ui_name]]))
+            formods::FM_le(state, paste0("setting NCA option: ", nca_opt, " = ", state[["NCA"]][["ui"]][[ui_name]]))
           }
         }
       }
@@ -2973,7 +2979,7 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_save"]])){
 
-    FM_le(state, "updating fg_ind_obs")
+    formods::FM_le(state, "updating fg_ind_obs")
 
     # updating just the fg_ind_obs figure
     state = run_nca_components(state, "fg_ind_obs")
@@ -2993,50 +2999,13 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
 
     # Current scenario:
     ana_scenario = current_ana[["ana_scenario"]]
-    # Current scenario options:
-    scenario_def  =  state[["MC"]][["ana_scenarios"]][[ana_scenario]]
 
-    FM_le(state, paste0("loading analysis scenario: ", ana_scenario))
-
-    # Pulling out the current analysis
-    current_ana = NCA_fetch_current_ana(state)
-
-
-    # Overwriting the scenario components in the current analysis
-    current_ana[["nca_parameters"]] = scenario_def[["nca_parameters"]]
-    current_ana[["sampling"]]       = scenario_def[["sampling"]]
-
-
-    # Removing any previous intervals
-    current_ana[["intervals"]]      = NULL
-
-    # Storing any changes here:
-    state = NCA_set_current_ana(state, current_ana)
-
-
-    # The current analysis will be further updated internally
-    # in NCA_add_init()
-    for(int_idx in 1:length(scenario_def[["intervals"]])){
-      scenario_row = scenario_def[["intervals"]][[int_idx]]
-      interval_start = as.numeric(as.character(scenario_row$row[["start"]]))
-      interval_stop  = as.numeric(as.character(scenario_row$row[["stop"]]))
-      nca_parameters = scenario_row$row[["nca_parameters"]]
-
-      state = NCA_add_int(state=state,
-        interval_start = interval_start,
-        interval_stop  = interval_stop,
-        nca_parameters = nca_parameters)
-    }
-
-    notify_text = paste0("Scenario: ", state[["MC"]][["ana_scenarios"]][[current_ana[["ana_scenario"]]]][["description"]])
-    state = FM_set_notification(state, notify_text, "NCA scenario set", "info")
+    # Loading the scenario:
+    state = NCA_load_scenario(state, ana_scenario)
 
     # Saving the button state to the counter
     state[["NCA"]][["button_counters"]][["button_ana_use_scenario"]] =
       state[["NCA"]][["ui"]][["button_ana_use_scenario"]]
-
-    # Updating any messages
-    state = FM_set_ui_msg(state, msgs)
 
   }
   #---------------------------------------------
@@ -3044,9 +3013,6 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
   # the current selection in the UI:
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_add_int"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_ana_add_int"]])){
-
-    # Empty messages:
-    msgs = c()
 
     # Default to adding the interval
     ADD_INTERVAL = TRUE
@@ -3106,13 +3072,13 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
       notify_text = state[["MC"]][["notifications"]][["ana_add_int_success"]]
       notify_text = stringr::str_replace(notify_text, "===DETAILS===", details)
       notify_type = "success"
-      FM_le(state, notify_text)
+      formods::FM_le(state, notify_text)
       state = FM_set_notification(state, notify_text, "Interval Added", "success")
     } else {
       notify_text = paste(msgs, collapse="\n")
       notify_type = "failure"
       state = FM_set_notification(state, notify_text, "Interval Not Added", "failure")
-      FM_le(state, "interval was not added")
+      formods::FM_le(state, "interval was not added")
     }
 
     # Saving the button state to the counter
@@ -3120,19 +3086,20 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
       state[["NCA"]][["ui"]][["button_ana_add_int"]]
 
     # Updating any messages
-    state = FM_set_ui_msg(state, msgs)
+    state = formods::FM_set_ui_msg(state, msgs)
   }
   #---------------------------------------------
   # Run Analysis
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_run"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_ana_run"]])){
 
-    FM_le(state, "running nca and generating subsequent figures and tables")
+    formods::FM_le(state, "running nca and generating subsequent figures and tables")
 
     # Pausing access to the screen
-    FM_pause_screen(state   = state,
-                    message = state[["MC"]][["labels"]][["busy"]][["run_nca"]],
-                    session = session)
+    formods:: FM_pause_screen(
+      state   = state,
+      message = state[["MC"]][["labels"]][["busy"]][["run_nca"]],
+      session = session)
 
     # This will build the code and run the different components:
     state = run_nca_components(state)
@@ -3160,14 +3127,15 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_copy"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_ana_copy"]])){
 
-    FM_le(state, "copying current analysis")
+    formods::FM_le(state, "copying current analysis")
 
     # Pausing access to the screen because the rebuilding portion below can
     # take a while and we don't want the user mucking around with things while
     # that is happening.
-    FM_pause_screen(state   = state,
-                    message = state[["MC"]][["labels"]][["busy"]][["run_nca"]],
-                    session = session)
+    formods::FM_pause_screen(
+      state   = state,
+      message = state[["MC"]][["labels"]][["busy"]][["run_nca"]],
+      session = session)
 
     # This creates a copy of the current analysis which will become the old
     # one :).
@@ -3219,7 +3187,7 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_new"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_ana_new"]])){
 
-    FM_le(state, "creating new analysis")
+    formods::FM_le(state, "creating new analysis")
     msgs = c()
 
     # Creating a new analysis
@@ -3235,14 +3203,14 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
       state[["NCA"]][["ui"]][["button_ana_new"]]
 
     # Updating any messages
-    state = FM_set_ui_msg(state, msgs)
+    state = formods::FM_set_ui_msg(state, msgs)
   }
   #---------------------------------------------
   # Delete analysis
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_del"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_ana_del"]])){
 
-    FM_le(state, "deleting analysis")
+    formods::FM_le(state, "deleting analysis")
     msgs = c()
 
     # Getting the current analysis
@@ -3268,14 +3236,14 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
       state[["NCA"]][["ui"]][["button_ana_del"]]
 
     # Updating any messages
-    state = FM_set_ui_msg(state, msgs)
+    state = formods::FM_set_ui_msg(state, msgs)
   }
   #---------------------------------------------
   # Save analysis
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_save"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_ana_save"]])){
 
-    FM_le(state, "saving changes to current analysis")
+    formods::FM_le(state, "saving changes to current analysis")
 
     # Getting the current analysis
     current_ana = NCA_fetch_current_ana(state)
@@ -3313,12 +3281,12 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
       state[["NCA"]][["ui"]][["button_ana_save"]]
 
     # Updating any messages
-    state = FM_set_ui_msg(state, msgs)
+    state = formods::FM_set_ui_msg(state, msgs)
 
   }
   #---------------------------------------------
   # Passing any messages back to the user
-  #state = FM_set_ui_msg(state, msgs, append=TRUE)
+  #state = formods::FM_set_ui_msg(state, msgs, append=TRUE)
 
   #---------------------------------------------
   # Saving the state
@@ -3334,6 +3302,7 @@ NCA_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, id_A
 #'@param id ID string for the module.
 #'@param id_UD  ID string for the upload data module used to handle uploads or the name of the list element in react_state where the data set is stored.
 #'@param id_DW  ID string for the data wrangling module to process any uploaded data
+#'@param session Shiny session variable (in app) or a list (outside of app)
 #'@return list containing an empty NCA state
 NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  session){
 
@@ -3357,14 +3326,15 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
     "select_tb_ind_obs_page"         = "curr_tb_ind_obs",
     "select_tb_ind_params_page"      = "curr_tb_ind_params",
     "select_tb_sum_params_page"      = "curr_tb_sum_params",
-    "fg_ind_obs_rpt"                 = "fg_ind_obs_rpt",           
-    "tb_ind_obs_rpt"                 = "tb_ind_obs_rpt",          
+    "fg_ind_obs_rpt"                 = "fg_ind_obs_rpt",
+    "tb_ind_obs_rpt"                 = "tb_ind_obs_rpt",
     "tb_ind_params_rpt"              = "tb_ind_params_rpt",
-    "tb_sum_params_rpt"              = "tb_sum_params_rpt",   
+    "tb_sum_params_rpt"              = "tb_sum_params_rpt",
     "check_fg_ind_obs_logy"          = "fg_ind_obs_logy",
     "switch_ana_source_sampling"     = "sampling",
     "switch_ana_fig"                 = "fig_type",
     "switch_ana_tab"                 = "tab_type",
+    "text_ana_key"                   = "key",
     "select_ana_nca_parameters"      = "nca_parameters",
     "select_ana_scenario"            = "ana_scenario",
     "select_ana_units_time"          = "units_time",
@@ -3393,7 +3363,6 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
                       "hot_nca_intervals",
                       "select_current_ana",
                       "select_current_view",
-                      "text_ana_key",
                       "text_ana_notes")
 
 
@@ -3401,7 +3370,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
 
   isgood          = TRUE
 
-  state = FM_init_state(
+  state = formods::FM_init_state(
     FM_yaml_file    = FM_yaml_file,
     MOD_yaml_file   = MOD_yaml_file,
     id              = id,
@@ -3510,11 +3479,11 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
   # Creating an empty docx report. It has the style information
   # needed for building tables
   init_cmd = state[["yaml"]][["FM"]][["reporting"]][["content_init"]][["docx"]]
-  tcres = FM_tc(cmd = init_cmd, tc_env = list(), capture="rpt")
+  tcres = formods::FM_tc(cmd = init_cmd, tc_env = list(), capture="rpt")
   state[["NCA"]][["docx_rpt"]] = tcres[["capture"]][["rpt"]]
 
   # Finding the dataset
-  DSV = FM_fetch_ds(state, session, c(id_UD, id_DW))
+  DSV = formods::FM_fetch_ds(state, session, c(id_UD, id_DW))
 
   # If the dataset isn't good then we need to
   # flag the whole module as not being good
@@ -3529,7 +3498,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
   state[["NCA"]][["ana_cntr"]]      = 0
   state[["NCA"]][["current_ana"]]   = NULL
 
-  FM_le(state, "State initialized")
+  formods::FM_le(state, "State initialized")
 
   if(isgood){
     # Initializing an empty analysis
@@ -3537,7 +3506,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
   }
 
 
-  FM_le(state, "State initialized")
+  formods::FM_le(state, "State initialized")
 state}
 
 #'@export
@@ -3556,7 +3525,7 @@ code}
 #'@description Description
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@param rpt Report with the current content of the report which will be appended to in
-#'this function. For details on the structure see the documentation for \code{\link{formods::FM_generate_report}}.
+#'this function. For details on the structure see the documentation for \code{\link[formods]{FM_generate_report}}.
 #'@param rpttype Type of report to generate (supported "xlsx", "pptx", "docx").
 #'@param gen_code_only Boolean value indicating that only code should be
 #'generated (\code{FALSE}).
@@ -3568,7 +3537,50 @@ code}
 #'  \item{msgs:}      Messages to be passed back to the user.
 #'  \item{rpt:}       Report with any additions passed back to the user.
 #'}
-#'@seealso \code{\link{formods::FM_generate_report}}
+#'@seealso \code{\link[formods]{FM_generate_report}}
+#'@examples
+#'
+#'# We need a state object to use below
+#'sess_res = NCA_test_mksession(session=list())
+#'state = sess_res$state
+#'
+#'rpt = list(summary = list(), sheets=list())
+#'
+#'rpt_res = NCA_append_report(state,
+#'  rpt     = rpt,
+#'  rpttype = "xlsx")
+#'
+#'# Shows if report elements are present
+#'rpt_res$hasrptele
+#'
+#'# Code chunk to generate report element
+#'cat(paste(rpt_res$code, collapse="\n"))
+#'
+#'# Tabular summary of data views
+#'rpt_res$rpt$summary
+#'@seealso \code{\link{FM_generate_report}}
+#'@examples
+#' # We need a state object to use below
+#' sess_res = NCA_test_mksession(session=list())
+#' state = sess_res$state
+#' 
+#' # here we need an empty report object for tabular data
+#' rpt = list(summary = list(), sheets=list())
+#' 
+#' # Now we append the report indicating we want 
+#' # Excel output:
+#' rpt_res = NCA_append_report(state,
+#'   rpt     = rpt,
+#'   rpttype = "xlsx")
+#' 
+#' # Shows if report elements are present
+#' rpt_res$hasrptele
+#' 
+#' # Code chunk to generate report element
+#' cat(paste(rpt_res$code, collapse="\n"))
+#' 
+#' # Tabular results from the first NCA analysis
+#' rpt_res$rpt$sheets$NCA_1_RES
 NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 
   isgood    = TRUE
@@ -3577,10 +3589,83 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
   msgs      = c()
 
 
-  # The NCA module only supports the following report types:
+  # The NCA module supports the following report types:
   supported_rpttypes = c("xlsx", "pptx", "docx")
 
   if(rpttype %in% supported_rpttypes){
+    if(rpttype == "xlsx"){
+      for(ana in names(state[["NCA"]][["anas"]])){
+        # Only the analyses that are in a good state are reported
+        tmp_ana = state[["NCA"]][["anas"]][[ana]] 
+        if(tmp_ana[["isgood"]]){
+          hasrptele = TRUE
+          #----------------------------------------------------------
+          # Table of final PKNCA results
+          assign(tmp_ana[["objs"]][["tb_ind_params"]][["name"]],
+                 tmp_ana[["objs"]][["tb_ind_params"]][["value"]])
+          ind_sheet_name = paste0(tmp_ana[["id"]], "_RES")
+
+          # This appends the data frame to the report list
+          code_chunk = paste0('rpt[["sheets"]][["',
+                              ind_sheet_name,
+                              '"]]=',
+                              tmp_ana[["objs"]][["tb_ind_params"]][["name"]],
+                              '[["one_table"]]')
+          # Evaluating the code
+          if(!gen_code_only){
+            eval(parse(text=code_chunk))}
+          # Appending to returned code
+          code = c(code, code_chunk)
+
+          # Appends the mapping between sheet name and description:
+          code_chunk = c('rpt[["summary"]] = rbind(rpt[["summary"]],',
+                         "  data.frame(",
+                  paste0('    Sheet_Name="',  ind_sheet_name, '",'),
+                  paste0('    Description="', tmp_ana[["key"]], ' (indiviudal results)"'),
+                         "  )",
+                         ')')
+          # Evaluating the code
+          if(!gen_code_only){
+            eval(parse(text=code_chunk))}
+          # Appending to returned code
+          code = c(code, code_chunk)
+
+          #----------------------------------------------------------
+          # Table of raw PKNCA results
+          # Storing the data frame in the object name used in the code
+          assign(tmp_ana[["objs"]][["res"]][["name"]],
+                 tmp_ana[["objs"]][["res"]][["value"]])
+            
+          raw_sheet_name = paste0(tmp_ana[["id"]], "_RAW")
+
+          # This appends the data frame to the report list
+          code_chunk = paste0('rpt[["sheets"]][["',
+                              raw_sheet_name,
+                              '"]]=as.data.frame(',
+                              tmp_ana[["objs"]][["res"]][["name"]],
+                              ")")
+          # Evaluating the code
+          if(!gen_code_only){
+            eval(parse(text=code_chunk))}
+          # Appending to returned code
+          code = c(code, code_chunk)
+
+          # Appends the mapping between sheet name and description:
+          code_chunk = c('rpt[["summary"]] = rbind(rpt[["summary"]],',
+                         "  data.frame(",
+                  paste0('    Sheet_Name="',  raw_sheet_name, '",'),
+                  paste0('    Description="', tmp_ana[["key"]], ' (raw NCA results)"'),
+                         "  )",
+                         ')')
+          # Evaluating the code
+          if(!gen_code_only){
+            eval(parse(text=code_chunk))}
+          # Appending to returned code
+          code = c(code, code_chunk)
+          #----------------------------------------------------------
+        }
+      }
+    }
   }
 
   res = list(
@@ -3632,16 +3717,16 @@ NCA_fetch_ds = function(state){
                checksum   = NULL,
                DSchecksum = NULL)
 
-  # This prevents returning a dataset if this is triggered before data has
-  # been loaded
-  if(state[["NCA"]][["isgood"]]){
-
-    # Fill in the DS creation stuff here
-    isgood = FALSE
-
-    # Putting it all into the ds object to be returned
-    ds[[object_name]] = NEWDS
-  }
+# # This prevents returning a dataset if this is triggered before data has
+# # been loaded
+# if(state[["NCA"]][["isgood"]]){
+#
+#   # Fill in the DS creation stuff here
+#   isgood = FALSE
+#
+#   # Putting it all into the ds object to be returned
+#   ds[[object_name]] = NEWDS
+# }
 
   res = list(hasds  = hasds,
              isgood = isgood,
@@ -3708,9 +3793,9 @@ NCA_new_ana    = function(state){
          col_ntime               = "",
          col_group               = "",
          curr_fg_ind_obs         = "",               # Current figure page
-         curr_tb_ind_obs         = "",               # Current table page 
-         curr_tb_ind_params      = "",               # 
-         curr_tb_sum_params      = "",               # 
+         curr_tb_ind_obs         = "",               # Current table page
+         curr_tb_ind_params      = "",               #
+         curr_tb_sum_params      = "",               #
          include_units           = "",
          intervals               = NULL,             # holds intervals added to the analysis
          interval_range          = c("0", "Inf"),    # Current interval in the interface.
@@ -3959,7 +4044,7 @@ res}
 #'@param route_col Column name with the route data.
 #'@param DS        Dataframe containing the dataset.
 #'@return Dataset with the route mapping applied.
-#'
+#' library(readxl)
 #' #loading a dataset
 #' data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
 #' myDS = readxl::read_excel(path=data_file, sheet="DATA")        %>%
@@ -3996,7 +4081,7 @@ DS}
 #'@description Use this to get information about data formats.
 #'@return list with details about the data formats
 #'@examples
-#' FM_fetch_current_mods()
+#' NCA_fetch_data_format()
 NCA_fetch_data_format = function(){
 
   yaml_file = system.file(package="ruminate","templates","NCA.yaml")
@@ -4651,7 +4736,10 @@ nca_builder = function(state){
              "nca_res = ", nca_res_object_name, ", ",
              "obnd = rpt, ",
              "nps = nps, ",
-             "digits = ", state[["MC"]][["reporting"]][["digits"]],
+             'not_calc = "', state[["MC"]][["reporting"]][["not_calc"]] ,'",',
+             'infinity = "', state[["MC"]][["reporting"]][["infinity"]] ,'",',
+             "digits = ", state[["MC"]][["reporting"]][["digits"]],',',
+             'mult_str = "', state[["MC"]][["reporting"]][["mult_str"]],'"',
              ")"))
 
     # Working out the little code elements:
@@ -4679,7 +4767,7 @@ nca_builder = function(state){
   # saving any messages:
   msgs = c(msgs, current_ana[["msgs"]])
 
-  state = FM_set_ui_msg(state, msgs)
+  state = formods::FM_set_ui_msg(state, msgs)
 
   # Saving the state information
   current_ana[["isgood"]]            = isgood
@@ -4797,7 +4885,7 @@ run_nca_components = function(
         }
 
         # Running the analysis and trapping any errors
-        nca_run_res = FM_tc(cmd, tc_env, capture)
+        nca_run_res = formods::FM_tc(cmd, tc_env, capture)
 
         # Capturing the exit status
         if(nca_run_res[["isgood"]]){
@@ -4853,7 +4941,7 @@ run_nca_components = function(
           }
 
           # Running the table or figure generation code:
-          nca_run_res = FM_tc(cmd, tc_env, capture)
+          nca_run_res = formods::FM_tc(cmd, tc_env, capture)
 
           # Capturing the results. There are two points of failure here. One
           # is that the code can fail to execute. That should mark the current
@@ -4930,7 +5018,7 @@ run_nca_components = function(
 
   #If there is something wrong we set that in the messages
   if(!current_ana[["isgood"]]){
-    state = FM_set_ui_msg(state, msgs)
+    state = formods::FM_set_ui_msg(state, msgs)
   }
 
   # Setting the analysis checksum based on the objs portion.
@@ -4942,9 +5030,11 @@ run_nca_components = function(
   # Creating a checksum for the entire module:
   all_checksum = ":"
   for(ana_id in names(state[["NCA"]][["anas"]])){
-    paste0(all_checksum, ana_id, ":", state[["NCA"]][["anas"]][[ana_id]][["checksum"]], ":")
+    all_checksum = paste0(all_checksum, ana_id, ":", state[["NCA"]][["anas"]][[ana_id]][["checksum"]], ":")
   }
   state[["NCA"]][["checksum"]] = digest::digest(all_checksum, algo=c("md5"))
+  FM_le(state, paste0("module checksum updated:", state[["NCA"]][["checksum"]]))
+  
 
 state}
 
@@ -5170,8 +5260,8 @@ res}
 #'@param OBS_STRING Label for observation data.
 #'@param BLQ_STRING Label for BLQ data.
 #'@param NA_STRING  Label for missing data.
-#'@param log_sacle  Boolean variable to control y-scale (\code{TRUE}: Log 10, \code{FALSE}: linear).
-#'@param scale      String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}.
+#'@param log_scale  Boolean variable to control y-scale (\code{TRUE}: Log 10, \code{FALSE}: linear).
+#'@param scales     String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}.
 #'@param nfrows     Number of facet rows per page.
 #'@param nfcols     Number of facet cols per page.
 #'@return list containing the following elements
@@ -5451,11 +5541,15 @@ ruminate = function(){
 
 
 #'@export
-#'@title Title
-#'@description Description
+#'@title Create Tabular Output from PKNCA Results
+#'@description Create paginated tables from PKNCA to use in reports and Shiny
+#'apps.
 #'@param nca_res Output of PKNCA.
 #'@param type     Type of table to generate. Can be either \code{"individual"} or \code{"summary"]}.
 #'@param grouping How to group columns in tables. Can be either \code{"interval"} or \code{"parameter"]}.
+#'@param not_calc Text string to replace NA values with to indicated values were not calculated.
+#'@param mult_str Text string to replace * values in units.
+#'@param infinity Text string to replace infinity in time intervals in column headers.
 #'@param obnd     onbrand reporting object.
 #'@param nps NCA parameter summary table with the following columns.
 #'   \itemize{
@@ -5469,6 +5563,8 @@ ruminate = function(){
 #'to disable rounding)
 #'@param max_col Maximum number of columns to have on a page. Spillover will
 #'be wrapped to multiple pages.
+#'@param max_row Maximum number of rows to have on a page. Spillover will
+#'hang over the side of the page..
 #'@return list containing the following elements
 #'\itemize{
 #'   \item{raw_nca:} Raw PKNCA output.
@@ -5482,13 +5578,11 @@ mk_table_nca_params = function(
   type        = "individual",
   grouping    = "interval",
   not_calc    = "NC",
-# not_sampled = "NS",
-# blq         = "BLQ",
   obnd        = NULL,
   nps         = NULL,
+  mult_str    = "*",
   # JMH make sure this is used as intended below
-  infinity    = list(text  = "∞",
-                     md    = "∞"),
+  infinity    = "inf",
   digits      = 3,
   max_row     = NULL,
   max_col     = NULL){
@@ -5550,7 +5644,7 @@ mk_table_nca_params = function(
     dplyr::mutate(range = stringr::str_replace(
                           string      = .data[["range"]],
                           pattern     = "Inf",
-                          replacement = infinity[["text"]]))
+                          replacement = infinity))
 
 
   if(type == "summary"){
@@ -5637,13 +5731,10 @@ mk_table_nca_params = function(
   notes_detect = c(not_calc)
 
   # Identifies which of the common rows to highlight.
-
   table_body_head = c()
   row_common_head = c()
 
-  mult_str =  "⋅"
-
-  # here we're repalcing the multiplication sign in the units with 
+  # here we're repalcing the multiplication sign in the units with
   # whatever is in the mult_str:
   if(HAS_UNITS){
     nps_found[["units"]] = stringr::str_replace(
@@ -5674,8 +5765,6 @@ mk_table_nca_params = function(
       ncol  = ncol(row_common) )
   }
 
-
-
   stres =
   span_table(table_body      = table_body,
              row_common      = row_common,
@@ -5688,10 +5777,11 @@ mk_table_nca_params = function(
              notes_detect    = notes_detect)
 
   res = list(
-    raw_nca = raw_nca,
-    isgood = stres[["isgood"]],
-    tables = stres[["tables"]],
-    msgs   = stres[["msgs"]]
+    raw_nca   = raw_nca,
+    isgood    = stres[["isgood"]],
+    one_table = stres[["one_table"]],
+    tables    = stres[["tables"]],
+    msgs      = stres[["msgs"]]
   )
 
 res}
@@ -5713,14 +5803,14 @@ res}
 #'}
 #'@examples
 #' sess_res = NCA_test_mksession(session=list())
-NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW"){
+NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_ASM="ASM"){
 
   isgood = TRUE
   rsc    = NULL
   input  = list()
 
   # Populating the session with UD and DW components
-  sess_res = DW_test_mksession(session=session, id=id_DW, id_UD = id_UD)
+  sess_res = formods::DW_test_mksession(session=session, id=id_DW, id_UD = id_UD)
   if(!("ShinySession" %in% class(session))){
     session = sess_res[["session"]]
   }
@@ -5749,157 +5839,63 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW"){
 
 
 
-  # JMH populate the test session/state here later
- ##------------------------------------
- ## Creating "Individual profiles by cohort" data view
- #state[["FG"]][["ui"]][["text_fig_key"]]        = "Individual profiles by cohort"
- #state[["FG"]][["ui"]][["select_current_view"]] = "DW_myDS_1"
- #current_fig = FG_fetch_current_fig(state)
- #current_fig[["key"]]         = state[["FG"]][["ui"]][["text_fig_key"]]
- #current_fig[["fig_dsview"]]  = state[["FG"]][["ui"]][["select_current_view"]]
- #state = FG_set_current_fig(state, current_fig)
- #
- ## Adding the lines
- #state[["FG"]][["ui"]][["select_fg_element"]]          = "line"
- #state[["FG"]][["ui"]][["select_component_x"]]         = "TIME_DY"
- #state[["FG"]][["ui"]][["select_component_y"]]         = "DV"
- #state[["FG"]][["ui"]][["select_component_color"]]     = "CMT"
- #state[["FG"]][["ui"]][["select_component_group"]]     = "IDCMT"
- #
- #fgb_res  = fers_builder(state)
- #state = FG_build( state,
- #  cmd     = fgb_res[["cmd"]],
- #  element = fgb_res[["element"]],
- #  desc    = fgb_res[["desc"]])
- #
- ## faceting by cohort
- #state[["FG"]][["ui"]][["select_fg_element"]]          = "facet"
- #state[["FG"]][["ui"]][["select_component_facet"]]     = "Cohort"
- #
- #fgb_res  = fers_builder(state)
- #state = FG_build( state,
- #  cmd     = fgb_res[["cmd"]],
- #  element = fgb_res[["element"]],
- #  desc    = fgb_res[["desc"]])
- #
- ## setting the log scale
- #state[["FG"]][["ui"]][["select_fg_element"]]          = "scales"
- #state[["FG"]][["ui"]][["select_component_yscale"]]    = "log10"
- #
- #fgb_res  = fers_builder(state)
- #state = FG_build( state,
- #  cmd     = fgb_res[["cmd"]],
- #  element = fgb_res[["element"]],
- #  desc    = fgb_res[["desc"]])
- #
- #
- #
- ##------------------------------------
- ## Plotting the 3 mg SD IV cohort
- ## Updating the key and data view
- #state = FG_new_fig(state)
- #state[["FG"]][["ui"]][["text_fig_key"]]        = "3 mg SD IV"
- #state[["FG"]][["ui"]][["select_current_view"]] = "DW_myDS_2"
- #current_fig = FG_fetch_current_fig(state)
- #current_fig[["key"]]         = state[["FG"]][["ui"]][["text_fig_key"]]
- #current_fig[["fig_dsview"]]  = state[["FG"]][["ui"]][["select_current_view"]]
- #state = FG_set_current_fig(state, current_fig)
- #
- ## Adding the lines
- #state[["FG"]][["ui"]][["select_fg_element"]]          = "line"
- #state[["FG"]][["ui"]][["select_component_x"]]         = "TIME_DY"
- #state[["FG"]][["ui"]][["select_component_y"]]         = "DV"
- #state[["FG"]][["ui"]][["select_component_group"]]     = "ID"
- #
- #fgb_res  = fers_builder(state)
- #state = FG_build( state,
- #  cmd     = fgb_res[["cmd"]],
- #  element = fgb_res[["element"]],
- #  desc    = fgb_res[["desc"]])
- #
- #
- ## setting the log scale
- #state[["FG"]][["ui"]][["select_fg_element"]]          = "scales"
- #state[["FG"]][["ui"]][["select_component_yscale"]]    = "log10"
- #
- #fgb_res  = fers_builder(state)
- #state = FG_build( state,
- #  cmd     = fgb_res[["cmd"]],
- #  element = fgb_res[["element"]],
- #  desc    = fgb_res[["desc"]])
- #
- ##------------------------------------
- ## Plotting the 3 mg MD SC first dose cohort
- ## Updating the key and data view
- #state = FG_new_fig(state)
- #state[["FG"]][["ui"]][["text_fig_key"]]        = "3 mg SC first dose"
- #state[["FG"]][["ui"]][["select_current_view"]] = "DW_myDS_3"
- #current_fig = FG_fetch_current_fig(state)
- #current_fig[["key"]]         = state[["FG"]][["ui"]][["text_fig_key"]]
- #current_fig[["fig_dsview"]]  = state[["FG"]][["ui"]][["select_current_view"]]
- #state = FG_set_current_fig(state, current_fig)
- #
- ## Adding the lines
- #state[["FG"]][["ui"]][["select_fg_element"]]          = "line"
- #state[["FG"]][["ui"]][["select_component_x"]]         = "TIME_DY"
- #state[["FG"]][["ui"]][["select_component_y"]]         = "DV"
- #state[["FG"]][["ui"]][["select_component_group"]]     = "ID"
- #
- #fgb_res  = fers_builder(state)
- #state = FG_build( state,
- #  cmd     = fgb_res[["cmd"]],
- #  element = fgb_res[["element"]],
- #  desc    = fgb_res[["desc"]])
- #
- #
- ## setting the log scale
- #state[["FG"]][["ui"]][["select_fg_element"]]          = "scales"
- #state[["FG"]][["ui"]][["select_component_yscale"]]    = "log10"
- #
- #fgb_res  = fers_builder(state)
- #state = FG_build( state,
- #  cmd     = fgb_res[["cmd"]],
- #  element = fgb_res[["element"]],
- #  desc    = fgb_res[["desc"]])
- #
- ##------------------------------------
- ## Boxplots of parameters
- ## Updating the key and data view
- #state = FG_new_fig(state)
- #state[["FG"]][["ui"]][["text_fig_key"]]        = "Parameter distribution by Cohort"
- #state[["FG"]][["ui"]][["select_current_view"]] = "DW_myDS_4"
- #current_fig = FG_fetch_current_fig(state)
- #current_fig[["key"]]         = state[["FG"]][["ui"]][["text_fig_key"]]
- #current_fig[["fig_dsview"]]  = state[["FG"]][["ui"]][["select_current_view"]]
- #state = FG_set_current_fig(state, current_fig)
- #
- ## Adding the boxplots
- #state[["FG"]][["ui"]][["select_fg_element"]]          = "boxplot"
- #state[["FG"]][["ui"]][["select_component_x"]]         = "parameter"
- #state[["FG"]][["ui"]][["select_component_y"]]         = "values"
- #state[["FG"]][["ui"]][["select_component_fill"]]      = "Cohort"
- ## The select_component* ui elements are recycled in the UI and would
- ## normally be reset to "" when a new figure element is loaded. For the
- ## purposes here we need to reset those manually.
- #state[["FG"]][["ui"]][["select_component_group"]]     = ""
- #state[["FG"]][["ui"]][["select_component_color"]]     = ""
- #
- #fgb_res  = fers_builder(state)
- #state = FG_build( state,
- #  cmd     = fgb_res[["cmd"]],
- #  element = fgb_res[["element"]],
- #  desc    = fgb_res[["desc"]])
- #
- ## setting the log scale
- #state[["FG"]][["ui"]][["select_fg_element"]]          = "scales"
- #state[["FG"]][["ui"]][["select_component_yscale"]]    = "log10"
- #
- #fgb_res  = fers_builder(state)
- #state = FG_build( state,
- #  cmd     = fgb_res[["cmd"]],
- #  element = fgb_res[["element"]],
- #  desc    = fgb_res[["desc"]])
- ##------------------------------------
+  #------------------------------------
+  # First First dose PK only with BQL values
+  current_ana = NCA_fetch_current_ana(state)
+  # Setting the dataset:
+  current_ana[["ana_dsview"]] = "DW_myDS_7"
+
+  # Defining the columns
+  current_ana[["col_id"]]           = "ID"
+  current_ana[["col_time"]]         = "TIME_DY"
+  current_ana[["col_ntime"]]        = "NTIME_DY"
+  current_ana[["col_conc"]]         = "DV"
+  current_ana[["col_dose"]]         = "DOSE"
+  current_ana[["col_route"]]        = "ROUTE"
+  current_ana[["col_analyte"]]      = "N/A"    #Analyte  
+  current_ana[["col_dur"]]          = "N/A"    #Duration 
+
+  # Setting the caption/analysis key
+  current_ana[["key"]]              = "PK NCA Analysis Example"
+
+  # This will update the changes to the current analysis:
+  state = NCA_set_current_ana(state, current_ana)
+
+  # This will load the scenario
+  state = NCA_load_scenario(state, "sd_iv")
+
+  # And then this will run the intervals in the scenario:
+  state = run_nca_components(state)
+  #------------------------------------
+  # First First dose PK/PD with BQL values
+  # Create a new analysis
+  state = NCA_new_ana(state)
+  current_ana = NCA_fetch_current_ana(state)
+  # Setting the dataset:
+  current_ana[["ana_dsview"]] = "DW_myDS_6"
+
+  # Setting the caption/analysis key
+  current_ana[["key"]]              = "PK/PD NCA Analysis Example"
+
+  # Defining the columns
+  current_ana[["col_id"]]           = "ID"
+  current_ana[["col_time"]]         = "TIME_DY"
+  current_ana[["col_ntime"]]        = "NTIME_DY"
+  current_ana[["col_conc"]]         = "DV"
+  current_ana[["col_dose"]]         = "DOSE"
+  current_ana[["col_route"]]        = "ROUTE"
+  current_ana[["col_analyte"]]      = "CMT"    #Analyte  
+  current_ana[["col_dur"]]          = "N/A"    #Duration 
+
+  # This will update the changes to the current analysis:
+  state = NCA_set_current_ana(state, current_ana)
+
+  # This will load the scenario
+  state = NCA_load_scenario(state, "sd_iv")
+
+  # And then this will run the intervals in the scenario:
+  state = run_nca_components(state)
+  #------------------------------------
 
   # This functions works both in a shiny app and outside of one
   # if we're in a shiny app then the 'session' then the class of
@@ -6110,7 +6106,8 @@ span_table = function(table_body                = NULL,
   }
 
   # This means that everything checks out and we're good to go.
-  tables = list()
+  tables    = list()
+  one_table = NULL
   if(isgood){
     tb_idx = 1
 
@@ -6183,7 +6180,7 @@ span_table = function(table_body                = NULL,
           ntrim = 0
           while(sum(tmp_dim$widths) > max_width){
             ntrim = ntrim + 1
-            tmp_dim$widths = head(tmp_dim$widths, -1)
+            tmp_dim$widths = utils::head(tmp_dim$widths, -1)
           }
 
           # This trims off those elements
@@ -6199,7 +6196,7 @@ span_table = function(table_body                = NULL,
           ntrim = 0
           while(sum(tmp_dim$heights) > max_height){
             ntrim = ntrim + 1
-            tmp_dim$heights = head(tmp_dim$heights, -1)
+            tmp_dim$heights = utils::head(tmp_dim$heights, -1)
           }
 
           # This trims off those elements
@@ -6238,6 +6235,16 @@ span_table = function(table_body                = NULL,
       }
       row_offset = max(row_sel)
     }
+
+
+    #creating the single table as well:
+    one_body   = cbind(row_common, table_body)
+    one_header = cbind(row_common_head, table_body_head)
+    if(!is.null(one_header)){
+      one_header = as.data.frame(one_header)
+      colnames(one_header) = names(one_body)
+    }
+    one_table  = rbind(one_header, one_body)
   }
 
   # If an error was encountered above we want to pack that into a tabular
@@ -6251,9 +6258,12 @@ span_table = function(table_body                = NULL,
               tb_idx = 1))
   }
 
-  res = list(isgood = isgood,
-             tables = tables,
-             msgs   = msgs)
+
+
+  res = list(isgood    = isgood,
+             one_table = one_table,
+             tables    = tables,
+             msgs      = msgs)
 
 res}
 
@@ -6513,7 +6523,53 @@ ft_apply_md = function(ft, obnd=NULL, part = "body"){
   }
 ft}
 
+#'@export
+#'@title Render Markdown in flextable Object
+#'@description Takes a flextable object and renders any markdown in the
+#'specified part.
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@param ana_scenario  Short name of the analysis scenario to load from the config file.
+#'@return NCA state object with the scenario loaded and relevant notifications
+#'set. 
+NCA_load_scenario = function(state, ana_scenario){
 
+
+    formods::FM_le(state, paste0("loading analysis scenario: ", ana_scenario))
+
+    scenario_def  =  state[["MC"]][["ana_scenarios"]][[ana_scenario]]
+
+    # Pulling out the current analysis
+    current_ana = NCA_fetch_current_ana(state)
+
+    # Overwriting the scenario components in the current analysis
+    current_ana[["nca_parameters"]] = scenario_def[["nca_parameters"]]
+    current_ana[["sampling"]]       = scenario_def[["sampling"]]
+
+    # Removing any previous intervals
+    current_ana[["intervals"]]      = NULL
+
+    # Storing any changes here:
+    state = NCA_set_current_ana(state, current_ana)
+
+
+    # The current analysis will be further updated internally
+    # in NCA_add_init()
+    for(int_idx in 1:length(scenario_def[["intervals"]])){
+      scenario_row = scenario_def[["intervals"]][[int_idx]]
+      interval_start = as.numeric(as.character(scenario_row$row[["start"]]))
+      interval_stop  = as.numeric(as.character(scenario_row$row[["stop"]]))
+      nca_parameters = scenario_row$row[["nca_parameters"]]
+
+      state = NCA_add_int(state=state,
+        interval_start = interval_start,
+        interval_stop  = interval_stop,
+        nca_parameters = nca_parameters)
+    }
+
+    notify_text = paste0("Scenario: ", state[["MC"]][["ana_scenarios"]][[current_ana[["ana_scenario"]]]][["description"]])
+    state = FM_set_notification(state, notify_text, "NCA scenario set", "info")
+
+state}
 
 
 

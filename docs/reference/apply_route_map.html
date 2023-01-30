@@ -81,10 +81,9 @@ a vector of regular expressions to match.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Dataset with the route mapping applied.</p>
-
-
-<p>#loading a dataset
+<p>Dataset with the route mapping applied.
+library(readxl)
+#loading a dataset
 data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
 myDS = readxl::read_excel(path=data_file, sheet="DATA")        %&gt;%</p>
 

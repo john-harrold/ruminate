@@ -13,15 +13,30 @@ LazyData: FALSE
 Depends:
   R (>= 4.2.0)
 Imports:
+  cli,
   digest,
+  dplyr,
   DT,
   flextable,
   formods,
+  ggplot2,
+  officer,
+  onbrand,
   PKNCA,
+  plotly,
+  rhandsontable,
   shiny,
-  shinyWidgets
+  shinyAce,
+  shinyWidgets,
+  stringr,
+  tidyr,
+  utils,
+  yaml
 Suggests:
+  clipr,
   knitr,
+  prompter,
+  readxl,
   shinydashboard,
   rmarkdown,
   testthat (>= 3.0.0)

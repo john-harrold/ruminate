@@ -32,6 +32,8 @@ NCA_fetch_state(
 \item{id_UD}{ID string for the upload data module used to save and load app states}
 
 \item{id_DW}{ID string for the data wrangling module used to save and load app states}
+
+\item{react_state}{Variable passed to server to allow reaction outside of module (\code{NULL})}
 }
 \value{
 list containing the current state of the app including default
@@ -79,7 +81,7 @@ and the second element containing the end of the interval.
 \item{units_time:}       Time units.
 }
 \item{current_ana:}           Currently selected analysis (list name element from anas).
-\item{DSV:}                   Available data source views (see \code{\link{FM_fetch_ds}})
+\item{DSV:}                   Available data source views (see \code{\link[formods]{FM_fetch_ds}})
 \item{checksum:}              This is an MD5 sum of the module (checksum of the analysis checksums).
 \item{nca_config:}            List of PKNCA configuration options for this analysis.
 \item{nca_parameters:}        List with two elements
@@ -99,7 +101,7 @@ name.
 }
 }
 \item{ui:}                    Current value of form elements in the UI.
-\item{ui_ana_map:}            Map between UI element names and analysis in the object you get from \code{\link{NCA_fetch_current_ana()}}
+\item{ui_ana_map:}            Map between UI element names and analysis in the object you get from \code{\link{NCA_fetch_current_ana}}
 \item{ui_ids:}                Vector of UI elements for the module.
 \item{ui_hold:}               List of hold elements to disable updates before a full ui referesh is complete.
 }

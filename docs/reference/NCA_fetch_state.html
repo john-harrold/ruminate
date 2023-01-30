@@ -105,6 +105,10 @@
 <dt>id_DW</dt>
 <dd><p>ID string for the data wrangling module used to save and load app states</p></dd>
 
+
+<dt>react_state</dt>
+<dd><p>Variable passed to server to allow reaction outside of module (<code>NULL</code>)</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -149,7 +153,7 @@ and the second element containing the end of the interval.</p></li>
 <li><p>units_time:       Time units.</p></li>
 </ul></li>
 <li><p>current_ana:           Currently selected analysis (list name element from anas).</p></li>
-<li><p>DSV:                   Available data source views (see <code>FM_fetch_ds</code>)</p></li>
+<li><p>DSV:                   Available data source views (see <code><a href="https://formods.ubiquity.tools/reference/FM_fetch_ds.html" class="external-link">FM_fetch_ds</a></code>)</p></li>
 <li><p>checksum:              This is an MD5 sum of the module (checksum of the analysis checksums).</p></li>
 <li><p>nca_config:            List of PKNCA configuration options for this analysis.</p></li>
 <li><p>nca_parameters:        List with two elements</p><ul><li><p>choices:          List consisting of "Common Parameters" and
@@ -165,7 +169,7 @@ name.</p></li>
 </ul></li>
 </ul></li>
 <li><p>ui:                    Current value of form elements in the UI.</p></li>
-<li><p>ui_ana_map:            Map between UI element names and analysis in the object you get from <code><a href="NCA_fetch_current_ana.html">NCA_fetch_current_ana()</a></code></p></li>
+<li><p>ui_ana_map:            Map between UI element names and analysis in the object you get from <code><a href="NCA_fetch_current_ana.html">NCA_fetch_current_ana</a></code></p></li>
 <li><p>ui_ids:                Vector of UI elements for the module.</p></li>
 <li><p>ui_hold:               List of hold elements to disable updates before a full ui referesh is complete.</p></li>
 </ul></li>

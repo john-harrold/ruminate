@@ -71,8 +71,25 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">FM_fetch_current_mods</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in FM_fetch_current_mods():</span> could not find function "FM_fetch_current_mods"</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">NCA_fetch_data_format</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sname              Column Required</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    id          Subject ID      yes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  time                Time      yes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 ntime        Nominal Time      yes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  conc       Concentration      yes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  dose                Dose      yes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 route               Route      yes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   dur Duration (optional)       no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 cycle          Dose cycle      yes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                          Description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                                                         Unique subject identifier.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                                        Time since the first dose. Must be numeric.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                       Time since the last dose in the cycle (same units as Time). Must be numeric.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                          Observed concentration. Must be numeric, no NA values. Missing values should be set to 0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                                                             Value of dose given (must be numeric).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Doseing route. It should be either 'extravascular' or 'intravascular' but ruminate will make an effort to figure out other values.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                                 Doseing duration (same units as Time). If set to N/A a value of 0 will be assumed.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                                                                                 Current dose cycle</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

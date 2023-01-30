@@ -30,13 +30,13 @@ mk_figure_ind_obs(
 
 \item{NA_STRING}{Label for missing data.}
 
+\item{log_scale}{Boolean variable to control y-scale (\code{TRUE}: Log 10, \code{FALSE}: linear).}
+
+\item{scales}{String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}.}
+
 \item{nfrows}{Number of facet rows per page.}
 
 \item{nfcols}{Number of facet cols per page.}
-
-\item{log_sacle}{Boolean variable to control y-scale (\code{TRUE}: Log 10, \code{FALSE}: linear).}
-
-\item{scale}{String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}.}
 }
 \value{
 list containing the following elements

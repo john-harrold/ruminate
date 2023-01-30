@@ -16,6 +16,8 @@ NCA_init_state(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session)
 \item{id_UD}{ID string for the upload data module used to handle uploads or the name of the list element in react_state where the data set is stored.}
 
 \item{id_DW}{ID string for the data wrangling module to process any uploaded data}
+
+\item{session}{Shiny session variable (in app) or a list (outside of app)}
 }
 \value{
 list containing an empty NCA state

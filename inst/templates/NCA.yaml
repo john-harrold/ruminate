@@ -19,6 +19,14 @@ MC:
       - table_ind_obs 
     # Number of significant digits
     digits: 3
+    # When reporting units the * will be replaced with this value
+    mult_str: "⋅"
+    # You can use unicode here like this "∞"
+    # How infinity is represented in reports like table headers
+    # to change inf in parameters you need to change them for the individual
+    # parameters below. 
+    infinity: "inf" 
+    not_calc: "NC"
   notifications:
     ana_add_int_success: "Interval added: ===DETAILS==="
   # Put different formatting options (widths, heights,

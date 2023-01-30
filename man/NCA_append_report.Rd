@@ -10,7 +10,7 @@ NCA_append_report(state, rpt, rpttype, gen_code_only = FALSE)
 \item{state}{NCA state from \code{NCA_fetch_state()}}
 
 \item{rpt}{Report with the current content of the report which will be appended to in
-this function. For details on the structure see the documentation for \code{\link{formods::FM_generate_report}}.}
+this function. For details on the structure see the documentation for \code{\link[formods]{FM_generate_report}}.}
 
 \item{rpttype}{Type of report to generate (supported "xlsx", "pptx", "docx").}
 
@@ -30,6 +30,50 @@ list containing the following elements
 \description{
 Description
 }
+\examples{
+
+# We need a state object to use below
+sess_res = NCA_test_mksession(session=list())
+state = sess_res$state
+
+rpt = list(summary = list(), sheets=list())
+
+rpt_res = NCA_append_report(state,
+ rpt     = rpt,
+ rpttype = "xlsx")
+
+# Shows if report elements are present
+rpt_res$hasrptele
+
+# Code chunk to generate report element
+cat(paste(rpt_res$code, collapse="\n"))
+
+# Tabular summary of data views
+rpt_res$rpt$summary
+# We need a state object to use below
+sess_res = NCA_test_mksession(session=list())
+state = sess_res$state
+
+# here we need an empty report object for tabular data
+rpt = list(summary = list(), sheets=list())
+
+# Now we append the report indicating we want 
+# Excel output:
+rpt_res = NCA_append_report(state,
+  rpt     = rpt,
+  rpttype = "xlsx")
+
+# Shows if report elements are present
+rpt_res$hasrptele
+
+# Code chunk to generate report element
+cat(paste(rpt_res$code, collapse="\n"))
+
+# Tabular results from the first NCA analysis
+rpt_res$rpt$sheets$NCA_1_RES
+}
 \seealso{
-\code{\link{formods::FM_generate_report}}
+\code{\link[formods]{FM_generate_report}}
+
+\code{\link{FM_generate_report}}
 }

@@ -1,11 +1,11 @@
-#library(formods)
+library(formods)
 
 # These are suggested packages
-#library(shinydashboard)
+library(shinydashboard)
 #library(ggpubr)
 #library(plotly)
 #library(shinybusy)
-#library(prompter)
+library(prompter)
 #library(utils)
 
 

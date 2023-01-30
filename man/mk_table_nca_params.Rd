@@ -2,7 +2,7 @@
 % Please edit documentation in R/NCA_Server.R
 \name{mk_table_nca_params}
 \alias{mk_table_nca_params}
-\title{Title}
+\title{Create Tabular Output from PKNCA Results}
 \usage{
 mk_table_nca_params(
   nca_res,
@@ -11,7 +11,8 @@ mk_table_nca_params(
   not_calc = "NC",
   obnd = NULL,
   nps = NULL,
-  infinity = list(text = "∞", md = "∞"),
+  mult_str = "*",
+  infinity = "inf",
   digits = 3,
   max_row = NULL,
   max_col = NULL
@@ -24,6 +25,8 @@ mk_table_nca_params(
 
 \item{grouping}{How to group columns in tables. Can be either \code{"interval"} or \code{"parameter"]}.}
 
+\item{not_calc}{Text string to replace NA values with to indicated values were not calculated.}
+
 \item{obnd}{onbrand reporting object.}
 
 \item{nps}{NCA parameter summary table with the following columns.
@@ -35,8 +38,15 @@ mk_table_nca_params(
 \item{description:}    Verbose textual description of the parameter.
 }}
 
+\item{mult_str}{Text string to replace * values in units.}
+
+\item{infinity}{Text string to replace infinity in time intervals in column headers.}
+
 \item{digits}{Number of significant figures to report (set to \code{NULL}
 to disable rounding)}
+
+\item{max_row}{Maximum number of rows to have on a page. Spillover will
+hang over the side of the page..}
 
 \item{max_col}{Maximum number of columns to have on a page. Spillover will
 be wrapped to multiple pages.}
@@ -52,5 +62,6 @@ format from \code{build_span()}.
 }
 }
 \description{
-Description
+Create paginated tables from PKNCA to use in reports and Shiny
+apps.
 }

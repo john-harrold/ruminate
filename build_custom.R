@@ -1,3 +1,5 @@
+setwd(here::here())
+
 # building documentation
 devtools::document(roclets = c('rd', 'collate', 'namespace', 'vignette'))
 

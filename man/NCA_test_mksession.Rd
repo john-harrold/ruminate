@@ -4,7 +4,13 @@
 \alias{NCA_test_mksession}
 \title{Populate Session Data for Module Testing}
 \usage{
-NCA_test_mksession(session, id = "NCA", id_UD = "UD", id_DW = "DW")
+NCA_test_mksession(
+  session,
+  id = "NCA",
+  id_UD = "UD",
+  id_DW = "DW",
+  id_ASM = "ASM"
+)
 }
 \arguments{
 \item{session}{Shiny session variable (in app) or a list (outside of app)}
