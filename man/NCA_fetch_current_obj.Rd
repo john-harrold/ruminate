@@ -12,8 +12,20 @@ NCA_fetch_current_obj(state, obj_type)
 \item{obj_type}{Type of object to return (either "table" or "figure").}
 }
 \value{
-list containing the following elements
+list with a format that depends on the obj_type.
+For figures:
 \itemize{
+\item\link{ggplot:}   ggplot object of the figure.
+\item{isgood:}   Return status of the function.
+\item{msgs:}     Messages to be passed back to the user.
+}
+For tables:
+\itemize{
+\item\link{df:}       Dataframe of the current table.
+\item\link{ft:}       Flextable object of the current table.
+\item\link{notes:}    Any table notes to be included.
+\item{isgood:}   Return status of the function.
+\item{msgs:}     Messages to be passed back to the user.
 }
 }
 \description{
@@ -22,4 +34,17 @@ currently selected object. For example if you have specified figure, it will
 look at the output figure selected and the figure number of that figure and
 return the ggplot object for that.
 by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
+}
+\examples{
+# We need a state object to use below
+sess_res = NCA_test_mksession(session=list())
+state = sess_res$state
+
+# Current active table:
+res = NCA_fetch_current_obj(state, "table")
+res$ft
+
+# Current active figure:
+res = NCA_fetch_current_obj(state, "figure")
+res$ggplot
 }

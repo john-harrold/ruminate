@@ -71,9 +71,11 @@ span_table(
 \value{
 list with the following elements
 \itemize{
-\item{isgood:} Boolean indicating the exit status of the function.
-\item{msgs:}   Vector of text messages describing any errors that were found.
-\item{tables:} Named list of tables. Each list element is of the output
+\item{isgood:}    Boolean indicating the exit status of the function.
+\item{one_body:}  Full table with no headers.
+\item{one_table:} Full table with headers.
+\item{msgs:}      Vector of text messages describing any errors that were found.
+\item{tables:}    Named list of tables. Each list element is of the output.
 format from \code{build_span()}.
 }
 }

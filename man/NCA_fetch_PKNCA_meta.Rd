@@ -7,8 +7,12 @@
 NCA_fetch_PKNCA_meta()
 }
 \value{
-List containing data frames of PKNCA meta data
+Dataframe containing PKCNA metadata for NCA parameters.
 }
 \description{
 Compiles Metadata from PKNCA
+}
+\examples{
+PKNCA_meta = NCA_fetch_PKNCA_meta()
+head(PKNCA_meta)
 }

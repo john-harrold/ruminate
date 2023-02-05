@@ -34,3 +34,10 @@ the R-object for that dataset. Each element has the following structure:
 \description{
 Fetches the datasets contained in the module
 }
+\examples{
+# We need a state object to use below
+sess_res = NCA_test_mksession(session=list())
+state = sess_res$state
+
+myDs = NCA_fetch_ds(state)
+}

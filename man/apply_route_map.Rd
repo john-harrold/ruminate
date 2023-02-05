@@ -16,18 +16,28 @@ a vector of regular expressions to match.}
 }
 \value{
 Dataset with the route mapping applied.
+}
+\description{
+Used to convert nonstandard dose route values (i.e. "IV") to
+standard values ("intravascular").
+}
+\examples{
 library(readxl)
 #loading a dataset
 data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
-myDS = readxl::read_excel(path=data_file, sheet="DATA")        \%>\%
+myDS = readxl::read_excel(path=data_file, sheet="DATA") 
 
-route_map = list(
-intravascular = c("^(?i)iv$"),
-extravascular = c("^(?i)sc$", "^(?i)oral")
-)
+ route_map = list(
+   intravascular = c("^(?i)iv$"),
+   extravascular = c("^(?i)sc$", "^(?i)oral")
+ )
 
-myDS = apply_route_map(myDS, route_col=ROUTE, route_map)
-}
-\description{
-Compiles Metadata from PKNCA
+head(myDS[["ROUTE"]])
+
+myDS = apply_route_map(route_map = route_map, 
+                       route_col = "ROUTE", 
+                       DS        = myDS)
+
+head(myDS[["ROUTE"]])
+
 }

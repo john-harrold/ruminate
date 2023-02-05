@@ -88,8 +88,127 @@ by subject id highlighting of certain NCA aspects (e.g. points used for half-lif
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>list containing the following elements</p><ul></ul></div>
+<p>list with a format that depends on the obj_type.
+For figures:</p><ul><li><p>ggplot:   ggplot object of the figure.</p></li>
+<li><p>isgood:   Return status of the function.</p></li>
+<li><p>msgs:     Messages to be passed back to the user.</p></li>
+</ul><p>For tables:</p><ul><li><p>df:       Dataframe of the current table.</p></li>
+<li><p>ft:       Flextable object of the current table.</p></li>
+<li><p>notes:    Any table notes to be included.</p></li>
+<li><p>isgood:   Return status of the function.</p></li>
+<li><p>msgs:     Messages to be passed back to the user.</p></li>
+</ul></div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># We need a state object to use below</span></span></span>
+<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="NCA_test_mksession.html">NCA_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → UD: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → UD: module checksum updated:48559d397570afc9fba8ad9b252fa75a</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:5a6adb8be080914162e848e04fb61f85</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:a5d1d3b8a436befcfa119b5d72d3697b</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:48d9e35c3f568c7a6f72914538d4ecd4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:680bde3fe602684945b93dda69abc020</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:1f571c6eabb372eff6c1ef806344b2e4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:a1632ef431da47f98334a9281270a3fd</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:518e56af743d086ea4b1b6070bf70472</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:460fd6e3a4a46f56f17bde8ff4ef5c01</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:12335ca5ced95462c2ed1df919a72d15</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:0794933dac491313b32ca4bbfd996641</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:75abe1a1cfc787fc68049b40c9e5749e</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:070868f0125fd16b3e648dc05be84cd0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:1da012ee43c59bf8bedc7376511d179e</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:6dfd06414929a762cc4f07d6d428289b</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:83f7106b33c98e7650432749c16d7a36</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:32652abd1996af932cbdf304cc509bd0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:dfa171056875bc474e03e0c911ace2b6</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:5d4dfb7affd116c593a856034804aa04</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:f47016aa2630055e8a1ae44ab79cabd2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:46cc2c9503359a39be98c3c0b889851a</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:58ed3ad9e797e77eba05a2576b78e50f</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:aaf6ebcd2be24f05cd9b4776ef042986</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:afbbf99a8ed5f01191217b8370603a9d</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:086f760681a2b47a9a1dfd572f876fcd</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:8c045cb5e0fe9bd74e84d87d3c6725b5</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:779a7d3c81e58ea4c8a756c2e422fee0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:104438a337e6617c4504477506e90863</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:1bd57823c76715ccceab0be02ed7a79e</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:8b901fc11d897dd27c774accf0eb7097</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:7d55b640df1207dcdc56a10c9b8d8b87</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:8d91f192ea994a133c8e2fbb7ce7c11a</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:d5c81022154ffb7347d7a30d66a38f60</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: loading analysis scenario: sd_iv</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:e2b54e9898d32f75591e2735e3389b16</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: loading analysis scenario: sd_iv</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:dbb251454055ee0150f1b4f3289d758c</span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">state</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Current active table:</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">=</span> <span class="fu">NCA_fetch_current_obj</span><span class="op">(</span><span class="va">state</span>, <span class="st">"table"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">ft</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Current active figure:</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">=</span> <span class="fu">NCA_fetch_current_obj</span><span class="op">(</span><span class="va">state</span>, <span class="st">"figure"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">ggplot</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

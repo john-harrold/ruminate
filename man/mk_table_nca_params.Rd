@@ -13,7 +13,11 @@ mk_table_nca_params(
   nps = NULL,
   mult_str = "*",
   infinity = "inf",
-  digits = 3,
+  digits = NULL,
+  text_format = "text",
+  notes_detect = NULL,
+  max_height = 7,
+  max_width = 6.5,
   max_row = NULL,
   max_col = NULL
 )
@@ -45,11 +49,17 @@ mk_table_nca_params(
 \item{digits}{Number of significant figures to report (set to \code{NULL}
 to disable rounding)}
 
-\item{max_row}{Maximum number of rows to have on a page. Spillover will
-hang over the side of the page..}
+\item{text_format}{Either \code{"md"} for markdown or \code{"text"} (default) for plain text.}
 
-\item{max_col}{Maximum number of columns to have on a page. Spillover will
-be wrapped to multiple pages.}
+\item{notes_detect}{Vector of strings to detect in output tables (example \code{c("NC", "BLQ")}).}
+
+\item{max_height}{Maximum height of the final table in inches (A value of \code{NULL} will use 100 inches).}
+
+\item{max_width}{Maximum width of the final table in inches (A value of \code{NULL} will use 100 inches).}
+
+\item{max_row}{Maximum number of rows to have on a page. Spillover will hang over the side of the page..}
+
+\item{max_col}{Maximum number of columns to have on a page. Spillover will be wrapped to multiple pages.}
 }
 \value{
 list containing the following elements

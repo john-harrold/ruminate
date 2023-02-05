@@ -10,8 +10,6 @@ ruminate()
 }
 \value{
 Nothing.
-\itemize{
-}
 }
 \description{
 This is done by creating a Shiny interface to different tools for data
@@ -22,6 +20,11 @@ date. When saved, a script is generated to reproduce the different actions in
 the Shiny interface.
 
 Runs the pharmacometrics ruminate app.
+}
+\examples{
+if (interactive()) {
+ruminate()
+}
 }
 \seealso{
 \url{https://ruminate.ubiquity.tools/}

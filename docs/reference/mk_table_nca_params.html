@@ -71,7 +71,11 @@ apps.</p>
 <span>  nps <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mult_str <span class="op">=</span> <span class="st">"*"</span>,</span>
 <span>  infinity <span class="op">=</span> <span class="st">"inf"</span>,</span>
-<span>  digits <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  digits <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  text_format <span class="op">=</span> <span class="st">"text"</span>,</span>
+<span>  notes_detect <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_height <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  max_width <span class="op">=</span> <span class="fl">6.5</span>,</span>
 <span>  max_row <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_col <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -121,14 +125,28 @@ apps.</p>
 to disable rounding)</p></dd>
 
 
+<dt>text_format</dt>
+<dd><p>Either <code>"md"</code> for markdown or <code>"text"</code> (default) for plain text.</p></dd>
+
+
+<dt>notes_detect</dt>
+<dd><p>Vector of strings to detect in output tables (example <code>c("NC", "BLQ")</code>).</p></dd>
+
+
+<dt>max_height</dt>
+<dd><p>Maximum height of the final table in inches (A value of <code>NULL</code> will use 100 inches).</p></dd>
+
+
+<dt>max_width</dt>
+<dd><p>Maximum width of the final table in inches (A value of <code>NULL</code> will use 100 inches).</p></dd>
+
+
 <dt>max_row</dt>
-<dd><p>Maximum number of rows to have on a page. Spillover will
-hang over the side of the page..</p></dd>
+<dd><p>Maximum number of rows to have on a page. Spillover will hang over the side of the page..</p></dd>
 
 
 <dt>max_col</dt>
-<dd><p>Maximum number of columns to have on a page. Spillover will
-be wrapped to multiple pages.</p></dd>
+<dd><p>Maximum number of columns to have on a page. Spillover will be wrapped to multiple pages.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -20,6 +20,8 @@ NCA_test_mksession(
 \item{id_UD}{An ID string that corresponds with the ID used to call the UD modules UI elements}
 
 \item{id_DW}{An ID string that corresponds with the ID used to call the DW modules UI elements}
+
+\item{id_ASM}{An ID string that corresponds with the ID used to call the ASM modules UI elements}
 }
 \value{
 list with the following elements

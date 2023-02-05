@@ -17,3 +17,9 @@ of this list is the same as the structure of \code{state$NCA$anas} in the output
 \description{
 Takes an NCA state and returns the current active analysis
 }
+\examples{
+# We need a state object to use below
+sess_res = NCA_test_mksession(session=list())
+state = sess_res$state
+current_ana = NCA_fetch_current_ana(state)
+}

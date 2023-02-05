@@ -22,13 +22,15 @@ list containing the following elements
 \itemize{
 \item{isgood:}    Return status of the function.
 \item{hasrptele:} Boolean indicator if the module has any reportable elements.
-\item{code:}      Data wrangling R command.
+\item{code:}      Code to create report elements.
 \item{msgs:}      Messages to be passed back to the user.
 \item{rpt:}       Report with any additions passed back to the user.
 }
 }
 \description{
-Description
+Takes an NCA state object and appends any reportable elements
+for the specified report type. On NCA analyses that are in a "good" state
+will be reported. Those not in a good state will be ignored.
 }
 \examples{
 

@@ -8,25 +8,88 @@ MC:
     clip:    TRUE 
   reporting:
     enabled: TRUE
+    # Text format determines how text will be rendered. It can be either "md"
+    # for Markdown or "text" for plain text. This will also control things
+    # like table headers.
+    text_format: "md"
     # Priority of reporting relative to other modules (higher numbers are
     # reported first)
-    priority: 1
-    # This represents the order in which figures and tables will be reported:
+    priority: 10
+    # The order of the figure and table ids (e.g. fg_ind_obs) represents the
+    # order in which figures and tables will be reported. Each id should have
+    # the following optoins:
+    #                      
+    #   caption_single      Caption used when a table or figure needs only a
+    #                       single page.
+    #                      
+    #   caption_multiple    Caption used when a table or figure spans multiple
+    #                       pages.
+    #                      
+    #   title_single        Slide title used when a table or figure needs only a
+    #                       single page.
+    #                      
+    #   title_multiple      Slide title used when a table or figure spans multiple
+    #                       pages.
+    #                      
+    #   sub_title_single    Slide sub_title used when a table or figure needs only a
+    #                       single page.
+    #                      
+    #   sub_title_multiple  Slide sub_title used when a table or figure spans multiple
+    #                       pages.
+    #                      
+    # The following placeholders can be used bu surroudning them with ===. For
+    # example to include the total number of figures you would use
+    # ===FIGTOT===:
+    #                      
+    # NCADESC               Description of the NCA analysis provided by the
+    #                       user in the UI (tables and figures).
+    #                      
+    # FIGNUM                Number of the current figure for figures that span
+    #                       multiple pages (figures only).
+    #                      
+    # FIGTOT                Total number of figures for figures that span
+    #                       multiple pages (figures only).
+    #                      
+    # TABNUM                Number of the current table for tables that span
+    #                       multiple pages (tables only).
+    #                      
+    # TABTOT                Total number of tables for tables that span multiple
+    #                       pages (tables only).
+    #                      
+    #                      
     figures:
-      - figure_ind_obs 
+      fg_ind_obs:
+        caption_single:     "===NCADESC=== (Individual Observations)"
+        caption_multiple:   "===NCADESC=== (Individual Observations,  ===FIGNUM=== of ===FIGTOT===)"
+        title_single:       " Individual Observations"
+        title_multiple:     " Individual Observations"
+        sub_title_single:   "===NCADESC==="
+        sub_title_multiple: "===NCADESC=== (===FIGNUM=== of ===FIGTOT===)"
     tables:  
-      - table_ind_params
-      - table_ind_obs 
-    # Number of significant digits
+      tb_ind_params:
+        caption_single:   "===NCADESC=== (Individual Parameters)"
+        caption_multiple: "===NCADESC=== (Individual Parameters, ===TABNUM=== of ===TABTOT===)"
+      tb_ind_obs:
+        caption_single:   "===NCADESC===, Individual Data"
+        caption_multiple: "===NCADESC===, Individual Data (===TABNUM=== of ===TABTOT===)"
+    # Default number of significant digits
     digits: 3
-    # When reporting units the * will be replaced with this value
+    # When reporting units the * will be replaced with this value:
     mult_str: "⋅"
     # You can use unicode here like this "∞"
     # How infinity is represented in reports like table headers
     # to change inf in parameters you need to change them for the individual
     # parameters below. 
-    infinity: "inf" 
-    not_calc: "NC"
+    infinity:    "inf" 
+    not_calc:    "NC"
+    not_sampled: "NS"
+    blq:         "BLQ"
+    # Here we list all the notes that can be present in tables. You need an
+    # entry for whatever you put in not_calc and blq above here.
+    notes:
+      NC: "not calculated"
+      NS: "not sampled"    
+      BLQ: "below the level of quantification"
   notifications:
     ana_add_int_success: "Interval added: ===DETAILS==="
   # Put different formatting options (widths, heights,
@@ -195,7 +258,7 @@ MC:
       subtext: "Faceted view of individual time-course"
   tables:  
     tb_ind_params:
-      choice:  "Indiviudal NCA Parameters"       
+      choice:  "Individual NCA Parameters"       
       subtext: "Listings of subject-level NCA parmaeters"
     tb_sum_params:
       choice:  "Summarized NCA Parameters"       
@@ -270,6 +333,14 @@ MC:
     select_ana_source_sampling:      "Data Sampling"
     busy:
       run_nca:                       "Running NCA be patient."
+    PKNCA_raw:
+      ID:                            "Subject ID"
+      start:                         "Initial time of the analysis interval."
+      end:                           "Final time of the analysis interval."
+      PPTESTCD:                      "Parameter name from PKNCA."
+      PPORRES:                       "parameter value."
+      exclude:                       "Reason for parameter exclusion (NA when parameter was calculated)."
+      PPORRESU:                      "Parameter units."
   # For details on the PKNCA options see this vignette:
   # https://billdenney.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html
   # This section contains information about different options, metadata about
@@ -1079,6 +1150,9 @@ MC:
     time:     ["day",     "hr",      "min",    "sec"         ]
     time_def:  "day"
     vol:      ["mL",     "L"]
+  # This is used to generate documentation about required columns in datasets.
+  # Yous hould only change the Column and Description elements. The others are
+  # used internally. 
   data_format:
     columns:
      - entry:
