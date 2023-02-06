@@ -46,8 +46,7 @@ mk_table_nca_params(
 
 \item{infinity}{Text string to replace infinity in time intervals in column headers.}
 
-\item{digits}{Number of significant figures to report (set to \code{NULL}
-to disable rounding)}
+\item{digits}{Number of significant figures to report (set to \code{NULL} to disable rounding)}
 
 \item{text_format}{Either \code{"md"} for markdown or \code{"text"} (default) for plain text.}
 
@@ -64,10 +63,13 @@ to disable rounding)}
 \value{
 list containing the following elements
 \itemize{
-\item{raw_nca:} Raw PKNCA output.
-\item{isgood:}  Boolean indicating the exit status of the function.
-\item{msgs:}    Vector of text messages describing any errors that were found.
-\item{tables:}  Named list of tables. Each list element is of the output
+\item{raw_nca:}     Raw PKNCA output.
+\item{isgood:}      Boolean indicating the exit status of the function.
+\item{one_table:}   Dataframe of the entire table with the first lines containing the header.
+\item{one_body:}    Dataframe of the entire table (data only).
+\item{one_header:}  Dataframe of the entire header (row and body, no data).
+\item{tables:}      Named list of tables. Each list element is of the output
+\item{msgs:}        Vector of text messages describing any errors that were found.
 format from \code{build_span()}.
 }
 }

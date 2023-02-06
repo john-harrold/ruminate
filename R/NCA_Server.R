@@ -4065,7 +4065,6 @@ res}
 #' state = sess_res$state
 #'
 #' myDs = NCA_fetch_ds(state)
-
 NCA_fetch_ds = function(state){
   hasds  = FALSE
   isgood = TRUE
@@ -5477,8 +5476,9 @@ state}
 #'@param nca_res Output of PKNCA.
 #'@param obnd        onbrand reporting object.
 #'@param not_sampled Character string to use for missing data when pivoting.
-#'@param blq         Character string to use to indicate BLQ data.
+#'@param blq         Character string to use to indicate data below the level of quantification (value of 0 in the dataset).
 #'@param digits      Number of significant figures to report (set to \code{NULL} to disable rounding)
+#'@param text_format      Either \code{"md"} for markdown or \code{"text"} (default) for plain text.
 #'@param max_width   Maximum width of the final table in inches (A value of \code{NULL} will use 100 inches).
 #'@param max_height  Maximum height of the final table in inches (A value of \code{NULL} will use 100 inches).
 #'@param max_col     Maximum number of columns to have on a page. Spillover will be wrapped to multiple pages.
@@ -5496,13 +5496,13 @@ mk_table_ind_obs = function(
   not_sampled  = "NS",
   blq          = "BLQ",
   digits       = 3,
+  text_format  = "text",
   max_height   = 7,
   max_width    = 6.5,
   max_row      = NULL,
   max_col      = 9,
   notes_detect = NULL,
   rows_by      = "time"){
-
 
   # Extracting the needed column names:
   col_id      = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
@@ -5513,6 +5513,7 @@ mk_table_ind_obs = function(
   # Plucking out the units for time and conc
   time_units = ""
   conc_units = ""
+
   if(!is.null(nca_res[["data"]][["units"]])){
     # Perhaps there is a better way to extract these things but this is the
     # most obvious to me :)
@@ -5535,19 +5536,14 @@ mk_table_ind_obs = function(
     dplyr::rename(ID   = dplyr::all_of(col_id))
 
   # BILL how does PKNCA handle units with multiple analytes?
+
   # If we have an analyte column we rename it:
-  row_header_cols    = c()
-  row_header_label   = c()
-  row_header_lengths = c()
-  analyte_units    = NULL
-  if(length(col_analyte) == 1){
-    all_data = dplyr::rename(all_data, ANALYTE=col_analyte) |>
-               dplyr::arrange(!!as.name("ANALYTE"), !!as.name("TIME"))
-    row_header_cols    = c("ANALYTE")
-    row_header_label   = c("Analyte")
-    row_header_lengths = c(1)
-    analyte_units    = " "
-  }
+  row_common_head    = NULL
+ #row_header_cols    = c()
+ #row_header_label   = c()
+ #row_header_lengths = c()
+
+  units_data = c()
 
   # Applying significant digits
   if(!is.null(digits)){
@@ -5565,27 +5561,52 @@ mk_table_ind_obs = function(
   all_data[all_data[["CONC"]] == "0", ][["CONC"]] = blq
 
   if(rows_by == "time"){
-    row_header_cols = c("TIME",  row_header_cols)
-    row_header_label   = c("Time", row_header_label)
-    row_header_lengths = c(     1, row_header_lengths)
-    if(time_units == ""){
-      units_data = c("", analyte_units)
+    if(is.null(row_common_head)){
+      row_common_head = data.frame(TIME="Time")
     } else {
-      units_data = c(paste0("(", time_units,")"), analyte_units)
+      row_common_head = cbind(row_common_head, 
+                              data.frame(TIME="Time"))
+    }
+  # row_header_cols = c("TIME",  row_header_cols)
+  # row_header_label   = c("Time", row_header_label)
+  # row_header_lengths = c(     1, row_header_lengths)
+    if(time_units == ""){
+      units_data = c(units_data, "")
+    } else {
+      units_data = c(units_data, paste0("(", time_units,")"))
     }
     col_header_label = "Concentration ===CONCUNITS=== for ID"
     all_data = tidyr::pivot_wider(all_data, names_from="ID", values_from="CONC", values_fill=not_sampled)
   } else  if(rows_by == "id"){
-    row_header_cols    = c("ID", row_header_cols)
-    row_header_label   = c("ID", row_header_label)
-    row_header_lengths = c(   1, row_header_lengths)
-    if(time_units == ""){
-      units_data = c("", analyte_units)
+    if(is.null(row_common_head)){
+      row_common_head = data.frame(ID="ID")
     } else {
-      units_data = c("--", analyte_units)
+      row_common_head = cbind(row_common_head, 
+                              data.frame(ID="ID"))
+    }
+  # row_header_cols    = c("ID", row_header_cols)
+  # row_header_label   = c("ID", row_header_label)
+  # row_header_lengths = c(   1, row_header_lengths)
+    if(time_units == ""){
+      units_data = c(units_data, "")
+    } else {
+      units_data = c(units_data, "--")
     }
     col_header_label = "Concentration ===CONCUNITS=== for ID Observation Time ===TIMEUNITS==="
     all_data = tidyr::pivot_wider(all_data, names_from="TIME", values_from="CONC", values_fill=not_sampled)
+  }
+
+  if(length(col_analyte) == 1){
+    all_data = dplyr::rename(all_data, ANALYTE=col_analyte) |>
+               dplyr::arrange(!!as.name("ANALYTE"), !!as.name("TIME"))
+    if(is.null(row_common_head)){
+      row_common_head = data.frame(ANALYTE="Analyte")
+    } else {
+      row_common_head = cbind(row_common_head, 
+                              data.frame(ANALYTE="Analyte"))
+    }
+    analyte_units    = " "
+    units_data = c(units_data, analyte_units)
   }
 
   if(conc_units == ""){
@@ -5602,88 +5623,47 @@ mk_table_ind_obs = function(
 
 
   # Splitting the data into header columns and observations
-  rh_data   = dplyr::select(all_data,  dplyr::all_of(row_header_cols))
-  conc_data = dplyr::select(all_data, -dplyr::all_of(row_header_cols))
-
+  row_common   = dplyr::select(all_data,  dplyr::all_of(names(row_common_head)))
+  table_body   = dplyr::select(all_data, -dplyr::all_of(names(row_common_head)))
 
   # This converts everything to text:
-  conc_data         = dplyr::mutate_all(conc_data, as.character)
+  table_body        = dplyr::mutate_all(table_body, as.character)
 
-
-  # JMH convert over to span_table
-
-
-  # Number of concentration data columns per table
-  ndata_col = max_col - ncol(rh_data)
-  offset = 0
-  tables   = list()
-  tbl_idx  = 1
-  while(offset+1< ncol(conc_data)){
-
-    # These are the columns where we'll chop up the conc
-    # data into columns
-    c_start = offset+1
-    c_stop  = min((offset+max_col),ncol(conc_data))
-
-    tbl_data = conc_data[, c(c_start:c_stop)]
-
-    # This will hold keywords for any notes for the table.
-    notes = c()
-
-    # We have to strip out the nas to test for zero values
-    tbl_data_no_na = dplyr::mutate(tbl_data, across(1:ncol(tbl_data), ~ ifelse(is.na(.x),-1,.x)))
-    if(any(tbl_data_no_na == "0")){
-      notes = c(notes, blq)
+  table_body_head = NULL 
+  for(tmpID in names(table_body)){
+    if(is.null(table_body_head)){
+      table_body_head = eval(parse(text=paste0('dplyr::tibble("', tmpID,'" = c("', col_header_label, '", tmpID))')))
+    } else {
+      table_body_head[[tmpID]] = c(col_header_label, tmpID)
     }
-
-    if(any(tbl_data_no_na == not_sampled)){
-      notes = c(notes, not_sampled)
-    }
-
-    if(any(is.na(tbl_data))){
-      notes = c(notes, "NA")
-    }
-
-    # Attaching the row header data:
-    tp_df = cbind(rh_data, tbl_data)
-
-    tbl_key = paste0("Table_", tbl_idx)
-
-    line_thick = officer::fp_border(color="black", width=2)
-    line_thin  = officer::fp_border(color="black", width=0.5)
-    # Creating a flextable version of the table
-    tp_ft = flextable::flextable(tp_df)                                |>
-      flextable::border_remove()                                       |>
-      flextable::delete_part(part="header")                            |>
-      flextable::add_header_row(
-        values = c(units_data, names(tbl_data)))                       |>
-      flextable::add_header_row(
-        values    = c(row_header_label,   col_header_label),
-        colwidths = c(row_header_lengths, ncol(tbl_data   )))          |>
-      flextable::vline(border=line_thin, j=1,  part="all")             |>
-      #flextable::vline_left(border=line_thick,  part="all")            |>
-      #flextable::vline(border=line_thick, j=ncol(tp_df), part="all")   |>
-      flextable::align(align="center", part="header")                  |>
-      flextable::align(align="center", part="body")                    |>
-      flextable::bold(part="header")                                   |>
-      flextable::hline_top(border=line_thick, part="header")           |>
-      flextable::hline_bottom(border=line_thin, part="header")         |>
-      flextable::hline_bottom(border=line_thick, part="body")
-
-    tables[[tbl_key]] = list(
-      df    = tp_df,
-      ft    = tp_ft,
-      notes = notes
-    )
-
-    # updating the offset and table counters
-    offset  = offset+max_col
-    tbl_idx = tbl_idx + 1
   }
 
+
+  # We need to attach the units to the rows as well:
+  row_common_head = rbind(row_common_head, units_data)
+
+  #browser()
+  stres =
+  span_table(table_body      = table_body,  
+             row_common      = row_common,    
+             table_body_head = table_body_head,
+             row_common_head = row_common_head,
+             obnd            = obnd,
+             header_format   = text_format,
+             max_width       = max_width,
+             max_height      = max_height,
+             max_row         = max_row,
+             max_col         = max_col,
+             notes_detect    = notes_detect)
+
   res = list(
-    all_data = all_data,
-    tables = tables
+    #all_data   = all_data,
+    isgood     = stres[["isgood"]],
+    one_table  = stres[["one_table"]],
+    one_header = stres[["one_header"]],
+    one_body   = stres[["one_body"]],
+    tables     = stres[["tables"]],
+    msgs       = stres[["msgs"]]
   )
 
 
@@ -6034,20 +6014,22 @@ ruminate = function(){
 #'     \item{latex:}          Name used in latex output.
 #'     \item{description:}    Verbose textual description of the parameter.
 #'   }
-#'@param digits   Number of significant figures to report (set to \code{NULL}
-#'to disable rounding)
-#'@param text_format Either \code{"md"} for markdown or \code{"text"} (default) for plain text.
-#'@param notes_detect              Vector of strings to detect in output tables (example \code{c("NC", "BLQ")}).
-#'@param max_width   Maximum width of the final table in inches (A value of \code{NULL} will use 100 inches).
-#'@param max_height  Maximum height of the final table in inches (A value of \code{NULL} will use 100 inches).
-#'@param max_col     Maximum number of columns to have on a page. Spillover will be wrapped to multiple pages.
-#'@param max_row     Maximum number of rows to have on a page. Spillover will hang over the side of the page..
+#'@param digits           Number of significant figures to report (set to \code{NULL} to disable rounding)
+#'@param text_format      Either \code{"md"} for markdown or \code{"text"} (default) for plain text.
+#'@param notes_detect     Vector of strings to detect in output tables (example \code{c("NC", "BLQ")}).
+#'@param max_width        Maximum width of the final table in inches (A value of \code{NULL} will use 100 inches).
+#'@param max_height       Maximum height of the final table in inches (A value of \code{NULL} will use 100 inches).
+#'@param max_col          Maximum number of columns to have on a page. Spillover will be wrapped to multiple pages.
+#'@param max_row          Maximum number of rows to have on a page. Spillover will hang over the side of the page..
 #'@return list containing the following elements
 #'\itemize{
-#'   \item{raw_nca:} Raw PKNCA output.
-#'   \item{isgood:}  Boolean indicating the exit status of the function.
-#'   \item{msgs:}    Vector of text messages describing any errors that were found.
-#'   \item{tables:}  Named list of tables. Each list element is of the output
+#'   \item{raw_nca:}     Raw PKNCA output.
+#'   \item{isgood:}      Boolean indicating the exit status of the function.
+#'   \item{one_table:}   Dataframe of the entire table with the first lines containing the header.
+#'   \item{one_body:}    Dataframe of the entire table (data only).
+#'   \item{one_header:}  Dataframe of the entire header (row and body, no data).
+#'   \item{tables:}      Named list of tables. Each list element is of the output
+#'   \item{msgs:}        Vector of text messages describing any errors that were found.
 #'   format from \code{build_span()}.
 #'}
 mk_table_nca_params = function(
@@ -6206,7 +6188,6 @@ mk_table_nca_params = function(
   # Now we reorder the columns of tdata according to the grouping above:
   tdata = dplyr::select(tdata,
                         dplyr::all_of(c(col_id, rpt_name_group, nps_found[["pnames"]])))
-
 
   # Rows that are common for each table:
   row_common  = dplyr::select(tdata, dplyr::all_of(c(col_id, rpt_name_group)))
@@ -6769,10 +6750,10 @@ span_table = function(table_body                = NULL,
 res}
 
 #'@export
-#'@title Spread Large Table Over Smaller Tables
-#'@description Takes a large table and spreads it over smaller tables to
-#'paginate it. It will preserve common row  information on the left and
-#'separate columns according to maximum specifications.
+#'@title Construct Table Span From Components
+#'@description Takes a large table, common rows, and header information and
+#'constructs a table that is a subset of those components using supplied
+#'ranges of rows and columns. 
 #'@param table_body                Data frame with the body of the large table.
 #'@param row_common                Data frame with the common rows.
 #'@param table_body_head           Data frame or matrix with headers for the table body.

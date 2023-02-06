@@ -2,7 +2,7 @@
 % Please edit documentation in R/NCA_Server.R
 \name{build_span}
 \alias{build_span}
-\title{Spread Large Table Over Smaller Tables}
+\title{Construct Table Span From Components}
 \usage{
 build_span(
   table_body = NULL,
@@ -71,9 +71,9 @@ list with the following elements
 }
 }
 \description{
-Takes a large table and spreads it over smaller tables to
-paginate it. It will preserve common row  information on the left and
-separate columns according to maximum specifications.
+Takes a large table, common rows, and header information and
+constructs a table that is a subset of those components using supplied
+ranges of rows and columns.
 }
 \details{
 The way the data frames relate to each other are mapped out below. The

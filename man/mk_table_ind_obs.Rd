@@ -10,6 +10,7 @@ mk_table_ind_obs(
   not_sampled = "NS",
   blq = "BLQ",
   digits = 3,
+  text_format = "text",
   max_height = 7,
   max_width = 6.5,
   max_row = NULL,
@@ -25,9 +26,11 @@ mk_table_ind_obs(
 
 \item{not_sampled}{Character string to use for missing data when pivoting.}
 
-\item{blq}{Character string to use to indicate BLQ data.}
+\item{blq}{Character string to use to indicate data below the level of quantification (value of 0 in the dataset).}
 
 \item{digits}{Number of significant figures to report (set to \code{NULL} to disable rounding)}
+
+\item{text_format}{Either \code{"md"} for markdown or \code{"text"} (default) for plain text.}
 
 \item{max_height}{Maximum height of the final table in inches (A value of \code{NULL} will use 100 inches).}
 

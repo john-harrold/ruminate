@@ -71,6 +71,7 @@ individual observation data. This can be spread out of over several tables
 <span>  not_sampled <span class="op">=</span> <span class="st">"NS"</span>,</span>
 <span>  blq <span class="op">=</span> <span class="st">"BLQ"</span>,</span>
 <span>  digits <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  text_format <span class="op">=</span> <span class="st">"text"</span>,</span>
 <span>  max_height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>  max_width <span class="op">=</span> <span class="fl">6.5</span>,</span>
 <span>  max_row <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -95,11 +96,15 @@ individual observation data. This can be spread out of over several tables
 
 
 <dt>blq</dt>
-<dd><p>Character string to use to indicate BLQ data.</p></dd>
+<dd><p>Character string to use to indicate data below the level of quantification (value of 0 in the dataset).</p></dd>
 
 
 <dt>digits</dt>
 <dd><p>Number of significant figures to report (set to <code>NULL</code> to disable rounding)</p></dd>
+
+
+<dt>text_format</dt>
+<dd><p>Either <code>"md"</code> for markdown or <code>"text"</code> (default) for plain text.</p></dd>
 
 
 <dt>max_height</dt>
