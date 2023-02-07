@@ -1,6 +1,6 @@
 MC: 
   code: # module specific code options
-    packages: ["PKNCA", "dplyr", "stringr", "ruminate"]
+    packages: ["PKNCA", "dplyr", "stringr", "formods", "ruminate"]
     readOnly: TRUE
     mode:     r
   compact:
