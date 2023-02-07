@@ -70,7 +70,7 @@ list containing the following elements
 \item{one_header:}  Dataframe of the entire header (row and body, no data).
 \item{tables:}      Named list of tables. Each list element is of the output
 \item{msgs:}        Vector of text messages describing any errors that were found.
-format from \code{build_span()}.
+format from \code{\link[onbrand]{build_span}}.
 }
 }
 \description{
