@@ -40,13 +40,18 @@ You can install the development version from
 [GitHub](https://github.com/john-harrold/ruminate/) with the following:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("john-harrold/formods", dependencies=TRUE)
+# Installing devtools if it's not already installed
+if(system.file(package="devtools") == ""){
+  install.packages("devtools") 
+}
+devtools::install_github("john-harrold/onbrand",  dependencies=TRUE)
+devtools::install_github("john-harrold/formods",  dependencies=TRUE)
 devtools::install_github("john-harrold/ruminate", dependencies=TRUE)
 ```
 
-Note that because `ruminate` depends on `formods` you will need to first
-install the development version of `formods`.
+Note that because `ruminate` depends on `formods` and `onbrand` you will
+need to first install the development versions of `onbrand` and
+`formods`.
 
 # Getting started
 

@@ -20,6 +20,7 @@
 #'@import shiny
 #'@import officer
 #'@importFrom digest digest
+#'@importFrom rio import
 #'@importFrom shinyAce aceEditor updateAceEditor
 #'@importFrom stringr str_replace str_detect str_split
 #'@importFrom utils head
@@ -97,6 +98,17 @@ NCA_Server <- function(id,
         uiele = "# Run analysis to see code."
       } else {
         uiele = current_ana[["code"]]
+
+        # This will define the nca parameter summary (nps) table. 
+        nps_def = 'NCA_nps = NCA_fetch_np_meta()[["summary"]]'
+
+        # Adding the preamble to load necessary packages
+        mod_deps = FM_fetch_deps(state = state, session = session)
+        if("package_code" %in% names(mod_deps)){
+          uiele = paste0(c(mod_deps$package_code, "", 
+                           nps_def, "", uiele), collapse="\n")
+        }
+        
       }
 
 
@@ -3400,57 +3412,15 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
           )
   }
 
-  # This table summarizes the NCA parameters
-  np_summary = NULL
-  # This list contains the NCA parameter
-  # choices in the selection menu
-  np_choices = list()
 
-  # Default descriptors from PKNCA:
-  PKNCA_def = PKNCA::get.interval.cols()
-
-  for(nca_param in names(state[["MC"]][["nca_parameters"]])){
-    np_comps = state[["MC"]][["nca_parameters"]][[nca_param]]
-
-    # This should catch any typos in the YAML file:
-    if(nca_param %in% names(PKNCA_def)){
-      # Null values for description and text indicate that we want
-      # to use the default values from PKNCA
-      if(is.null(np_comps[["description"]])){
-        np_comps[["description"]] = PKNCA_def[[nca_param]][["desc"]]
-      }
-      if(is.null(np_comps[["text"]])){
-        np_comps[["text"]] = PKNCA_def[[nca_param]][["pretty_name"]]
-      }
-
-
-      # Updating the choices list
-      np_choices[[ np_comps[["group"]] ]][[ np_comps[["text"]] ]] = nca_param
-
-      # Updating the summary table
-      np_summary =
-        rbind(np_summary,
-          data.frame(
-            parameter   = nca_param,
-            text        = np_comps[["text"]],
-            md          = np_comps[["md"]],
-            latex       = PKNCA_def[[nca_param]][["pretty_name"]],
-            description =  np_comps[["description"]])
-         )
-    } else {
-      cli::cli_alert_danger(paste0("NCA: Parameter specified in YAML is not a valid PKNCA parameter: ", nca_param))
-    }
-  }
+  # This will pull out the nca parameters meta information.
+  np_meta = NCA_fetch_np_meta(MOD_yaml_file = MOD_yaml_file)
+  np_choices = np_meta[["choices"]]
+  np_summary = np_meta[["summary"]]
 
   # IDs for NCA options start with nca_opt_ (see data.frame command above)
   # We add those to the list of the  ui_ids:
   ui_ids   = c(ui_ids, nc_summary[["ui_id"]])
-
-# ui_hold         = c(nc_summary[["ui_id"]],
-#                     "select_current_ana",
-#                     "hot_nca_intervals",
-#                     "select_current_view")
-#
 
   # Adding all of the ui_ids to the list of ui_hold
   ui_hold = ui_ids
@@ -3518,8 +3488,36 @@ state}
 #'@return Character object vector with the lines of code
 NCA_fetch_code = function(state){
 
-  code = NULL
+  code = c()
+  ana_found = FALSE
 
+  for(ana_id in names(state[["NCA"]][["anas"]])){
+    current_ana = state[["NCA"]][["anas"]][[ana_id]]
+    if(current_ana[["isgood"]]){
+      ana_found = TRUE 
+      code = c(code, current_ana[["code_components"]][["code_ana_only"]])
+      code = c(code, current_ana[["code_components"]][["code_fg_ind_obs"]])
+      code = c(code, current_ana[["code_components"]][["code_tb_ind_obs"]])
+      code = c(code, current_ana[["code_components"]][["code_tb_ind_params"]])
+    }
+  }
+
+  # if at least one analysis was found then we 
+  # attach the nps definition  code
+  if(ana_found){
+    # This will fetch the nps table based on the NCA.yaml file bundled in the
+    # exporte zip file:
+    nps_def = paste0('NCA_nps = NCA_fetch_np_meta(file.path("config", "',
+                     basename(state[["MOD_yaml_file"]]),
+                     '"))[["summary"]]')
+    code = c("# NCA analyses", "", nps_def, code)
+
+  } else {
+    # Otherwise we just pass a comment that there were 
+    # no valid analyses found
+    code = "# No valid NCA analyses were found"
+  }
+  
 code}
 
 #'@export
@@ -4513,14 +4511,15 @@ DS}
 #'@export
 #'@title Fetches Details About Data Requirements
 #'@description Use this to get information about data formats.
+#'@param MOD_yaml_file  Module configuration file with MC as main section.
 #'@return list with details about the data formats
 #'@examples
 #' NCA_fetch_data_format()
-NCA_fetch_data_format = function(){
+NCA_fetch_data_format = function(
+  MOD_yaml_file = system.file(package="ruminate","templates","NCA.yaml")){
 
-  yaml_file = system.file(package="ruminate","templates","NCA.yaml")
-
-  MC = yaml::read_yaml(yaml_file)
+  MC = yaml::read_yaml(MOD_yaml_file)
+  #MC = rio::import(MOD_yaml_file)
 
   res = NULL
 
@@ -4530,6 +4529,76 @@ NCA_fetch_data_format = function(){
   }
 res}
 
+#'@export
+#'@title Fetches NCA Parameter Meta Information 
+#'@description This provides meta information about NCA parameters. This
+#'includes parameter names, text descriptions, formatting (md and LaTeX). 
+#'@param MOD_yaml_file  Module configuration file with MC as main section.
+#'@return list with the following elements:
+#' \itemize{
+#'   \item{choices:} List parameter choices grouped by values specified in the module configuration file.
+#'   \item{summary:} Data frame with meta data about the NCA parameters with
+#'   the following columns:
+#'   \itemize{
+#'     \item{parameter:}   Name of parameter in PKNCA.
+#'     \item{text:}        Name of parameter in plain text.
+#'     \item{md:}          Parameter name formatted in Markdown.
+#'     \item{latex:}       Parameter name formatted using LaTeX.
+#'     \item{description:} Verbose description in plain text for the parameter.
+#'  }
+#'}
+#'@examples
+#' NCA_fetch_np_meta()
+NCA_fetch_np_meta = function(
+  MOD_yaml_file = system.file(package="ruminate","templates","NCA.yaml")){
+
+  # Reading in the yaml file
+  MOD_config = yaml::read_yaml(MOD_yaml_file)
+
+  # This table summarizes the NCA parameters
+  np_summary = NULL
+  # This list contains the NCA parameter
+  # choices in the selection menu
+  np_choices = list()
+
+  # Default descriptors from PKNCA:
+  PKNCA_def = PKNCA::get.interval.cols()
+
+  for(nca_param in names(MOD_config[["MC"]][["nca_parameters"]])){
+    np_comps = MOD_config[["MC"]][["nca_parameters"]][[nca_param]]
+
+    # This should catch any typos in the YAML file:
+    if(nca_param %in% names(PKNCA_def)){
+      # Null values for description and text indicate that we want
+      # to use the default values from PKNCA
+      if(is.null(np_comps[["description"]])){
+        np_comps[["description"]] = PKNCA_def[[nca_param]][["desc"]]
+      }
+      if(is.null(np_comps[["text"]])){
+        np_comps[["text"]] = PKNCA_def[[nca_param]][["pretty_name"]]
+      }
+
+      # Updating the choices list
+      np_choices[[ np_comps[["group"]] ]][[ np_comps[["text"]] ]] = nca_param
+
+      # Updating the summary table
+      np_summary =
+        rbind(np_summary,
+          data.frame(
+            parameter   = nca_param,
+            text        = np_comps[["text"]],
+            md          = np_comps[["md"]],
+            latex       = PKNCA_def[[nca_param]][["pretty_name"]],
+            description =  np_comps[["description"]])
+         )
+    } else {
+      cli::cli_alert_danger(paste0("NCA: Parameter specified in YAML is not a valid PKNCA parameter: ", nca_param))
+    }
+  }
+
+  res = list(choices = np_choices,
+             summary = np_summary)
+res}
 
 #'@title Adds Analysis Interval to Current Analysis
 #'@description Takes the start time, stop time, and NCA parameters and adds

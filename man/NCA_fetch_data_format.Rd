@@ -4,7 +4,12 @@
 \alias{NCA_fetch_data_format}
 \title{Fetches Details About Data Requirements}
 \usage{
-NCA_fetch_data_format()
+NCA_fetch_data_format(
+  MOD_yaml_file = system.file(package = "ruminate", "templates", "NCA.yaml")
+)
+}
+\arguments{
+\item{MOD_yaml_file}{Module configuration file with MC as main section.}
 }
 \value{
 list with details about the data formats
