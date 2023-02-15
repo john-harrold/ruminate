@@ -156,7 +156,7 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:903735b7667734bf62fba137c14caee4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:0eb9539e99c1648d71e6241fb995e72d</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: loading analysis scenario: sd_iv</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
@@ -201,7 +201,7 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:e6f613a78882a792ea5fb74acfc0b732</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:402aaec2e04fdf32e6e3c725fd310eb3</span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">state</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rpt</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>summary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, sheets<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -212,14 +212,46 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Shows if report elements are present</span></span></span>
 <span class="r-in"><span><span class="va">rpt_res</span><span class="op">$</span><span class="va">hasrptele</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Code chunk to generate report element</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">rpt_res</span><span class="op">$</span><span class="va">code</span>, collapse<span class="op">=</span><span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_1_RES"]]=NCA_1_table_ind_params[["one_table"]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_1_RES",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK NCA Analysis Example (indiviudal results)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_1_RAW"]]=as.data.frame(NCA_1_res)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_1_RAW",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK NCA Analysis Example (raw NCA results)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_2_RES"]]=NCA_2_table_ind_params[["one_table"]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_2_RES",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK/PD NCA Analysis Example (indiviudal results)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_2_RAW"]]=as.data.frame(NCA_2_res)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_2_RAW",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK/PD NCA Analysis Example (raw NCA results)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Tabular summary of data views</span></span></span>
 <span class="r-in"><span><span class="va">rpt_res</span><span class="op">$</span><span class="va">rpt</span><span class="op">$</span><span class="va">summary</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Sheet_Name                                     Description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  NCA_1_RES    PK NCA Analysis Example (indiviudal results)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  NCA_1_RAW       PK NCA Analysis Example (raw NCA results)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  NCA_2_RES PK/PD NCA Analysis Example (indiviudal results)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  NCA_2_RAW    PK/PD NCA Analysis Example (raw NCA results)</span>
 <span class="r-in"><span><span class="co"># We need a state object to use below</span></span></span>
 <span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="NCA_test_mksession.html">NCA_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → UD: State initialized</span>
@@ -269,7 +301,7 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:dfde634043caa0d94ee3061a0b60fac9</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:f512c99de5f940d53a6e60af24e8e14e</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: loading analysis scenario: sd_iv</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
@@ -314,7 +346,7 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:a8db384ed618981ca3df6db0d0c12ff8</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:c1815fbf59ba2644bb7a44e8247a0258</span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">state</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># here we need an empty report object for tabular data</span></span></span>
@@ -328,14 +360,65 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Shows if report elements are present</span></span></span>
 <span class="r-in"><span><span class="va">rpt_res</span><span class="op">$</span><span class="va">hasrptele</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Code chunk to generate report element</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">rpt_res</span><span class="op">$</span><span class="va">code</span>, collapse<span class="op">=</span><span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_1_RES"]]=NCA_1_table_ind_params[["one_table"]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_1_RES",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK NCA Analysis Example (indiviudal results)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_1_RAW"]]=as.data.frame(NCA_1_res)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_1_RAW",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK NCA Analysis Example (raw NCA results)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_2_RES"]]=NCA_2_table_ind_params[["one_table"]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_2_RES",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK/PD NCA Analysis Example (indiviudal results)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_2_RAW"]]=as.data.frame(NCA_2_res)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_2_RAW",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK/PD NCA Analysis Example (raw NCA results)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Tabular results from the first NCA analysis</span></span></span>
 <span class="r-in"><span><span class="va">rpt_res</span><span class="op">$</span><span class="va">rpt</span><span class="op">$</span><span class="va">sheets</span><span class="op">$</span><span class="va">NCA_1_RES</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    ID auclast:[0,21] cmax:[0,21] aucinf.obs:[0,inf]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  ID      AUC~last~      C~max~       AUC~inf,obs~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          day⋅ng/mL       ng/mL          day⋅ng/mL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3             [0,21]      [0,21]            [0,inf]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   1           6140         816               9840</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   2           8810        1230              17600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   3           6410         786               9800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   4           6390         824              11300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   5           8090        1150              16400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   6           6740         737              12900</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  7           6780         679              13500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  8           7010         586              16600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  9           9370        1440              16800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 10           9100         951              16400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 11           6780         640              14700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 12           5360         675               8900</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 13           8620        1060              16000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 14           5930         717              11300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 15           8760        1060              16800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 16           5760         643              10300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 17           9300         985              19800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 18           5800         574               9980</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 19           8360        1060              16700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 20           6590         706              12600</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

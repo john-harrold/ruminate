@@ -20,7 +20,6 @@
 #'@import shiny
 #'@import officer
 #'@importFrom digest digest
-#'@importFrom rio import
 #'@importFrom shinyAce aceEditor updateAceEditor
 #'@importFrom stringr str_replace str_detect str_split
 #'@importFrom utils head
@@ -4519,7 +4518,6 @@ NCA_fetch_data_format = function(
   MOD_yaml_file = system.file(package="ruminate","templates","NCA.yaml")){
 
   MC = yaml::read_yaml(MOD_yaml_file)
-  #MC = rio::import(MOD_yaml_file)
 
   res = NULL
 
@@ -5540,6 +5538,7 @@ run_nca_components = function(
 
 state}
 
+#'@export
 #'@title Creates Tables of Individual Observations from PKNCA Result
 #'@description Takes the output of PKNCA and creates a tabular view of the
 #'individual observation data. This can be spread out of over several tables
@@ -5740,6 +5739,7 @@ mk_table_ind_obs = function(
 
 res}
 
+#'@export
 #'@title Creates Figures of Individual Observations from PKNCA Result
 #'@description Takes the output of PKNCA and creates `ggplot` figures faceted
 #'by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
@@ -6067,6 +6067,7 @@ ruminate = function(){
   shiny::runApp(system.file(package="ruminate", "templates","ruminate.R"))}
 
 
+#'@export
 #'@title Create Tabular Output from PKNCA Results
 #'@description Create paginated tables from PKNCA to use in reports and Shiny
 #'apps.
