@@ -5645,7 +5645,7 @@ mk_table_ind_obs = function(
     } else {
       units_data = c(units_data, paste0("(", time_units,")"))
     }
-    col_header_label = "Concentration ===CONCUNITS=== for ID"
+    col_header_label = "Concentration ===CONCUNITS=== by ID"
     all_data = tidyr::pivot_wider(all_data, names_from="ID", values_from="CONC", values_fill=not_sampled)
   } else  if(rows_by == "id"){
     if(is.null(row_common_head)){
@@ -5662,7 +5662,7 @@ mk_table_ind_obs = function(
     } else {
       units_data = c(units_data, "--")
     }
-    col_header_label = "Concentration ===CONCUNITS=== for ID Observation Time ===TIMEUNITS==="
+    col_header_label = "Concentration ===CONCUNITS=== by ID Observation Time ===TIMEUNITS==="
     all_data = tidyr::pivot_wider(all_data, names_from="TIME", values_from="CONC", values_fill=not_sampled)
   }
 

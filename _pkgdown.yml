@@ -27,6 +27,9 @@ reference:
 #    - starts_with("NCA_")
 navbar:
   left:
+  - text: "Tutorial"
+    icon: fas fa-chalkboard-teacher
+    href: https://vimeo.com/user3889152/ruminate
   - text: "Functions"
     icon: fas fa-hat-wizard
     href: reference/index.html

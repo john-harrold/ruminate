@@ -165,10 +165,14 @@ server <- function(input, output, session) {
   # changes in the module state outside of the module
   react_FM = reactiveValues()
 
+  # Module IDs and the order they are needed for code generation
+  mod_ids = c("UD", "DW", "FG", "NCA")
+
   # Module servers
   formods::ASM_Server(id="ASM",                                              
-                      react_state=react_FM, 
-                      FM_yaml_file=formods.yaml)
+                      react_state  = react_FM, 
+                      FM_yaml_file = formods.yaml,
+                      mod_ids      = mod_ids)
   formods::UD_Server( id="UD",  id_ASM = "ASM",                              
                      react_state=react_FM, 
                      FM_yaml_file=formods.yaml)
