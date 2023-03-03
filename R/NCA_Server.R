@@ -1424,13 +1424,17 @@ NCA_Server <- function(id,
           # These are the columns in the dataset:
           dscols = names(ds[["DS"]])
 
-
           # Finding the value to use:
           value = NCA_find_col(
             curr_ana = current_ana[["col_id"]],
             curr_ui  = state[["NCA"]][["ui"]][["select_ana_col_id"]],
             patterns = state[["MC"]][["detect_col"]][["id"]],
             dscols   = dscols)
+
+          # Pulling out column header formatting information.
+          hfmt = FM_fetch_data_format(ds[["DS"]], state)
+          sel_style   = c(rep("", length(dscols)))
+          sel_subtext = c(as.vector(unlist( hfmt[["col_subtext"]])))
 
           # Creating the selection input
           uiele =
@@ -1440,6 +1444,9 @@ NCA_Server <- function(id,
             label      = state[["MC"]][["labels"]][["select_ana_col_id"]],
             selected   = value,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            choicesOpt = list( style   = sel_style,
+                               subtext = sel_subtext,
+                              "live-search"=TRUE),
             width      = state[["MC"]][["formatting"]][["select_ana_col_id"]][["width"]],
             inline     = TRUE)
         }
@@ -1490,6 +1497,11 @@ NCA_Server <- function(id,
             patterns = state[["MC"]][["detect_col"]][["ntime"]],
             dscols   = dscols)
 
+          # Pulling out column header formatting information.
+          hfmt = FM_fetch_data_format(ds[["DS"]], state)
+          sel_style   = c(rep("", length(dscols)))
+          sel_subtext = c(as.vector(unlist( hfmt[["col_subtext"]])))
+
           # Creating the selection input
           uiele =
           shinyWidgets::pickerInput(
@@ -1498,6 +1510,9 @@ NCA_Server <- function(id,
             label      = state[["MC"]][["labels"]][["select_ana_col_ntime"]],
             selected   = value,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            choicesOpt = list( style   = sel_style,
+                               subtext = sel_subtext,
+                              "live-search"=TRUE),
             width      = state[["MC"]][["formatting"]][["select_ana_col_ntime"]][["width"]],
             inline     = TRUE)
         }
@@ -1548,6 +1563,11 @@ NCA_Server <- function(id,
             patterns = state[["MC"]][["detect_col"]][["time"]],
             dscols   = dscols)
 
+          # Pulling out column header formatting information.
+          hfmt = FM_fetch_data_format(ds[["DS"]], state)
+          sel_style   = c(rep("", length(dscols)))
+          sel_subtext = c(as.vector(unlist( hfmt[["col_subtext"]])))
+
           # Creating the selection input
           uiele =
           shinyWidgets::pickerInput(
@@ -1556,6 +1576,9 @@ NCA_Server <- function(id,
             label      = state[["MC"]][["labels"]][["select_ana_col_time"]],
             selected   = value,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            choicesOpt = list( style   = sel_style,
+                               subtext = sel_subtext,
+                              "live-search"=TRUE),
             width      = state[["MC"]][["formatting"]][["select_ana_col_time"]][["width"]],
             inline     = TRUE)
         }
@@ -1606,6 +1629,11 @@ NCA_Server <- function(id,
             patterns = state[["MC"]][["detect_col"]][["dose"]],
             dscols   = dscols)
 
+          # Pulling out column header formatting information.
+          hfmt = FM_fetch_data_format(ds[["DS"]], state)
+          sel_style   = c(rep("", length(dscols)))
+          sel_subtext = c(as.vector(unlist( hfmt[["col_subtext"]])))
+
           # Creating the selection input
           uiele =
           shinyWidgets::pickerInput(
@@ -1614,6 +1642,9 @@ NCA_Server <- function(id,
             label      = state[["MC"]][["labels"]][["select_ana_col_dose"]],
             selected   = value,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            choicesOpt = list( style   = sel_style,
+                               subtext = sel_subtext,
+                              "live-search"=TRUE),
             width      = state[["MC"]][["formatting"]][["select_ana_col_dose"]][["width"]],
             inline     = TRUE)
         }
@@ -1665,6 +1696,15 @@ NCA_Server <- function(id,
             null_ok  = TRUE,
             dscols   = dscols)
 
+          # Pulling out column header formatting information.
+          hfmt = FM_fetch_data_format(ds[["DS"]], state)
+          sel_style   = c(rep("", length(dscols)))
+          sel_subtext = c(as.vector(unlist( hfmt[["col_subtext"]])))
+
+          #prepending for the N/A option
+          sel_style   = c("", sel_style)
+          sel_subtext = c("", sel_subtext)
+
           # Creating the selection input
           uiele =
           shinyWidgets::pickerInput(
@@ -1673,6 +1713,9 @@ NCA_Server <- function(id,
             label      = state[["MC"]][["labels"]][["select_ana_col_dur"]],
             selected   = value,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            choicesOpt = list( style   = sel_style,
+                               subtext = sel_subtext,
+                              "live-search"=TRUE),
             width      = state[["MC"]][["formatting"]][["select_ana_col_dur"]][["width"]],
             inline     = TRUE)
         }
@@ -1723,6 +1766,11 @@ NCA_Server <- function(id,
             patterns = state[["MC"]][["detect_col"]][["route"]],
             dscols   = dscols)
 
+          # Pulling out column header formatting information.
+          hfmt = FM_fetch_data_format(ds[["DS"]], state)
+          sel_style   = c(rep("", length(dscols)))
+          sel_subtext = c(as.vector(unlist( hfmt[["col_subtext"]])))
+
           # Creating the selection input
           uiele =
           shinyWidgets::pickerInput(
@@ -1731,6 +1779,9 @@ NCA_Server <- function(id,
             label      = state[["MC"]][["labels"]][["select_ana_col_route"]],
             selected   = value,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            choicesOpt = list( style   = sel_style,
+                               subtext = sel_subtext,
+                              "live-search"=TRUE),
             width      = state[["MC"]][["formatting"]][["select_ana_col_route"]][["width"]],
             inline     = TRUE)
         }
@@ -1781,6 +1832,11 @@ NCA_Server <- function(id,
             patterns = state[["MC"]][["detect_col"]][["conc"]],
             dscols   = dscols)
 
+          # Pulling out column header formatting information.
+          hfmt = FM_fetch_data_format(ds[["DS"]], state)
+          sel_style   = c(rep("", length(dscols)))
+          sel_subtext = c(as.vector(unlist( hfmt[["col_subtext"]])))
+
           # Creating the selection input
           uiele =
           shinyWidgets::pickerInput(
@@ -1789,6 +1845,9 @@ NCA_Server <- function(id,
             label      = state[["MC"]][["labels"]][["select_ana_col_conc"]],
             selected   = value,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            choicesOpt = list( style   = sel_style,
+                               subtext = sel_subtext,
+                              "live-search"=TRUE),
             width      = state[["MC"]][["formatting"]][["select_ana_col_conc"]][["width"]],
             inline     = TRUE)
         }
@@ -1843,6 +1902,11 @@ NCA_Server <- function(id,
           #JMH add multiple option to NCA_find_col
           # react to dose, id and time and remove those options
 
+          # Pulling out column header formatting information.
+          hfmt = FM_fetch_data_format(ds[["DS"]], state)
+          sel_style   = c(rep("", length(dscols)))
+          sel_subtext = c(as.vector(unlist( hfmt[["col_subtext"]])))
+
           # Creating the selection input
           uiele =
           shinyWidgets::pickerInput(
@@ -1852,6 +1916,9 @@ NCA_Server <- function(id,
             selected   = value,
             multiple   = TRUE,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            choicesOpt = list( style   = sel_style,
+                               subtext = sel_subtext,
+                              "live-search"=TRUE),
             width      = state[["MC"]][["formatting"]][["select_ana_col_group"]][["width"]],
             inline     = TRUE)
         }
@@ -1904,6 +1971,15 @@ NCA_Server <- function(id,
           #JMH add multiple option to NCA_find_col
           # react to dose, id and time and remove those options
 
+          # Pulling out column header formatting information.
+          hfmt = FM_fetch_data_format(ds[["DS"]], state)
+          sel_style   = c(rep("", length(dscols)))
+          sel_subtext = c(as.vector(unlist( hfmt[["col_subtext"]])))
+
+          #prepending for the N/A option
+          sel_style   = c("", sel_style)
+          sel_subtext = c("", sel_subtext)
+
           # Creating the selection input
           uiele =
           shinyWidgets::pickerInput(
@@ -1913,6 +1989,9 @@ NCA_Server <- function(id,
             selected   = value,
             multiple   = FALSE,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            choicesOpt = list( style   = sel_style,
+                               subtext = sel_subtext,
+                              "live-search"=TRUE),
             width      = state[["MC"]][["formatting"]][["select_ana_col_analyte"]][["width"]],
             inline     = TRUE)
         }
