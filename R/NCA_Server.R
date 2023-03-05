@@ -540,7 +540,6 @@ NCA_Server <- function(id,
           value_start = current_ana[["interval_range"]][1]
           value_stop  = current_ana[["interval_range"]][2]
 
-
           ds =  state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]]
           # This is all the times in the dataset:
           time_choices = unique(sort(ds[["DS"]][[current_ana[["col_time"]] ]]))
@@ -3529,8 +3528,18 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  sessi
   # Creating an empty docx report. It has the style information
   # needed for building tables
   init_cmd = state[["yaml"]][["FM"]][["reporting"]][["content_init"]][["docx"]]
+ 
+  # Changing to the user directory to create the report object:
+  current_dir = getwd()
+  user_dir    = FM_fetch_user_files_path(state)
+  setwd(user_dir)
+
   tcres = formods::FM_tc(cmd = init_cmd, tc_env = list(), capture="rpt")
   state[["NCA"]][["docx_rpt"]] = tcres[["capture"]][["rpt"]]
+
+  # Returning back to the current directory
+  setwd(current_dir)
+  
 
   # Finding the dataset
   DSV = formods::FM_fetch_ds(state, session, c(id_UD, id_DW))
@@ -5038,8 +5047,7 @@ nca_builder = function(state){
 
     #--------------------------
     # Adding the text description of the analysis
-    cmd = c(cmd, "",  paste0("# ", current_ana[["key"]]))
-
+    cmd = c(cmd, "", FM_build_comment(2, current_ana[["key"]]))
 
     #--------------------------
     # Defining the pknca options.

@@ -3,6 +3,8 @@ MC:
     packages: ["PKNCA", "dplyr", "stringr", "formods", "ruminate"]
     readOnly: TRUE
     mode:     r
+    preamble: |- 
+      # Non-compartmental analysis ----------------------------------------------
   compact:
     code:    TRUE 
     clip:    TRUE 
