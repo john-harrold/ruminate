@@ -15,15 +15,15 @@ NCA_fetch_current_obj(state, obj_type)
 list with a format that depends on the obj_type.
 For figures:
 \itemize{
-\item\link{ggplot:}   ggplot object of the figure.
+\item{ggplot:}   ggplot object of the figure.
 \item{isgood:}   Return status of the function.
 \item{msgs:}     Messages to be passed back to the user.
 }
 For tables:
 \itemize{
-\item\link{df:}       Dataframe of the current table.
-\item\link{ft:}       Flextable object of the current table.
-\item\link{notes:}    Any table notes to be included.
+\item{df:}       Dataframe of the current table.
+\item{ft:}       Flextable object of the current table.
+\item{notes:}    Any table notes to be included.
 \item{isgood:}   Return status of the function.
 \item{msgs:}     Messages to be passed back to the user.
 }

@@ -6,7 +6,7 @@
 \alias{ruminate-package}
 \title{ruminate: Shiny app and module to facilitate pharamacometrics analysis}
 \usage{
-ruminate()
+ruminate(host = "127.0.0.1", port = 3838)
 }
 \value{
 Nothing.

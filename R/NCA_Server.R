@@ -771,7 +771,8 @@ NCA_Server <- function(id,
         uiele = fobj[["df"]]
       }
 
-    uiele})
+    uiele}, options=list(pageLength=100,
+                         lengthMenu = c(25, 50, 100)) )
     #------------------------------------
     # Figure Results (show plot)
     output$ui_nca_ana_results_fig_plot               = renderUI({
@@ -6020,15 +6021,15 @@ res}
 #'@return list with a format that depends on the obj_type.
 #' For figures:
 #'\itemize{
-#'  \item[ggplot:]   ggplot object of the figure. 
+#'  \item{ggplot:}   ggplot object of the figure. 
 #'  \item{isgood:}   Return status of the function.
 #'  \item{msgs:}     Messages to be passed back to the user.
 #'}
 #' For tables:
 #'\itemize{
-#'  \item[df:]       Dataframe of the current table.
-#'  \item[ft:]       Flextable object of the current table.
-#'  \item[notes:]    Any table notes to be included.
+#'  \item{df:}       Dataframe of the current table.
+#'  \item{ft:}       Flextable object of the current table.
+#'  \item{notes:}    Any table notes to be included.
 #'  \item{isgood:}   Return status of the function.
 #'  \item{msgs:}     Messages to be passed back to the user.
 #'}
@@ -6150,8 +6151,10 @@ obj}
 #'if (interactive()) {
 #' ruminate()
 #'}
-ruminate = function(){
-  shiny::runApp(system.file(package="ruminate", "templates","ruminate.R"))}
+ruminate = function(host="127.0.0.1", port=3838){
+  shiny::runApp(system.file(package="ruminate", "templates","ruminate.R"),
+                host  = host,
+                port  = port)}
 
 
 #'@export
