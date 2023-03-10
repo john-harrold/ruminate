@@ -5207,12 +5207,14 @@ nca_builder = function(state){
       nca_params_found = c(nca_params_found, params_from_str)
     }
 
+    # This removes duplicates
+    nca_params_found = unique(nca_params_found)
 
     # This will build the components of the intervals data frame:
     int_df_comp = list()
     for(intidx in 1:nrow(current_ana[["intervals"]])){
       int_df_comp[["start"]] = c( int_df_comp[["start"]], toString(current_ana[["intervals"]][intidx, ][["start"]]))
-      int_df_comp[["end"]]  = c( int_df_comp[["end"]],  toString(current_ana[["intervals"]][intidx, ][["stop"]]))
+      int_df_comp[["end"]]   = c( int_df_comp[["end"]],   toString(current_ana[["intervals"]][intidx, ][["stop"]]))
 
       # These are the parameters for the current interval:
       params_from_str =
@@ -5229,7 +5231,6 @@ nca_builder = function(state){
         }
       }
     }
-
 
     cmd = c(cmd,
       "",
