@@ -59,3 +59,27 @@ need to first install the development versions of `onbrand` and
 library(ruminate)
 ruminate()
 ```
+
+# Using with Docker
+
+## Run locally
+
+``` bash
+# Build Image
+docker build -t ruminate .
+# Run Locally (localhost:3838)
+docker run --name ruminate --rm -p 3838:3838 ruminate
+```
+
+## Push to DockerHub
+
+``` bash
+docker tag ruminate <username>/ruminate:latest
+docker push <username>/ruminate:latest
+```
+
+## Pull from DockerHub
+
+``` bash
+docker pull <username>/ruminate:latest
+```
