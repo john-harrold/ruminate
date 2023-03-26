@@ -64,21 +64,28 @@ ruminate()
 
 ## Run locally
 
+Download the Docker file
+[here](https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/Dockerfile)
+here, then build the Docker image:
+
 ``` bash
-# Build Image
 docker build -t ruminate .
-# Run Locally (localhost:3838)
+```
+
+This will run the Docker image locally:
+
+``` bash
 docker run --name ruminate --rm -p 3838:3838 ruminate
 ```
 
-## Push to DockerHub
+This will push the image to DockerHub:
 
 ``` bash
 docker tag ruminate <username>/ruminate:latest
 docker push <username>/ruminate:latest
 ```
 
-## Pull from DockerHub
+You can use this to pull the image from DockerHub:
 
 ``` bash
 docker pull <username>/ruminate:latest
