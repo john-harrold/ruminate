@@ -1,4 +1,5 @@
 library(formods)
+library(ruminate)
 
 # These are suggested packages
 library(shinydashboard)
@@ -114,24 +115,24 @@ server <- function(input, output, session) {
   mod_ids = c("UD", "DW", "FG", "NCA")
 
   # Module servers
-  formods::ASM_Server(id="ASM",                                              
-                      react_state  = react_FM, 
-                      FM_yaml_file = formods.yaml,
-                      mod_ids      = mod_ids)
-  formods::UD_Server( id="UD",  id_ASM = "ASM",                              
-                     react_state=react_FM, 
-                     FM_yaml_file=formods.yaml)
-  formods::DW_Server( id="DW",       id_ASM = "ASM",  
-                      id_UD = "UD",               
-                     react_state=react_FM, 
-                     FM_yaml_file=formods.yaml)
-  formods::FG_Server( id="FG",     id_ASM = "ASM",  
-                     id_UD = "UD", id_DW = "DW", 
-                     react_state=react_FM, 
-                     FM_yaml_file=formods.yaml)
-  NCA_Server(id="NCA",     id_ASM = "ASM",  
-             id_UD = "UD", id_DW = "DW", 
-             react_state=react_FM)
+  formods::ASM_Server( id="ASM",                                              
+                       react_state  = react_FM, 
+                       FM_yaml_file = formods.yaml,
+                       mod_ids      = mod_ids)
+  formods::UD_Server(  id="UD",  id_ASM = "ASM",                              
+                       react_state=react_FM, 
+                       FM_yaml_file=formods.yaml)
+  formods::DW_Server(  id="DW",       id_ASM = "ASM",  
+                       id_UD = "UD",               
+                       react_state=react_FM, 
+                       FM_yaml_file=formods.yaml)
+  formods::FG_Server(  id="FG",     id_ASM = "ASM",  
+                       id_UD = "UD", id_DW = "DW", 
+                       react_state=react_FM, 
+                       FM_yaml_file=formods.yaml)
+  ruminate::NCA_Server(id="NCA",     id_ASM = "ASM",  
+                       id_UD = "UD", id_DW = "DW", 
+                       react_state=react_FM)
 }
 
 shinyApp(ui, server)

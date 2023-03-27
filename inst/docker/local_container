@@ -1,0 +1,20 @@
+FROM rocker/shiny-verse:4.2.0
+
+## Install R libraries
+RUN R -e "install.packages('remotes', repos='http://cran.rstudio.com/')"
+
+RUN R -e "remotes::install_github('john-harrold/onbrand',  dependencies=TRUE)"
+RUN R -e "remotes::install_github('john-harrold/formods',  dependencies=TRUE)"
+RUN R -e "remotes::install_github('john-harrold/ruminate', dependencies=TRUE)"
+
+#RUN mkdir /ruminate
+#COPY . /ruminate
+#RUN R -e "remotes::install_github('john-harrold/ruminate', dependencies=TRUE)"
+#RUN mkdir "/srv/shiny-server/ruminate"
+#RUN R -e "file.copy(system.file(package='ruminate', 'templates', 'ruminate.R'), '/srv/shiny-server/ruminate/App.R')"
+
+# Making the ruminate App the main app for the site:
+RUN rm 'srv/shiny-server/index.html'
+RUN R -e "file.copy(system.file(package='ruminate', 'templates', 'ruminate.R'), '/srv/shiny-server/App.R')"
+## Open the port for Shiny
+EXPOSE 3838
