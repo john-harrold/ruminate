@@ -70,7 +70,7 @@ ui <- shinydashboard::dashboardPage(
                shinydashboard::box(title="Run Non-Compartmental Analysis", width=12,
                fluidRow( prompter::use_prompt(),
                column(width=12,
-               htmlOutput(NS("NCA",  "NCA_ui_compact"))))),
+               htmlOutput(NS("NCA",  "NCA_ui_compact")))))
                ),
        shinydashboard::tabItem(tabName="loadsave",
                shinydashboard::box(title="Load Dataset", width=12,

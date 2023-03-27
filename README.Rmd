@@ -75,7 +75,7 @@ ruminate()
 If you want, you can download the Docker file [here](https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/Dockerfile). This will build the docker image from the repository on GitHub.
 
 ```bash
-docker build -t ruminate  https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/Dockerfile
+docker build -t ruminate --no-cache https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/Dockerfile
 ```
 This will run the Docker image locally:
 
@@ -95,3 +95,5 @@ You can use this to pull the image from DockerHub:
 ```bash
 docker pull <username>/ruminate:latest
 ```
+
+failed to solve with frontend dockerfile.v0: failed to read dockerfile: error from sender: open 7NbHsV: permission denied

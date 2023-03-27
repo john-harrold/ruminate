@@ -5,12 +5,7 @@ RUN R -e "install.packages('remotes', repos='http://cran.rstudio.com/')"
 
 RUN R -e "remotes::install_github('john-harrold/onbrand',  dependencies=TRUE)"
 RUN R -e "remotes::install_github('john-harrold/formods',  dependencies=TRUE)"
-# RUN R -e "remotes::install_github('john-harrold/ruminate', dependencies=TRUE)"
-
-#RUN mkdir /ruminate
-#COPY . /ruminate
-RUN R -e "remotes::install_local('john-harrold/ruminate', dependencies=TRUE)"
-
+RUN R -e "remotes::install_github('john-harrold/ruminate', dependencies=TRUE)"
 
 ## Open the port for Shiny
 EXPOSE 3838

@@ -4654,6 +4654,12 @@ NCA_fetch_np_meta = function(
   for(nca_param in names(MOD_config[["MC"]][["nca_parameters"]])){
     np_comps = MOD_config[["MC"]][["nca_parameters"]][[nca_param]]
 
+    if(is.null(PKNCA_def[[nca_param]][["pretty_name"]])){
+      latex_name = "no_name"
+    } else {
+      latex_name = PKNCA_def[[nca_param]][["pretty_name"]]
+    }
+
     # This should catch any typos in the YAML file:
     if(nca_param %in% names(PKNCA_def)){
       # Null values for description and text indicate that we want
@@ -4662,7 +4668,7 @@ NCA_fetch_np_meta = function(
         np_comps[["description"]] = PKNCA_def[[nca_param]][["desc"]]
       }
       if(is.null(np_comps[["text"]])){
-        np_comps[["text"]] = PKNCA_def[[nca_param]][["pretty_name"]]
+        np_comps[["text"]] = latex_name
       }
 
       # Updating the choices list
@@ -4675,7 +4681,7 @@ NCA_fetch_np_meta = function(
             parameter   = nca_param,
             text        = np_comps[["text"]],
             md          = np_comps[["md"]],
-            latex       = PKNCA_def[[nca_param]][["pretty_name"]],
+            latex       = latex_name,
             description =  np_comps[["description"]])
          )
     } else {
