@@ -60,16 +60,16 @@ library(ruminate)
 ruminate()
 ```
 
-# Using with Docker
+# Running `{ruminate}` in a Docker container
 
-## Run locally
-
-Download the Docker file
-[here](https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/Dockerfile)
-here, then build the Docker image:
+Note this uses an `x86` image. So it will only work on Intel or AMD
+cpus. This means that you wont get very far with an M1 mac. If you want,
+you can download the Docker file
+[here](https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container).
+This will build the docker image from the repository on GitHub.
 
 ``` bash
-docker build -t ruminate .
+docker build -t ruminate --no-cache  https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container
 ```
 
 This will run the Docker image locally:
@@ -77,6 +77,10 @@ This will run the Docker image locally:
 ``` bash
 docker run --name ruminate --rm -p 3838:3838 ruminate
 ```
+
+If everything worked you can then point your web browser to:
+
+    http://127.0.0.1:3838/
 
 This will push the image to DockerHub:
 

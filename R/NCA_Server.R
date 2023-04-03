@@ -40,6 +40,7 @@
 #'@param id_ASM ID string for the app state management module used to save and load app states
 #'@param id_UD ID string for the upload data module used to save and load app states
 #'@param id_DW ID string for the data wrangling module used to save and load app states
+#'@param deployed Boolean variable indicating whether the app is deployed or not.
 #'@param react_state Variable passed to server to allow reaction outside of module (\code{NULL})
 #'@return list containing the current state of the app including default
 #'values from the yaml file as well as any changes made by the user. The list
@@ -65,7 +66,8 @@ NCA_Server <- function(id,
                       id_ASM        = "ASM",
                       id_UD         = "UD",
                       id_DW         = "DW",
-                      react_state  = NULL) {
+                      deployed      = FALSE,
+                      react_state   = NULL) {
   moduleServer(id, function(input, output, session) {
 
 
@@ -219,8 +221,7 @@ NCA_Server <- function(id,
                              react_state     = react_state)
       uiele = NULL
       uiele = NULL
-      if((system.file(package="clipr") != "") &
-         !state[["yaml"]][["FM"]][["deployed"]]){
+      if((system.file(package="clipr") != "") & !deployed){
         uiele = shinyWidgets::actionBttn(
                   inputId = NS(id, "button_ana_clip"),
                   label   = state[["MC"]][["labels"]][["clip_ana"]],
@@ -2756,8 +2757,7 @@ NCA_Server <- function(id,
       formods::FM_le(state, "clipping code")
       # This is all conditional on the whether clipr is installed $
       # and if the app isn't deployed
-      if((system.file(package="clipr") != "") &
-         !state[["yaml"]][["FM"]][["deployed"]]){
+      if((system.file(package="clipr") != "") & !deployed){
 
         current_ana = NCA_fetch_current_ana(state)
 

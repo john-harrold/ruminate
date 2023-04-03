@@ -1,5 +1,6 @@
 if(interactive()){
 library(formods)
+library(ruminate)
 
 # These are suggested packages
 library(shinydashboard)
@@ -71,7 +72,7 @@ ui <- shinydashboard::dashboardPage(
                shinydashboard::box(title="Run Non-Compartmental Analysis", width=12,
                fluidRow( prompter::use_prompt(),
                column(width=12,
-               htmlOutput(NS("NCA",  "NCA_ui_compact"))))),
+               htmlOutput(NS("NCA",  "NCA_ui_compact")))))
                ),
        shinydashboard::tabItem(tabName="loadsave",
                shinydashboard::box(title="Load Dataset", width=12,
@@ -115,24 +116,24 @@ server <- function(input, output, session) {
   mod_ids = c("UD", "DW", "FG", "NCA")
 
   # Module servers
-  formods::ASM_Server(id="ASM",                                              
-                      react_state  = react_FM, 
-                      FM_yaml_file = formods.yaml,
-                      mod_ids      = mod_ids)
-  formods::UD_Server( id="UD",  id_ASM = "ASM",                              
-                     react_state=react_FM, 
-                     FM_yaml_file=formods.yaml)
-  formods::DW_Server( id="DW",       id_ASM = "ASM",  
-                      id_UD = "UD",               
-                     react_state=react_FM, 
-                     FM_yaml_file=formods.yaml)
-  formods::FG_Server( id="FG",     id_ASM = "ASM",  
-                     id_UD = "UD", id_DW = "DW", 
-                     react_state=react_FM, 
-                     FM_yaml_file=formods.yaml)
-  NCA_Server(id="NCA",     id_ASM = "ASM",  
-             id_UD = "UD", id_DW = "DW", 
-             react_state=react_FM)
+  formods::ASM_Server( id="ASM",                                              
+                       react_state  = react_FM, 
+                       FM_yaml_file = formods.yaml,
+                       mod_ids      = mod_ids)
+  formods::UD_Server(  id="UD",  id_ASM = "ASM",                              
+                       react_state=react_FM, 
+                       FM_yaml_file=formods.yaml)
+  formods::DW_Server(  id="DW",       id_ASM = "ASM",  
+                       id_UD = "UD",               
+                       react_state=react_FM, 
+                       FM_yaml_file=formods.yaml)
+  formods::FG_Server(  id="FG",     id_ASM = "ASM",  
+                       id_UD = "UD", id_DW = "DW", 
+                       react_state=react_FM, 
+                       FM_yaml_file=formods.yaml)
+  ruminate::NCA_Server(id="NCA",     id_ASM = "ASM",  
+                       id_UD = "UD", id_DW = "DW", 
+                       react_state=react_FM)
 }
 
 shinyApp(ui, server)
