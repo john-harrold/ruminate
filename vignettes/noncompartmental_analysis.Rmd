@@ -1,0 +1,171 @@
+---
+title: 'Noncompartmental Analysis'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Noncompartmental Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, eval=TRUE)
+require(ubiquity)
+require(ggplot2)
+require(rhandsontable)
+require(gridExtra)
+require(flextable)
+require(ruminate)
+# The presim variable will contain presimulated data when eval is set to true
+presim_loaded = FALSE
+```
+
+```{r echo=FALSE, results=FALSE}
+  presim= list()
+  if(file.exists("NCA_presim.RData")){
+    file.remove("NCA_presim.RData")
+  }
+```
+
+```{r echo=FALSE, results=FALSE, eval=TRUE}
+if(file.exists("NCA_presim.RData")){
+  load("NCA_presim.RData")
+  presim_loaded = TRUE
+}
+
+NCA_yaml = yaml::read_yaml(system.file(package="ruminate", "templates","NCA.yaml"))
+```
+
+
+# Introduction
+
+Non-compartmental analysis (NCA) is a simple and quick method for evaluating the exposure of a drug. It allows you to evaluate things like linearity and in vivo exposure. To illustrate this consider an antibody given in a subcutaneous injection. The actual profile a patient might experience is given in the solid black line. But we don't yet have the ability to sample in a continuous fashion. What we might observer is given by the blue points.   
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, error=FALSE, results="hide", fig.width=8, fig.height=4}
+system_new(system_file="mab_pk", overwrite=TRUE)
+cfg = build_system()
+parameters = system_fetch_parameters(cfg)
+cfg = system_zero_inputs(cfg)
+cfg = system_set_bolus(cfg, state   ="At", 
+                            times   = c(  0.0),  #  day
+                            values  = c(400.0))  #  mg
+
+cfg=system_set_option(cfg, group  = "simulation",
+                           option = "output_times",
+                           linspace(0,30,100))
+
+som_smooth = run_simulation_ubiquity(parameters, cfg) 
+som_smooth$simout$time_C_ng_ml = som_smooth$simout$C_ng_ml*som_smooth$simout$ts.days
+
+cfg=system_set_option(cfg, group  = "simulation", 
+                            option = "include_important_output_times", 
+                            value  = "no")
+
+cfg=system_set_option(cfg, group  = "simulation",
+                           option = "output_times",
+                           c(0,.25, .5, 1, 2,7,14,21,28))
+som_sample = run_simulation_ubiquity(parameters, cfg) 
+som_sample$simout$time_C_ng_ml = som_sample$simout$C_ng_ml*som_sample$simout$ts.days
+
+
+polydf = NULL
+for(tidx in 1:(nrow(som_sample$simout)-1)){
+  xv = c(som_sample$simout$ts.days[tidx], som_sample$simout$ts.days[tidx+1],  som_sample$simout$ts.days[tidx+1], som_sample$simout$ts.days[tidx] )  
+  yvC = c(som_sample$simout$C_ng_ml[tidx], som_sample$simout$C_ng_ml[tidx+1], 0, 0)  
+  yvTC = c(som_sample$simout$time_C_ng_ml[tidx], som_sample$simout$time_C_ng_ml[tidx+1], 0, 0)  
+  tmpdf = data.frame(xv = xv, yvC=yvC, yvTC=yvTC, sp=tidx)
+  if(is.null(polydf)){
+    polydf = tmpdf 
+  } else {
+    polydf = rbind(tmpdf, polydf)
+  }
+}
+```
+
+```{r results="hide", warning=FALSE, echo=FALSE}
+# When eval is set to TRUE we save the presimulated results
+  presim$plots$som_smooth = som_smooth
+  presim$plots$som_sample = som_sample
+  presim$plots$polydf     = polydf
+```
+
+```{r results="hide", warning=FALSE, echo=FALSE, eval=TRUE}
+if(presim_loaded){
+  som_smooth = presim$plots$som_smooth 
+  som_sample = presim$plots$som_sample 
+  polydf     = presim$plots$polydf
+}
+```
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, error=FALSE, eval=TRUE, results="hide", fig.width=8, fig.height=4}
+p_C = ggplot()
+p_C = p_C +  geom_line(data=som_smooth$simout, aes(x=ts.days, y=C_ng_ml))
+p_C = p_C + geom_point(data=som_sample$simout, aes(x=ts.days, y=C_ng_ml), color="blue")
+p_C = p_C + xlab("Time") + ylab("Concentration") + ggtitle("AUC")
+p_C = p_C +  geom_polygon(data=polydf, aes(x=xv, y=yvC, group=sp), color="blue", linetype='dashed', fill="lightblue")
+p_C = p_C + theme(plot.title = element_text(hjust = 0.5))
+p_C = prepare_figure(fo=p_C, purpose="shiny")
+
+
+p_TC = ggplot()
+p_TC = p_TC +  geom_line(data=som_smooth$simout, aes(x=ts.days, y=time_C_ng_ml))
+p_TC = p_TC + geom_point(data=som_sample$simout, aes(x=ts.days, y=time_C_ng_ml), color="blue")
+p_TC = p_TC + xlab("Time") + ylab("Time x Concentration") + ggtitle("AUMC")
+p_TC = p_TC +  geom_polygon(data=polydf, aes(x=xv, y=yvTC, group=sp), color="blue", linetype='dashed', fill="lightblue")
+p_TC = p_TC + theme(plot.title = element_text(hjust = 0.5))
+p_TC = prepare_figure(fo=p_TC, purpose="shiny")
+
+
+p_AUC = p_C
+p_AUMC = p_TC
+```
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, error=FALSE, eval=TRUE, fig.width=8, fig.height=3.5}
+gridExtra::grid.arrange(p_AUC, p_AUMC, ncol=2)
+```
+
+Generally NCA will determine the following directly from the data:
+
+* ``Cmax`` - Maximum observed concentration (units=concentration)
+* ``Tmax`` - The time where the maximum concentration was observed (units=time)
+* ``AUC`` - The area under the curve  ($units=time \times concentration$)
+* ``AUMC`` - The area under the first moment curve  ($units=time^2 \times concentration$)
+
+These properties are all based on observational data. So the ``Cmax`` and ``Tmax`` will most certainly not be at the actual maximum concentration but as long as we sample judiciously it will give us a good approximation. Similarly, the calculated ``AUC`` and ``AUMC`` will be different than the actual values. To calculate the areas you need to dig back into your calculus text books to the trapezoid method. Basically each sampling interval is a trapezoid and the area of each is calculated and added up for all of the ``n`` samples:
+
+$$
+AUC = \int_0^{t_f} Cdt \approx  \sum_{i=1}^{n-1}{\frac{C_i+C_{i+1}}{2}\times (t_{i+1}-t_{i})},  \ \ \ \ \ 
+AUMC = \int_0^{t_f} t\times Cdt \approx  \sum_{i=1}^{n-1}{\frac{t_iC_i+t_{i+1}C_{i+1}}{2}\times (t_{i+1}-t_{i})}
+$$
+
+This can be done in Excel pretty easily. Depending on the data and the analysis other properties can be calculated. For example we can calculate the clearance, steady-state volume of distribution and terminal half-life:
+
+* Clearance: $CL = \frac{Dose}{AUC}$
+* Mean residence time: $MRT = \frac{AUMC}{AUC}$
+* Steady state volume of distribution: $V_{ss} = MRT \times CL$
+* Half-life: Terminal slope of the natural log of the data
+
+Properties like AUC and AUMC can also be be calculated using extrapolation from the last time point to infinity to account for data beyond the observations at hand. The subsequent values of clearance, volumes of distribution, etc can also change with extrapolation. 
+
+There is a lot of nuance associated with these calculations, and it is good to rely on software that focuses on this type of analysis. The [`{PKNCA}`](https://github.com/billdenney/pknca) package has been developed with this in mind. The ruminate app provides an interface to functionality found in `{PKNCA}` and will generate code you can use to get started with `{PKNCA}`.
+
+# Data format
+
+To run NCA you need your data formatted in a specific way. The names of the columns can be defined by the user. Some columns are required, others are optional, and others are only required depending on how the user wants to specify dosing. See below for a general description of the columns followed by mroe information about how dosing is inferred: 
+
+* **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_id"]]`:**        `r NCA_yaml[["MC"]][["formatting"]][["select_ana_col_id"]][["tooltip"]]`
+* **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_time"]]`:**      `r NCA_yaml[["MC"]][["formatting"]][["select_ana_col_time"]][["tooltip"]]`
+* **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_ntime"]]`:**     `r NCA_yaml[["MC"]][["formatting"]][["select_ana_col_ntime"]][["tooltip"]]`
+* **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_dose"]]`:**      `r NCA_yaml[["MC"]][["formatting"]][["select_ana_col_dose"]][["tooltip"]]`
+* **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_conc"]]`:**      `r NCA_yaml[["MC"]][["formatting"]][["select_ana_col_conc"]][["tooltip"]]`
+* **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_route"]]`:**     `r NCA_yaml[["MC"]][["formatting"]][["select_ana_col_route"]][["tooltip"]]`
+* **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_group"]]`:**     `r NCA_yaml[["MC"]][["formatting"]][["select_ana_col_group"]][["tooltip"]]`
+* **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_dur"]]`:**       `r NCA_yaml[["MC"]][["formatting"]][["select_ana_col_dur"]][["tooltip"]]`
+* **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_cycle"]]`:**     `r NCA_yaml[["MC"]][["formatting"]][["select_ana_col_cycle"]][["tooltip"]]`
+* **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_evid"]]`:**      `r NCA_yaml[["MC"]][["formatting"]][["select_ana_col_evid"]][["tooltip"]]`
+* **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_analyte"]]`:**   `r NCA_yaml[["MC"]][["formatting"]][["select_ana_col_analyte"]][["tooltip"]]`
+
+## Dosing records
+
+## Dosing from columns
+
+## Dosing from rows (NONMEM format)

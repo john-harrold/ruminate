@@ -125,6 +125,10 @@ MC:
       fig_type:        "report"
       tab_type:        "report"
     # These apply to the intervals table
+    dose_from:
+      default:          "cols"
+      tooltip:          "Dosing information can be found in either columns (column for dose, dose cycle, nominal time) or rows (one row for each dose event distinguished by an event ID (EVID) column)."
+      tooltip_position: "top"
     intervals:  
       width:  600
       height: 175
@@ -194,28 +198,54 @@ MC:
       width: 250
     select_ana_tab_view:
       width: 250
-    select_ana_col_id:
-      width: 150
     select_ana_source_sampling: 
       width: 150
     select_ana_nca_parameters:
       width: 150
+    select_ana_col_id:
+      width: 150
+      tooltip:  "Unique id for each subject in the dataset"
+      tooltip_position: "bottom"
     select_ana_col_dose:
       width: 150
+      tooltip: "Amount of dose"
+      tooltip_position: "bottom"
     select_ana_col_dur: 
       width: 150
+      tooltip: "Duration of infusion (optional)"
+      tooltip_position: "bottom"
     select_ana_col_conc:
       width: 150
+      tooltip: "Observed concentration (NA for missing values)"
+      tooltip_position: "bottom"
     select_ana_col_route:
       width: 150
+      tooltip: "Dosing route (intravascular  or extravascular)"
+      tooltip_position: "bottom"
     select_ana_col_time:
       width: 150
+      tooltip: "Time since the first dose"
+      tooltip_position: "bottom"
     select_ana_col_ntime:
       width: 150
+      tooltip: "Time since the most recent dose (optional, needed for dosing from columns)"
+      tooltip_position: "bottom"
     select_ana_col_group:
       width: 150
+      tooltip: "Other columns used for grouping (optional)"
+      tooltip_position: "bottom"
     select_ana_col_analyte:
       width: 150
+      tooltip: "Used if multiple analytes are present in the dataset (optional)"
+      tooltip_position: "bottom"
+    select_ana_col_evid:
+      width: 150
+      tooltip: "EVID column from NONMEM used to distinguish dosing and observation records (optional, needed for dosing from rows)"
+      tooltip_position: "bottom"
+    select_ana_col_cycle:
+      width: 150
+      tooltip: "The most recent dose cycle or period (optional, needed for dosing from columns)"
+      tooltip_position: "bottom"
     select_ana_units_dose:
       width: 150
     select_ana_units_time:
@@ -298,6 +328,7 @@ MC:
     head_intervals_current:          "Current Intervals"
     head_analysis_template:          "Use Analysis Template"
     head_intervals_create:           "Create an Interval"
+    head_dose_from:                  "Dosing Information"
     head_col_mapping:                "Identify Columns"
     head_col_mapping_required:       "Required"
     head_col_mapping_optional:       "Optional"
@@ -314,6 +345,8 @@ MC:
     select_ana_col_conc:             "Concentration"
     select_ana_col_route:            "Route"
     select_ana_col_group:            "Other Grouping"
+    select_ana_col_cycle:            "Dosing Cycle or Period"
+    select_ana_col_evid:             "Event ID"
     select_ana_col_analyte:          "Analyte"
     select_ana_units_time:           "Time"
     select_ana_units_dose:           "Dose"
@@ -329,6 +362,9 @@ MC:
     switch_ana_fig:                  NULL          
     switch_ana_fig_interactive:      "Interactive"
     switch_ana_fig_report:           "Report Preview"     
+    switch_ana_dose_from:            "Dosing Found In"
+    switch_ana_dose_from_rows:       "Rows"        
+    switch_ana_dose_from_cols:       "Columns"     
     switch_ana_tab:                  NULL          
     switch_ana_tab_interactive:      "Interactive"
     switch_ana_tab_report:           "Report Preview"
@@ -372,7 +408,7 @@ MC:
       pknca_option:  adj.r.squared.factor
     max_missing:
       group:         General
-      label:         "Max Missing (frac)"
+      label:         "Max missing (frac)"
       tooltip:       "The maximum fraction of the data that may be missing (‘NA’) to calculate summary statistics."
       type:          "numeric"
       value:         0.5
@@ -388,7 +424,7 @@ MC:
       pknca_option:  auc.method
     conc_na:   
       group:         Missing and BLQ Values 
-      label:         Missing Values
+      label:         Missing values
       tooltip:       "Determines how missing (NA) values are generally handled. Can be either drop or a numeric value to use. "
       type:          "mixed"
       value:         "drop"
@@ -396,7 +432,7 @@ MC:
       pknca_option:  conc.na
     conc_blq_first:
       group:         Missing and BLQ Values 
-      label:         First Value BLQ
+      label:         First value BLQ
       tooltip:       "Indicates what to do if the first observation is BLQ. It can either be drop, keep, or a numeric value to use."
       type:          "mixed"
       value:         "keep"
@@ -404,7 +440,7 @@ MC:
       pknca_option:  conc.blq$first
     conc_blq_middle:
       group:         Missing and BLQ Values 
-      label:         Middle Values BLQ
+      label:         Middle values BLQ
       tooltip:       "Indicates what to do if a value between the first and last observations is BLQ. It can either be drop, keep, or a numeric value to use."
       type:          "mixed"
       value:         "drop"
@@ -489,10 +525,11 @@ MC:
     id:      ["^(?i)id$",    "(?i)subject",    "(?i)animal"]
     time:    ["^(?i)time",   "(?i)ntime"  ]
     ntime:   ["^(?i)ntime",  "(?i)time"   ]
-    conc:    ["^(?i)conc",   "^(?i)dv$",  ]
-    dose:    ["(?i)dose"]
+    conc:    ["^(?i)conc",   "^(?i)dv$",      "^(?i)pcstresn$", "^(?i)lbstresn$", "^(?i)AVAL(N|NUM)?$"]
+    dose:    ["(?i)dose",    "^(?i)ecdose?$", "^(?i)exdose?$"]
+    evid:    ["(?i)evid"]
     route:   ["(?i)route"]
-    cycle:   ["(?i)cycle",   "(?i)dose_num"]
+    cycle:   ["(?i)cycle",   "(?i)dose_num", "(?i)period"]
     group:   NULL
     analyte: NULL
     dur:     NULL
