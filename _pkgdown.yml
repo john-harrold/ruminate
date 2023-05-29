@@ -29,7 +29,11 @@ navbar:
   left:
   - text: "Tutorial"
     icon: fas fa-chalkboard-teacher
-    href: https://vimeo.com/user3889152/ruminate
+    menu:
+       - text: "Video Tutorial"
+         href: https://vimeo.com/user3889152/ruminate
+       - text: "Non-Compartmental Analysis"
+         href: articles/noncompartmental_analysis.html
   - text: "Functions"
     icon: fas fa-hat-wizard
     href: reference/index.html

@@ -20,12 +20,16 @@ standard values ("intravascular").'><meta property="og:image" content="/logo.png
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item">
-  <a class="external-link nav-link" href="https://vimeo.com/user3889152/ruminate">
+      <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown--tutorial">
     <span class="fas fa fas fa-chalkboard-teacher"></span>
      
     Tutorial
   </a>
+  <div class="dropdown-menu" aria-labelledby="dropdown--tutorial">
+    <a class="external-link dropdown-item" href="https://vimeo.com/user3889152/ruminate">Video Tutorial</a>
+    <a class="dropdown-item" href="../articles/noncompartmental_analysis.html">Non-Compartmental Analysis</a>
+  </div>
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">
@@ -99,7 +103,7 @@ a vector of regular expressions to match.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org" class="external-link">readxl</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">#loading a dataset</span></span></span>
 <span class="r-in"><span><span class="va">data_file</span> <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"formods"</span>,<span class="st">"test_data"</span>,<span class="st">"TEST_DATA.xlsx"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">myDS</span> <span class="op">=</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span>path<span class="op">=</span><span class="va">data_file</span>, sheet<span class="op">=</span><span class="st">"DATA"</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="va">myDS</span> <span class="op">=</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span>path<span class="op">=</span><span class="va">data_file</span>, sheet<span class="op">=</span><span class="st">"DATA"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="va">route_map</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>   intravascular <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^(?i)iv$"</span><span class="op">)</span>,</span></span>
@@ -109,8 +113,8 @@ a vector of regular expressions to match.</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">myDS</span><span class="op">[[</span><span class="st">"ROUTE"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "IV" "IV" "IV" "IV" "IV" "IV"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">myDS</span> <span class="op">=</span> <span class="fu">apply_route_map</span><span class="op">(</span>route_map <span class="op">=</span> <span class="va">route_map</span>, </span></span>
-<span class="r-in"><span>                       route_col <span class="op">=</span> <span class="st">"ROUTE"</span>, </span></span>
+<span class="r-in"><span><span class="va">myDS</span> <span class="op">=</span> <span class="fu">apply_route_map</span><span class="op">(</span>route_map <span class="op">=</span> <span class="va">route_map</span>,</span></span>
+<span class="r-in"><span>                       route_col <span class="op">=</span> <span class="st">"ROUTE"</span>,</span></span>
 <span class="r-in"><span>                       DS        <span class="op">=</span> <span class="va">myDS</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">myDS</span><span class="op">[[</span><span class="st">"ROUTE"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>

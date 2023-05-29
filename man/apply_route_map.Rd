@@ -25,7 +25,7 @@ standard values ("intravascular").
 library(readxl)
 #loading a dataset
 data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
-myDS = readxl::read_excel(path=data_file, sheet="DATA") 
+myDS = readxl::read_excel(path=data_file, sheet="DATA")
 
  route_map = list(
    intravascular = c("^(?i)iv$"),
@@ -34,8 +34,8 @@ myDS = readxl::read_excel(path=data_file, sheet="DATA")
 
 head(myDS[["ROUTE"]])
 
-myDS = apply_route_map(route_map = route_map, 
-                       route_col = "ROUTE", 
+myDS = apply_route_map(route_map = route_map,
+                       route_col = "ROUTE",
                        DS        = myDS)
 
 head(myDS[["ROUTE"]])

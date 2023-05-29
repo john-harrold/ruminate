@@ -7,6 +7,12 @@
     <loc>/LICENSE-text.html</loc>
   </url>
   <url>
+    <loc>/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>/articles/noncompartmental_analysis.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -74,6 +80,9 @@
   </url>
   <url>
     <loc>/reference/build_span.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dose_records_builder.html</loc>
   </url>
   <url>
     <loc>/reference/ft_apply_md.html</loc>

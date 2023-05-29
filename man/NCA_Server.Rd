@@ -11,6 +11,7 @@ NCA_Server(
   id_ASM = "ASM",
   id_UD = "UD",
   id_DW = "DW",
+  deployed = FALSE,
   react_state = NULL
 )
 }
@@ -26,6 +27,8 @@ NCA_Server(
 \item{id_UD}{ID string for the upload data module used to save and load app states}
 
 \item{id_DW}{ID string for the data wrangling module used to save and load app states}
+
+\item{deployed}{Boolean variable indicating whether the app is deployed or not.}
 
 \item{react_state}{Variable passed to server to allow reaction outside of module (\code{NULL})}
 }
@@ -73,6 +76,15 @@ UD.yaml       = system.file(package="formods","templates", "UD.yaml")
 DW.yaml       = system.file(package="formods","templates", "DW.yaml")
 FG.yaml       = system.file(package="formods","templates", "FG.yaml")
 
+# Making sure that the deployed object is created
+if(!exists("deployed")){
+  deployed = FALSE
+}
+
+# If the DEPLOYED file marker existrs we set deployed to TRUE
+if(file.exists("DEPLOYED")){
+  deployed = TRUE
+}
 
 CSS <- "
 .wrapfig {
@@ -92,8 +104,8 @@ intro_text = tags$p(
 "Ruminate is a shiny module for pharmacometric data process,
 visualization, and analysis. It consists of separate shiny modules that
 provide interfaces into common R packages and provides the underlying code
-to facilitate usage of those packages and to provide reproducable analyses. 
-To give it a try you can Download the test dataset ", 
+to facilitate usage of those packages and to provide reproducable analyses.
+To give it a try you can Download the test dataset ",
 tags$a("here", href=data_url),".")
 
 # intro_text = "Ruminate is a shiny module for pharmacometric data process,
@@ -122,7 +134,7 @@ ui <- shinydashboard::dashboardPage(
     tags$style(HTML(CSS))
   ),
     shinydashboard::tabItems(
-       shinydashboard::tabItem(tabName="nca", 
+       shinydashboard::tabItem(tabName="nca",
                shinydashboard::box(title="Run Non-Compartmental Analysis", width=12,
                fluidRow( prompter::use_prompt(),
                column(width=12,
@@ -139,7 +151,7 @@ ui <- shinydashboard::dashboardPage(
                            class = "wrapfig",
                            src   = logo_url,
                            width = 150,
-                           alt = "formods logo" ), 
+                           alt = "formods logo" ),
                        intro_text
                        ))
                  )
@@ -170,23 +182,28 @@ server <- function(input, output, session) {
   mod_ids = c("UD", "DW", "FG", "NCA")
 
   # Module servers
-  formods::ASM_Server( id="ASM",                                              
-                       react_state  = react_FM, 
+  formods::ASM_Server( id="ASM",
+                       deployed     = deployed,
+                       react_state  = react_FM,
                        FM_yaml_file = formods.yaml,
                        mod_ids      = mod_ids)
-  formods::UD_Server(  id="UD",  id_ASM = "ASM",                              
-                       react_state=react_FM, 
+  formods::UD_Server(  id="UD",  id_ASM = "ASM",
+                       deployed     = deployed,
+                       react_state=react_FM,
                        FM_yaml_file=formods.yaml)
-  formods::DW_Server(  id="DW",       id_ASM = "ASM",  
-                       id_UD = "UD",               
-                       react_state=react_FM, 
+  formods::DW_Server(  id="DW",       id_ASM = "ASM",
+                       id_UD = "UD",
+                       deployed     = deployed,
+                       react_state=react_FM,
                        FM_yaml_file=formods.yaml)
-  formods::FG_Server(  id="FG",     id_ASM = "ASM",  
-                       id_UD = "UD", id_DW = "DW", 
-                       react_state=react_FM, 
+  formods::FG_Server(  id="FG",     id_ASM = "ASM",
+                       id_UD = "UD", id_DW = "DW",
+                       deployed     = deployed,
+                       react_state=react_FM,
                        FM_yaml_file=formods.yaml)
-  ruminate::NCA_Server(id="NCA",     id_ASM = "ASM",  
-                       id_UD = "UD", id_DW = "DW", 
+  ruminate::NCA_Server(id="NCA",     id_ASM = "ASM",
+                       id_UD = "UD", id_DW = "DW",
+                       deployed     = deployed,
                        react_state=react_FM)
 }
 

@@ -1906,10 +1906,10 @@ NCA_Server <- function(id,
           if(current_ana[["dose_from"]] == "cols"){
             # Pulling out the dataset list
             ds =  state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]]
-           
+
             # These are the columns in the dataset:
             dscols = names(ds[["DS"]])
-           
+
             # Finding the value to use:
             value = NCA_find_col(
               curr_ana = current_ana[["col_cycle"]],
@@ -1917,15 +1917,15 @@ NCA_Server <- function(id,
               patterns = state[["MC"]][["detect_col"]][["cycle"]],
               null_ok  = TRUE,
               dscols   = dscols)
-           
+
             #JMH add multiple option to NCA_find_col
             # react to dose, id and time and remove those options
-           
+
             # Pulling out column header formatting information.
             hfmt = FM_fetch_data_format(ds[["DS"]], state)
             sel_style   = c(rep("", length(dscols)))
             sel_subtext = c(as.vector(unlist( hfmt[["col_subtext"]])))
-           
+
             # Creating the selection input
             uiele =
             shinyWidgets::pickerInput(
@@ -1982,10 +1982,10 @@ NCA_Server <- function(id,
           if(current_ana[["dose_from"]] == "rows"){
             # Pulling out the dataset list
             ds =  state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]]
-           
+
             # These are the columns in the dataset:
             dscols = names(ds[["DS"]])
-           
+
             # Finding the value to use:
             value = NCA_find_col(
               curr_ana = current_ana[["col_evid"]],
@@ -1993,15 +1993,15 @@ NCA_Server <- function(id,
               patterns = state[["MC"]][["detect_col"]][["evid"]],
               null_ok  = TRUE,
               dscols   = dscols)
-           
+
             #JMH add multiple option to NCA_find_col
             # react to dose, id and time and remove those options
-           
+
             # Pulling out column header formatting information.
             hfmt = FM_fetch_data_format(ds[["DS"]], state)
             sel_style   = c(rep("", length(dscols)))
             sel_subtext = c(as.vector(unlist( hfmt[["col_subtext"]])))
-           
+
             # Creating the selection input
             uiele =
             shinyWidgets::pickerInput(
@@ -4741,6 +4741,7 @@ NCA_find_col             = function(curr_ana = NULL,
 value}
 
 
+#'@export
 #'@title Fetches Current Analysis
 #'@description Takes an NCA state and returns the current active analysis
 #'@param state NCA state from \code{NCA_fetch_state()}
@@ -5200,6 +5201,7 @@ NCA_process_current_ana = function(state){
 
 current_ana}
 
+#'@export
 #'@title Builds NCA Code from ui Elements
 #'@description Takes the current analysis in the state object and creates the
 #'code to run the analysis
@@ -5388,16 +5390,16 @@ nca_builder = function(state){
 
     # We're going to walk through each column. If it's defined and in the
     # dataset then we will include it in the assignment:
-    all_cols = c("col_id",    
-                 "col_dose",  
-                 "col_dur",   
+    all_cols = c("col_id",
+                 "col_dose",
+                 "col_dur",
                  "col_analyte",
-                 "col_route", 
-                 "col_time",  
-                 "col_ntime", 
-                 "col_group", 
-                 "col_evid",  
-                 "col_cycle") 
+                 "col_route",
+                 "col_time",
+                 "col_ntime",
+                 "col_group",
+                 "col_evid",
+                 "col_cycle")
 
     col_args = c()
     for(cname in all_cols){
@@ -5413,7 +5415,7 @@ nca_builder = function(state){
     cmd = c( cmd,
         paste0(nca_drec_object_name, " = dose_records_builder( "),
         paste0(    '    NCA_DS = ', nca_ds_object_name, ',' ),
-        col_args,  
+        col_args,
         paste0(    '    dose_from = "', dose_from , '")[["dose_rec"]]' ))
 
   # JMH dose_rec_fix delete
@@ -5691,6 +5693,7 @@ nca_builder = function(state){
 
 state}
 
+#'@export
 #'@title Runs NCA for the Current Analysis
 #'@description Takes the current state and runs the current analysis in that
 #'state.
@@ -6909,26 +6912,75 @@ NCA_load_scenario = function(state, ana_scenario){
 state}
 
 
-#'@title Builds Dose Records Dataframe    
+#'@export
+#'@title Builds Dose Records Dataframe
 #'@description Takes information about columns in dataset and constructs the
 #'dosing records.
-#'@param NCA_DS
-#'@param dose_from 
-#'@param col_id     
-#'@param col_time  
-#'@param col_ntime 
-#'@param col_route 
-#'@param col_dose  
-#'@param col_cycle 
-#'@param col_dur   
-#'@param col_analyte
-#'@param col_group 
+#'@param NCA_DS Dataset containing dosing records.
+#'@param dose_from Method of dose extraction either "cols" or "rows".
+#'@param col_id Name of column with subject ID.
+#'@param col_time Name of column with time since first dose.
+#'@param col_ntime Name of column with time since the last dose (required with 'dose_from="cols").
+#'@param col_route Name of column with route information.
+#'@param col_dose Name of column with last dose given. 
+#'@param col_cycle Name of column with dose cycle (required with 'dose_from="cols").
+#'@param col_dur Name of column with dose duration.
+#'@param col_evid Name of column with event ID (required with 'dose_from="rows").
+#'@param col_analyte Name of column with analyte (optional).
+#'@param col_group Names of columns with grouping information (optionl).
 #'@return list containing the following elements
 #'\itemize{
 #'  \item{isgood:}           Return status of the function.
 #'  \item{msgs:}             Messages to be passed back to the user.
-#'  \item{dose_rec:}   
+#'  \item{dose_rec:}
 #'}
+#'@examples
+#'
+#'library(dplyr)
+#'library(readxl)
+#'library(stringr)
+#'
+#'# Example data file:
+#'data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
+#'
+#'# Dataset formatted to extract dosing from columns
+#'DS_cols = readxl::read_excel(path=data_file, sheet="DATA")        |>
+#'  dplyr::filter(EVID == 0)                                |>
+#'  dplyr::filter(DOSE %in% c(3))                           |>
+#'  dplyr::filter(str_detect(string=Cohort, "^MD"))         |>
+#'  dplyr::filter(CMT == "C_ng_ml")
+#'
+#'drb_res = dose_records_builder(
+#'  NCA_DS     = DS_cols,
+#'  dose_from  = "cols",
+#'  col_id     = "ID",
+#'  col_time   = "TIME_DY",
+#'  col_ntime  = "NTIME_DY",
+#'  col_route  = "ROUTE",
+#'  col_cycle  = "DOSE_NUM",
+#'  col_dose   = "DOSE",
+#'  col_group  = "Cohort")
+#'
+#' head(drb_res$dose_rec)
+#'
+#'# Dataset formatted to extract dosing from rows (records)
+#'DS_rows = readxl::read_excel(path=data_file, sheet="DATA")        |>
+#'  dplyr::filter(DOSE %in% c(3))                                   |>
+#'  dplyr::filter(str_detect(string=Cohort, "^MD"))                 |>
+#'  dplyr::filter(CMT %in% c("Ac", "C_ng_ml"))
+#'
+#'drb_res = dose_records_builder(
+#'  NCA_DS     = DS_rows,
+#'  dose_from  = "rows",
+#'  col_id     = "ID",
+#'  col_time   = "TIME_DY",
+#'  col_ntime  = "NTIME_DY",
+#'  col_route  = "ROUTE",
+#'  col_dose   = "AMT",
+#'  col_evid   = "EVID",
+#'  col_group  = "Cohort")
+#'
+#' head(drb_res$dose_rec)
 dose_records_builder = function(
   NCA_DS       = NULL,
   dose_from    = NULL,
@@ -6939,6 +6991,7 @@ dose_records_builder = function(
   col_dose     = NULL,
   col_cycle    = NULL,
   col_dur      = NULL,
+  col_evid     = NULL,
   col_analyte  = NULL,
   col_group    = NULL){
 
@@ -6948,14 +7001,14 @@ dose_records_builder = function(
 
   # These columns are required generally
   required_cols = c(
-    "col_id",   
-    "col_time", 
+    "col_id",
+    "col_time",
     "col_route",
     "col_dose")
 
   other_cols    = c(
-    "col_group",   
-    "col_dur",   
+    "col_group",
+    "col_dur",
     "col_analyte")
 
   # Checking user input
@@ -6997,7 +7050,7 @@ dose_records_builder = function(
   # This constructs the dosing records:
   if(isgood){
 
-    # These are the subset of columns that are kept in the 
+    # These are the subset of columns that are kept in the
     # dose records data frame:
     dose_select_cols = c(
       col_id,
@@ -7025,7 +7078,7 @@ dose_records_builder = function(
 
     if(dose_from == "cols"){
       #--------------------------
-      # columns are used for grouping when finding 
+      # columns are used for grouping when finding
       # unique dose columns
       unique_dose = c()
       # Adding the optional grouping columns
@@ -7039,14 +7092,17 @@ dose_records_builder = function(
       # Adding the cycle and ID columns:
       unique_dose = c(unique_dose, col_cycle, col_id)
 
-      dose_rec = 
+      dose_rec =
         dplyr::group_by(NCA_DS, dplyr::across(dplyr::all_of(c(unique_dose))))    |> # Pulling out one row for
         dplyr::filter(row_number() == 1)                                         |> # each dosing record
         dplyr::ungroup()                                                         |>
         dplyr::mutate(!! col_time := .data[[col_time]] - .data[[col_ntime]])     |> # Calculating the dose time from on the nominal offset
-        dplyr::select( dplyr::all_of(dose_select_cols)) 
+        dplyr::select( dplyr::all_of(dose_select_cols))
     } else if(dose_from == "rows"){
-      # JMH add logic for extracting nonmem dosing
+      # Pulling out all of the columns where EVID is 1
+      dose_rec =
+        dplyr::filter(NCA_DS,.data[[col_evid]] == 1)                             |> # EVID =1 for dosing records
+        dplyr::select( dplyr::all_of(dose_select_cols))
     }
   }
 
@@ -7054,8 +7110,8 @@ dose_records_builder = function(
     msgs = c(msgs, "dose_records_builder()")
   }
 
-  res = list(isgood   = isgood, 
+  res = list(isgood   = isgood,
              msgs     = msgs,
              dose_rec = dose_rec)
-  
+
 res}

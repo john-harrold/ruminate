@@ -1,13 +1,13 @@
-MC: 
+MC:
   code: # module specific code options
     packages: ["PKNCA", "dplyr", "stringr", "formods", "ruminate"]
     readOnly: TRUE
     mode:     r
-    preamble: |- 
+    preamble: |-
       # Non-compartmental analysis ----------------------------------------------
   compact:
-    code:    TRUE 
-    clip:    TRUE 
+    code:    TRUE
+    clip:    TRUE
   reporting:
     enabled: TRUE
     # Text format determines how text will be rendered. It can be either "md"
@@ -20,45 +20,45 @@ MC:
     # The order of the figure and table ids (e.g. fg_ind_obs) represents the
     # order in which figures and tables will be reported. Each id should have
     # the following optoins:
-    #                      
+    #
     #   caption_single      Caption used when a table or figure needs only a
     #                       single page.
-    #                      
+    #
     #   caption_multiple    Caption used when a table or figure spans multiple
     #                       pages.
-    #                      
+    #
     #   title_single        Slide title used when a table or figure needs only a
     #                       single page.
-    #                      
+    #
     #   title_multiple      Slide title used when a table or figure spans multiple
     #                       pages.
-    #                      
+    #
     #   sub_title_single    Slide sub_title used when a table or figure needs only a
     #                       single page.
-    #                      
+    #
     #   sub_title_multiple  Slide sub_title used when a table or figure spans multiple
     #                       pages.
-    #                      
+    #
     # The following placeholders can be used bu surroudning them with ===. For
     # example to include the total number of figures you would use
     # ===FIGTOT===:
-    #                      
+    #
     # NCADESC               Description of the NCA analysis provided by the
     #                       user in the UI (tables and figures).
-    #                      
+    #
     # FIGNUM                Number of the current figure for figures that span
     #                       multiple pages (figures only).
-    #                      
+    #
     # FIGTOT                Total number of figures for figures that span
     #                       multiple pages (figures only).
-    #                      
+    #
     # TABNUM                Number of the current table for tables that span
     #                       multiple pages (tables only).
-    #                      
+    #
     # TABTOT                Total number of tables for tables that span multiple
     #                       pages (tables only).
-    #                      
-    #                      
+    #
+    #
     figures:
       fg_ind_obs:
         caption_single:     "===NCADESC=== (Individual Observations)"
@@ -67,7 +67,7 @@ MC:
         title_multiple:     " Individual Observations"
         sub_title_single:   "===NCADESC==="
         sub_title_multiple: "===NCADESC=== (===FIGNUM=== of ===FIGTOT===)"
-    tables:  
+    tables:
       tb_ind_params:
         caption_single:   "===NCADESC=== (Individual Parameters)"
         caption_multiple: "===NCADESC=== (Individual Parameters, ===TABNUM=== of ===TABTOT===)"
@@ -81,8 +81,8 @@ MC:
     # You can use unicode here like this "∞"
     # How infinity is represented in reports like table headers
     # to change inf in parameters you need to change them for the individual
-    # parameters below. 
-    infinity:    "inf" 
+    # parameters below.
+    infinity:    "inf"
     not_calc:    "NC"
     not_sampled: "NS"
     blq:         "BLQ"
@@ -90,7 +90,7 @@ MC:
     # entry for whatever you put in not_calc and blq above here.
     notes:
       NC: "not calculated"
-      NS: "not sampled"    
+      NS: "not sampled"
       BLQ: "below the level of quantification"
   notifications:
     ana_add_int_success: "Interval added: ===DETAILS==="
@@ -102,7 +102,7 @@ MC:
       width:  800
       height: 300
     # Dimensions of the notes text area
-    notes:      
+    notes:
       width:  "520px"
       height: "75px"
     # Width of textInput and selectInput UI elements in the
@@ -112,9 +112,9 @@ MC:
     # Width of the figure preview (must be numeric)
     # The options nrow and ncol refer to the default number of rows and
     # columns when faceting. The options nrow_opt and nrow_col are values the
-    # user can select. 
-    # 
-    preview:    
+    # user can select.
+    #
+    preview:
       width:           "100%"
       height:          "600px"
       nrow:            4
@@ -129,106 +129,106 @@ MC:
       default:          "cols"
       tooltip:          "Dosing information can be found in either columns (column for dose, dose cycle, nominal time) or rows (one row for each dose event distinguished by an event ID (EVID) column)."
       tooltip_position: "top"
-    intervals:  
+    intervals:
       width:  600
       height: 175
-    intervals_start:  
+    intervals_start:
       width:  50
-    intervals_stop:  
+    intervals_stop:
       width:  50
-    intervals_np_text:  
+    intervals_np_text:
       width:  375
-    intervals_delete:  
+    intervals_delete:
       width:  75
     button_ana_run:
-      size: "sm" 
+      size: "sm"
       block: TRUE
     button_ana_del:
-      size: "sm" 
+      size: "sm"
       block: TRUE
       tooltip: "Delete the current analysis."
       tooltip_position: "right"
     button_ana_save:
-      size: "sm" 
+      size: "sm"
       block: TRUE
       tooltip: "Save the caption and notes and apply the data view for the current analysis."
       tooltip_position: "right"
     button_ana_clip:
-      size: "sm" 
+      size: "sm"
       block: TRUE
       tooltip: "Copy the code to generate the current analysis to the clipboard."
       tooltip_position: "right"
     button_fg_save:
-      size: "sm" 
+      size: "sm"
       block: TRUE
      #tooltip: "tooltip"
      #tooltip_position: "right"
     button_tb_save:
-      size: "sm" 
+      size: "sm"
       block: TRUE
      #tooltip: "tooltip"
      #tooltip_position: "right"
     button_ana_copy:
-      size: "sm" 
+      size: "sm"
       block: TRUE
       tooltip: "Make a copy of the current analysis."
       tooltip_position: "right"
     button_ana_new:
-      size: "sm" 
+      size: "sm"
       block: TRUE
       tooltip: "Create a new analysis."
       tooltip_position: "right"
     button_ana_add_int:
-      size: "sm" 
+      size: "sm"
       block: TRUE
     button_ana_use_scenario:
-      size: "sm" 
+      size: "sm"
       block: TRUE
     check_fg_ind_obs:
       width: 75
-    select_ana_interval_range:  
+    select_ana_interval_range:
       width:  200
     text_ana_interval_start:
-      width: 75 
+      width: 75
     text_ana_interval_stop:
-      width: 75 
+      width: 75
     select_current_view:
       width: 200
     select_ana_fig_view:
       width: 250
     select_ana_tab_view:
       width: 250
-    select_ana_source_sampling: 
+    select_ana_source_sampling:
       width: 150
     select_ana_nca_parameters:
       width: 150
     select_ana_col_id:
       width: 150
-      tooltip:  "Unique id for each subject in the dataset"
+      tooltip:  "Unique id for each subject in the dataset (required)"
       tooltip_position: "bottom"
     select_ana_col_dose:
       width: 150
-      tooltip: "Amount of dose"
+      tooltip: "Amount of dose (required)"
       tooltip_position: "bottom"
-    select_ana_col_dur: 
+    select_ana_col_dur:
       width: 150
       tooltip: "Duration of infusion (optional)"
       tooltip_position: "bottom"
     select_ana_col_conc:
       width: 150
-      tooltip: "Observed concentration (NA for missing values)"
+      tooltip: "Observed concentration (NA for missing values, required)"
       tooltip_position: "bottom"
     select_ana_col_route:
       width: 150
-      tooltip: "Dosing route (intravascular  or extravascular)"
+      tooltip: "Dosing route (intravascular  or extravascular, required)"
       tooltip_position: "bottom"
     select_ana_col_time:
       width: 150
-      tooltip: "Time since the first dose"
+      tooltip: "Observation time since the first dose (required)"
       tooltip_position: "bottom"
     select_ana_col_ntime:
       width: 150
-      tooltip: "Time since the most recent dose (optional, needed for dosing from columns)"
+      tooltip: "Time since the most recent dose (optional, needed to determine dosing from columns)"
       tooltip_position: "bottom"
     select_ana_col_group:
       width: 150
@@ -252,7 +252,7 @@ MC:
       width: 150
     select_ana_units_conc:
       width: 150
-    select_ana_units_amt: 
+    select_ana_units_amt:
       width: 150
     select_ana_scenario:
       width: 150
@@ -286,20 +286,20 @@ MC:
   # in the interface.
   figures:
     fg_ind_obs:
-      choice:  "Individual Profiles"   
+      choice:  "Individual Profiles"
       subtext: "Faceted view of individual time-course"
-  tables:  
+  tables:
     tb_ind_params:
-      choice:  "Individual NCA Parameters"       
+      choice:  "Individual NCA Parameters"
       subtext: "Listings of subject-level NCA parmaeters"
     tb_sum_params:
-      choice:  "Summarized NCA Parameters"       
+      choice:  "Summarized NCA Parameters"
       subtext: "Listings of NCA parmaeters summarized by group/analyte"
     tb_ind_obs:
-      choice:  "Individual Data"       
+      choice:  "Individual Data"
       subtext: "Listings of subject-level time-course data"
     tb_nca_raw:
-      choice:  "Raw NCA Output"       
+      choice:  "Raw NCA Output"
       subtext: "Output from PKNCA with requested and dependent parameters"
   labels:
     ana_key:                         "title/caption"
@@ -315,14 +315,14 @@ MC:
     no_dataset:                      "No datasets available to analyze. You need to load a dataset to use this module."
     ana_use_scenario:                "Analysis Template"
     ana_add_int:                     "Add Interval"
-    no_intervals:                    "No intervals added yet"             
+    no_intervals:                    "No intervals added yet"
     panel_analysis_opts:             "Analysis Options"
     panel_figures:                   "Figures"
     panel_tables:                    "Tables"
     panel_nca_config:                "Configuration"
     text_ana_interval_start:         "Start"
-    text_ana_interval_stop:          "End"  
-    select_ana_interval_range:       "Interval Range"  
+    text_ana_interval_stop:          "End"
+    select_ana_interval_range:       "Interval Range"
     # Headings used in the UI
     head_intervals:                  "Analysis Time Intervals"
     head_intervals_current:          "Current Intervals"
@@ -359,13 +359,13 @@ MC:
     select_tb_page:                  "Show Page"
     check_fg_ind_obs_logy:           "Log 10 y-scale"
     switch_ana_include_units:        "Include Units"
-    switch_ana_fig:                  NULL          
+    switch_ana_fig:                  NULL
     switch_ana_fig_interactive:      "Interactive"
-    switch_ana_fig_report:           "Report Preview"     
+    switch_ana_fig_report:           "Report Preview"
     switch_ana_dose_from:            "Dosing Found In"
-    switch_ana_dose_from_rows:       "Rows"        
-    switch_ana_dose_from_cols:       "Columns"     
-    switch_ana_tab:                  NULL          
+    switch_ana_dose_from_rows:       "Rows"
+    switch_ana_dose_from_cols:       "Columns"
+    switch_ana_tab:                  NULL
     switch_ana_tab_interactive:      "Interactive"
     switch_ana_tab_report:           "Report Preview"
     select_ana_source_sampling:      "Data Sampling"
@@ -391,10 +391,10 @@ MC:
   #                Set to NULL to not display a tool tip.
   # type         - List of possible types. For example if you have "numeric" then
   #                "character" the value will be evaluated as numeric, if this is
-  #                NA then it will be evaluated as character. 
+  #                NA then it will be evaluated as character.
   # value        - Default value in the UI
-  # options      - If set to NULL a text input box will be created for this option, 
-  #                if there are options then a selection box will be created. 
+  # options      - If set to NULL a text input box will be created for this option,
+  #                if there are options then a selection box will be created.
   # pknca_option - The actual option set with PKNCA
   nca_config:
     adj_r_squared_factor:
@@ -415,15 +415,15 @@ MC:
       options:       NULL
       pknca_option:  max.missing
     auc_method:
-      group:         AUC     
+      group:         AUC
       label:         Method
       tooltip:       "The method used to calculate the AUC and related statistics."
       type:          "character"
       value:         "lin up/log down"
       options:       ["lin up/log down", "linear"]
       pknca_option:  auc.method
-    conc_na:   
-      group:         Missing and BLQ Values 
+    conc_na:
+      group:         Missing and BLQ Values
       label:         Missing values
       tooltip:       "Determines how missing (NA) values are generally handled. Can be either drop or a numeric value to use. "
       type:          "mixed"
@@ -431,7 +431,7 @@ MC:
       options:       NULL
       pknca_option:  conc.na
     conc_blq_first:
-      group:         Missing and BLQ Values 
+      group:         Missing and BLQ Values
       label:         First value BLQ
       tooltip:       "Indicates what to do if the first observation is BLQ. It can either be drop, keep, or a numeric value to use."
       type:          "mixed"
@@ -439,14 +439,14 @@ MC:
       options:       NULL
       pknca_option:  conc.blq$first
     conc_blq_middle:
-      group:         Missing and BLQ Values 
+      group:         Missing and BLQ Values
       label:         Middle values BLQ
       tooltip:       "Indicates what to do if a value between the first and last observations is BLQ. It can either be drop, keep, or a numeric value to use."
       type:          "mixed"
       value:         "drop"
       options:       NULL
       pknca_option:  conc.blq$middle
-    conc_blq_last:  
+    conc_blq_last:
       group:         "Missing and BLQ Values"
       label:         "Last Value BLQ"
       tooltip:       "Indicates what to do if the last observation is BLQ. It can either be drop, keep, or a numeric value to use."
@@ -454,12 +454,12 @@ MC:
       value:         "keep"
       options:       NULL
       pknca_option:  conc.blq$last
-    first_tmax:     
+    first_tmax:
       group:         "General"
       label:         "Multiple tmax use first"
       tooltip:       "If there is more than one concentration equal to Cmax, should the time selected for Tmax be the first value? If TRUE, the first will be selected. If FALSE, the last will be selected."
       type:          "logical"
-      value:         TRUE  
+      value:         TRUE
       options:       [TRUE, FALSE]
       pknca_option:  first.tmax
     allow_tmax_in_half_life:
@@ -467,7 +467,7 @@ MC:
       label:         "Allow tmax in half-life"
       tooltip:       "Should the concentration and time at Tmax be allowed in the half-life calculation? TRUE is yes and FALSE is no."
       type:          "logical"
-      value:         FALSE 
+      value:         FALSE
       options:       [TRUE, FALSE]
       pknca_option:  allow.tmax.in.half.life
     min_hl_points:
@@ -475,32 +475,32 @@ MC:
       label:         "Min points"
       tooltip:       "What is the minimum number of points required to calculate half-life?"
       type:          "numeric"
-      value:         3     
-      options:       [ 2, 3, 4, 5 ]      
+      value:         3
+      options:       [ 2, 3, 4, 5 ]
       pknca_option:  min.hl.points
-    min_span_ratio: 
+    min_span_ratio:
       group:         "Half-Life"
       label:         "Min span ratio"
       # BILL this is a bit cryptic
       tooltip:       "What is the minimum span ratio required to consider a half-life valid?"
       type:          "logical"
-      value:         2     
-      options:       NULL 
-      pknca_option:  min.span.ratio  
+      value:         2
+      options:       NULL
+      pknca_option:  min.span.ratio
     min_hl_r_squared:
       group:         "Half-Life"
       label:         "Min r² value"
       tooltip:       "What is the minimum r² value to consider a half-life calculation valid?"
       type:          "numeric"
-      value:         0.9   
-      options:       NULL 
+      value:         0.9
+      options:       NULL
       pknca_option:  min.hl.r.squared
     max_aucinf_pext:
       group:         "AUC"
       label:         "Max allowed extrap (%)"
       tooltip:       "What is the maximum percent extrapolation to consider an AUC∞ valid?"
       type:          "numeric"
-      value:         20     
+      value:         20
       options:       NULL
       pknca_option:  max.aucinf.pext
   # Prefix used to create NCA analysis objects in generated code
@@ -510,7 +510,7 @@ MC:
   # in order from left to right. The first pattern to match will return that
   # column. For example if you set id to:
   #
-  # id:   ["^(?i)id$",    "(?i)subject"] 
+  # id:   ["^(?i)id$",    "(?i)subject"]
   #
   # It will match any column that is id. The (?i) is case insensitive. But it
   # wont match IDs for example because it looks for something that starts with
@@ -533,7 +533,7 @@ MC:
     group:   NULL
     analyte: NULL
     dur:     NULL
-  # Routes may be specified in the dataset in a more detailed or convenient 
+  # Routes may be specified in the dataset in a more detailed or convenient
   # format than what is needed for analysis. Here you can specify patterns
   # that can be used to detect routes. For details on the regular expressions
   # that can be used see the detect_col section above. In general you can use
@@ -541,7 +541,7 @@ MC:
   #
   #   myroute: ["regex1", "regex2"]
   #
-  # This will assign the route to 'myroute' in the ROUTE column if it matches 
+  # This will assign the route to 'myroute' in the ROUTE column if it matches
   # regex1 or regex2.
   #
   detect_route:
@@ -550,68 +550,68 @@ MC:
   # These are default analysis scenarios that are shown in the App. They will
   # be shown in the order defined. Each scenario has the following attributes:
   #   - description: Free form textual description shown to the user
-  #   - nca_parameters: List of nca parameters to be calculated 
+  #   - nca_parameters: List of nca parameters to be calculated
   #   - sampling: Can be either "serial" or "sparse"
   #   BILL: Get relevant scenarios from bill here
   ana_scenarios:
-    sd_iv: 
+    sd_iv:
       description: "Single Dose (IV)"
-      nca_parameters: ["cmax", "auclast", "aucinf.obs"] 
+      nca_parameters: ["cmax", "auclast", "aucinf.obs"]
       sampling:   "serial"
       intervals:
-        - row:   
+        - row:
             start:         0
             stop:          Inf
             nca_parameters: ["aucinf.obs"]
-        - row:   
+        - row:
             start:         0
-            stop:          21  
+            stop:          21
             nca_parameters: ["cmax", "auclast"]
-    md_iv: 
+    md_iv:
       description: "Multiple Dose IV"
-      nca_parameters: ["cmax", "auclast", "aucinf.obs"] 
+      nca_parameters: ["cmax", "auclast", "aucinf.obs"]
       sampling:   "serial"
       intervals:
-        - row:   
+        - row:
             start:         0
             stop:          Inf
             nca_parameters: ["cmax", "auclast","aucinf.obs"]
-    sd_iv_sparse: 
+    sd_iv_sparse:
       description: "Single Dose (IV) Sparse Sampling"
-      nca_parameters: ["cmax", "sparse_auclast"] 
+      nca_parameters: ["cmax", "sparse_auclast"]
       sampling:   "sparse"
       intervals:
-        - row:   
+        - row:
             start:          0
             stop:           Inf
             nca_parameters: ["cmax", "sparse_auclast"]
-    md_iv_sparse: 
+    md_iv_sparse:
       description: "Multiple Dose IV Sparse Sampling"
-      nca_parameters: ["cmax", "sparse_auclast"] 
+      nca_parameters: ["cmax", "sparse_auclast"]
       sampling:   "sparse"
       intervals:
-        - row:   
+        - row:
             start:          0
             stop:           Inf
             nca_parameters: ["cmax", "sparse_auclast"]
   # This is the default shown when the app loads or a new analysis is created
   ana_scenario_def: "sd_iv"
   # Here are all of the available NCA parameters. Each field is the name of
-  # the parameter used in PKNCA. See the table in this vignette for the 
+  # the parameter used in PKNCA. See the table in this vignette for the
   # available parameters:
   #
   # https://cran.r-project.org/web/packages/PKNCA/vignettes/v03-selection-of-calculation-intervals.html
   #
   # Each of parameter has the following
   #
-  #  - description: This is a verbose description of the parameter. If set to NULL the 
+  #  - description: This is a verbose description of the parameter. If set to NULL the
   #                 description from PKNCA will be used. Set it to other text to
   #                 overwrite it. This description will also be used in exports as
   #                 well.
-  #                 
+  #
   #  - text:        Textual description to show the user. If set to NULL it
   #                 will use the text form PKCNA.
-  #                 
+  #
   #  - md:          Markdown formatted value of text.
   #
   #  - group:       This is how the paramters will be grouped in the UI that
@@ -620,7 +620,7 @@ MC:
   # To limit the options the user sees you simply need to comment out the
   # parameters you do not want in the App. Alterantively you can use the
   # grouping below to have the most common parameters together at the top and
-  # the remaining in case they are needed. 
+  # the remaining in case they are needed.
   #
   # BILL can you go through the text and md elements below and make any
   # changes you think make sense. For example is there a better way to label
@@ -682,7 +682,7 @@ MC:
       text:        NULL
       md:          "AUC~int,inf,obs,dose~"
       group:       "Other"
-    aucint.inf.pred:    
+    aucint.inf.pred:
       description: NULL
       text:        NULL
       md:          "AUC~int,inf,pred~"
@@ -707,7 +707,7 @@ MC:
       text:        NULL
       md:          "AUC~iv,all~"
       group:       "Other"
-    aucivinf.obs: 
+    aucivinf.obs:
       description: NULL
       text:        NULL
       md:          "AUC~iv,inf,obs~"
@@ -717,7 +717,7 @@ MC:
       text:        NULL
       md:          "AUC~iv,inf,pred~"
       group:       "Other"
-    aucivint.all:  
+    aucivint.all:
       description: NULL
       text:        NULL
       md:          "AUC~iv,int,all~"
@@ -872,72 +872,72 @@ MC:
       text:        NULL
       md:          "CL~last,pred,dn~"
       group:       "Other"
-    clr.last:     
+    clr.last:
       description: NULL
       text:        NULL
-      md:          "CL~R,last~" 
+      md:          "CL~R,last~"
       group:       "Other"
     clr.obs:
       description: NULL
       text:        NULL
-      md:          "CL~R,obs~" 
+      md:          "CL~R,obs~"
       group:       "Other"
-    clr.pred:     
+    clr.pred:
       description: NULL
       text:        NULL
-      md:          "CL~R,pred~" 
+      md:          "CL~R,pred~"
       group:       "Other"
-    cmax:   
+    cmax:
       description: NULL
       text:        NULL
-      md:          "C~max~" 
+      md:          "C~max~"
       group:       "Common Parameters"
-    cmax.dn:   
+    cmax.dn:
       description: NULL
       text:        NULL
-      md:          "C~max,dn~" 
+      md:          "C~max,dn~"
       group:       "Other"
-    cmin:   
+    cmin:
       description: NULL
       text:        NULL
-      md:          "C~min~" 
+      md:          "C~min~"
       group:       "Other"
-    cmin.dn:   
+    cmin.dn:
       description: NULL
       text:        NULL
-      md:          "C~min,dn~" 
+      md:          "C~min,dn~"
       group:       "Other"
     ctrough:
       description: NULL
       text:        NULL
-      md:          "C~tr~" 
+      md:          "C~tr~"
       group:       "Other"
-    ctrough.dn:   
+    ctrough.dn:
       description: NULL
       text:        NULL
-      md:          "C~tr,dn~" 
+      md:          "C~tr,dn~"
       group:       "Other"
-    deg.fluc:  
+    deg.fluc:
       description: NULL
       text:        NULL
       md:          "dgf"
       group:       "Other"
-    end:       
+    end:
       description: NULL
       text:        NULL
       md:          "t~end~"
       group:       "Other"
-    f:         
+    f:
       description: NULL
       text:        NULL
       md:          "f~b~"
       group:       "Other"
-    fe:        
+    fe:
       description: NULL
       text:        NULL
       md:          "f~e~"
       group:       "Other"
-    half.life: 
+    half.life:
       description: NULL
       text:        NULL
       md:          "t~half~"
@@ -945,54 +945,54 @@ MC:
     kel.iv.last:
       description: NULL
       text:        NULL
-      md:          "k~el,iv,last~" 
+      md:          "k~el,iv,last~"
       group:       "Other"
     kel.iv.obs:
       description: NULL
       text:        NULL
-      md:          "k~el,iv,obs~" 
+      md:          "k~el,iv,obs~"
       group:       "Other"
     kel.iv.pred:
       description: NULL
       text:        NULL
-      md:          "k~el,iv,pred~" 
+      md:          "k~el,iv,pred~"
       group:       "Other"
     kel.last:
       description: NULL
       text:        NULL
-      md:          "k~el,last~" 
+      md:          "k~el,last~"
       group:       "Other"
     kel.obs:
       description: NULL
       text:        NULL
-      md:          "k~el,obs~" 
+      md:          "k~el,obs~"
       group:       "Other"
     kel.pred:
       description: NULL
       text:        NULL
-      md:          "k~el,pred~" 
+      md:          "k~el,pred~"
       group:       "Other"
     lambda.z:
       description: NULL
       text:        "λz"
-      md:          "<ff:symbol>l</ff>~z~" 
+      md:          "<ff:symbol>l</ff>~z~"
       group:       "Other"
     lambda.z.n.points:
       description: NULL
       text:        "λz,n"
-      md:          "<ff:symbol>l</ff>~z,n~" 
+      md:          "<ff:symbol>l</ff>~z,n~"
       group:       "Other"
     lambda.z.time.first:
       description: NULL
       text:        "λz (t 1ˢᵗ)"
-      md:          "<ff:symbol>l</ff>~z~ (t 1^st^)" 
+      md:          "<ff:symbol>l</ff>~z~ (t 1^st^)"
       group:       "Other"
     mrt.iv.last:
       description: NULL
       text:        NULL
       md:          "MRT~iv,last~"
       group:       "Other"
-    mrt.iv.obs:  
+    mrt.iv.obs:
       description: NULL
       text:        NULL
       md:          "MRT~iv,obs~"
@@ -1027,15 +1027,15 @@ MC:
       text:        NULL
       md:          "MRT~pred~"
       group:       "Other"
-    ptr:     
+    ptr:
       description: NULL
       text:        NULL
-      md:          "PTR" 
+      md:          "PTR"
       group:       "Other"
     r.squared:
       description: NULL
       text:        "r²"
-      md:          "R^2^" 
+      md:          "R^2^"
       group:       "Common Parameters"
     span.ratio:
       description: NULL
@@ -1047,17 +1047,17 @@ MC:
       text:        NULL
       md:          "AUC~last,sp~"
       group:       "Common Parameters"
-    start:          
+    start:
       description: NULL
       text:        NULL
       md:          "t~start~"
       group:       "Other"
-    swing:          
+    swing:
       description: NULL
       text:        NULL
-      md:          "SWING" 
+      md:          "SWING"
       group:       "Other"
-    tfirst: 
+    tfirst:
       description: NULL
       text:        "t 1ˢᵗ"
       md:          "t~first~"
@@ -1111,69 +1111,69 @@ MC:
     vd.obs:
       description: NULL
       text:        NULL
-      md:          "V~d,obs~" 
+      md:          "V~d,obs~"
       group:       "Other"
     vd.pred:
       description: NULL
       text:        NULL
-      md:          "V~d,pred~" 
+      md:          "V~d,pred~"
       group:       "Other"
     vss.iv.last:
       description: NULL
       text:        NULL
-      md:          "V~ss,iv,last~" 
+      md:          "V~ss,iv,last~"
       group:       "Other"
     vss.iv.obs:
       description: NULL
       text:        NULL
-      md:          "V~ss,iv,obs~" 
+      md:          "V~ss,iv,obs~"
       group:       "Other"
     vss.iv.pred:
       description: NULL
       text:        NULL
-      md:          "V~ss,iv,pred~" 
+      md:          "V~ss,iv,pred~"
       group:       "Other"
     vss.last:
       description: NULL
       text:        NULL
-      md:          "V~ss,iv,last~" 
+      md:          "V~ss,iv,last~"
       group:       "Other"
     vss.md.obs:
       description: NULL
       text:        NULL
-      md:          "V~ss,md,obs~" 
+      md:          "V~ss,md,obs~"
       group:       "Other"
     vss.md.pred:
       description: NULL
       text:        NULL
-      md:          "V~ss,md,pred~" 
+      md:          "V~ss,md,pred~"
       group:       "Other"
     vss.obs:
       description: NULL
       text:        NULL
-      md:          "V~ss,obs~" 
+      md:          "V~ss,obs~"
       group:       "Other"
     vss.pred:
       description: NULL
       text:        NULL
-      md:          "V~ss,pred~" 
+      md:          "V~ss,pred~"
       group:       "Other"
     vz.obs:
       description: NULL
       text:        NULL
-      md:          "V~z,obs~" 
+      md:          "V~z,obs~"
       group:       "Other"
     vz.pred:
       description: NULL
       text:        NULL
-      md:          "V~z,pred~" 
+      md:          "V~z,pred~"
       group:       "Other"
   units:
     # For reference this is the units vignette from PKNCA
     #
     # http://billdenney.github.io/pknca/articles/v07-unit-conversion.html
     #
-    # Default value for whether or not to include units. This can 
+    # Default value for whether or not to include units. This can
     # be overwritten in the app.
     include_units: TRUE
     # Add unit options here, they will appear in the order they are
@@ -1181,17 +1181,17 @@ MC:
     # initialize. It must be in the list.
     # BILL how will PKNCA handle units like µg
     conc:     ["ng/mL",   "µg/mL",  "g/L",    "molar",  "nM"]
-    conc_def:  "ng/mL"                                   
+    conc_def:  "ng/mL"
     dose:     ["g",  "mg",  "mg/kg",   "µg", "µg/kg",   "ng",   "ng/kg"]
     dose_def:  "mg"
     amt:      ["g",  "mg", "µg",  "ng", "g", "moles", "µmoles", "nmoles"]
-    amt_def:   "mg"                                       
+    amt_def:   "mg"
     time:     ["day",     "hr",      "min",    "sec"         ]
     time_def:  "day"
     vol:      ["mL",     "L"]
   # This is used to generate documentation about required columns in datasets.
   # Yous hould only change the Column and Description elements. The others are
-  # used internally. 
+  # used internally.
   data_format:
     columns:
      - entry:

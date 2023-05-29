@@ -59,7 +59,7 @@ state = sess_res$state
 # here we need an empty report object for tabular data
 rpt = list(summary = list(), sheets=list())
 
-# Now we append the report indicating we want 
+# Now we append the report indicating we want
 # Excel output:
 rpt_res = NCA_append_report(state,
   rpt     = rpt,
