@@ -9,28 +9,34 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, eval=TRUE)
-require(ubiquity)
 require(ggplot2)
 require(rhandsontable)
 require(gridExtra)
 require(flextable)
 require(ruminate)
+# Determining if ubiquity is installed
+if(system.file(package="ubiquity") == ""){
+  ubiquity_found = FALSE
+} else {
+  require(ubiquity)
+  ubiquity_found = TRUE
+}
 # The presim variable will contain presimulated data when eval is set to true
-presim_loaded = FALSE
+#presim_loaded = FALSE
 ```
 
 ```{r echo=FALSE, results=FALSE}
-  presim= list()
-  if(file.exists("NCA_presim.RData")){
-    file.remove("NCA_presim.RData")
-  }
+# presim= list()
+# if(file.exists("NCA_presim.RData")){
+#   file.remove("NCA_presim.RData")
+# }
 ```
 
 ```{r echo=FALSE, results=FALSE, eval=TRUE}
-if(file.exists("NCA_presim.RData")){
-  load("NCA_presim.RData")
-  presim_loaded = TRUE
-}
+# if(file.exists("NCA_presim.RData")){
+#   load("NCA_presim.RData")
+#   presim_loaded = TRUE
+# }
 
 NCA_yaml = yaml::read_yaml(system.file(package="ruminate", "templates","NCA.yaml"))
 ```
@@ -41,82 +47,94 @@ NCA_yaml = yaml::read_yaml(system.file(package="ruminate", "templates","NCA.yaml
 Non-compartmental analysis (NCA) is a simple and quick method for evaluating the exposure of a drug. It allows you to evaluate things like linearity and in vivo exposure. To illustrate this consider an antibody given in a subcutaneous injection. The actual exposure profile a patient might experience is given in the solid black line in the left panel. But we don't yet have the ability to sample in a continuous fashion. What we might observer is given by the blue points.
 
 ```{r warning=FALSE, message=FALSE, echo=FALSE, error=FALSE, results="hide", fig.width=8, fig.height=4}
-system_new(system_file="mab_pk", overwrite=TRUE)
-cfg = build_system()
-parameters = system_fetch_parameters(cfg)
-cfg = system_zero_inputs(cfg)
-cfg = system_set_bolus(cfg, state   ="At", 
-                            times   = c(  0.0),  #  day
-                            values  = c(400.0))  #  mg
-
-cfg=system_set_option(cfg, group  = "simulation",
-                           option = "output_times",
-                           linspace(0,30,100))
-
-som_smooth = run_simulation_ubiquity(parameters, cfg) 
-som_smooth$simout$time_C_ng_ml = som_smooth$simout$C_ng_ml*som_smooth$simout$ts.days
-
-cfg=system_set_option(cfg, group  = "simulation", 
-                            option = "include_important_output_times", 
-                            value  = "no")
-
-cfg=system_set_option(cfg, group  = "simulation",
-                           option = "output_times",
-                           c(0,.25, .5, 1, 2,7,14,21,28))
-som_sample = run_simulation_ubiquity(parameters, cfg) 
-som_sample$simout$time_C_ng_ml = som_sample$simout$C_ng_ml*som_sample$simout$ts.days
+polydf     = NULL
+som_smooth = NULL
+som_sample = NULL
 
 
-polydf = NULL
-for(tidx in 1:(nrow(som_sample$simout)-1)){
-  xv = c(som_sample$simout$ts.days[tidx], som_sample$simout$ts.days[tidx+1],  som_sample$simout$ts.days[tidx+1], som_sample$simout$ts.days[tidx] )  
-  yvC = c(som_sample$simout$C_ng_ml[tidx], som_sample$simout$C_ng_ml[tidx+1], 0, 0)  
-  yvTC = c(som_sample$simout$time_C_ng_ml[tidx], som_sample$simout$time_C_ng_ml[tidx+1], 0, 0)  
-  tmpdf = data.frame(xv = xv, yvC=yvC, yvTC=yvTC, sp=tidx)
-  if(is.null(polydf)){
-    polydf = tmpdf 
-  } else {
-    polydf = rbind(tmpdf, polydf)
+
+if(ubiquity_found){
+  system_new(system_file="mab_pk", overwrite=TRUE)
+  cfg = build_system()
+  parameters = system_fetch_parameters(cfg)
+  cfg = system_zero_inputs(cfg)
+  cfg = system_set_bolus(cfg, state   ="At", 
+                              times   = c(  0.0),  #  day
+                              values  = c(400.0))  #  mg
+  
+  cfg=system_set_option(cfg, group  = "simulation",
+                             option = "output_times",
+                             linspace(0,30,100))
+  
+  som_smooth = run_simulation_ubiquity(parameters, cfg) 
+  som_smooth$simout$time_C_ng_ml = som_smooth$simout$C_ng_ml*som_smooth$simout$ts.days
+  
+  cfg=system_set_option(cfg, group  = "simulation", 
+                              option = "include_important_output_times", 
+                              value  = "no")
+  
+  cfg=system_set_option(cfg, group  = "simulation",
+                             option = "output_times",
+                             c(0,.25, .5, 1, 2,7,14,21,28))
+  som_sample = run_simulation_ubiquity(parameters, cfg) 
+  som_sample$simout$time_C_ng_ml = som_sample$simout$C_ng_ml*som_sample$simout$ts.days
+  
+  
+  for(tidx in 1:(nrow(som_sample$simout)-1)){
+    xv = c(som_sample$simout$ts.days[tidx], som_sample$simout$ts.days[tidx+1],  som_sample$simout$ts.days[tidx+1], som_sample$simout$ts.days[tidx] )  
+    yvC = c(som_sample$simout$C_ng_ml[tidx], som_sample$simout$C_ng_ml[tidx+1], 0, 0)  
+    yvTC = c(som_sample$simout$time_C_ng_ml[tidx], som_sample$simout$time_C_ng_ml[tidx+1], 0, 0)  
+    tmpdf = data.frame(xv = xv, yvC=yvC, yvTC=yvTC, sp=tidx)
+    if(is.null(polydf)){
+      polydf = tmpdf 
+    } else {
+      polydf = rbind(tmpdf, polydf)
+    }
   }
 }
 ```
 
 ```{r results="hide", warning=FALSE, echo=FALSE}
-# When eval is set to TRUE we save the presimulated results
-  presim$plots$som_smooth = som_smooth
-  presim$plots$som_sample = som_sample
-  presim$plots$polydf     = polydf
+# # When eval is set to TRUE we save the presimulated results
+#   presim$plots$som_smooth = som_smooth
+#   presim$plots$som_sample = som_sample
+#   presim$plots$polydf     = polydf
 ```
 
 ```{r results="hide", warning=FALSE, echo=FALSE, eval=TRUE}
-if(presim_loaded){
-  som_smooth = presim$plots$som_smooth 
-  som_sample = presim$plots$som_sample 
-  polydf     = presim$plots$polydf
-}
+# if(presim_loaded){
+#   som_smooth = presim$plots$som_smooth 
+#   som_sample = presim$plots$som_sample 
+#   polydf     = presim$plots$polydf
+# }
 ```
 
 ```{r warning=FALSE, message=FALSE, echo=FALSE, error=FALSE, eval=TRUE, results="hide", fig.width=8, fig.height=4}
-p_C = ggplot()
-p_C = p_C +  geom_line(data=som_smooth$simout, aes(x=ts.days, y=C_ng_ml))
-p_C = p_C + geom_point(data=som_sample$simout, aes(x=ts.days, y=C_ng_ml), color="blue")
-p_C = p_C + xlab("Time") + ylab("Concentration") + ggtitle("AUC")
-p_C = p_C +  geom_polygon(data=polydf, aes(x=xv, y=yvC, group=sp), color="blue", linetype='dashed', fill="lightblue")
-p_C = p_C + theme(plot.title = element_text(hjust = 0.5))
-p_C = prepare_figure(fo=p_C, purpose="shiny")
-
-
-p_TC = ggplot()
-p_TC = p_TC +  geom_line(data=som_smooth$simout, aes(x=ts.days, y=time_C_ng_ml))
-p_TC = p_TC + geom_point(data=som_sample$simout, aes(x=ts.days, y=time_C_ng_ml), color="blue")
-p_TC = p_TC + xlab("Time") + ylab("Time x Concentration") + ggtitle("AUMC")
-p_TC = p_TC +  geom_polygon(data=polydf, aes(x=xv, y=yvTC, group=sp), color="blue", linetype='dashed', fill="lightblue")
-p_TC = p_TC + theme(plot.title = element_text(hjust = 0.5))
-p_TC = prepare_figure(fo=p_TC, purpose="shiny")
-
-
-p_AUC = p_C
-p_AUMC = p_TC
+if(ubiquity_found){
+  p_C = ggplot()
+  p_C = p_C +  geom_line(data=som_smooth$simout, aes(x=ts.days, y=C_ng_ml))
+  p_C = p_C + geom_point(data=som_sample$simout, aes(x=ts.days, y=C_ng_ml), color="blue")
+  p_C = p_C + xlab("Time") + ylab("Concentration") + ggtitle("AUC")
+  p_C = p_C +  geom_polygon(data=polydf, aes(x=xv, y=yvC, group=sp), color="blue", linetype='dashed', fill="lightblue")
+  p_C = p_C + theme(plot.title = element_text(hjust = 0.5))
+  p_C = prepare_figure(fo=p_C, purpose="shiny")
+  
+  
+  p_TC = ggplot()
+  p_TC = p_TC +  geom_line(data=som_smooth$simout, aes(x=ts.days, y=time_C_ng_ml))
+  p_TC = p_TC + geom_point(data=som_sample$simout, aes(x=ts.days, y=time_C_ng_ml), color="blue")
+  p_TC = p_TC + xlab("Time") + ylab("Time x Concentration") + ggtitle("AUMC")
+  p_TC = p_TC +  geom_polygon(data=polydf, aes(x=xv, y=yvTC, group=sp), color="blue", linetype='dashed', fill="lightblue")
+  p_TC = p_TC + theme(plot.title = element_text(hjust = 0.5))
+  p_TC = prepare_figure(fo=p_TC, purpose="shiny")
+  
+  
+  p_AUC = p_C
+  p_AUMC = p_TC
+} else {
+  p_AUC = ggplot2::ggplot()
+  p_AUMC = ggplot2::ggplot()
+}
 ```
 
 ```{r warning=FALSE, message=FALSE, echo=FALSE, error=FALSE, eval=TRUE, fig.width=8, fig.height=3.5}
@@ -185,3 +203,12 @@ Beyond the required columns to infer dosing from columns you must also have the 
 
 **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_dose"]]`** and
 **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_evid"]]`**
+
+
+# Configuration File
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE,  style="max-height: 100px;"}
+#yaml= file.path(system.file(package="ruminate"), "templates", "NCA.yaml")
+cat(readLines(file.path(system.file(package="ruminate"), "templates", "NCA.yaml")), sep="\n")
+```
