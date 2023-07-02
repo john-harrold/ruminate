@@ -3,16 +3,22 @@
 
 # ruminate <img src="man/figures/logo.png" align="right" height="138.5" />
 
-<!-- badges: start 
-[![R-CMD-check](https://github.com/john-harrold/ruminate/workflows/R-CMD-check/badge.svg)](https://github.com/john-harrold/ruminate/actions)
--->
+![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate)
+![Active](https://www.repostatus.org/badges/latest/active.svg)
+[![Lifecycle:
+Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![Codecov test
+coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
+[![R-CMD-check](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml)
+
 <!---
 [![version](https://www.r-pkg.org/badges/version/ruminate)](https://CRAN.R-project.org/package=ruminate)
 ![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate) 
-![Active](https://www.repostatus.org/badges/latest/active.svg)
 --->
+
+![Active](https://www.repostatus.org/badges/latest/active.svg)
+
 <!-- badges: 
-[![Lifecycle: Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 
 
 [ruminate](<https://rumiante.ubiquity.tools>) 

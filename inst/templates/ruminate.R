@@ -86,7 +86,10 @@ ui <- shinydashboard::dashboardPage(
                shinydashboard::box(title="Load Dataset", width=12,
                  fluidRow(
                    column(width=6,
-                     htmlOutput(NS("UD",  "UD_ui_compact"))),
+                     div(style="display:inline-block;width:100%", htmlOutput(NS("UD", "ui_ud_load_data"))),
+                     htmlOutput(NS("UD", "ui_ud_clean")),
+                     htmlOutput(NS("UD", "ui_ud_select_sheets")),
+                     htmlOutput(NS("UD", "ui_ud_text_load_result"))),
                    column(width=6,
                        tags$p(
                            tags$img(
@@ -96,7 +99,12 @@ ui <- shinydashboard::dashboardPage(
                            alt = "formods logo" ),
                        intro_text
                        ))
-                 )
+                 ),
+                 fluidRow(
+                   column(width=12,
+                          div(style="display:inline-block;vertical-align:top",
+                                    htmlOutput(NS("UD", "ui_ud_data_preview")))
+                          ))
                ),
                shinydashboard::box(title="Save or Load Analysis", width=12,
                    htmlOutput(NS("ASM", "ui_asm_compact")))
@@ -122,6 +130,18 @@ server <- function(input, output, session) {
 
   # Module IDs and the order they are needed for code generation
   mod_ids = c("UD", "DW", "FG", "NCA")
+
+  # If the ftmptest file is present we load test data
+  ftmptest = file.path(tempdir(), "ruminate.test")
+  if(file.exists(ftmptest)){
+    NCA_test_mksession(
+      session,
+      id     = "NCA",
+      id_UD  = "UD",
+      id_DW  = "DW",
+      id_ASM = "ASM"
+    )
+  }
 
   # Module servers
   formods::ASM_Server( id="ASM",

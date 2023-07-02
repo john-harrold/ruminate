@@ -181,6 +181,18 @@ server <- function(input, output, session) {
   # Module IDs and the order they are needed for code generation
   mod_ids = c("UD", "DW", "FG", "NCA")
 
+  # If the ftmptest file is present we load test data
+  ftmptest = file.path(tempdir(), "ruminate.test")
+  if(file.exists(ftmptest)){
+    NCA_test_mksession(
+      session,
+      id     = "NCA",
+      id_UD  = "UD",
+      id_DW  = "DW",
+      id_ASM = "ASM"
+    )
+  }
+
   # Module servers
   formods::ASM_Server( id="ASM",
                        deployed     = deployed,

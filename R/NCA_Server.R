@@ -2830,7 +2830,7 @@ NCA_Server <- function(id,
           #tags$h4(state[["MC"]][["labels"]][["head_intervals_current"]]),
           #tagList(rhandsontable::rHandsontableOutput(NS(id, "hot_nca_intervals"))),
           tags$br(),
-          tags$h3(state[["MC"]][["labels"]][["head_dose_from"]]),
+          tags$h3(state[["MC"]][["labels"]][["head_dose_from"]], icon_link(href=state[["MC"]][["tooltips"]][["url_dosing"]])),
            div(style="display:inline-block",
              htmlOutput(NS("NCA", "ui_nca_ana_dose_from"))),
           tags$br(),
@@ -6446,12 +6446,30 @@ obj}
 #'@export
 #'@title Run the {ruminate} Shiny App
 #'@description Runs the pharmacometrics ruminate app.
+#'@param host Hostname of the server ("127.0.0.1")
+#'@param port Port number for the app (3838)
+#'@param mksession Boolean value, when TRUE will load test session data
+#'for app testing (FALSE)
 #'@return Nothing.
 #'@examples
 #'if (interactive()) {
 #' ruminate()
 #'}
-ruminate = function(host="127.0.0.1", port=3838){
+ruminate = function(host="127.0.0.1", port=3838, mksession = FALSE){
+
+  # File used to indicate we're in test mode
+  ftmptest = file.path(tempdir(), "ruminate.test") 
+  
+  # Deleteing any existing files
+  if(file.exists(ftmptest)){
+    unlink(ftmptest)
+  }
+
+  # If mksession is true we set this value to true
+  if(mksession){
+    file.create(ftmptest)
+  }
+
   shiny::runApp(system.file(package="ruminate", "templates","ruminate.R"),
                 host  = host,
                 port  = port)}

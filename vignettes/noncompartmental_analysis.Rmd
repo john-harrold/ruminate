@@ -188,9 +188,9 @@ To run NCA you need your data formatted in a specific way. The names of the colu
 Note that  **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_dose"]]`**  and  **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_conc"]]`** need to have the same mass units.
 
 
-## Dosing records
+## Dosing information
 
-Dosing will be extracted from the datasets. It can be incorporated in two ways. One is that the dosing information is stored in columns of the dataset. This is the simplest and most straight forward way of storing the dosing information. The other method is that dosing is specified as individual records (rows) in the dataset (if your data is formatted for NONMEM, you can use this). 
+Dosing will be extracted from the datasets, and it can be incorporated in two ways. One is that the dosing information is stored in columns of the dataset. This is the simplest and most straight forward way of storing the dosing information. The other method is that dosing is specified as individual records (rows) in the dataset (if your data is formatted for NONMEM, you can use this). 
 
 ### Determining dosing from columns
 
@@ -199,10 +199,15 @@ Beyond the required columns to infer dosing from columns you must also have the 
 **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_cycle"]]`**, and
 **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_ntime"]]`**.
 
+If you do not have observations at dosing times (e.g. you dose at time zero but your first observation is at 15 minutes post-dose), you can have an observation that is BQL (`NA`) at the dosing time (zero).
+
 ### Determining dosing from rows (NONMEM format)
 
+If your dataset is formatted for NONMEM you can extract the dosing from those rows that contain the dosing records. For this case it is expected you will have the following columns in your dataset:
 **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_dose"]]`** and
 **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_evid"]]`**
+
+Some notes on dosing information. For each interval where you want to calculate dose-dependent parameters, you will need to provide information about dosing in those intervals. 
 
 
 # Configuration File

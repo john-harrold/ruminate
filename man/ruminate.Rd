@@ -6,7 +6,15 @@
 \alias{ruminate-package}
 \title{ruminate: Shiny app and module to facilitate pharamacometrics analysis}
 \usage{
-ruminate(host = "127.0.0.1", port = 3838)
+ruminate(host = "127.0.0.1", port = 3838, mksession = FALSE)
+}
+\arguments{
+\item{host}{Hostname of the server ("127.0.0.1")}
+
+\item{port}{Port number for the app (3838)}
+
+\item{mksession}{Boolean value, when TRUE will load test session data
+for app testing (FALSE)}
 }
 \value{
 Nothing.
