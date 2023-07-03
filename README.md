@@ -11,13 +11,13 @@ Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
 [![R-CMD-check](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml)
 
-The goal of `ruminate` is to facilitate exploration of pharmacometrics
+The goal of `{ruminate}` is to facilitate exploration of pharmacometrics
 data. This is done by creating a Shiny interface to different tools for
-data transformation (`dplyr` and `tidyr`), plotting (`ggplot2`), and
-noncompartmental analysis (`PKNCA`). These results can be reported in
-Excel, Word or PowerPoint. The state of the app can be saved and loaded
-at a later date. When saved, a script is generated to reproduce the
-different actions in the Shiny interface.
+data transformation (`{dplyr}` and `{tidyr}`), plotting (`{ggplot2}`),
+and noncompartmental analysis (`{PKNCA}`). These results can be reported
+in Excel, Word or PowerPoint. The state of the app can be saved and
+loaded at a later date. When saved, a script is generated to reproduce
+the different actions in the Shiny interface.
 
 # Installation
 
@@ -42,9 +42,9 @@ devtools::install_github("john-harrold/formods",  dependencies=TRUE)
 devtools::install_github("john-harrold/ruminate", dependencies=TRUE)
 ```
 
-Note that because `ruminate` depends on `formods` and `onbrand` you will
-need to first install the development versions of `onbrand` and
-`formods`.
+Note that because `{ruminate}` depends on `{formods}` and `{onbrand}`
+you will need to first install the development versions of `{onbrand}`
+and `{formods}`.
 
 # Getting started
 
