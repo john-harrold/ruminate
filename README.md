@@ -11,19 +11,6 @@ Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
 [![R-CMD-check](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml)
 
-<!---
-[![version](https://www.r-pkg.org/badges/version/ruminate)](https://CRAN.R-project.org/package=ruminate)
-![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate) 
---->
-
-![Active](https://www.repostatus.org/badges/latest/active.svg)
-
-<!-- badges: 
-
-
-[ruminate](<https://rumiante.ubiquity.tools>) 
-end -->
-
 The goal of `ruminate` is to facilitate exploration of pharmacometrics
 data. This is done by creating a Shiny interface to different tools for
 data transformation (`dplyr` and `tidyr`), plotting (`ggplot2`), and

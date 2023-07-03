@@ -217,12 +217,12 @@ need to have the same mass units.</p>
 <div class="section level3">
 <h3 id="dosing-information">Dosing information<a class="anchor" aria-label="anchor" href="#dosing-information"></a>
 </h3>
-<p>Dosing will be extracted from the datasets. It can be incorporated in
-two ways. One is that the dosing information is stored in columns of the
-dataset. This is the simplest and most straight forward way of storing
-the dosing information. The other method is that dosing is specified as
-individual records (rows) in the dataset (if your data is formatted for
-NONMEM, you can use this).</p>
+<p>Dosing will be extracted from the datasets, and it can be
+incorporated in two ways. One is that the dosing information is stored
+in columns of the dataset. This is the simplest and most straight
+forward way of storing the dosing information. The other method is that
+dosing is specified as individual records (rows) in the dataset (if your
+data is formatted for NONMEM, you can use this).</p>
 <div class="section level4">
 <h4 id="determining-dosing-from-columns">Determining dosing from columns<a class="anchor" aria-label="anchor" href="#determining-dosing-from-columns"></a>
 </h4>
@@ -230,11 +230,21 @@ NONMEM, you can use this).</p>
 also have the following columns defined: <strong>Dose</strong>,
 <strong>Dosing Cycle or Period</strong>, and <strong>Nominal
 Time</strong>.</p>
+<p>If you do not have observations at dosing times (e.g. you dose at
+time zero but your first observation is at 15 minutes post-dose), you
+can have an observation that is BQL (<code>NA</code>) at the dosing time
+(zero).</p>
 </div>
 <div class="section level4">
 <h4 id="determining-dosing-from-rows-nonmem-format">Determining dosing from rows (NONMEM format)<a class="anchor" aria-label="anchor" href="#determining-dosing-from-rows-nonmem-format"></a>
 </h4>
-<p><strong>Dose</strong> and <strong>Event ID</strong></p>
+<p>If your dataset is formatted for NONMEM you can extract the dosing
+from those rows that contain the dosing records. For this case it is
+expected you will have the following columns in your dataset:
+<strong>Dose</strong> and <strong>Event ID</strong></p>
+<p>Some notes on dosing information. For each interval where you want to
+calculate dose-dependent parameters, you will need to provide
+information about dosing in those intervals.</p>
 </div>
 </div>
 </div>
@@ -519,6 +529,7 @@ Time</strong>.</p>
 <span><span class="co">##     ana_key:           "Unique description used for referencing analysis and in other elements (e.g. reporting)."</span></span>
 <span><span class="co">##     show_code:         "Show analysis code"</span></span>
 <span><span class="co">##     nca_intervals:     "Current NCA intervals"</span></span>
+<span><span class="co">##     url_dosing:        "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#dosing-information"</span></span>
 <span><span class="co">##     ph:</span></span>
 <span><span class="co">##       text_ana_interval_start: 0</span></span>
 <span><span class="co">##       text_ana_interval_stop:  "number or Inf"</span></span>

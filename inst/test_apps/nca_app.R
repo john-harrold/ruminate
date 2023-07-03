@@ -87,7 +87,10 @@ ui <- shinydashboard::dashboardPage(
                shinydashboard::box(title="Load Dataset", width=12,
                  fluidRow(
                    column(width=6,
-                     htmlOutput(NS("UD",  "UD_ui_compact"))),
+                     div(style="display:inline-block;width:100%", htmlOutput(NS("UD", "ui_ud_load_data"))),
+                     htmlOutput(NS("UD", "ui_ud_clean")),
+                     htmlOutput(NS("UD", "ui_ud_select_sheets")),
+                     htmlOutput(NS("UD", "ui_ud_text_load_result"))),
                    column(width=6,
                        tags$p(
                            tags$img(
@@ -97,7 +100,12 @@ ui <- shinydashboard::dashboardPage(
                            alt = "formods logo" ),
                        intro_text
                        ))
-                 )
+                 ),
+                 fluidRow(
+                   column(width=12,
+                          div(style="display:inline-block;vertical-align:top",
+                                    htmlOutput(NS("UD", "ui_ud_data_preview")))
+                          ))
                ),
                shinydashboard::box(title="Save or Load Analysis", width=12,
                    htmlOutput(NS("ASM", "ui_asm_compact")))

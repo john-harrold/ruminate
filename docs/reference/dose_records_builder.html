@@ -185,15 +185,8 @@ dosing records.</p>
 <span class="r-in"><span> col_group  <span class="op">=</span> <span class="st">"Cohort"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">drb_res</span><span class="op">$</span><span class="va">dose_rec</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      ID TIME_DY  DOSE ROUTE Cohort    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>   121     0       3 IV    MD 3 mg IV</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>   121    42.0     3 IV    MD 3 mg IV</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>   122     0       3 IV    MD 3 mg IV</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>   122    42.0     3 IV    MD 3 mg IV</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>   123     0       3 IV    MD 3 mg IV</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>   123    42.0     3 IV    MD 3 mg IV</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 variables: ID &lt;dbl&gt;, TIME_DY &lt;dbl&gt;, DOSE &lt;dbl&gt;, ROUTE &lt;chr&gt;, Cohort &lt;chr&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Dataset formatted to extract dosing from rows (records)</span></span></span>
 <span class="r-in"><span><span class="va">DS_rows</span> <span class="op">=</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span>path<span class="op">=</span><span class="va">data_file</span>, sheet<span class="op">=</span><span class="st">"DATA"</span><span class="op">)</span>        <span class="op">|&gt;</span></span></span>
@@ -213,15 +206,8 @@ dosing records.</p>
 <span class="r-in"><span> col_group  <span class="op">=</span> <span class="st">"Cohort"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">drb_res</span><span class="op">$</span><span class="va">dose_rec</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      ID TIME_DY     AMT ROUTE Cohort    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>   121       0 3<span style="text-decoration: underline;">000</span>000 IV    MD 3 mg IV</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>   121      14 3<span style="text-decoration: underline;">000</span>000 IV    MD 3 mg IV</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>   121      28 3<span style="text-decoration: underline;">000</span>000 IV    MD 3 mg IV</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>   121      42 3<span style="text-decoration: underline;">000</span>000 IV    MD 3 mg IV</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>   122       0 3<span style="text-decoration: underline;">000</span>000 IV    MD 3 mg IV</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>   122      14 3<span style="text-decoration: underline;">000</span>000 IV    MD 3 mg IV</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 variables: ID &lt;dbl&gt;, TIME_DY &lt;dbl&gt;, AMT &lt;dbl&gt;, ROUTE &lt;chr&gt;, Cohort &lt;chr&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
