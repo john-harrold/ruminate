@@ -205,9 +205,9 @@ If you do not have observations at dosing times (e.g. you dose at time zero but 
 
 If your dataset is formatted for NONMEM you can extract the dosing from those rows that contain the dosing records. For this case it is expected you will have the following columns in your dataset:
 **`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_dose"]]`** (AMT in NONMEM) and
-**`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_evid"]]`**
+**`r NCA_yaml[["MC"]][["labels"]][["select_ana_col_evid"]]`** (EVID in NONMEM).
 
-Some notes on dosing information. For each interval where you want to calculate dose-dependent parameters, you will need to provide information about dosing in those intervals. In a multiple dose setting where you do not have enough PK to run NCA it is not necessary to provide dosing information. For example if you have four weekely doses but only have intensive sampling on weeks 1 and 4 but peak and trough on weeks 2 and 3, you do not have to provide dosing information for weeks 2 and 3. However there are certain parameters that `{PKNCA}` will provide if that dosing and intermediate sampling information is provided (e.g. time to steady-state). So if all you are interested in is parameters for intervals with intensive sampling, then you don't need to worry about having dosing information for the other intervals. 
+Some notes on dosing information. For each interval where you want to calculate dose-dependent parameters, you will need to provide information about dosing in those intervals. In a multiple dose setting where you have intervals where you do not have enough PK to run NCA it, is not necessary to provide dosing information for those intervals. For example if you have four weekly doses but only have intensive sampling on weeks 1 and 4 but peak and trough on weeks 2 and 3, you do not have to provide dosing information for weeks 2 and 3. However there are certain parameters that `{PKNCA}` will provide if that dosing and intermediate sampling information is provided (e.g. time to steady-state). So if all you are interested in is parameters for intervals with intensive sampling, then you don't need to worry about having dosing information for the other intervals. 
 
 
 # Configuration File

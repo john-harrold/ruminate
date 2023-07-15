@@ -49,13 +49,14 @@ Note that because `{ruminate}` depends on `{formods}` and `{onbrand}` you will n
 
 # Getting started
 
+## Running in RStudio
 
 ``` r 
 library(ruminate)
 ruminate()
 ```
 
-# Running `{ruminate}` in a Docker container
+## Running in a Docker container
 
 Note this uses an `x86` image. So it will only work on Intel or AMD cpus. This means that you wont get very far with an M1 mac.  If you want, you can download the Docker file [here](https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container). This will build the docker image from the repository on GitHub.
 
