@@ -58,6 +58,7 @@ dosing records.
 }
 \examples{
 
+if(system.file(package="readxl") !=""){
 library(dplyr)
 library(readxl)
 library(stringr)
@@ -83,7 +84,7 @@ drb_res = dose_records_builder(
  col_dose   = "DOSE",
  col_group  = "Cohort")
 
-head(drb_res$dose_rec)
+utils::head(drb_res$dose_rec)
 
 # Dataset formatted to extract dosing from rows (records)
 DS_rows = readxl::read_excel(path=data_file, sheet="DATA")        |>
@@ -102,5 +103,6 @@ drb_res = dose_records_builder(
  col_evid   = "EVID",
  col_group  = "Cohort")
 
-head(drb_res$dose_rec)
+utils::head(drb_res$dose_rec)
+}
 }

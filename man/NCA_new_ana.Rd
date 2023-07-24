@@ -17,6 +17,7 @@ is set as the current active analyisis
 Creates a new NCA analysis in an NCA module
 }
 \examples{
+library(ruminate)
 # Module IDs                                                                   
 id     = "NCA"                                                                 
 id_UD  = "UD"                                                                  

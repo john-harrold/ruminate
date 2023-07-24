@@ -16,6 +16,7 @@ Character object vector with the lines of code
 Fetches the code to generate results seen in the app
 }
 \examples{
+library(ruminate)
 # Module IDs                                                                   
 id     = "NCA"                                                                 
 id_UD  = "UD"                                                                  

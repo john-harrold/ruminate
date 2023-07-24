@@ -115,6 +115,7 @@ name.
 Merges default app options with the changes made in the UI
 }
 \examples{
+library(ruminate)
 # Module IDs                                                                   
 id     = "NCA"                                                                 
 id_UD  = "UD"                                                                  

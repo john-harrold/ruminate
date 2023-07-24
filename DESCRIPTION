@@ -19,7 +19,6 @@ Imports:
   flextable,
   formods,
   ggplot2,
-  officer,
   onbrand (>= 1.0.3),
   PKNCA,
   plotly,
@@ -33,6 +32,7 @@ Imports:
   utils,
   yaml
 Suggests:
+  cli,
   clipr,
   gridExtra,
   knitr,

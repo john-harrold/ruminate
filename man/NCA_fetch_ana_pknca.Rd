@@ -9,7 +9,7 @@ NCA_fetch_ana_pknca(state, current_ana)
 \arguments{
 \item{state}{NCA state from \code{NCA_fetch_state()}}
 
-\item{curr_ana}{Current value in the analysis}
+\item{current_ana}{Current value in the analysis}
 }
 \value{
 Dataset from the \code{ds} field of FM_fetch_ds()
@@ -18,6 +18,7 @@ Dataset from the \code{ds} field of FM_fetch_ds()
 Fetches the PKNCA output for a specified analysis
 }
 \examples{
+library(ruminate)
 # Module IDs                                                                   
 id     = "NCA"                                                                 
 id_UD  = "UD"                                                                  

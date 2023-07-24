@@ -19,6 +19,7 @@ Takes an NCA state and an analysis list and sets that figure list
 as the value for the active figure
 }
 \examples{
+library(ruminate)
 # Module IDs                                                                   
 id     = "NCA"                                                                 
 id_UD  = "UD"                                                                  

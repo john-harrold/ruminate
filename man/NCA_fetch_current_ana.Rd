@@ -18,6 +18,7 @@ of this list is the same as the structure of \code{state$NCA$anas} in the output
 Takes an NCA state and returns the current active analysis
 }
 \examples{
+library(ruminate)
 # Module IDs                                                                   
 id     = "NCA"                                                                 
 id_UD  = "UD"                                                                  

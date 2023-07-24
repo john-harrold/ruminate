@@ -22,6 +22,7 @@ Used to convert nonstandard dose route values (i.e. "IV") to
 standard values ("intravascular").
 }
 \examples{
+if(system.file(package="readxl") !=""){
 library(readxl)
 #loading a dataset
 data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
@@ -32,12 +33,12 @@ myDS = readxl::read_excel(path=data_file, sheet="DATA")
    extravascular = c("^(?i)sc$", "^(?i)oral")
  )
 
-head(myDS[["ROUTE"]])
+utils::head(myDS[["ROUTE"]])
 
 myDS = apply_route_map(route_map = route_map,
                        route_col = "ROUTE",
                        DS        = myDS)
 
-head(myDS[["ROUTE"]])
-
+utils::head(myDS[["ROUTE"]])
+}
 }

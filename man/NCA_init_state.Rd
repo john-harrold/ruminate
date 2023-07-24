@@ -25,17 +25,3 @@ list containing an empty NCA state
 \description{
 Creates a list of the initialized module state
 }
-\examples{
-# Module IDs                                                                   
-id     = "NCA"                                                                 
-id_UD  = "UD"                                                                  
-id_DW  = "DW"                                                                  
-id_ASM = "ASM"                                                                 
-
-# We need a session variable
-session = list()
-
-FM_yaml_file  = system.file(package = "formods",  "templates", "formods.yaml") 
-MOD_yaml_file = system.file(package = "ruminate", "templates", "NCA.yaml")     
-state = NCA_init_state(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session)
-}

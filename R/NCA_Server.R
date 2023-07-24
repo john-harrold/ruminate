@@ -18,7 +18,6 @@
 #'@import tidyr
 #'@import formods
 #'@import shiny
-#'@import officer
 #'@importFrom digest digest
 #'@importFrom rlang :=
 #'@importFrom shinyAce aceEditor updateAceEditor
@@ -3037,6 +3036,7 @@ NCA_Server <- function(id,
   })
 }
 
+#'@export
 #'@title Fetch ruminate State
 #'@description Merges default app options with the changes made in the UI
 #'@param id Shiny module ID
@@ -3630,20 +3630,6 @@ NCA_fetch_state = function(id, input, session,
 #'@param id_DW  ID string for the data wrangling module to process any uploaded data
 #'@param session Shiny session variable (in app) or a list (outside of app)
 #'@return list containing an empty NCA state
-#'@examples
-#' # Module IDs                                                                   
-#' id     = "NCA"                                                                 
-#' id_UD  = "UD"                                                                  
-#' id_DW  = "DW"                                                                  
-#' id_ASM = "ASM"                                                                 
-#' 
-#' # We need a session variable
-#' session = list()
-#' 
-#  # We also need configuration files                                             
-#' FM_yaml_file  = system.file(package = "formods",  "templates", "formods.yaml") 
-#' MOD_yaml_file = system.file(package = "ruminate", "templates", "NCA.yaml")     
-#' state = NCA_init_state(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session)
 NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session){
 
   button_counters = c("button_ana_new",
@@ -4498,6 +4484,7 @@ NCA_fetch_ds = function(state){
 res}
 
 
+#'@export
 #'@title Initialize New Analysis
 #'@description Creates a new NCA analysis in an NCA module
 #'@param state NCA state from \code{NCA_fetch_state()}
@@ -4659,6 +4646,7 @@ NCA_new_ana    = function(state){
 state}
 
 
+#'@export
 #'@title Sets Current Analysis
 #'@description Takes an NCA state and an analysis list and sets that figure list
 #'as the value for the active figure
@@ -4786,7 +4774,7 @@ ana}
 #'@return Dataframe containing PKCNA metadata for NCA parameters.
 #'@examples
 #' PKNCA_meta = NCA_fetch_PKNCA_meta()
-#' head(PKNCA_meta)
+#' utils::head(PKNCA_meta)
 NCA_fetch_PKNCA_meta    = function(){
 
   res = list()
@@ -4819,6 +4807,7 @@ res}
 #'@param DS        Dataframe containing the dataset.
 #'@return Dataset with the route mapping applied.
 #'@examples
+#' if(system.file(package="readxl") !=""){
 #' library(readxl)
 #' #loading a dataset
 #' data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
@@ -4829,14 +4818,14 @@ res}
 #'    extravascular = c("^(?i)sc$", "^(?i)oral")
 #'  )
 #'
-#' head(myDS[["ROUTE"]])
+#' utils::head(myDS[["ROUTE"]])
 #'
 #' myDS = apply_route_map(route_map = route_map,
 #'                        route_col = "ROUTE",
 #'                        DS        = myDS)
 #'
-#' head(myDS[["ROUTE"]])
-#'
+#' utils::head(myDS[["ROUTE"]])
+#'}
 apply_route_map  = function(route_map  = list(),
                              route_col = NULL,
                              DS        = NULL){
@@ -4945,9 +4934,13 @@ NCA_fetch_np_meta = function(
             description =  np_comps[["description"]])
          )
     } else {
-      FM_le(state, 
-            paste0("NCA: Parameter specified in YAML is not a valid PKNCA parameter: ", nca_param),
-            entry_type="danger")
+      msg = paste0("NCA: Parameter specified in YAML is not a valid PKNCA parameter: ", nca_param)
+
+      if(system.file(package="cli")==""){
+        message(msg)
+      } else {
+        cli::cli_alert_danger(msg)
+      }
     }
   }
 
@@ -4995,6 +4988,7 @@ NCA_add_int = function(state, interval_start, interval_stop, nca_parameters){
 
 state}
 
+#'@export
 #'@title Processes Current Analysis to be Run
 #'@description Takes the current analysis and checks different aspects to for
 #'any issues to make sure it's good to go.
@@ -7063,6 +7057,7 @@ state}
 #'}
 #'@examples
 #'
+#'if(system.file(package="readxl") !=""){
 #'library(dplyr)
 #'library(readxl)
 #'library(stringr)
@@ -7088,7 +7083,7 @@ state}
 #'  col_dose   = "DOSE",
 #'  col_group  = "Cohort")
 #'
-#' head(drb_res$dose_rec)
+#' utils::head(drb_res$dose_rec)
 #'
 #'# Dataset formatted to extract dosing from rows (records)
 #'DS_rows = readxl::read_excel(path=data_file, sheet="DATA")        |>
@@ -7107,7 +7102,8 @@ state}
 #'  col_evid   = "EVID",
 #'  col_group  = "Cohort")
 #'
-#' head(drb_res$dose_rec)
+#' utils::head(drb_res$dose_rec)
+#'}
 dose_records_builder = function(
   NCA_DS       = NULL,
   dose_from    = NULL,
@@ -7247,7 +7243,7 @@ res}
 #'@title Fetch Analysis Dataset
 #'@description Fetches the dataset used for the specified analysis 
 #'@param state NCA state from \code{NCA_fetch_state()}
-#'@param curr_ana Current value in the analysis
+#'@param current_ana Current value in the analysis
 #'@return Dataset from the \code{ds} field of FM_fetch_ds()
 #'@example inst/test_apps/NCA_funcs.R
 NCA_fetch_ana_ds = function(state, current_ana){
@@ -7266,7 +7262,7 @@ ds}
 #'@title Fetch PKNCA Results Object
 #'@description Fetches the PKNCA output for a specified analysis
 #'@param state NCA state from \code{NCA_fetch_state()}
-#'@param curr_ana Current value in the analysis
+#'@param current_ana Current value in the analysis
 #'@return Dataset from the \code{ds} field of FM_fetch_ds()
 #'@example inst/test_apps/NCA_funcs.R
 NCA_fetch_ana_pknca = function(state, current_ana){

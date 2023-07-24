@@ -17,6 +17,7 @@ Takes the current analysis and checks different aspects to for
 any issues to make sure it's good to go.
 }
 \examples{
+library(ruminate)
 # Module IDs                                                                   
 id     = "NCA"                                                                 
 id_UD  = "UD"                                                                  

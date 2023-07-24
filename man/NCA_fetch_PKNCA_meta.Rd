@@ -14,5 +14,5 @@ Compiles Metadata from PKNCA
 }
 \examples{
 PKNCA_meta = NCA_fetch_PKNCA_meta()
-head(PKNCA_meta)
+utils::head(PKNCA_meta)
 }

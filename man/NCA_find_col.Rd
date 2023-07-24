@@ -44,6 +44,7 @@ The first match found is returned.
 }
 }
 \examples{
+library(ruminate)
 # Module IDs                                                                   
 id     = "NCA"                                                                 
 id_UD  = "UD"                                                                  
