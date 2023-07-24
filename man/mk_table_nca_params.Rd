@@ -77,3 +77,31 @@ format from \code{\link[onbrand]{build_span}}.
 Create paginated tables from PKNCA to use in reports and Shiny
 apps.
 }
+\examples{
+id     = "NCA"                                                                 
+id_UD  = "UD"                                                                  
+id_DW  = "DW"                                                                  
+id_ASM = "ASM"                                                                 
+
+# We need a state variable to be define                             
+ sess_res = NCA_test_mksession(session=list(),                                 
+      id     = id,                                                             
+      id_UD  = id_UD,                                                          
+      id_DW  = id_DW,                                                          
+      id_ASM = id_ASM)                                                         
+
+state = sess_res$state
+
+# Pulls out the active analysis                                                
+current_ana = NCA_fetch_current_ana(state)
+
+# This is the raw PKNCA output
+pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+
+# Parameter reporting details from the ruminate configuration
+nps  = state[["NCA"]][["nca_parameters"]][["summary"]]
+
+# Building the figure
+mk_res = mk_table_nca_params(nca_res = pknca_res, nps=nps, digits=3)
+mk_res$tables[["Table 1"]]$ft
+}

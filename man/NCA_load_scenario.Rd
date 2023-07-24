@@ -19,3 +19,6 @@ set.
 Loads a pre-defined analysis scneario from the NCA YAML config
 file.
 }
+\examples{
+# JMH add example
+}

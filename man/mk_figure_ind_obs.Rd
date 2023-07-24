@@ -51,3 +51,28 @@ a also a list containing two elements:
 Takes the output of PKNCA and creates \code{ggplot} figures faceted
 by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
 }
+\examples{
+id     = "NCA"                                                                 
+id_UD  = "UD"                                                                  
+id_DW  = "DW"                                                                  
+id_ASM = "ASM"                                                                 
+
+# We need a state variable to be define                             
+ sess_res = NCA_test_mksession(session=list(),                                 
+      id     = id,                                                             
+      id_UD  = id_UD,                                                          
+      id_DW  = id_DW,                                                          
+      id_ASM = id_ASM)                                                         
+
+state = sess_res$state
+
+# Pulls out the active analysis                                                
+current_ana = NCA_fetch_current_ana(state)
+
+# This is the raw PKNCA output
+pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+
+# Building the figure
+mk_res = mk_figure_ind_obs(nca_res = pknca_res)
+mk_res$figures$Figure_1$gg
+}

@@ -56,3 +56,28 @@ Takes the output of PKNCA and creates a tabular view of the
 individual observation data. This can be spread out of over several tables
 (pages) if necessary.
 }
+\examples{
+id     = "NCA"                                                                 
+id_UD  = "UD"                                                                  
+id_DW  = "DW"                                                                  
+id_ASM = "ASM"                                                                 
+
+# We need a state variable to be define                             
+ sess_res = NCA_test_mksession(session=list(),                                 
+      id     = id,                                                             
+      id_UD  = id_UD,                                                          
+      id_DW  = id_DW,                                                          
+      id_ASM = id_ASM)                                                         
+
+state = sess_res$state
+
+# Pulls out the active analysis                                                
+current_ana = NCA_fetch_current_ana(state)
+
+# This is the raw PKNCA output
+pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+
+# Building the figure
+mk_res = mk_table_ind_obs(nca_res = pknca_res)
+mk_res$tables[["Table 1"]]$ft
+}

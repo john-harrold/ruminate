@@ -55,4 +55,23 @@ library(readxl)
   })
 
 
+  # JMH add test for NCA_test_mksession to make sure all of the state$NCA$anas
+  # are good
+
+  #*NCA_fetch_state
+  #*NCA_fetch_code
+  #*NCA_init_state
+  #*NCA_new_ana   
+  #*NCA_set_current_ana   
+  #*NCA_find_col
+  # NCA_add_int 
+  #*NCA_fetch_ana_ds
+  #*NCA_process_current_ana
+  #*nca_builder
+  # run_nca_components
+  #*mk_table_ind_obs   
+  #*mk_figure_ind_obs   
+  #*mk_table_nca_params
+  # NCA_load_scenario
+
 }

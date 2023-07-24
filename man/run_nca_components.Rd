@@ -34,3 +34,6 @@ List with the following components:
 Takes the current state and runs the current analysis in that
 state.
 }
+\examples{
+# JMH add example
+}

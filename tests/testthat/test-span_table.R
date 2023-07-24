@@ -1,3 +1,4 @@
+library(onbrand)
 test_that("Spanning tables", {
   # First we need to create some data.
   # This will read in a test dataset:

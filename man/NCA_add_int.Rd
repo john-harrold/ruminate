@@ -22,3 +22,6 @@ State with interval added to the current analysis.
 Takes the start time, stop time, and NCA parameters and adds
 them to the intervals table
 }
+\examples{
+# JMH add example
+}

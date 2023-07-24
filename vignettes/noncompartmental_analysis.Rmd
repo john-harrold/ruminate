@@ -11,7 +11,6 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, eval=TRUE)
 require(ggplot2)
 require(rhandsontable)
-require(gridExtra)
 require(flextable)
 require(ruminate)
 # Determining if ubiquity is installed
@@ -21,6 +20,13 @@ if(system.file(package="ubiquity") == ""){
   require(ubiquity)
   ubiquity_found = TRUE
 }
+if(system.file(package="gridExtra") == ""){
+  gridExtra_found = FALSE
+} else {
+  require(gridExtra)
+  gridExtra_found = TRUE
+}
+
 # The presim variable will contain presimulated data when eval is set to true
 #presim_loaded = FALSE
 ```
@@ -54,8 +60,12 @@ som_sample = NULL
 
 
 if(ubiquity_found){
-  system_new(system_file="mab_pk", overwrite=TRUE)
-  cfg = build_system()
+  system_new(system_file="mab_pk", overwrite=TRUE, output_directory=tempdir())
+  
+  cfg = build_system(system_file         =file.path(tempdir(), "system.txt"),
+                     output_directory    =file.path(tempdir(), "output"),
+                     temporary_directory =file.path(tempdir(), "transient"))
+  
   parameters = system_fetch_parameters(cfg)
   cfg = system_zero_inputs(cfg)
   cfg = system_set_bolus(cfg, state   ="At", 
@@ -138,7 +148,9 @@ if(ubiquity_found){
 ```
 
 ```{r warning=FALSE, message=FALSE, echo=FALSE, error=FALSE, eval=TRUE, fig.width=8, fig.height=3.5}
-gridExtra::grid.arrange(p_AUC, p_AUMC, ncol=2)
+if(gridExtra_found & ubiquity_found){
+  gridExtra::grid.arrange(p_AUC, p_AUMC, ncol=2)
+}
 ```
 
 Generally NCA will determine the following directly from the data:

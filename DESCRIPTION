@@ -13,7 +13,6 @@ LazyData: FALSE
 Depends:
   R (>= 4.2.0)
 Imports:
-  cli,
   digest,
   dplyr,
   DT,
@@ -21,10 +20,11 @@ Imports:
   formods,
   ggplot2,
   officer,
-  onbrand,
+  onbrand (>= 1.0.3),
   PKNCA,
   plotly,
   rhandsontable,
+  rlang,
   shiny,
   shinyAce,
   shinyWidgets,
@@ -34,6 +34,7 @@ Imports:
   yaml
 Suggests:
   clipr,
+  gridExtra,
   knitr,
   prompter,
   rmarkdown,

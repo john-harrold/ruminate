@@ -11,19 +11,27 @@ nca_builder(state)
 JMH update the return list below}
 }
 \value{
-list containing the following elements
-\itemize{
-\item{isgood:}           Return status of the function.
-\item{msgs:}             Messages to be passed back to the user.
-\item{code_previous:}    Code to generate the dataset.
-\item{code_ana_only:}    Code for the analysis.
-\item{code_fg_ind_obs:}  Code to generate figure(s) of individual observations
-\item{code_tb_ind_obs:}  Code to generate table(s) of individual observations
-\item{code:}             Complete code to run the analysis.
-\item{obj:}              List with names of R objects used in then generated code.
-}
+NCA state with the NCA for the current analysis built.
 }
 \description{
 Takes the current analysis in the state object and creates the
 code to run the analysis
+}
+\examples{
+# Module IDs                                                                   
+id     = "NCA"                                                                 
+id_UD  = "UD"                                                                  
+id_DW  = "DW"                                                                  
+id_ASM = "ASM"                                                                 
+
+# We need a module variables to be defined
+ sess_res = NCA_test_mksession(session=list(),                                 
+      id     = id,                                                             
+      id_UD  = id_UD,                                                          
+      id_DW  = id_DW,                                                          
+      id_ASM = id_ASM)                                                         
+
+state = sess_res$state
+
+state = nca_builder(state)
 }

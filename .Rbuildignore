@@ -11,3 +11,4 @@ README.RMD
 
 ^codecov\.yml$
 ^\.github$
+vignettes/transient/*

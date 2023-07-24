@@ -20,6 +20,7 @@
 #'@import shiny
 #'@import officer
 #'@importFrom digest digest
+#'@importFrom rlang :=
 #'@importFrom shinyAce aceEditor updateAceEditor
 #'@importFrom stringr str_replace str_detect str_split
 #'@importFrom utils head
@@ -3122,6 +3123,7 @@ NCA_Server <- function(id,
 #' \item{FM_yaml_file:} App configuration file with FM as main section.
 #' \item{MOD_yaml_file:}  Module configuration file with MC as main section.
 #'}
+#'@example inst/test_apps/NCA_funcs.R
 NCA_fetch_state = function(id, input, session,
                            FM_yaml_file, MOD_yaml_file,
                            id_ASM, id_UD, id_DW, react_state){
@@ -3628,7 +3630,21 @@ NCA_fetch_state = function(id, input, session,
 #'@param id_DW  ID string for the data wrangling module to process any uploaded data
 #'@param session Shiny session variable (in app) or a list (outside of app)
 #'@return list containing an empty NCA state
-NCA_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_UD, id_DW,  session){
+#'@examples
+#' # Module IDs                                                                   
+#' id     = "NCA"                                                                 
+#' id_UD  = "UD"                                                                  
+#' id_DW  = "DW"                                                                  
+#' id_ASM = "ASM"                                                                 
+#' 
+#' # We need a session variable
+#' session = list()
+#' 
+#  # We also need configuration files                                             
+#' FM_yaml_file  = system.file(package = "formods",  "templates", "formods.yaml") 
+#' MOD_yaml_file = system.file(package = "ruminate", "templates", "NCA.yaml")     
+#' state = NCA_init_state(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session)
+NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session){
 
   button_counters = c("button_ana_new",
                       "button_ana_del",
@@ -3811,6 +3827,7 @@ state}
 #'@description Fetches the code to generate results seen in the app
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@return Character object vector with the lines of code
+#'@example inst/test_apps/NCA_funcs.R
 NCA_fetch_code = function(state){
 
   code = c()
@@ -4486,6 +4503,7 @@ res}
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@return NCA state object containing a new empty analysis and that analysis
 #'is set as the current active analyisis
+#'@example inst/test_apps/NCA_funcs.R
 NCA_new_ana    = function(state){
 
   # Incrementing the analysis counter
@@ -4647,6 +4665,7 @@ state}
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@param ana Analysis list from \code{NCA_fetch_current_ana}
 #'@return State with the current analysis updated
+#'@example inst/test_apps/NCA_funcs.R
 NCA_set_current_ana    = function(state, ana){
 
   # Current analysis ID
@@ -4683,6 +4702,7 @@ state}
 #'@param null_ok  Logical value indicating if a null result (nothing found) is
 #'       OK (default: \code{FALSE})
 #'@return Name of column found based on the rules above.
+#'@example inst/test_apps/NCA_funcs.R
 NCA_find_col             = function(curr_ana = NULL,
                                     curr_ui  = NULL,
                                     patterns = NULL,
@@ -4748,11 +4768,7 @@ value}
 #'@return List containing the details of the current analysis. The structure
 #'of this list is the same as the structure of \code{state$NCA$anas} in the output of
 #'\code{NCA_fetch_state()}.
-#'@examples
-#'# We need a state object to use below
-#'sess_res = NCA_test_mksession(session=list())
-#'state = sess_res$state
-#' current_ana = NCA_fetch_current_ana(state)
+#'@example inst/test_apps/NCA_funcs.R
 NCA_fetch_current_ana    = function(state){
 
   # Current analysis ID
@@ -4929,7 +4945,9 @@ NCA_fetch_np_meta = function(
             description =  np_comps[["description"]])
          )
     } else {
-      cli::cli_alert_danger(paste0("NCA: Parameter specified in YAML is not a valid PKNCA parameter: ", nca_param))
+      FM_le(state, 
+            paste0("NCA: Parameter specified in YAML is not a valid PKNCA parameter: ", nca_param),
+            entry_type="danger")
     }
   }
 
@@ -4945,6 +4963,8 @@ res}
 #'@param interval_stop  Interval stop time (numeric).
 #'@param nca_parameters list of NCA parameters in the interval
 #'@return State with interval added to the current analysis.
+#'@examples
+#' # JMH add example
 NCA_add_int = function(state, interval_start, interval_stop, nca_parameters){
 
   # This is a summary table of the nca parameters with the
@@ -4980,6 +5000,7 @@ state}
 #'any issues to make sure it's good to go.
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@return Current analysis list with isgood and msgs set
+#'@example inst/test_apps/NCA_funcs.R
 NCA_process_current_ana = function(state){
 
   omsgs  = c()
@@ -5207,17 +5228,24 @@ current_ana}
 #'code to run the analysis
 #'@param state NCA state from \code{NCA_fetch_state()}
 #' JMH update the return list below
-#'@return list containing the following elements
-#'\itemize{
-#'  \item{isgood:}           Return status of the function.
-#'  \item{msgs:}             Messages to be passed back to the user.
-#'  \item{code_previous:}    Code to generate the dataset.
-#'  \item{code_ana_only:}    Code for the analysis.
-#'  \item{code_fg_ind_obs:}  Code to generate figure(s) of individual observations
-#'  \item{code_tb_ind_obs:}  Code to generate table(s) of individual observations
-#'  \item{code:}             Complete code to run the analysis.
-#'  \item{obj:}              List with names of R objects used in then generated code.
-#'}
+#'@return NCA state with the NCA for the current analysis built.
+#'@examples
+#' # Module IDs                                                                   
+#' id     = "NCA"                                                                 
+#' id_UD  = "UD"                                                                  
+#' id_DW  = "DW"                                                                  
+#' id_ASM = "ASM"                                                                 
+#' 
+#' # We need a module variables to be defined
+#'  sess_res = NCA_test_mksession(session=list(),                                 
+#'       id     = id,                                                             
+#'       id_UD  = id_UD,                                                          
+#'       id_DW  = id_DW,                                                          
+#'       id_ASM = id_ASM)                                                         
+#' 
+#' state = sess_res$state
+#' 
+#' state = nca_builder(state)
 nca_builder = function(state){
 
   isgood             = TRUE
@@ -5713,6 +5741,8 @@ state}
 #'  \item{msgs:}      Error messages if any issues were encountered.
 #'  \item{nca_res:}   PKNCA results if run was successful.
 #'}
+#'@examples
+#' # JMH add example
 run_nca_components = function(
   state,
   components=c("nca",
@@ -5744,7 +5774,6 @@ run_nca_components = function(
   # Messages to pass back to the user
   msgs = c()
 
-
   # If current_ana is bad then something in the nca_builder() failed.
   # We want to pass those back to the user.
   if(current_ana[["isgood"]]){
@@ -5775,6 +5804,9 @@ run_nca_components = function(
 
         # Running the analysis and trapping any errors
         nca_run_res = formods::FM_tc(cmd, tc_env, capture)
+
+        #browser()
+
 
         # Capturing the exit status
         if(nca_run_res[["isgood"]]){
@@ -5893,13 +5925,12 @@ run_nca_components = function(
       # If we encounter a failure anywhere above we attach a generic message
       # about the current figure or table
       if(!current_ana[["isgood"]]){
-        err_msgs = paste0(c("Unable to create: ", fig_tab, "see above for details."))
+        err_msgs = paste0("Unable to create: ", fig_tab, " see above for details.")
         msgs = c(msgs, err_msgs)
       }
     }
   } else {
     msgs = c(msgs, current_ana[["msgs"]] )
-
   }
 
 
@@ -5907,6 +5938,7 @@ run_nca_components = function(
   #If there is something wrong we set that in the messages
   if(!current_ana[["isgood"]]){
     state = formods::FM_set_ui_msg(state, msgs)
+    FM_le(state, msgs, entry_type="danger")
   }
 
   # Setting the analysis checksum based on the objs portion.
@@ -5948,6 +5980,30 @@ state}
 #'@return list containing the following elements
 #'\itemize{
 #'}
+#'@examples
+#' id     = "NCA"                                                                 
+#' id_UD  = "UD"                                                                  
+#' id_DW  = "DW"                                                                  
+#' id_ASM = "ASM"                                                                 
+#'
+#' # We need a state variable to be define                             
+#'  sess_res = NCA_test_mksession(session=list(),                                 
+#'       id     = id,                                                             
+#'       id_UD  = id_UD,                                                          
+#'       id_DW  = id_DW,                                                          
+#'       id_ASM = id_ASM)                                                         
+#'
+#' state = sess_res$state
+#'
+#' # Pulls out the active analysis                                                
+#' current_ana = NCA_fetch_current_ana(state)
+#' 
+#' # This is the raw PKNCA output
+#' pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+#'
+#' # Building the figure
+#' mk_res = mk_table_ind_obs(nca_res = pknca_res)
+#' mk_res$tables[["Table 1"]]$ft
 mk_table_ind_obs = function(
   nca_res   ,
   obnd         = NULL,
@@ -6148,6 +6204,30 @@ res}
 #' \item{gg:}    A ggplot object for that page.
 #' \item{notes:} Placeholder for future notes, but NULL now.
 #'}
+#'@examples
+#' id     = "NCA"                                                                 
+#' id_UD  = "UD"                                                                  
+#' id_DW  = "DW"                                                                  
+#' id_ASM = "ASM"                                                                 
+#'
+#' # We need a state variable to be define                             
+#'  sess_res = NCA_test_mksession(session=list(),                                 
+#'       id     = id,                                                             
+#'       id_UD  = id_UD,                                                          
+#'       id_DW  = id_DW,                                                          
+#'       id_ASM = id_ASM)                                                         
+#'
+#' state = sess_res$state
+#'
+#' # Pulls out the active analysis                                                
+#' current_ana = NCA_fetch_current_ana(state)
+#' 
+#' # This is the raw PKNCA output
+#' pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+#'
+#' # Building the figure
+#' mk_res = mk_figure_ind_obs(nca_res = pknca_res)
+#' mk_res$figures$Figure_1$gg
 mk_figure_ind_obs = function(
   nca_res       ,
   OBS_LAB         = "Concentration ===CONCUNITS===",
@@ -6458,8 +6538,8 @@ obj}
 ruminate = function(host="127.0.0.1", port=3838, mksession = FALSE){
 
   # File used to indicate we're in test mode
-  ftmptest = file.path(tempdir(), "ruminate.test") 
-  
+  ftmptest = file.path(tempdir(), "ruminate.test")
+
   # Deleteing any existing files
   if(file.exists(ftmptest)){
     unlink(ftmptest)
@@ -6512,6 +6592,33 @@ ruminate = function(host="127.0.0.1", port=3838, mksession = FALSE){
 #'   \item{msgs:}        Vector of text messages describing any errors that were found.
 #'   format from \code{\link[onbrand]{build_span}}.
 #'}
+#'@examples
+#' id     = "NCA"                                                                 
+#' id_UD  = "UD"                                                                  
+#' id_DW  = "DW"                                                                  
+#' id_ASM = "ASM"                                                                 
+#'
+#' # We need a state variable to be define                             
+#'  sess_res = NCA_test_mksession(session=list(),                                 
+#'       id     = id,                                                             
+#'       id_UD  = id_UD,                                                          
+#'       id_DW  = id_DW,                                                          
+#'       id_ASM = id_ASM)                                                         
+#'
+#' state = sess_res$state
+#'
+#' # Pulls out the active analysis                                                
+#' current_ana = NCA_fetch_current_ana(state)
+#' 
+#' # This is the raw PKNCA output
+#' pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+#'
+#' # Parameter reporting details from the ruminate configuration
+#' nps  = state[["NCA"]][["nca_parameters"]][["summary"]]
+#'
+#' # Building the figure
+#' mk_res = mk_table_nca_params(nca_res = pknca_res, nps=nps, digits=3)
+#' mk_res$tables[["Table 1"]]$ft
 mk_table_nca_params = function(
   nca_res   ,
   type         = "individual",
@@ -6779,8 +6886,6 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
   FM_yaml_file  = system.file(package = "formods",  "templates", "formods.yaml")
   MOD_yaml_file = system.file(package = "ruminate", "templates", "NCA.yaml")
 
-  # empty input
-  input = list()
 
   # Creating an empty state object
   state = NCA_fetch_state(id             = id,
@@ -6792,8 +6897,6 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
                          id_UD           = id_UD,
                          id_DW           = id_DW,
                          react_state     = react_state)
-
-
 
   #------------------------------------
   # First First dose PK only with BQL values
@@ -6809,8 +6912,9 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
   current_ana[["col_evid"]]         = "EVID"
   current_ana[["col_dose"]]         = "DOSE"
   current_ana[["col_route"]]        = "ROUTE"
-  current_ana[["col_analyte"]]      = "N/A"    #Analyte
-  current_ana[["col_dur"]]          = "N/A"    #Duration
+  current_ana[["col_cycle"]]        = "DOSE_NUM"
+  current_ana[["col_analyte"]]      = "N/A"    
+  current_ana[["col_dur"]]          = "N/A"   
 
   # Defining where how dosing should be found:
   current_ana[["dose_from"]]        = "cols"
@@ -6826,10 +6930,12 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
 
   # And then this will run the intervals in the scenario:
   state = run_nca_components(state)
+
+  #browser()
   #------------------------------------
   # First First dose PK/PD with BQL values
   # Create a new analysis
-  state = NCA_new_ana(state)
+  state       = NCA_new_ana(state)
   current_ana = NCA_fetch_current_ana(state)
   # Setting the dataset:
   current_ana[["ana_dsview"]] = "DW_myDS_6"
@@ -6845,6 +6951,7 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
   current_ana[["col_dose"]]         = "DOSE"
   current_ana[["col_evid"]]         = "EVID"
   current_ana[["col_route"]]        = "ROUTE"
+  current_ana[["col_cycle"]]        = "DOSE_NUM"
   current_ana[["col_analyte"]]      = "CMT"    #Analyte
   current_ana[["col_dur"]]          = "N/A"    #Duration
 
@@ -6891,6 +6998,8 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
 #'@param ana_scenario  Short name of the analysis scenario to load from the config file.
 #'@return NCA state object with the scenario loaded and relevant notifications
 #'set.
+#'@examples
+#' # JMH add example
 NCA_load_scenario = function(state, ana_scenario){
 
     formods::FM_le(state, paste0("loading analysis scenario: ", ana_scenario))
@@ -6940,7 +7049,7 @@ state}
 #'@param col_time Name of column with time since first dose.
 #'@param col_ntime Name of column with time since the last dose (required with 'dose_from="cols").
 #'@param col_route Name of column with route information.
-#'@param col_dose Name of column with last dose given. 
+#'@param col_dose Name of column with last dose given.
 #'@param col_cycle Name of column with dose cycle (required with 'dose_from="cols").
 #'@param col_dur Name of column with dose duration.
 #'@param col_evid Name of column with event ID (required with 'dose_from="rows").
@@ -7133,3 +7242,33 @@ dose_records_builder = function(
              dose_rec = dose_rec)
 
 res}
+
+#'@export
+#'@title Fetch Analysis Dataset
+#'@description Fetches the dataset used for the specified analysis 
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@param curr_ana Current value in the analysis
+#'@return Dataset from the \code{ds} field of FM_fetch_ds()
+#'@example inst/test_apps/NCA_funcs.R
+NCA_fetch_ana_ds = function(state, current_ana){
+  ds = NULL
+  dsview      = current_ana[["ana_dsview"]]
+  if(is.null(dsview)){
+    FM_le(state      = state,
+          paste0("Unable to find dsview >", dsview ,"< for the current analysis"),
+          entry_type = "danger")
+  } else {
+    ds          = state[["NCA"]][["DSV"]][["ds"]][[dsview]][["DS"]]
+  }
+ds}
+
+#'@export
+#'@title Fetch PKNCA Results Object
+#'@description Fetches the PKNCA output for a specified analysis
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@param curr_ana Current value in the analysis
+#'@return Dataset from the \code{ds} field of FM_fetch_ds()
+#'@example inst/test_apps/NCA_funcs.R
+NCA_fetch_ana_pknca = function(state, current_ana){
+  pknca_res = current_ana[["objs"]][["res"]][["value"]]
+pknca_res}
