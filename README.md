@@ -3,13 +3,19 @@
 
 # ruminate <img src="man/figures/logo.png" align="right" height="138.5" />
 
+<!-- 
 ![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate)
+-->
+<!-- badges: start -->
+
 ![Active](https://www.repostatus.org/badges/latest/active.svg)
 [![Lifecycle:
 Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![Codecov test
 coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
 [![R-CMD-check](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml)
+
+<!-- badges: end -->
 
 The goal of `{ruminate}` is to facilitate exploration of pharmacometrics
 data. This is done by creating a Shiny interface to different tools for
@@ -48,12 +54,14 @@ and `{formods}`.
 
 # Getting started
 
+## Running in RStudio
+
 ``` r
 library(ruminate)
 ruminate()
 ```
 
-# Running `{ruminate}` in a Docker container
+## Running in a Docker container
 
 Note this uses an `x86` image. So it will only work on Intel or AMD
 cpus. This means that you wont get very far with an M1 mac. If you want,

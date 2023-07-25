@@ -91,7 +91,12 @@
 <img src="logo.png" class="logo" alt=""><h1 id="ruminate-">ruminate <a class="anchor" aria-label="anchor" href="#ruminate-"></a>
 </h1>
 </div>
-<p><img src="https://cranlogs.r-pkg.org/badges/ruminate" alt="cranlogs"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Active"><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: Experimental"></a> <a href="https://app.codecov.io/gh/john-harrold/ruminate?branch=master" class="external-link"><img src="https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg" alt="Codecov test coverage"></a> <a href="https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></p>
+<!-- 
+![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate)
+-->
+<!-- badges: start -->
+
+<!-- badges: end -->
 <p>The goal of <a href="https://ruminate.ubiquity.tools/" class="external-link">ruminate</a> is to facilitate exploration of pharmacometrics data. This is done by creating a Shiny interface to different tools for data transformation (<a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a> and <a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a>), plotting (<a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>), and noncompartmental analysis (<a href="https://billdenney.github.io/pknca/" class="external-link">PKNCA</a>). These results can be reported in Excel, Word or PowerPoint. The state of the app can be saved and loaded at a later date. When saved, a script is generated to reproduce the different actions in the Shiny interface.</p>
 </div>
 <div class="section level1">
@@ -118,13 +123,16 @@ install.packages("ruminate")
 <div class="section level1">
 <h1 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h1>
+<div class="section level2">
+<h2 id="running-in-rstudio">Running in RStudio<a class="anchor" aria-label="anchor" href="#running-in-rstudio"></a>
+</h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ruminate.ubiquity.tools/" class="external-link">ruminate</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/ruminate.html">ruminate</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level1">
-<h1 id="running-ruminate-in-a-docker-container">Running <code>{ruminate}</code> in a Docker container<a class="anchor" aria-label="anchor" href="#running-ruminate-in-a-docker-container"></a>
-</h1>
+<div class="section level2">
+<h2 id="running-in-a-docker-container">Running in a Docker container<a class="anchor" aria-label="anchor" href="#running-in-a-docker-container"></a>
+</h2>
 <p>Note this uses an <code>x86</code> image. So it will only work on Intel or AMD cpus. This means that you wont get very far with an M1 mac. If you want, you can download the Docker file <a href="https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container" class="external-link">here</a>. This will build the docker image from the repository on GitHub.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> ruminate <span class="at">--no-cache</span>  https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container</span></code></pre></div>
 <p>This will run the Docker image locally:</p>
@@ -136,6 +144,7 @@ install.packages("ruminate")
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> push <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
 <p>You can use this to pull the image from DockerHub:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
+</div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
@@ -170,7 +179,14 @@ install.packages("ruminate")
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: Experimental"></a></li>
+<li><a href="https://app.codecov.io/gh/john-harrold/ruminate?branch=master" class="external-link"><img src="https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>

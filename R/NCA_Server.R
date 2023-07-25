@@ -4956,8 +4956,6 @@ res}
 #'@param interval_stop  Interval stop time (numeric).
 #'@param nca_parameters list of NCA parameters in the interval
 #'@return State with interval added to the current analysis.
-#'@examples
-#' # JMH add example
 NCA_add_int = function(state, interval_start, interval_stop, nca_parameters){
 
   # This is a summary table of the nca parameters with the
@@ -6992,8 +6990,6 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
 #'@param ana_scenario  Short name of the analysis scenario to load from the config file.
 #'@return NCA state object with the scenario loaded and relevant notifications
 #'set.
-#'@examples
-#' # JMH add example
 NCA_load_scenario = function(state, ana_scenario){
 
     formods::FM_le(state, paste0("loading analysis scenario: ", ana_scenario))
