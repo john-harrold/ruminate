@@ -85,7 +85,9 @@ ui <- shinydashboard::dashboardPage(
   shinydashboard::dashboardHeader(title="ruminate"),
   shinydashboard::dashboardSidebar(
      shinydashboard::sidebarMenu(
-       shinydashboard::menuItem("Load/Save",       tabName="loadsave",    icon=icon("arrow-down-up-across-line")) ,
+       shinydashboard::menuItem("Load/Save",       
+                                tabName="loadsave",    
+                                icon=icon("arrow-down-up-across-line")) ,
        shinydashboard::menuItem("Transform Data",  tabName="wrangle",     icon=icon("shuffle")),
        shinydashboard::menuItem("Visualize",       tabName="plot",        icon=icon("chart-line")),
        shinydashboard::menuItem("NCA",             tabName="nca",         icon=icon("chart-area"))
