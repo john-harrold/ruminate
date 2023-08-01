@@ -25,12 +25,20 @@ in Excel, Word or PowerPoint. The state of the app can be saved and
 loaded at a later date. When saved, a script is generated to reproduce
 the different actions in the Shiny interface.
 
-# Installation
+# Deployed example in the cloud
+
+You can point your web browser to
+[runrumiate.ubiquity.tools](https://runruminate.ubiquity.tools) and try
+the development version of ruminate. Keep in mind this is a public
+server. No data is tracked or kept, but it is open to the public. So be
+careful about uploading confidential data. Also know this is a single
+instance and if many people are using it at once it can be slow.
+
+# Local installation
 
 <!---
 You can install the released version of ``rumiante`` from [CRAN](https://cran.r-project.org/package=ruminate) with:
-
-``` r
+&#10;``` r
 install.packages("ruminate")
 ```
 --->
@@ -52,8 +60,6 @@ Note that because `{ruminate}` depends on `{formods}` and `{onbrand}`
 you will need to first install the development versions of `{onbrand}`
 and `{formods}`.
 
-# Getting started
-
 ## Running in RStudio
 
 ``` r
@@ -61,7 +67,7 @@ library(ruminate)
 ruminate()
 ```
 
-## Running in a Docker container
+# Running in a Docker container
 
 Note this uses an `x86` image. So it will only work on Intel or AMD
 cpus. This means that you wont get very far with an M1 mac. If you want,

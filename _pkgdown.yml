@@ -27,6 +27,9 @@ reference:
 #    - starts_with("NCA_")
 navbar:
   left:
+  - text: "Try Online"
+    icon: fas fa-cloud
+    href: https://runruminate.ubiquity.tools/
   - text: "Tutorial"
     icon: fas fa-chalkboard-teacher
     menu:

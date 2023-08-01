@@ -67,6 +67,7 @@ library(shinydashboard)
 library(prompter)
 #library(utils)
 
+tags$style("@import url(https://use.fontawesome.com/releases/v6.4.0/css/all.css);")
 
 # You can copy these locally and customize them for your own needs. Simply
 # change the assignment to the local copy you've modified.
@@ -94,19 +95,38 @@ CSS <- "
   margin-bottom: 20px;
 }
 "
+
 #https://fontawesome.com/icons?from=io
-logo_url = "https://raw.githubusercontent.com/john-harrold/ruminate/main/man/figures/logo.png"
-#logo_url = paste0("file://", system.file(package = "ruminate","help","figures","logo.png"))
-data_url =
-"https://github.com/john-harrold/formods/raw/master/inst/test_data/TEST_DATA.xlsx"
+logo_url = 
+  "https://raw.githubusercontent.com/john-harrold/ruminate/main/man/figures/logo.png"
+data_url = 
+  "https://github.com/john-harrold/formods/raw/master/inst/test_data/TEST_DATA.xlsx"
+run_url  = 
+  "https://runruminate.ubiquity.tools/"
+use_url  = 
+  "https://useruminate.ubiquity.tools/"
+main_url = 
+  "https://ruminate.ubiquity.tools/"
+issue_url =
+  "https://github.com/john-harrold/ruminate/issues"
 
 intro_text = tags$p(
-"Ruminate is a shiny module for pharmacometric data process,
+"Ruminate is a shiny module for pharmacometric data processing,
 visualization, and analysis. It consists of separate shiny modules that
-provide interfaces into common R packages and provides the underlying code
-to facilitate usage of those packages and to provide reproducable analyses.
-To give it a try you can Download the test dataset ",
-tags$a("here", href=data_url),".")
+provide interfaces into common R packages and provides the underlying code. 
+This is done to facilitate usage of those packages and to provide reproducible
+analyses." , 
+tags$li( "To give it a try you can download a test dataset ", 
+        tags$a("here", href=data_url),""),
+tags$li( "Go to  ", 
+        tags$a("useruminate.ubiquity.tools", href=use_url)," for a video
+        demonstrating how to use ruminate"),
+tags$li( "To find out more visit  ", 
+        tags$a("ruminate.ubiquity.tools", href=main_url),""),
+tags$li( "If you run into any problems, have questions, or want a feature please
+        visit the ", 
+        tags$a("issues", href=issue_url)," page")
+)
 
 # intro_text = "Ruminate is a shiny module for pharmacometric data process,
 # visualization, and analysis. It consists of separate shiny modules that

@@ -18,7 +18,14 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="external-link nav-link" href="https://runruminate.ubiquity.tools/">
+    <span class="fas fa fas fa-cloud"></span>
+     
+    Try Online
+  </a>
+</li>
+<li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown--tutorial">
     <span class="fas fa fas fa-chalkboard-teacher"></span>
      
@@ -148,6 +155,7 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/etiennebacher/prompter" class="external-link">prompter</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">#library(utils)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">style</span><span class="op">(</span><span class="st">"@import url(https://use.fontawesome.com/releases/v6.4.0/css/all.css);"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can copy these locally and customize them for your own needs. Simply</span></span></span>
 <span class="r-in"><span><span class="co"># change the assignment to the local copy you've modified.</span></span></span>
@@ -175,19 +183,38 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span><span class="st">  margin-bottom: 20px;</span></span></span>
 <span class="r-in"><span><span class="st">}</span></span></span>
 <span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#https://fontawesome.com/icons?from=io</span></span></span>
-<span class="r-in"><span><span class="va">logo_url</span> <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/john-harrold/ruminate/main/man/figures/logo.png"</span></span></span>
-<span class="r-in"><span><span class="co">#logo_url = paste0("file://", system.file(package = "ruminate","help","figures","logo.png"))</span></span></span>
-<span class="r-in"><span><span class="va">data_url</span> <span class="op">=</span></span></span>
-<span class="r-in"><span><span class="st">"https://github.com/john-harrold/formods/raw/master/inst/test_data/TEST_DATA.xlsx"</span></span></span>
+<span class="r-in"><span><span class="va">logo_url</span> <span class="op">=</span> </span></span>
+<span class="r-in"><span>  <span class="st">"https://raw.githubusercontent.com/john-harrold/ruminate/main/man/figures/logo.png"</span></span></span>
+<span class="r-in"><span><span class="va">data_url</span> <span class="op">=</span> </span></span>
+<span class="r-in"><span>  <span class="st">"https://github.com/john-harrold/formods/raw/master/inst/test_data/TEST_DATA.xlsx"</span></span></span>
+<span class="r-in"><span><span class="va">run_url</span>  <span class="op">=</span> </span></span>
+<span class="r-in"><span>  <span class="st">"https://runruminate.ubiquity.tools/"</span></span></span>
+<span class="r-in"><span><span class="va">use_url</span>  <span class="op">=</span> </span></span>
+<span class="r-in"><span>  <span class="st">"https://useruminate.ubiquity.tools/"</span></span></span>
+<span class="r-in"><span><span class="va">main_url</span> <span class="op">=</span> </span></span>
+<span class="r-in"><span>  <span class="st">"https://ruminate.ubiquity.tools/"</span></span></span>
+<span class="r-in"><span><span class="va">issue_url</span> <span class="op">=</span></span></span>
+<span class="r-in"><span>  <span class="st">"https://github.com/john-harrold/ruminate/issues"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">intro_text</span> <span class="op">=</span> <span class="va">tags</span><span class="op">$</span><span class="fu">p</span><span class="op">(</span></span></span>
-<span class="r-in"><span><span class="st">"Ruminate is a shiny module for pharmacometric data process,</span></span></span>
+<span class="r-in"><span><span class="st">"Ruminate is a shiny module for pharmacometric data processing,</span></span></span>
 <span class="r-in"><span><span class="st">visualization, and analysis. It consists of separate shiny modules that</span></span></span>
-<span class="r-in"><span><span class="st">provide interfaces into common R packages and provides the underlying code</span></span></span>
-<span class="r-in"><span><span class="st">to facilitate usage of those packages and to provide reproducable analyses.</span></span></span>
-<span class="r-in"><span><span class="st">To give it a try you can Download the test dataset "</span>,</span></span>
-<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">a</span><span class="op">(</span><span class="st">"here"</span>, href<span class="op">=</span><span class="va">data_url</span><span class="op">)</span>,<span class="st">"."</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="st">provide interfaces into common R packages and provides the underlying code. </span></span></span>
+<span class="r-in"><span><span class="st">This is done to facilitate usage of those packages and to provide reproducible</span></span></span>
+<span class="r-in"><span><span class="st">analyses."</span> , </span></span>
+<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span> <span class="st">"To give it a try you can download a test dataset "</span>, </span></span>
+<span class="r-in"><span>        <span class="va">tags</span><span class="op">$</span><span class="fu">a</span><span class="op">(</span><span class="st">"here"</span>, href<span class="op">=</span><span class="va">data_url</span><span class="op">)</span>,<span class="st">""</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span> <span class="st">"Go to  "</span>, </span></span>
+<span class="r-in"><span>        <span class="va">tags</span><span class="op">$</span><span class="fu">a</span><span class="op">(</span><span class="st">"useruminate.ubiquity.tools"</span>, href<span class="op">=</span><span class="va">use_url</span><span class="op">)</span>,<span class="st">" for a video</span></span></span>
+<span class="r-in"><span><span class="st">        demonstrating how to use ruminate"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span> <span class="st">"To find out more visit  "</span>, </span></span>
+<span class="r-in"><span>        <span class="va">tags</span><span class="op">$</span><span class="fu">a</span><span class="op">(</span><span class="st">"ruminate.ubiquity.tools"</span>, href<span class="op">=</span><span class="va">main_url</span><span class="op">)</span>,<span class="st">""</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span> <span class="st">"If you run into any problems, have questions, or want a feature please</span></span></span>
+<span class="r-in"><span><span class="st">        visit the "</span>, </span></span>
+<span class="r-in"><span>        <span class="va">tags</span><span class="op">$</span><span class="fu">a</span><span class="op">(</span><span class="st">"issues"</span>, href<span class="op">=</span><span class="va">issue_url</span><span class="op">)</span>,<span class="st">" page"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># intro_text = "Ruminate is a shiny module for pharmacometric data process,</span></span></span>
 <span class="r-in"><span><span class="co"># visualization, and analysis. It consists of separate shiny modules that</span></span></span>
