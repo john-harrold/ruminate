@@ -56,6 +56,7 @@ Merges default app options with the changes made in the UI
 }
 \examples{
 if(interactive()){
+# original file: inst/templates/ruminate.R
 library(formods)
 library(ruminate)
 
@@ -116,13 +117,13 @@ visualization, and analysis. It consists of separate shiny modules that
 provide interfaces into common R packages and provides the underlying code. 
 This is done to facilitate usage of those packages and to provide reproducible
 analyses." , 
+tags$li( "To find out more visit  ", 
+        tags$a("ruminate.ubiquity.tools", href=main_url),""),
 tags$li( "To give it a try you can download a test dataset ", 
         tags$a("here", href=data_url),""),
 tags$li( "Go to  ", 
         tags$a("useruminate.ubiquity.tools", href=use_url)," for a video
         demonstrating how to use ruminate"),
-tags$li( "To find out more visit  ", 
-        tags$a("ruminate.ubiquity.tools", href=main_url),""),
 tags$li( "If you run into any problems, have questions, or want a feature please
         visit the ", 
         tags$a("issues", href=issue_url)," page")
@@ -166,7 +167,8 @@ ui <- shinydashboard::dashboardPage(
                shinydashboard::box(title="Load Dataset", width=12,
                  fluidRow(
                    column(width=6,
-                     div(style="display:inline-block;width:100\%", htmlOutput(NS("UD", "ui_ud_load_data"))),
+                     div(style="display:inline-block;width:100\%", 
+                     htmlOutput(NS("UD", "ui_ud_load_data"))),
                      htmlOutput(NS("UD", "ui_ud_clean")),
                      htmlOutput(NS("UD", "ui_ud_select_sheets")),
                      htmlOutput(NS("UD", "ui_ud_text_load_result"))),

@@ -20,7 +20,7 @@ Imports:
   formods,
   ggplot2,
   onbrand (>= 1.0.3),
-  PKNCA,
+  PKNCA (>= 0.10.2),
   plotly,
   rhandsontable,
   rlang,
