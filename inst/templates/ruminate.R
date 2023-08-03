@@ -91,7 +91,8 @@ ui <- shinydashboard::dashboardPage(
                                 icon=icon("arrow-down-up-across-line")) ,
        shinydashboard::menuItem("Transform Data",  tabName="wrangle",     icon=icon("shuffle")),
        shinydashboard::menuItem("Visualize",       tabName="plot",        icon=icon("chart-line")),
-       shinydashboard::menuItem("NCA",             tabName="nca",         icon=icon("chart-area"))
+       shinydashboard::menuItem("NCA",             tabName="nca",         icon=icon("chart-area")),
+       shinydashboard::menuItem("App Info",        tabName="sysinfo",     icon=icon("book-medical"))
      )
   ),
   shinydashboard::dashboardBody(
@@ -106,32 +107,48 @@ ui <- shinydashboard::dashboardPage(
                htmlOutput(NS("NCA",  "NCA_ui_compact")))))
                ),
        shinydashboard::tabItem(tabName="loadsave",
-               shinydashboard::box(title="Load Dataset", width=12,
-                 fluidRow(
-                   column(width=6,
-                     div(style="display:inline-block;width:100%", 
-                     htmlOutput(NS("UD", "ui_ud_load_data"))),
-                     htmlOutput(NS("UD", "ui_ud_clean")),
-                     htmlOutput(NS("UD", "ui_ud_select_sheets")),
-                     htmlOutput(NS("UD", "ui_ud_text_load_result"))),
-                   column(width=6,
-                       tags$p(
-                           tags$img(
-                           class = "wrapfig",
-                           src   = logo_url,
-                           width = 150,
-                           alt = "formods logo" ),
-                       intro_text
-                       ))
-                 ),
+         #     shinydashboard::box(title=NULL, width=12,
+               shinydashboard::tabBox(
+                 width = 12,
+                 title = NULL,
+                 shiny::tabPanel(id="load_data",
+                          title=tagList(shiny::icon("file-arrow-up"),
+                                        "Load Data"),
+                   fluidRow(
+                     column(width=6,
+                       div(style="display:inline-block;width:100%", 
+                       htmlOutput(NS("UD", "ui_ud_load_data"))),
+                       htmlOutput(NS("UD", "ui_ud_clean")),
+                       htmlOutput(NS("UD", "ui_ud_select_sheets")),
+                       htmlOutput(NS("UD", "ui_ud_text_load_result"))),
+                     column(width=6,
+                         tags$p(
+                             tags$img(
+                             class = "wrapfig",
+                             src   = logo_url,
+                             width = 150,
+                             alt = "formods logo" ),
+                         intro_text
+                         ))
+                   ),
                  fluidRow(
                    column(width=12,
                           div(style="display:inline-block;vertical-align:top",
                                     htmlOutput(NS("UD", "ui_ud_data_preview")))
                           ))
-               ),
-               shinydashboard::box(title="Save or Load Analysis", width=12,
-                   htmlOutput(NS("ASM", "ui_asm_compact")))
+                 ),
+                 shiny::tabPanel(id="save_state",
+                          title=tagList(shiny::icon("arrow-down-up-across-line"),
+                                        "Save or Load Analysis"),
+                 fluidRow(
+                   column(width=5,
+                          div(style="display:inline-block;vertical-align:top",
+                   htmlOutput(NS("ASM", "ui_asm_compact"))
+                   ))
+                   )
+                 )
+               ) 
+         #     ),
                ),
        shinydashboard::tabItem(tabName="wrangle",
                shinydashboard::box(title="Transform and Create Views of Your Data", width=12,
@@ -141,7 +158,24 @@ ui <- shinydashboard::dashboardPage(
                ),
        shinydashboard::tabItem(tabName="plot",
                shinydashboard::box(title="Visualize Data", width=12,
-               htmlOutput(NS("FG",  "FG_ui_compact"))))
+               htmlOutput(NS("FG",  "FG_ui_compact")))),
+       shinydashboard::tabItem(tabName="sysinfo",
+         #     box(title="System Details", width=12,
+               shinydashboard::tabBox(
+                 width = 12,
+                 title = NULL,
+                 shiny::tabPanel(id="sys_details",
+                          title=tagList(shiny::icon("ghost"),
+                                        "Deployment Details"),
+                 htmlOutput(NS("ASM", "ui_asm_sys_detials"))
+                 ),
+                 shiny::tabPanel(id="sys_log",
+                          title=tagList(shiny::icon("clipboard-list"),
+                                        "App Log"),
+                 verbatimTextOutput(NS("ASM", "ui_asm_sys_log"))
+                 )
+         #       )
+               ))
       )
     )
   )
