@@ -7040,9 +7040,9 @@ state}
 #'@param col_ntime Name of column with time since the last dose (required with \code{dose_from="cols"}).
 #'@param col_route Name of column with route information.
 #'@param col_dose Name of column with last dose given.
-#'@param col_cycle Name of column with dose cycle (required with 'dose_from="cols").
+#'@param col_cycle Name of column with dose cycle (required with \code{dose_from="cols"}).
 #'@param col_dur Name of column with dose duration.
-#'@param col_evid Name of column with event ID (required with 'dose_from="rows").
+#'@param col_evid Name of column with event ID (required with \code{dose_from="rows"}).
 #'@param col_analyte Name of column with analyte (optional).
 #'@param col_group Names of columns with grouping information (optionl).
 #'@return list containing the following elements

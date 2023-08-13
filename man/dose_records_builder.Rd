@@ -34,11 +34,11 @@ dose_records_builder(
 
 \item{col_dose}{Name of column with last dose given.}
 
-\item{col_cycle}{Name of column with dose cycle (required with 'dose_from="cols").}
+\item{col_cycle}{Name of column with dose cycle (required with \code{dose_from="cols"}).}
 
 \item{col_dur}{Name of column with dose duration.}
 
-\item{col_evid}{Name of column with event ID (required with 'dose_from="rows").}
+\item{col_evid}{Name of column with event ID (required with \code{dose_from="rows"}).}
 
 \item{col_analyte}{Name of column with analyte (optional).}
 
