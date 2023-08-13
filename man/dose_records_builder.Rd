@@ -28,7 +28,7 @@ dose_records_builder(
 
 \item{col_time}{Name of column with time since first dose.}
 
-\item{col_ntime}{Name of column with time since the last dose (required with 'dose_from="cols").}
+\item{col_ntime}{Name of column with time since the last dose (required with \code{dose_from="cols"}).}
 
 \item{col_route}{Name of column with route information.}
 

@@ -7037,7 +7037,7 @@ state}
 #'@param dose_from Method of dose extraction either "cols" or "rows".
 #'@param col_id Name of column with subject ID.
 #'@param col_time Name of column with time since first dose.
-#'@param col_ntime Name of column with time since the last dose (required with 'dose_from="cols").
+#'@param col_ntime Name of column with time since the last dose (required with \code{dose_from="cols"}).
 #'@param col_route Name of column with route information.
 #'@param col_dose Name of column with last dose given.
 #'@param col_cycle Name of column with dose cycle (required with 'dose_from="cols").
