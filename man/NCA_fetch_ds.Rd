@@ -10,8 +10,6 @@ NCA_fetch_ds(state)
 \item{state}{NCA state from \code{NCA_fetch_state()}}
 }
 \value{
-Character object vector with the lines of code
-
 list containing the following elements
 \itemize{
 \item{isgood:}    Return status of the function.

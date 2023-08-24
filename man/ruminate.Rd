@@ -17,7 +17,8 @@ ruminate(host = "127.0.0.1", port = 3838, mksession = FALSE)
 for app testing (FALSE)}
 }
 \value{
-Nothing.
+Nothing is returned, this function just runs the built-in ruminate
+app.
 }
 \description{
 This is done by creating a Shiny interface to different tools for data

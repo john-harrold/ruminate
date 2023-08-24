@@ -12,7 +12,7 @@ NCA_fetch_current_obj(state, obj_type)
 \item{obj_type}{Type of object to return (either "table" or "figure").}
 }
 \value{
-list with a format that depends on the obj_type.
+List with a format that depends on the obj_type.
 For figures:
 \itemize{
 \item{ggplot:}   ggplot object of the figure.

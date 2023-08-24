@@ -55,7 +55,8 @@ id_ASM = "ASM"
       id     = id,                                                             
       id_UD  = id_UD,                                                          
       id_DW  = id_DW,                                                          
-      id_ASM = id_ASM)                                                         
+      id_ASM = id_ASM,
+      full_session=FALSE)
                                                                                
 # Extracting the session and input variables                                   
 session      = sess_res$session                                                

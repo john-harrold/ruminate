@@ -12,7 +12,7 @@ NCA_fetch_np_meta(
 \item{MOD_yaml_file}{Module configuration file with MC as main section.}
 }
 \value{
-list with the following elements:
+List with the following elements:
 \itemize{
 \item{choices:} List parameter choices grouped by values specified in the module configuration file.
 \item{summary:} Data frame with meta data about the NCA parameters with

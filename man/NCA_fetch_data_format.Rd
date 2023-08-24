@@ -12,7 +12,7 @@ NCA_fetch_data_format(
 \item{MOD_yaml_file}{Module configuration file with MC as main section.}
 }
 \value{
-list with details about the data formats
+List with details about the data formats
 }
 \description{
 Use this to get information about data formats.

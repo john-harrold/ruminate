@@ -3867,27 +3867,6 @@ code}
 #'  \item{msgs:}      Messages to be passed back to the user.
 #'  \item{rpt:}       Report with any additions passed back to the user.
 #'}
-#'@seealso \code{\link[formods]{FM_generate_report}}
-#'@examples
-#'
-#'# We need a state object to use below
-#'sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
-#'state = sess_res$state
-#'
-#'rpt = list(summary = list(), sheets=list())
-#'
-#'rpt_res = NCA_append_report(state,
-#'  rpt     = rpt,
-#'  rpttype = "xlsx")
-#'
-#'# Shows if report elements are present
-#'rpt_res$hasrptele
-#'
-#'# Code chunk to generate report element
-#'cat(paste(rpt_res$code, collapse="\n"))
-#'
-#'# Tabular summary of data views
-#'rpt_res$rpt$summary
 #'@seealso \code{\link{FM_generate_report}}
 #'@examples
 #' # We need a state object to use below
@@ -3909,9 +3888,6 @@ code}
 #'
 #'# Code chunk to generate report element
 #'cat(paste(rpt_res$code, collapse="\n"))
-#'
-#'# Tabular results from the first NCA analysis
-#'rpt_res$rpt$sheets$NCA_1_RES
 NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 
   isgood    = TRUE
@@ -4369,7 +4345,6 @@ res}
 #'@title Fetch Module Datasets
 #'@description Fetches the datasets contained in the module
 #'@param state NCA state from \code{NCA_fetch_state()}
-#'@return Character object vector with the lines of code
 #'@return list containing the following elements
 #'\itemize{
 #'  \item{isgood:}    Return status of the function.
@@ -4850,7 +4825,7 @@ DS}
 #'@title Fetches Details About Data Requirements
 #'@description Use this to get information about data formats.
 #'@param MOD_yaml_file  Module configuration file with MC as main section.
-#'@return list with details about the data formats
+#'@return List with details about the data formats
 #'@examples
 #' NCA_fetch_data_format()
 NCA_fetch_data_format = function(
@@ -4871,7 +4846,7 @@ res}
 #'@description This provides meta information about NCA parameters. This
 #'includes parameter names, text descriptions, formatting (md and LaTeX).
 #'@param MOD_yaml_file  Module configuration file with MC as main section.
-#'@return list with the following elements:
+#'@return List with the following elements:
 #' \itemize{
 #'   \item{choices:} List parameter choices grouped by values specified in the module configuration file.
 #'   \item{summary:} Data frame with meta data about the NCA parameters with
@@ -5971,7 +5946,7 @@ state}
 #'@param rows_by Can be either "time" or "id". If it is "time", there will be a
 #'column for time and separate column for each subject ID. If rows_by is set
 #'to "id" there will be a column for ID and a column for each individual time.
-#'@return list containing the following elements
+#'@return List containing the following elements
 #'\itemize{
 #'   \item{isgood:}      Boolean indicating the exit status of the function.
 #'   \item{one_table:}   Dataframe of the entire table with the first lines containing the header.
@@ -6199,7 +6174,7 @@ res}
 #'@param scales     String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}.
 #'@param nfrows     Number of facet rows per page.
 #'@param nfcols     Number of facet cols per page.
-#'@return list containing the element \code{figures} which is a list of figure
+#'@return List containing the element \code{figures} which is a list of figure
 #'        pages (\code{"Figure 1"}, \code{"Figure 2"}, etc.). Each of these is
 #'        a also a list containing two elements:
 #'\itemize{
@@ -6401,7 +6376,7 @@ res}
 #'by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@param obj_type Type of object to return (either "table" or "figure").
-#'@return list with a format that depends on the obj_type.
+#'@return List with a format that depends on the obj_type.
 #' For figures:
 #'\itemize{
 #'  \item{ggplot:}   ggplot object of the figure.
@@ -6533,7 +6508,8 @@ obj}
 #'@param port Port number for the app (3838)
 #'@param mksession Boolean value, when TRUE will load test session data
 #'for app testing (FALSE)
-#'@return Nothing.
+#'@return Nothing is returned, this function just runs the built-in ruminate
+#'app.
 #'@examples
 #'if (interactive()) {
 #' ruminate()

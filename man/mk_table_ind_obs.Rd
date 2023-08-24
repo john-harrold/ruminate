@@ -47,7 +47,7 @@ column for time and separate column for each subject ID. If rows_by is set
 to "id" there will be a column for ID and a column for each individual time.}
 }
 \value{
-list containing the following elements
+List containing the following elements
 \itemize{
 \item{isgood:}      Boolean indicating the exit status of the function.
 \item{one_table:}   Dataframe of the entire table with the first lines containing the header.

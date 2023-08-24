@@ -39,7 +39,7 @@ mk_figure_ind_obs(
 \item{nfcols}{Number of facet cols per page.}
 }
 \value{
-list containing the element \code{figures} which is a list of figure
+List containing the element \code{figures} which is a list of figure
 pages (\code{"Figure 1"}, \code{"Figure 2"}, etc.). Each of these is
 a also a list containing two elements:
 \itemize{
