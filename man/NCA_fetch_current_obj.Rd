@@ -37,7 +37,7 @@ by subject id highlighting of certain NCA aspects (e.g. points used for half-lif
 }
 \examples{
 # We need a state object to use below
-sess_res = NCA_test_mksession(session=list())
+sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
 state = sess_res$state
 
 # Current active table:

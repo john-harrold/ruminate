@@ -126,7 +126,7 @@ generated (<code>FALSE</code>).</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># We need a state object to use below</span></span></span>
-<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="NCA_test_mksession.html">NCA_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="NCA_test_mksession.html">NCA_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → UD: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → UD:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → UD:   dest:   file.path("config","report.docx")</span>
@@ -212,57 +212,7 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:fc53810392ee2a4aef60c367cdb40cbf</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: loading analysis scenario: sd_iv</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:fc4933035bcd2e86f96bd4fde8c43c1e</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:2e04a0b31ec9937217100921b616e131</span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">state</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rpt</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>summary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, sheets<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -291,30 +241,14 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK NCA Analysis Example (raw NCA results)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_2_RES"]]=NCA_2_table_ind_params[["one_table"]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_2_RES",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK/PD NCA Analysis Example (indiviudal results)"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_2_RAW"]]=as.data.frame(NCA_2_res)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_2_RAW",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK/PD NCA Analysis Example (raw NCA results)"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Tabular summary of data views</span></span></span>
 <span class="r-in"><span><span class="va">rpt_res</span><span class="op">$</span><span class="va">rpt</span><span class="op">$</span><span class="va">summary</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Sheet_Name                                     Description</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  NCA_1_RES    PK NCA Analysis Example (indiviudal results)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  NCA_1_RAW       PK NCA Analysis Example (raw NCA results)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  NCA_2_RES PK/PD NCA Analysis Example (indiviudal results)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  NCA_2_RAW    PK/PD NCA Analysis Example (raw NCA results)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Sheet_Name                                  Description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  NCA_1_RES PK NCA Analysis Example (indiviudal results)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  NCA_1_RAW    PK NCA Analysis Example (raw NCA results)</span>
 <span class="r-in"><span><span class="co"># We need a state object to use below</span></span></span>
-<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="NCA_test_mksession.html">NCA_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="NCA_test_mksession.html">NCA_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → UD: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → UD:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → UD:   dest:   file.path("config","report.docx")</span>
@@ -400,57 +334,7 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:de2b53652ff466ff850cf375807454f2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: loading analysis scenario: sd_iv</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 1 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 2 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Too few points for half-life calculation (min.hl.points=3 with only 0 points)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:9c279e4ceab40513df2c32f83a856412</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:03f20cea15dfd944db8ff2c613630c0d</span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">state</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># here we need an empty report object for tabular data</span></span></span>
@@ -459,8 +343,9 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-in"><span><span class="co"># Now we append the report indicating we want</span></span></span>
 <span class="r-in"><span><span class="co"># Excel output:</span></span></span>
 <span class="r-in"><span><span class="va">rpt_res</span> <span class="op">=</span> <span class="fu">NCA_append_report</span><span class="op">(</span><span class="va">state</span>,</span></span>
-<span class="r-in"><span>  rpt     <span class="op">=</span> <span class="va">rpt</span>,</span></span>
-<span class="r-in"><span>  rpttype <span class="op">=</span> <span class="st">"xlsx"</span><span class="op">)</span></span></span>
+<span class="r-in"><span> rpt           <span class="op">=</span> <span class="va">rpt</span>,</span></span>
+<span class="r-in"><span> rpttype       <span class="op">=</span> <span class="st">"xlsx"</span>,</span></span>
+<span class="r-in"><span> gen_code_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Shows if report elements are present</span></span></span>
 <span class="r-in"><span><span class="va">rpt_res</span><span class="op">$</span><span class="va">hasrptele</span></span></span>
@@ -482,47 +367,10 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK NCA Analysis Example (raw NCA results)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_2_RES"]]=NCA_2_table_ind_params[["one_table"]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_2_RES",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK/PD NCA Analysis Example (indiviudal results)"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_2_RAW"]]=as.data.frame(NCA_2_res)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_2_RAW",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK/PD NCA Analysis Example (raw NCA results)"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Tabular results from the first NCA analysis</span></span></span>
 <span class="r-in"><span><span class="va">rpt_res</span><span class="op">$</span><span class="va">rpt</span><span class="op">$</span><span class="va">sheets</span><span class="op">$</span><span class="va">NCA_1_RES</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    ID auclast:[0,21] cmax:[0,21] aucinf.obs:[0,inf]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  ID      AUC~last~      C~max~       AUC~inf,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          day⋅ng/mL       ng/mL          day⋅ng/mL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3             [0,21]      [0,21]            [0,inf]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   1           5900         690               9590</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   2           8240         750              17000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   3           6140         670               9520</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   4           6030         638              10900</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   5           7590         855              15900</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   6           6440         611              12600</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  7           6460         554              13200</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  8           6730         501              16300</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  9           8810        1100              16300</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 10           8760         828              16000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 11           6520         553              14400</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 12           5160         580               8700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 13           8120         693              15500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 14           5590         528              11000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 15           8310         850              16300</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 16           5460         512              10000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 17           8900         820              19400</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 18           5590         512               9770</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 19           7870         789              16200</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 20           6350         611              12400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

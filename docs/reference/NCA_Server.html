@@ -186,15 +186,15 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span><span class="st">"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#https://fontawesome.com/icons?from=io</span></span></span>
-<span class="r-in"><span><span class="va">logo_url</span> <span class="op">=</span> </span></span>
+<span class="r-in"><span><span class="va">logo_url</span> <span class="op">=</span></span></span>
 <span class="r-in"><span>  <span class="st">"https://raw.githubusercontent.com/john-harrold/ruminate/main/man/figures/logo.png"</span></span></span>
-<span class="r-in"><span><span class="va">data_url</span> <span class="op">=</span> </span></span>
+<span class="r-in"><span><span class="va">data_url</span> <span class="op">=</span></span></span>
 <span class="r-in"><span>  <span class="st">"https://github.com/john-harrold/formods/raw/master/inst/test_data/TEST_DATA.xlsx"</span></span></span>
-<span class="r-in"><span><span class="va">run_url</span>  <span class="op">=</span> </span></span>
+<span class="r-in"><span><span class="va">run_url</span>  <span class="op">=</span></span></span>
 <span class="r-in"><span>  <span class="st">"https://runruminate.ubiquity.tools/"</span></span></span>
-<span class="r-in"><span><span class="va">use_url</span>  <span class="op">=</span> </span></span>
+<span class="r-in"><span><span class="va">use_url</span>  <span class="op">=</span></span></span>
 <span class="r-in"><span>  <span class="st">"https://useruminate.ubiquity.tools/"</span></span></span>
-<span class="r-in"><span><span class="va">main_url</span> <span class="op">=</span> </span></span>
+<span class="r-in"><span><span class="va">main_url</span> <span class="op">=</span></span></span>
 <span class="r-in"><span>  <span class="st">"https://ruminate.ubiquity.tools/"</span></span></span>
 <span class="r-in"><span><span class="va">issue_url</span> <span class="op">=</span></span></span>
 <span class="r-in"><span>  <span class="st">"https://github.com/john-harrold/ruminate/issues"</span></span></span>
@@ -202,38 +202,29 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span><span class="va">intro_text</span> <span class="op">=</span> <span class="va">tags</span><span class="op">$</span><span class="fu">p</span><span class="op">(</span></span></span>
 <span class="r-in"><span><span class="st">"Ruminate is a shiny module for pharmacometric data processing,</span></span></span>
 <span class="r-in"><span><span class="st">visualization, and analysis. It consists of separate shiny modules that</span></span></span>
-<span class="r-in"><span><span class="st">provide interfaces into common R packages and provides the underlying code. </span></span></span>
+<span class="r-in"><span><span class="st">provide interfaces into common R packages and provides the underlying code.</span></span></span>
 <span class="r-in"><span><span class="st">This is done to facilitate usage of those packages and to provide reproducible</span></span></span>
-<span class="r-in"><span><span class="st">analyses."</span> , </span></span>
-<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span> <span class="st">"To find out more visit  "</span>, </span></span>
+<span class="r-in"><span><span class="st">analyses."</span> ,</span></span>
+<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span> <span class="st">"To find out more visit  "</span>,</span></span>
 <span class="r-in"><span>        <span class="va">tags</span><span class="op">$</span><span class="fu">a</span><span class="op">(</span><span class="st">"ruminate.ubiquity.tools"</span>, href<span class="op">=</span><span class="va">main_url</span><span class="op">)</span>,<span class="st">""</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span> <span class="st">"To give it a try you can download a test dataset "</span>, </span></span>
+<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span> <span class="st">"To give it a try you can download a test dataset "</span>,</span></span>
 <span class="r-in"><span>        <span class="va">tags</span><span class="op">$</span><span class="fu">a</span><span class="op">(</span><span class="st">"here"</span>, href<span class="op">=</span><span class="va">data_url</span><span class="op">)</span>,<span class="st">""</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span> <span class="st">"Go to  "</span>, </span></span>
+<span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span> <span class="st">"Go to  "</span>,</span></span>
 <span class="r-in"><span>        <span class="va">tags</span><span class="op">$</span><span class="fu">a</span><span class="op">(</span><span class="st">"useruminate.ubiquity.tools"</span>, href<span class="op">=</span><span class="va">use_url</span><span class="op">)</span>,<span class="st">" for a video</span></span></span>
 <span class="r-in"><span><span class="st">        demonstrating how to use ruminate"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span><span class="va">tags</span><span class="op">$</span><span class="fu">li</span><span class="op">(</span> <span class="st">"If you run into any problems, have questions, or want a feature please</span></span></span>
-<span class="r-in"><span><span class="st">        visit the "</span>, </span></span>
+<span class="r-in"><span><span class="st">        visit the "</span>,</span></span>
 <span class="r-in"><span>        <span class="va">tags</span><span class="op">$</span><span class="fu">a</span><span class="op">(</span><span class="st">"issues"</span>, href<span class="op">=</span><span class="va">issue_url</span><span class="op">)</span>,<span class="st">" page"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># intro_text = "Ruminate is a shiny module for pharmacometric data process,</span></span></span>
-<span class="r-in"><span><span class="co"># visualization, and analysis. It consists of separate shiny modules that</span></span></span>
-<span class="r-in"><span><span class="co"># provide interfaces into common R packages. The data transformation tools act</span></span></span>
-<span class="r-in"><span><span class="co"># as an interface to {dplyr} and {tidyr}, the visualization module acts as an</span></span></span>
-<span class="r-in"><span><span class="co"># interface to {ggplot}, and the NCA module acts as an interface to {PKNCA}. It</span></span></span>
-<span class="r-in"><span><span class="co"># offers reporting of the components in Word, PowerPoint and Excel. The</span></span></span>
-<span class="r-in"><span><span class="co"># internals of ruminate generate code on the fly and allow you view the code for</span></span></span>
-<span class="r-in"><span><span class="co"># each module element. It will also generate a script that when you save an</span></span></span>
-<span class="r-in"><span><span class="co"># analysis to reproduce all you didn within the interface."</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/dashboardPage.html" class="external-link">dashboardPage</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  skin<span class="op">=</span><span class="st">"black"</span>,</span></span>
 <span class="r-in"><span>  <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/dashboardHeader.html" class="external-link">dashboardHeader</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"ruminate"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/dashboardSidebar.html" class="external-link">dashboardSidebar</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>     <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/sidebarMenu.html" class="external-link">sidebarMenu</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>       <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/sidebarMenu.html" class="external-link">menuItem</a></span><span class="op">(</span><span class="st">"Load/Save"</span>,       </span></span>
-<span class="r-in"><span>                                tabName<span class="op">=</span><span class="st">"loadsave"</span>,    </span></span>
+<span class="r-in"><span>       <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/sidebarMenu.html" class="external-link">menuItem</a></span><span class="op">(</span><span class="st">"Load/Save"</span>,</span></span>
+<span class="r-in"><span>                                tabName<span class="op">=</span><span class="st">"loadsave"</span>,</span></span>
 <span class="r-in"><span>                                icon<span class="op">=</span><span class="fu">icon</span><span class="op">(</span><span class="st">"arrow-down-up-across-line"</span><span class="op">)</span><span class="op">)</span> ,</span></span>
 <span class="r-in"><span>       <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/sidebarMenu.html" class="external-link">menuItem</a></span><span class="op">(</span><span class="st">"Transform Data"</span>,  tabName<span class="op">=</span><span class="st">"wrangle"</span>,     icon<span class="op">=</span><span class="fu">icon</span><span class="op">(</span><span class="st">"shuffle"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>       <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/sidebarMenu.html" class="external-link">menuItem</a></span><span class="op">(</span><span class="st">"Visualize"</span>,       tabName<span class="op">=</span><span class="st">"plot"</span>,        icon<span class="op">=</span><span class="fu">icon</span><span class="op">(</span><span class="st">"chart-line"</span><span class="op">)</span><span class="op">)</span>,</span></span>
@@ -262,7 +253,7 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span>                                        <span class="st">"Load Data"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                   <span class="fu">fluidRow</span><span class="op">(</span></span></span>
 <span class="r-in"><span>                     <span class="fu">column</span><span class="op">(</span>width<span class="op">=</span><span class="fl">6</span>,</span></span>
-<span class="r-in"><span>                       <span class="fu">div</span><span class="op">(</span>style<span class="op">=</span><span class="st">"display:inline-block;width:100%"</span>, </span></span>
+<span class="r-in"><span>                       <span class="fu">div</span><span class="op">(</span>style<span class="op">=</span><span class="st">"display:inline-block;width:100%"</span>,</span></span>
 <span class="r-in"><span>                       <span class="fu">htmlOutput</span><span class="op">(</span><span class="fu">NS</span><span class="op">(</span><span class="st">"UD"</span>, <span class="st">"ui_ud_load_data"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                       <span class="fu">htmlOutput</span><span class="op">(</span><span class="fu">NS</span><span class="op">(</span><span class="st">"UD"</span>, <span class="st">"ui_ud_clean"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                       <span class="fu">htmlOutput</span><span class="op">(</span><span class="fu">NS</span><span class="op">(</span><span class="st">"UD"</span>, <span class="st">"ui_ud_select_sheets"</span><span class="op">)</span><span class="op">)</span>,</span></span>
@@ -293,7 +284,7 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span>                   <span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>                   <span class="op">)</span></span></span>
 <span class="r-in"><span>                 <span class="op">)</span></span></span>
-<span class="r-in"><span>               <span class="op">)</span> </span></span>
+<span class="r-in"><span>               <span class="op">)</span></span></span>
 <span class="r-in"><span>         <span class="co">#     ),</span></span></span>
 <span class="r-in"><span>               <span class="op">)</span>,</span></span>
 <span class="r-in"><span>       <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/tabItem.html" class="external-link">tabItem</a></span><span class="op">(</span>tabName<span class="op">=</span><span class="st">"wrangle"</span>,</span></span>

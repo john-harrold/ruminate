@@ -237,10 +237,6 @@ data is formatted for NONMEM, you can use this).</p>
 also have the following columns defined: <strong>Dose</strong>,
 <strong>Dosing Cycle or Period</strong>, and <strong>Nominal
 Time</strong>.</p>
-<p>If you do not have observations at dosing times (e.g. you dose at
-time zero but your first observation is at 15 minutes post-dose), you
-can have an observation that is BQL (<code>NA</code>) at the dosing time
-(zero).</p>
 </div>
 <div class="section level4">
 <h4 id="determining-dosing-from-rows-nonmem-format">Determining dosing from rows (NONMEM format)<a class="anchor" aria-label="anchor" href="#determining-dosing-from-rows-nonmem-format"></a>
@@ -253,1260 +249,1271 @@ expected you will have the following columns in your dataset:
 <p>Some notes on dosing information. For each interval where you want to
 calculate dose-dependent parameters, you will need to provide
 information about dosing in those intervals. In a multiple dose setting
-where you have intervals where you do not have enough PK to run NCA it,
-is not necessary to provide dosing information for those intervals. For
-example if you have four weekly doses but only have intensive sampling
-on weeks 1 and 4 but peak and trough on weeks 2 and 3, you do not have
-to provide dosing information for weeks 2 and 3. However there are
-certain parameters that <a href="https://billdenney.github.io/pknca/" class="external-link">PKNCA</a> will provide if that dosing
-and intermediate sampling information is provided (e.g. time to
+where you have intervals where you do not have enough PK data to run NCA
+it, is not necessary to provide dosing information for those intervals.
+For example if you have four weekly doses but only have intensive
+sampling on weeks 1 and 4 but peak and trough on weeks 2 and 3, you do
+not have to provide dosing information for weeks 2 and 3. However there
+are certain parameters that <a href="https://billdenney.github.io/pknca/" class="external-link">PKNCA</a> will provide if that
+dosing and intermediate sampling information is provided (e.g. time to
 steady-state). So if all you are interested in is parameters for
 intervals with intensive sampling, then you don’t need to worry about
 having dosing information for the other intervals.</p>
 </div>
 </div>
+<div class="section level3">
+<h3 id="nca-analysis-intervals">NCA analysis intervals<a class="anchor" aria-label="anchor" href="#nca-analysis-intervals"></a>
+</h3>
+<p>If you select an interval for analysis, it is necessary that you have
+observations at the beginning and end of that interval. If you do not
+have observations at dosing times (e.g. you dose at time zero but your
+first observation is at 15 minutes post-dose) and you want to use the
+dosing time as the beginning of your interval, you can have an
+observation that is BQL or missing (<code>NA</code>) at the dosing time
+(zero).</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="configuration-file">Configuration File<a class="anchor" aria-label="anchor" href="#configuration-file"></a>
 </h2>
-<pre><code><span><span class="co">## MC:</span></span>
-<span><span class="co">##   code: # module specific code options</span></span>
-<span><span class="co">##     packages: ["PKNCA", "dplyr", "stringr", "formods", "ruminate"]</span></span>
-<span><span class="co">##     readOnly: TRUE</span></span>
-<span><span class="co">##     mode:     r</span></span>
-<span><span class="co">##     preamble: |-</span></span>
-<span><span class="co">##       # Non-compartmental analysis ----------------------------------------------</span></span>
-<span><span class="co">##   compact:</span></span>
-<span><span class="co">##     code:    TRUE</span></span>
-<span><span class="co">##     clip:    TRUE</span></span>
-<span><span class="co">##   reporting:</span></span>
-<span><span class="co">##     enabled: TRUE</span></span>
-<span><span class="co">##     # Text format determines how text will be rendered. It can be either "md"</span></span>
-<span><span class="co">##     # for Markdown or "text" for plain text. This will also control things</span></span>
-<span><span class="co">##     # like table headers.</span></span>
-<span><span class="co">##     text_format: "md"</span></span>
-<span><span class="co">##     # Priority of reporting relative to other modules (higher numbers are</span></span>
-<span><span class="co">##     # reported first)</span></span>
-<span><span class="co">##     priority: 10</span></span>
-<span><span class="co">##     # The order of the figure and table ids (e.g. fg_ind_obs) represents the</span></span>
-<span><span class="co">##     # order in which figures and tables will be reported. Each id should have</span></span>
-<span><span class="co">##     # the following optoins:</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     #   caption_single      Caption used when a table or figure needs only a</span></span>
-<span><span class="co">##     #                       single page.</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     #   caption_multiple    Caption used when a table or figure spans multiple</span></span>
-<span><span class="co">##     #                       pages.</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     #   title_single        Slide title used when a table or figure needs only a</span></span>
-<span><span class="co">##     #                       single page.</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     #   title_multiple      Slide title used when a table or figure spans multiple</span></span>
-<span><span class="co">##     #                       pages.</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     #   sub_title_single    Slide sub_title used when a table or figure needs only a</span></span>
-<span><span class="co">##     #                       single page.</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     #   sub_title_multiple  Slide sub_title used when a table or figure spans multiple</span></span>
-<span><span class="co">##     #                       pages.</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     # The following placeholders can be used bu surroudning them with ===. For</span></span>
-<span><span class="co">##     # example to include the total number of figures you would use</span></span>
-<span><span class="co">##     # ===FIGTOT===:</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     # NCADESC               Description of the NCA analysis provided by the</span></span>
-<span><span class="co">##     #                       user in the UI (tables and figures).</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     # FIGNUM                Number of the current figure for figures that span</span></span>
-<span><span class="co">##     #                       multiple pages (figures only).</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     # FIGTOT                Total number of figures for figures that span</span></span>
-<span><span class="co">##     #                       multiple pages (figures only).</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     # TABNUM                Number of the current table for tables that span</span></span>
-<span><span class="co">##     #                       multiple pages (tables only).</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     # TABTOT                Total number of tables for tables that span multiple</span></span>
-<span><span class="co">##     #                       pages (tables only).</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     figures:</span></span>
-<span><span class="co">##       fg_ind_obs:</span></span>
-<span><span class="co">##         caption_single:     "===NCADESC=== (Individual Observations)"</span></span>
-<span><span class="co">##         caption_multiple:   "===NCADESC=== (Individual Observations,  ===FIGNUM=== of ===FIGTOT===)"</span></span>
-<span><span class="co">##         title_single:       " Individual Observations"</span></span>
-<span><span class="co">##         title_multiple:     " Individual Observations"</span></span>
-<span><span class="co">##         sub_title_single:   "===NCADESC==="</span></span>
-<span><span class="co">##         sub_title_multiple: "===NCADESC=== (===FIGNUM=== of ===FIGTOT===)"</span></span>
-<span><span class="co">##     tables:</span></span>
-<span><span class="co">##       tb_ind_params:</span></span>
-<span><span class="co">##         caption_single:   "===NCADESC=== (Individual Parameters)"</span></span>
-<span><span class="co">##         caption_multiple: "===NCADESC=== (Individual Parameters, ===TABNUM=== of ===TABTOT===)"</span></span>
-<span><span class="co">##       tb_ind_obs:</span></span>
-<span><span class="co">##         caption_single:   "===NCADESC===, Individual Data"</span></span>
-<span><span class="co">##         caption_multiple: "===NCADESC===, Individual Data (===TABNUM=== of ===TABTOT===)"</span></span>
-<span><span class="co">##     # Default number of significant digits</span></span>
-<span><span class="co">##     digits: 3</span></span>
-<span><span class="co">##     # When reporting units the * will be replaced with this value:</span></span>
-<span><span class="co">##     mult_str: "⋅"</span></span>
-<span><span class="co">##     # You can use unicode here like this "∞"</span></span>
-<span><span class="co">##     # How infinity is represented in reports like table headers</span></span>
-<span><span class="co">##     # to change inf in parameters you need to change them for the individual</span></span>
-<span><span class="co">##     # parameters below.</span></span>
-<span><span class="co">##     infinity:    "inf"</span></span>
-<span><span class="co">##     not_calc:    "NC"</span></span>
-<span><span class="co">##     not_sampled: "NS"</span></span>
-<span><span class="co">##     blq:         "BLQ"</span></span>
-<span><span class="co">##     # Here we list all the notes that can be present in tables. You need an</span></span>
-<span><span class="co">##     # entry for whatever you put in not_calc and blq above here.</span></span>
-<span><span class="co">##     notes:</span></span>
-<span><span class="co">##       NC: "not calculated"</span></span>
-<span><span class="co">##       NS: "not sampled"</span></span>
-<span><span class="co">##       BLQ: "below the level of quantification"</span></span>
-<span><span class="co">##   notifications:</span></span>
-<span><span class="co">##     ana_add_int_success: "Interval added: ===DETAILS==="</span></span>
-<span><span class="co">##   # Put different formatting options (widths, heights,</span></span>
-<span><span class="co">##   # shinyWidgets button sizes, etc) here.</span></span>
-<span><span class="co">##   formatting:</span></span>
-<span><span class="co">##     # Dimensions of code snippet box</span></span>
-<span><span class="co">##     code:</span></span>
-<span><span class="co">##       width:  800</span></span>
-<span><span class="co">##       height: 300</span></span>
-<span><span class="co">##     # Dimensions of the notes text area</span></span>
-<span><span class="co">##     notes:</span></span>
-<span><span class="co">##       width:  "520px"</span></span>
-<span><span class="co">##       height: "75px"</span></span>
-<span><span class="co">##     # Width of textInput and selectInput UI elements in the</span></span>
-<span><span class="co">##     # nca configuration</span></span>
-<span><span class="co">##     nca_config_option:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##     # Width of the figure preview (must be numeric)</span></span>
-<span><span class="co">##     # The options nrow and ncol refer to the default number of rows and</span></span>
-<span><span class="co">##     # columns when faceting. The options nrow_opt and nrow_col are values the</span></span>
-<span><span class="co">##     # user can select.</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     preview:</span></span>
-<span><span class="co">##       width:           "100%"</span></span>
-<span><span class="co">##       height:          "600px"</span></span>
-<span><span class="co">##       nrow:            4</span></span>
-<span><span class="co">##       ncol:            4</span></span>
-<span><span class="co">##       nrow_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]</span></span>
-<span><span class="co">##       ncol_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]</span></span>
-<span><span class="co">##       logy:            TRUE</span></span>
-<span><span class="co">##       fig_type:        "report"</span></span>
-<span><span class="co">##       tab_type:        "report"</span></span>
-<span><span class="co">##     # These apply to the intervals table</span></span>
-<span><span class="co">##     dose_from:</span></span>
-<span><span class="co">##       default:          "cols"</span></span>
-<span><span class="co">##       tooltip:          "Dosing information can be found in either columns (column for dose, dose cycle, nominal time) or rows (one row for each dose event distinguished by an event ID (EVID) column)."</span></span>
-<span><span class="co">##       tooltip_position: "top"</span></span>
-<span><span class="co">##     intervals:</span></span>
-<span><span class="co">##       width:  600</span></span>
-<span><span class="co">##       height: 175</span></span>
-<span><span class="co">##     intervals_start:</span></span>
-<span><span class="co">##       width:  50</span></span>
-<span><span class="co">##     intervals_stop:</span></span>
-<span><span class="co">##       width:  50</span></span>
-<span><span class="co">##     intervals_np_text:</span></span>
-<span><span class="co">##       width:  375</span></span>
-<span><span class="co">##     intervals_delete:</span></span>
-<span><span class="co">##       width:  75</span></span>
-<span><span class="co">##     button_ana_run:</span></span>
-<span><span class="co">##       size: "sm"</span></span>
-<span><span class="co">##       block: TRUE</span></span>
-<span><span class="co">##     button_ana_del:</span></span>
-<span><span class="co">##       size: "sm"</span></span>
-<span><span class="co">##       block: TRUE</span></span>
-<span><span class="co">##       tooltip: "Delete the current analysis."</span></span>
-<span><span class="co">##       tooltip_position: "right"</span></span>
-<span><span class="co">##     button_ana_save:</span></span>
-<span><span class="co">##       size: "sm"</span></span>
-<span><span class="co">##       block: TRUE</span></span>
-<span><span class="co">##       tooltip: "Save the caption and notes and apply the data view for the current analysis."</span></span>
-<span><span class="co">##       tooltip_position: "right"</span></span>
-<span><span class="co">##     button_ana_clip:</span></span>
-<span><span class="co">##       size: "sm"</span></span>
-<span><span class="co">##       block: TRUE</span></span>
-<span><span class="co">##       tooltip: "Copy the code to generate the current analysis to the clipboard."</span></span>
-<span><span class="co">##       tooltip_position: "right"</span></span>
-<span><span class="co">##     button_fg_save:</span></span>
-<span><span class="co">##       size: "sm"</span></span>
-<span><span class="co">##       block: TRUE</span></span>
-<span><span class="co">##      #tooltip: "tooltip"</span></span>
-<span><span class="co">##      #tooltip_position: "right"</span></span>
-<span><span class="co">##     button_tb_save:</span></span>
-<span><span class="co">##       size: "sm"</span></span>
-<span><span class="co">##       block: TRUE</span></span>
-<span><span class="co">##      #tooltip: "tooltip"</span></span>
-<span><span class="co">##      #tooltip_position: "right"</span></span>
-<span><span class="co">##     button_ana_copy:</span></span>
-<span><span class="co">##       size: "sm"</span></span>
-<span><span class="co">##       block: TRUE</span></span>
-<span><span class="co">##       tooltip: "Make a copy of the current analysis."</span></span>
-<span><span class="co">##       tooltip_position: "right"</span></span>
-<span><span class="co">##     button_ana_new:</span></span>
-<span><span class="co">##       size: "sm"</span></span>
-<span><span class="co">##       block: TRUE</span></span>
-<span><span class="co">##       tooltip: "Create a new analysis."</span></span>
-<span><span class="co">##       tooltip_position: "right"</span></span>
-<span><span class="co">##     button_ana_add_int:</span></span>
-<span><span class="co">##       size: "sm"</span></span>
-<span><span class="co">##       block: TRUE</span></span>
-<span><span class="co">##     button_ana_use_scenario:</span></span>
-<span><span class="co">##       size: "sm"</span></span>
-<span><span class="co">##       block: TRUE</span></span>
-<span><span class="co">##     check_fg_ind_obs:</span></span>
-<span><span class="co">##       width: 75</span></span>
-<span><span class="co">##     select_ana_interval_range:</span></span>
-<span><span class="co">##       width:  200</span></span>
-<span><span class="co">##     text_ana_interval_start:</span></span>
-<span><span class="co">##       width: 75</span></span>
-<span><span class="co">##     text_ana_interval_stop:</span></span>
-<span><span class="co">##       width: 75</span></span>
-<span><span class="co">##     select_current_view:</span></span>
-<span><span class="co">##       width: 200</span></span>
-<span><span class="co">##     select_ana_fig_view:</span></span>
-<span><span class="co">##       width: 250</span></span>
-<span><span class="co">##     select_ana_tab_view:</span></span>
-<span><span class="co">##       width: 250</span></span>
-<span><span class="co">##     select_ana_source_sampling:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##     select_ana_nca_parameters:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##     select_ana_col_id:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##       tooltip:  "Unique id for each subject in the dataset (required)"</span></span>
-<span><span class="co">##       tooltip_position: "bottom"</span></span>
-<span><span class="co">##     select_ana_col_dose:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##       tooltip: "Amount of dose (required)"</span></span>
-<span><span class="co">##       tooltip_position: "bottom"</span></span>
-<span><span class="co">##     select_ana_col_dur:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##       tooltip: "Duration of infusion (optional)"</span></span>
-<span><span class="co">##       tooltip_position: "bottom"</span></span>
-<span><span class="co">##     select_ana_col_conc:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##       tooltip: "Observed concentration (NA for missing values, required)"</span></span>
-<span><span class="co">##       tooltip_position: "bottom"</span></span>
-<span><span class="co">##     select_ana_col_route:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##       tooltip: "Dosing route (intravascular  or extravascular, required)"</span></span>
-<span><span class="co">##       tooltip_position: "bottom"</span></span>
-<span><span class="co">##     select_ana_col_time:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##       tooltip: "Observation time since the first dose (required)"</span></span>
-<span><span class="co">##       tooltip_position: "bottom"</span></span>
-<span><span class="co">##     select_ana_col_ntime:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##       tooltip: "Time since the most recent dose (optional, needed to determine dosing from columns)"</span></span>
-<span><span class="co">##       tooltip_position: "bottom"</span></span>
-<span><span class="co">##     select_ana_col_group:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##       tooltip: "Other columns used for grouping (optional)"</span></span>
-<span><span class="co">##       tooltip_position: "bottom"</span></span>
-<span><span class="co">##     select_ana_col_analyte:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##       tooltip: "Used if multiple analytes are present in the dataset (optional)"</span></span>
-<span><span class="co">##       tooltip_position: "bottom"</span></span>
-<span><span class="co">##     select_ana_col_evid:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##       tooltip: "EVID column from NONMEM used to distinguish dosing and observation records (optional, needed for dosing from rows)"</span></span>
-<span><span class="co">##       tooltip_position: "bottom"</span></span>
-<span><span class="co">##     select_ana_col_cycle:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##       tooltip: "The most recent dose cycle or period (optional, needed for dosing from columns)"</span></span>
-<span><span class="co">##       tooltip_position: "bottom"</span></span>
-<span><span class="co">##     select_ana_units_dose:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##     select_ana_units_time:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##     select_ana_units_conc:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##     select_ana_units_amt:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##     select_ana_scenario:</span></span>
-<span><span class="co">##       width: 150</span></span>
-<span><span class="co">##     select_fg_ind_obs_ncol:</span></span>
-<span><span class="co">##       width: 50</span></span>
-<span><span class="co">##     select_fg_ind_obs_nrow:</span></span>
-<span><span class="co">##       width: 50</span></span>
-<span><span class="co">##     select_fg_ind_obs_page:</span></span>
-<span><span class="co">##       width: 100</span></span>
-<span><span class="co">##     select_tb_page:</span></span>
-<span><span class="co">##       width: 100</span></span>
-<span><span class="co">##   errors:</span></span>
-<span><span class="co">##     nca_run_filed: "Unable to run PKNCA. Please, see below for details."</span></span>
-<span><span class="co">##     bad_input: "Input error message"</span></span>
-<span><span class="co">##     nca_no_fig: "There are no figures to display. You must run the analysis first"</span></span>
-<span><span class="co">##     nca_no_tab: "There are no tables to display. You must run the analysis first"</span></span>
-<span><span class="co">##   tooltips:</span></span>
-<span><span class="co">##     # Set to FALSE to disable tool tips for this module</span></span>
-<span><span class="co">##     include: TRUE</span></span>
-<span><span class="co">##     notes:             "Optional analysis notes that will be carried over and used in other elements (e.g. reporting)."</span></span>
-<span><span class="co">##     ana_key:           "Unique description used for referencing analysis and in other elements (e.g. reporting)."</span></span>
-<span><span class="co">##     show_code:         "Show analysis code"</span></span>
-<span><span class="co">##     nca_intervals:     "Current NCA intervals"</span></span>
-<span><span class="co">##     url_dosing:        "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#dosing-information"</span></span>
-<span><span class="co">##     ph:</span></span>
-<span><span class="co">##       text_ana_interval_start: 0</span></span>
-<span><span class="co">##       text_ana_interval_stop:  "number or Inf"</span></span>
-<span><span class="co">##       notes:                   "Optional NCA notes that will be carried over and used in other elements (e.g. reporting)."</span></span>
-<span><span class="co">##   # This controls the figure and table selection for an analysis. The order of</span></span>
-<span><span class="co">##   # the keys (e.g., tb_ind_params, tb_sum_params, etc) controls the</span></span>
-<span><span class="co">##   # order they are dispalyed in the selector and the text controls what's show</span></span>
-<span><span class="co">##   # in the interface.</span></span>
-<span><span class="co">##   figures:</span></span>
-<span><span class="co">##     fg_ind_obs:</span></span>
-<span><span class="co">##       choice:  "Individual Profiles"</span></span>
-<span><span class="co">##       subtext: "Faceted view of individual time-course"</span></span>
-<span><span class="co">##   tables:</span></span>
-<span><span class="co">##     tb_ind_params:</span></span>
-<span><span class="co">##       choice:  "Individual NCA Parameters"</span></span>
-<span><span class="co">##       subtext: "Listings of subject-level NCA parmaeters"</span></span>
-<span><span class="co">##     tb_sum_params:</span></span>
-<span><span class="co">##       choice:  "Summarized NCA Parameters"</span></span>
-<span><span class="co">##       subtext: "Listings of NCA parmaeters summarized by group/analyte"</span></span>
-<span><span class="co">##     tb_ind_obs:</span></span>
-<span><span class="co">##       choice:  "Individual Data"</span></span>
-<span><span class="co">##       subtext: "Listings of subject-level time-course data"</span></span>
-<span><span class="co">##     tb_nca_raw:</span></span>
-<span><span class="co">##       choice:  "Raw NCA Output"</span></span>
-<span><span class="co">##       subtext: "Output from PKNCA with requested and dependent parameters"</span></span>
-<span><span class="co">##   labels:</span></span>
-<span><span class="co">##     ana_key:                         "title/caption"</span></span>
-<span><span class="co">##     new_ana:                         "New"</span></span>
-<span><span class="co">##     run_ana:                         "Run NCA"</span></span>
-<span><span class="co">##     save_ana:                        "Save"</span></span>
-<span><span class="co">##     del_ana:                         "Delete"</span></span>
-<span><span class="co">##     copy_ana:                        "Copy"</span></span>
-<span><span class="co">##     clip_ana:                        "Code"</span></span>
-<span><span class="co">##     fg_save:                         "Apply changes"</span></span>
-<span><span class="co">##     tb_save:                         "Apply changes"</span></span>
-<span><span class="co">##     curr_anas_none:                  "No figures yet created"</span></span>
-<span><span class="co">##     no_dataset:                      "No datasets available to analyze. You need to load a dataset to use this module."</span></span>
-<span><span class="co">##     ana_use_scenario:                "Analysis Template"</span></span>
-<span><span class="co">##     ana_add_int:                     "Add Interval"</span></span>
-<span><span class="co">##     no_intervals:                    "No intervals added yet"</span></span>
-<span><span class="co">##     panel_analysis_opts:             "Analysis Options"</span></span>
-<span><span class="co">##     panel_figures:                   "Figures"</span></span>
-<span><span class="co">##     panel_tables:                    "Tables"</span></span>
-<span><span class="co">##     panel_nca_config:                "Configuration"</span></span>
-<span><span class="co">##     text_ana_interval_start:         "Start"</span></span>
-<span><span class="co">##     text_ana_interval_stop:          "End"</span></span>
-<span><span class="co">##     select_ana_interval_range:       "Interval Range"</span></span>
-<span><span class="co">##     # Headings used in the UI</span></span>
-<span><span class="co">##     head_intervals:                  "Analysis Time Intervals"</span></span>
-<span><span class="co">##     head_intervals_current:          "Current Intervals"</span></span>
-<span><span class="co">##     head_analysis_template:          "Use Analysis Template"</span></span>
-<span><span class="co">##     head_intervals_create:           "Create an Interval"</span></span>
-<span><span class="co">##     head_dose_from:                  "Dosing Information"</span></span>
-<span><span class="co">##     head_col_mapping:                "Identify Columns"</span></span>
-<span><span class="co">##     head_col_mapping_required:       "Required"</span></span>
-<span><span class="co">##     head_col_mapping_optional:       "Optional"</span></span>
-<span><span class="co">##     head_run_analysis:               "Run Analysis"</span></span>
-<span><span class="co">##     head_units:                      "Units"</span></span>
-<span><span class="co">##     select_current_view:             "Data from"</span></span>
-<span><span class="co">##     select_current_ana:              "Current NCA"</span></span>
-<span><span class="co">##     select_ana_scenario:             NULL  # "Type of Analysis:"</span></span>
-<span><span class="co">##     select_ana_col_id:               "Subject ID"</span></span>
-<span><span class="co">##     select_ana_col_time:             "Time"</span></span>
-<span><span class="co">##     select_ana_col_ntime:            "Nominal Time"</span></span>
-<span><span class="co">##     select_ana_col_dose:             "Dose"</span></span>
-<span><span class="co">##     select_ana_col_dur:              "Dose Duration"</span></span>
-<span><span class="co">##     select_ana_col_conc:             "Concentration"</span></span>
-<span><span class="co">##     select_ana_col_route:            "Route"</span></span>
-<span><span class="co">##     select_ana_col_group:            "Other Grouping"</span></span>
-<span><span class="co">##     select_ana_col_cycle:            "Dosing Cycle or Period"</span></span>
-<span><span class="co">##     select_ana_col_evid:             "Event ID"</span></span>
-<span><span class="co">##     select_ana_col_analyte:          "Analyte"</span></span>
-<span><span class="co">##     select_ana_units_time:           "Time"</span></span>
-<span><span class="co">##     select_ana_units_dose:           "Dose"</span></span>
-<span><span class="co">##     select_ana_units_conc:           "Concentration"</span></span>
-<span><span class="co">##     select_ana_units_amt:            "Amount"</span></span>
-<span><span class="co">##     select_ana_nca_parameters:       "Parameters"</span></span>
-<span><span class="co">##     select_fg_ind_obs_nrow:          "Rows"</span></span>
-<span><span class="co">##     select_fg_ind_obs_ncol:          "Columns"</span></span>
-<span><span class="co">##     select_fg_ind_obs_page:          "Show Page"</span></span>
-<span><span class="co">##     select_tb_page:                  "Show Page"</span></span>
-<span><span class="co">##     check_fg_ind_obs_logy:           "Log 10 y-scale"</span></span>
-<span><span class="co">##     switch_ana_include_units:        "Include Units"</span></span>
-<span><span class="co">##     switch_ana_fig:                  NULL</span></span>
-<span><span class="co">##     switch_ana_fig_interactive:      "Interactive"</span></span>
-<span><span class="co">##     switch_ana_fig_report:           "Report Preview"</span></span>
-<span><span class="co">##     switch_ana_dose_from:            "Dosing Found In"</span></span>
-<span><span class="co">##     switch_ana_dose_from_rows:       "Rows"</span></span>
-<span><span class="co">##     switch_ana_dose_from_cols:       "Columns"</span></span>
-<span><span class="co">##     switch_ana_tab:                  NULL</span></span>
-<span><span class="co">##     switch_ana_tab_interactive:      "Interactive"</span></span>
-<span><span class="co">##     switch_ana_tab_report:           "Report Preview"</span></span>
-<span><span class="co">##     select_ana_source_sampling:      "Data Sampling"</span></span>
-<span><span class="co">##     busy:</span></span>
-<span><span class="co">##       run_nca:                       "Running NCA be patient."</span></span>
-<span><span class="co">##     PKNCA_raw:</span></span>
-<span><span class="co">##       ID:                            "Subject ID"</span></span>
-<span><span class="co">##       start:                         "Initial time of the analysis interval."</span></span>
-<span><span class="co">##       end:                           "Final time of the analysis interval."</span></span>
-<span><span class="co">##       PPTESTCD:                      "Parameter name from PKNCA."</span></span>
-<span><span class="co">##       PPORRES:                       "parameter value."</span></span>
-<span><span class="co">##       exclude:                       "Reason for parameter exclusion (NA when parameter was calculated)."</span></span>
-<span><span class="co">##       PPORRESU:                      "Parameter units."</span></span>
-<span><span class="co">##   # For details on the PKNCA options see this vignette:</span></span>
-<span><span class="co">##   # https://billdenney.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html</span></span>
-<span><span class="co">##   # This section contains information about different options, metadata about</span></span>
-<span><span class="co">##   # them, default values, etc. Using this, the options UI for an analysis is</span></span>
-<span><span class="co">##   # generated automatically. Each configuration option has the following:</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   # group        - This is how configuration options will be grouped in the app</span></span>
-<span><span class="co">##   # label        - Short textual description</span></span>
-<span><span class="co">##   # tooltip      - More detailed description of the option and what goes into it.</span></span>
-<span><span class="co">##   #                Set to NULL to not display a tool tip.</span></span>
-<span><span class="co">##   # type         - List of possible types. For example if you have "numeric" then</span></span>
-<span><span class="co">##   #                "character" the value will be evaluated as numeric, if this is</span></span>
-<span><span class="co">##   #                NA then it will be evaluated as character.</span></span>
-<span><span class="co">##   # value        - Default value in the UI</span></span>
-<span><span class="co">##   # options      - If set to NULL a text input box will be created for this option,</span></span>
-<span><span class="co">##   #                if there are options then a selection box will be created.</span></span>
-<span><span class="co">##   # pknca_option - The actual option set with PKNCA</span></span>
-<span><span class="co">##   nca_config:</span></span>
-<span><span class="co">##     adj_r_squared_factor:</span></span>
-<span><span class="co">##       group:         General</span></span>
-<span><span class="co">##       # BILL I need a better label for this</span></span>
-<span><span class="co">##       label:         "r² (Adj) factor"</span></span>
-<span><span class="co">##       tooltip:       "The adjusted r² for the calculation of λz has this factor times the number of data points added to it. It allows for more data points to be preferred in the calculation of half-life."</span></span>
-<span><span class="co">##       type:          "numeric"</span></span>
-<span><span class="co">##       value:         0.0001</span></span>
-<span><span class="co">##       options:       NULL</span></span>
-<span><span class="co">##       pknca_option:  adj.r.squared.factor</span></span>
-<span><span class="co">##     max_missing:</span></span>
-<span><span class="co">##       group:         General</span></span>
-<span><span class="co">##       label:         "Max missing (frac)"</span></span>
-<span><span class="co">##       tooltip:       "The maximum fraction of the data that may be missing (‘NA’) to calculate summary statistics."</span></span>
-<span><span class="co">##       type:          "numeric"</span></span>
-<span><span class="co">##       value:         0.5</span></span>
-<span><span class="co">##       options:       NULL</span></span>
-<span><span class="co">##       pknca_option:  max.missing</span></span>
-<span><span class="co">##     auc_method:</span></span>
-<span><span class="co">##       group:         AUC</span></span>
-<span><span class="co">##       label:         Method</span></span>
-<span><span class="co">##       tooltip:       "The method used to calculate the AUC and related statistics."</span></span>
-<span><span class="co">##       type:          "character"</span></span>
-<span><span class="co">##       value:         "lin up/log down"</span></span>
-<span><span class="co">##       options:       ["lin up/log down", "linear"]</span></span>
-<span><span class="co">##       pknca_option:  auc.method</span></span>
-<span><span class="co">##     conc_na:</span></span>
-<span><span class="co">##       group:         Missing and BLQ Values</span></span>
-<span><span class="co">##       label:         Missing values</span></span>
-<span><span class="co">##       tooltip:       "Determines how missing (NA) values are generally handled. Can be either drop or a numeric value to use. "</span></span>
-<span><span class="co">##       type:          "mixed"</span></span>
-<span><span class="co">##       value:         "drop"</span></span>
-<span><span class="co">##       options:       NULL</span></span>
-<span><span class="co">##       pknca_option:  conc.na</span></span>
-<span><span class="co">##     conc_blq_first:</span></span>
-<span><span class="co">##       group:         Missing and BLQ Values</span></span>
-<span><span class="co">##       label:         First value BLQ</span></span>
-<span><span class="co">##       tooltip:       "Indicates what to do if the first observation is BLQ. It can either be drop, keep, or a numeric value to use."</span></span>
-<span><span class="co">##       type:          "mixed"</span></span>
-<span><span class="co">##       value:         "keep"</span></span>
-<span><span class="co">##       options:       NULL</span></span>
-<span><span class="co">##       pknca_option:  conc.blq$first</span></span>
-<span><span class="co">##     conc_blq_middle:</span></span>
-<span><span class="co">##       group:         Missing and BLQ Values</span></span>
-<span><span class="co">##       label:         Middle values BLQ</span></span>
-<span><span class="co">##       tooltip:       "Indicates what to do if a value between the first and last observations is BLQ. It can either be drop, keep, or a numeric value to use."</span></span>
-<span><span class="co">##       type:          "mixed"</span></span>
-<span><span class="co">##       value:         "drop"</span></span>
-<span><span class="co">##       options:       NULL</span></span>
-<span><span class="co">##       pknca_option:  conc.blq$middle</span></span>
-<span><span class="co">##     conc_blq_last:</span></span>
-<span><span class="co">##       group:         "Missing and BLQ Values"</span></span>
-<span><span class="co">##       label:         "Last Value BLQ"</span></span>
-<span><span class="co">##       tooltip:       "Indicates what to do if the last observation is BLQ. It can either be drop, keep, or a numeric value to use."</span></span>
-<span><span class="co">##       type:          "mixed"</span></span>
-<span><span class="co">##       value:         "keep"</span></span>
-<span><span class="co">##       options:       NULL</span></span>
-<span><span class="co">##       pknca_option:  conc.blq$last</span></span>
-<span><span class="co">##     first_tmax:</span></span>
-<span><span class="co">##       group:         "General"</span></span>
-<span><span class="co">##       label:         "Multiple tmax use first"</span></span>
-<span><span class="co">##       tooltip:       "If there is more than one concentration equal to Cmax, should the time selected for Tmax be the first value? If TRUE, the first will be selected. If FALSE, the last will be selected."</span></span>
-<span><span class="co">##       type:          "logical"</span></span>
-<span><span class="co">##       value:         TRUE</span></span>
-<span><span class="co">##       options:       [TRUE, FALSE]</span></span>
-<span><span class="co">##       pknca_option:  first.tmax</span></span>
-<span><span class="co">##     allow_tmax_in_half_life:</span></span>
-<span><span class="co">##       group:         "Half-Life"</span></span>
-<span><span class="co">##       label:         "Allow tmax in half-life"</span></span>
-<span><span class="co">##       tooltip:       "Should the concentration and time at Tmax be allowed in the half-life calculation? TRUE is yes and FALSE is no."</span></span>
-<span><span class="co">##       type:          "logical"</span></span>
-<span><span class="co">##       value:         FALSE</span></span>
-<span><span class="co">##       options:       [TRUE, FALSE]</span></span>
-<span><span class="co">##       pknca_option:  allow.tmax.in.half.life</span></span>
-<span><span class="co">##     min_hl_points:</span></span>
-<span><span class="co">##       group:         "Half-Life"</span></span>
-<span><span class="co">##       label:         "Min points"</span></span>
-<span><span class="co">##       tooltip:       "What is the minimum number of points required to calculate half-life?"</span></span>
-<span><span class="co">##       type:          "numeric"</span></span>
-<span><span class="co">##       value:         3</span></span>
-<span><span class="co">##       options:       [ 2, 3, 4, 5 ]</span></span>
-<span><span class="co">##       pknca_option:  min.hl.points</span></span>
-<span><span class="co">##     min_span_ratio:</span></span>
-<span><span class="co">##       group:         "Half-Life"</span></span>
-<span><span class="co">##       label:         "Min span ratio"</span></span>
-<span><span class="co">##       # BILL this is a bit cryptic</span></span>
-<span><span class="co">##       tooltip:       "What is the minimum span ratio required to consider a half-life valid?"</span></span>
-<span><span class="co">##       type:          "logical"</span></span>
-<span><span class="co">##       value:         2</span></span>
-<span><span class="co">##       options:       NULL</span></span>
-<span><span class="co">##       pknca_option:  min.span.ratio</span></span>
-<span><span class="co">##     min_hl_r_squared:</span></span>
-<span><span class="co">##       group:         "Half-Life"</span></span>
-<span><span class="co">##       label:         "Min r² value"</span></span>
-<span><span class="co">##       tooltip:       "What is the minimum r² value to consider a half-life calculation valid?"</span></span>
-<span><span class="co">##       type:          "numeric"</span></span>
-<span><span class="co">##       value:         0.9</span></span>
-<span><span class="co">##       options:       NULL</span></span>
-<span><span class="co">##       pknca_option:  min.hl.r.squared</span></span>
-<span><span class="co">##     max_aucinf_pext:</span></span>
-<span><span class="co">##       group:         "AUC"</span></span>
-<span><span class="co">##       label:         "Max allowed extrap (%)"</span></span>
-<span><span class="co">##       tooltip:       "What is the maximum percent extrapolation to consider an AUC∞ valid?"</span></span>
-<span><span class="co">##       type:          "numeric"</span></span>
-<span><span class="co">##       value:         20</span></span>
-<span><span class="co">##       options:       NULL</span></span>
-<span><span class="co">##       pknca_option:  max.aucinf.pext</span></span>
-<span><span class="co">##   # Prefix used to create NCA analysis objects in generated code</span></span>
-<span><span class="co">##   nca_object_name: "myANA_"</span></span>
-<span><span class="co">##   # The following patterns are used when detecting columns in your dataset</span></span>
-<span><span class="co">##   # automatically. You can create a multiple patterns. They will be processed</span></span>
-<span><span class="co">##   # in order from left to right. The first pattern to match will return that</span></span>
-<span><span class="co">##   # column. For example if you set id to:</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   # id:   ["^(?i)id$",    "(?i)subject"]</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   # It will match any column that is id. The (?i) is case insensitive. But it</span></span>
-<span><span class="co">##   # wont match IDs for example because it looks for something that starts with</span></span>
-<span><span class="co">##   # i (^) and ends with d ($).</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   # If that fails it will look for any column with the text 'subject' in it</span></span>
-<span><span class="co">##   # regardless of case. So it would match SUBJECT, subject, Subjects,</span></span>
-<span><span class="co">##   # subject id, etc.</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   # If you set it to NULL no attempt will be made to detect the column.</span></span>
-<span><span class="co">##   detect_col:</span></span>
-<span><span class="co">##     id:      ["^(?i)id$",    "(?i)subject",    "(?i)animal"]</span></span>
-<span><span class="co">##     time:    ["^(?i)time",   "(?i)ntime"  ]</span></span>
-<span><span class="co">##     ntime:   ["^(?i)ntime",  "(?i)time"   ]</span></span>
-<span><span class="co">##     conc:    ["^(?i)conc",   "^(?i)dv$",      "^(?i)pcstresn$", "^(?i)lbstresn$", "^(?i)AVAL(N|NUM)?$"]</span></span>
-<span><span class="co">##     dose:    ["(?i)dose",    "^(?i)ecdose?$", "^(?i)exdose?$"]</span></span>
-<span><span class="co">##     evid:    ["(?i)evid"]</span></span>
-<span><span class="co">##     route:   ["(?i)route"]</span></span>
-<span><span class="co">##     cycle:   ["(?i)cycle",   "(?i)dose_num", "(?i)period"]</span></span>
-<span><span class="co">##     group:   NULL</span></span>
-<span><span class="co">##     analyte: NULL</span></span>
-<span><span class="co">##     dur:     NULL</span></span>
-<span><span class="co">##   # Routes may be specified in the dataset in a more detailed or convenient</span></span>
-<span><span class="co">##   # format than what is needed for analysis. Here you can specify patterns</span></span>
-<span><span class="co">##   # that can be used to detect routes. For details on the regular expressions</span></span>
-<span><span class="co">##   # that can be used see the detect_col section above. In general you can use</span></span>
-<span><span class="co">##   # the format of:</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   #   myroute: ["regex1", "regex2"]</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   # This will assign the route to 'myroute' in the ROUTE column if it matches</span></span>
-<span><span class="co">##   # regex1 or regex2.</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   detect_route:</span></span>
-<span><span class="co">##     intravascular: ["^(?i)iv$"]</span></span>
-<span><span class="co">##     extravascular: ["^(?i)sc$", "^(?i)oral"]</span></span>
-<span><span class="co">##   # These are default analysis scenarios that are shown in the App. They will</span></span>
-<span><span class="co">##   # be shown in the order defined. Each scenario has the following attributes:</span></span>
-<span><span class="co">##   #   - description: Free form textual description shown to the user</span></span>
-<span><span class="co">##   #   - nca_parameters: List of nca parameters to be calculated</span></span>
-<span><span class="co">##   #   - sampling: Can be either "serial" or "sparse"</span></span>
-<span><span class="co">##   #   BILL: Get relevant scenarios from bill here</span></span>
-<span><span class="co">##   ana_scenarios:</span></span>
-<span><span class="co">##     sd_iv:</span></span>
-<span><span class="co">##       description: "Single Dose (IV)"</span></span>
-<span><span class="co">##       nca_parameters: ["cmax", "auclast", "aucinf.obs"]</span></span>
-<span><span class="co">##       sampling:   "serial"</span></span>
-<span><span class="co">##       intervals:</span></span>
-<span><span class="co">##         - row:</span></span>
-<span><span class="co">##             start:         0</span></span>
-<span><span class="co">##             stop:          Inf</span></span>
-<span><span class="co">##             nca_parameters: ["aucinf.obs"]</span></span>
-<span><span class="co">##         - row:</span></span>
-<span><span class="co">##             start:         0</span></span>
-<span><span class="co">##             stop:          21</span></span>
-<span><span class="co">##             nca_parameters: ["cmax", "auclast"]</span></span>
-<span><span class="co">##     md_iv:</span></span>
-<span><span class="co">##       description: "Multiple Dose IV"</span></span>
-<span><span class="co">##       nca_parameters: ["cmax", "auclast", "aucinf.obs"]</span></span>
-<span><span class="co">##       sampling:   "serial"</span></span>
-<span><span class="co">##       intervals:</span></span>
-<span><span class="co">##         - row:</span></span>
-<span><span class="co">##             start:         0</span></span>
-<span><span class="co">##             stop:          Inf</span></span>
-<span><span class="co">##             nca_parameters: ["cmax", "auclast","aucinf.obs"]</span></span>
-<span><span class="co">##     sd_iv_sparse:</span></span>
-<span><span class="co">##       description: "Single Dose (IV) Sparse Sampling"</span></span>
-<span><span class="co">##       nca_parameters: ["cmax", "sparse_auclast"]</span></span>
-<span><span class="co">##       sampling:   "sparse"</span></span>
-<span><span class="co">##       intervals:</span></span>
-<span><span class="co">##         - row:</span></span>
-<span><span class="co">##             start:          0</span></span>
-<span><span class="co">##             stop:           Inf</span></span>
-<span><span class="co">##             nca_parameters: ["cmax", "sparse_auclast"]</span></span>
-<span><span class="co">##     md_iv_sparse:</span></span>
-<span><span class="co">##       description: "Multiple Dose IV Sparse Sampling"</span></span>
-<span><span class="co">##       nca_parameters: ["cmax", "sparse_auclast"]</span></span>
-<span><span class="co">##       sampling:   "sparse"</span></span>
-<span><span class="co">##       intervals:</span></span>
-<span><span class="co">##         - row:</span></span>
-<span><span class="co">##             start:          0</span></span>
-<span><span class="co">##             stop:           Inf</span></span>
-<span><span class="co">##             nca_parameters: ["cmax", "sparse_auclast"]</span></span>
-<span><span class="co">##   # This is the default shown when the app loads or a new analysis is created</span></span>
-<span><span class="co">##   ana_scenario_def: "sd_iv"</span></span>
-<span><span class="co">##   # Here are all of the available NCA parameters. Each field is the name of</span></span>
-<span><span class="co">##   # the parameter used in PKNCA. See the table in this vignette for the</span></span>
-<span><span class="co">##   # available parameters:</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   # https://cran.r-project.org/web/packages/PKNCA/vignettes/v03-selection-of-calculation-intervals.html</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   # Each of parameter has the following</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   #  - description: This is a verbose description of the parameter. If set to NULL the</span></span>
-<span><span class="co">##   #                 description from PKNCA will be used. Set it to other text to</span></span>
-<span><span class="co">##   #                 overwrite it. This description will also be used in exports as</span></span>
-<span><span class="co">##   #                 well.</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   #  - text:        Textual description to show the user. If set to NULL it</span></span>
-<span><span class="co">##   #                 will use the text form PKCNA.</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   #  - md:          Markdown formatted value of text.</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   #  - group:       This is how the paramters will be grouped in the UI that</span></span>
-<span><span class="co">##   #                 is generated.</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   # To limit the options the user sees you simply need to comment out the</span></span>
-<span><span class="co">##   # parameters you do not want in the App. Alterantively you can use the</span></span>
-<span><span class="co">##   # grouping below to have the most common parameters together at the top and</span></span>
-<span><span class="co">##   # the remaining in case they are needed.</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   # BILL can you go through the text and md elements below and make any</span></span>
-<span><span class="co">##   # changes you think make sense. For example is there a better way to label</span></span>
-<span><span class="co">##   # the parameter aucint.inf.obs.dose :).</span></span>
-<span><span class="co">##   #</span></span>
-<span><span class="co">##   nca_parameters:</span></span>
-<span><span class="co">##     aucall:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~all~"</span></span>
-<span><span class="co">##       group:       "Common Parameters"</span></span>
-<span><span class="co">##     adj.r.squared:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        "r² (Adj)"</span></span>
-<span><span class="co">##       md:          "Adj. R^2^"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     ae:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AE"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucall.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~all,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucinf.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~inf,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucinf.obs.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~inf,obs,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucinf.pred.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~inf,pred,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucint.all:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~int,all~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucint.all.dose:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~int,all,dose~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucint.inf.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~int,inf,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucint.inf.obs.dose:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~int,inf,obs,dose~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucint.inf.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~int,inf,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucint.inf.pred.dose:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~int,inf,pred,dose~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucint.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~int,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucint.last.dose:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~int,last,dose~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivall:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,all~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivinf.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,inf,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivinf.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,inf,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivint.all:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,int,all~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivint.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,int,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivlast:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivpbextall:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,pbe,all~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivpbextinf.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,pbe,inf,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivpbextinf.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,pbe,inf,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivpbextint.all:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,pbe,inf,all~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivpbextint.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,pbe,inf,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucivpbextlast:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~iv,pbe,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     auclast:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     auclast.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~last,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucpext.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~pext,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aucpext.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~pext,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aumcall:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUMC~all~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aumcall.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUMC~all,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aumcinf.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUMC~inf,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aumcinf.obs.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUMC~inf,obs,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aumcinf.pred.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUMC~inf,pred,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aumclast:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUMC~last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     aumclast.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUMC~last,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     c0:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "C~0~"</span></span>
-<span><span class="co">##       group:       "Common Parameters"</span></span>
-<span><span class="co">##     cav:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "C~ave~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     cav.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "C~ave,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     ceoi:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "C~EOI~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     cl.all:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "CL"</span></span>
-<span><span class="co">##       group:       "Common Parameters"</span></span>
-<span><span class="co">##     cl.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "CL~last~"</span></span>
-<span><span class="co">##       group:       "Common Parameters"</span></span>
-<span><span class="co">##     cl.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "CL~obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     cl.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "CL~pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     clast.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "CL~last,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     clast.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "CL~last,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     clast.pred.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "CL~last,pred,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     clr.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "CL~R,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     clr.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "CL~R,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     clr.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "CL~R,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     cmax:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "C~max~"</span></span>
-<span><span class="co">##       group:       "Common Parameters"</span></span>
-<span><span class="co">##     cmax.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "C~max,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     cmin:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "C~min~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     cmin.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "C~min,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     ctrough:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "C~tr~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     ctrough.dn:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "C~tr,dn~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     deg.fluc:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "dgf"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     end:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~end~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     f:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "f~b~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     fe:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "f~e~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     half.life:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~half~"</span></span>
-<span><span class="co">##       group:       "Common Parameters"</span></span>
-<span><span class="co">##     kel.iv.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "k~el,iv,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     kel.iv.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "k~el,iv,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     kel.iv.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "k~el,iv,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     kel.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "k~el,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     kel.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "k~el,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     kel.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "k~el,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     lambda.z:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        "λz"</span></span>
-<span><span class="co">##       md:          "&lt;ff:symbol&gt;l&lt;/ff&gt;~z~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     lambda.z.n.points:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        "λz,n"</span></span>
-<span><span class="co">##       md:          "&lt;ff:symbol&gt;l&lt;/ff&gt;~z,n~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     lambda.z.time.first:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        "λz (t 1ˢᵗ)"</span></span>
-<span><span class="co">##       md:          "&lt;ff:symbol&gt;l&lt;/ff&gt;~z~ (t 1^st^)"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     mrt.iv.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "MRT~iv,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     mrt.iv.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "MRT~iv,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     mrt.iv.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "MRT~iv,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     mrt.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "MRT~last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     mrt.md.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "MRT~md,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     mrt.md.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "MRT~md,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     mrt.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "MRT~obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     mrt.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "MRT~pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     ptr:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "PTR"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     r.squared:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        "r²"</span></span>
-<span><span class="co">##       md:          "R^2^"</span></span>
-<span><span class="co">##       group:       "Common Parameters"</span></span>
-<span><span class="co">##     span.ratio:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "SR"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     sparse_auclast:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "AUC~last,sp~"</span></span>
-<span><span class="co">##       group:       "Common Parameters"</span></span>
-<span><span class="co">##     start:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~start~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     swing:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "SWING"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     tfirst:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        "t 1ˢᵗ"</span></span>
-<span><span class="co">##       md:          "t~first~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     thalf.eff.iv.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~half,eff,iv,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     thalf.eff.iv.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~half,eff,iv,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     thalf.eff.iv.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~half,eff,iv,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     thalf.eff.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~half,eff,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     thalf.eff.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~half,eff,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     thalf.eff.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~half,eff,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     time_above:</span></span>
-<span><span class="co">##       # JMH how is the conconcentration specified</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~ab~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     tlag:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~lag~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     tlast:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "t~last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vd.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~d,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vd.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~d,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vss.iv.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~ss,iv,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vss.iv.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~ss,iv,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vss.iv.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~ss,iv,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vss.last:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~ss,iv,last~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vss.md.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~ss,md,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vss.md.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~ss,md,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vss.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~ss,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vss.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~ss,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vz.obs:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~z,obs~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##     vz.pred:</span></span>
-<span><span class="co">##       description: NULL</span></span>
-<span><span class="co">##       text:        NULL</span></span>
-<span><span class="co">##       md:          "V~z,pred~"</span></span>
-<span><span class="co">##       group:       "Other"</span></span>
-<span><span class="co">##   units:</span></span>
-<span><span class="co">##     # For reference this is the units vignette from PKNCA</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     # http://billdenney.github.io/pknca/articles/v07-unit-conversion.html</span></span>
-<span><span class="co">##     #</span></span>
-<span><span class="co">##     # Default value for whether or not to include units. This can</span></span>
-<span><span class="co">##     # be overwritten in the app.</span></span>
-<span><span class="co">##     include_units: TRUE</span></span>
-<span><span class="co">##     # Add unit options here, they will appear in the order they are</span></span>
-<span><span class="co">##     # entered. The _def below is the default when a new analysis is</span></span>
-<span><span class="co">##     # initialize. It must be in the list.</span></span>
-<span><span class="co">##     # BILL how will PKNCA handle units like µg</span></span>
-<span><span class="co">##     conc:     ["ng/mL",   "µg/mL",  "g/L",    "molar",  "nM"]</span></span>
-<span><span class="co">##     conc_def:  "ng/mL"</span></span>
-<span><span class="co">##     dose:     ["g",  "mg",  "mg/kg",   "µg", "µg/kg",   "ng",   "ng/kg"]</span></span>
-<span><span class="co">##     dose_def:  "mg"</span></span>
-<span><span class="co">##     amt:      ["g",  "mg", "µg",  "ng", "g", "moles", "µmoles", "nmoles"]</span></span>
-<span><span class="co">##     amt_def:   "mg"</span></span>
-<span><span class="co">##     time:     ["day",     "hr",      "min",    "sec"         ]</span></span>
-<span><span class="co">##     time_def:  "day"</span></span>
-<span><span class="co">##     vol:      ["mL",     "L"]</span></span>
-<span><span class="co">##   # This is used to generate documentation about required columns in datasets.</span></span>
-<span><span class="co">##   # Yous hould only change the Column and Description elements. The others are</span></span>
-<span><span class="co">##   # used internally.</span></span>
-<span><span class="co">##   data_format:</span></span>
-<span><span class="co">##     columns:</span></span>
-<span><span class="co">##      - entry:</span></span>
-<span><span class="co">##         sname:       "id"</span></span>
-<span><span class="co">##         Column:      "Subject ID"</span></span>
-<span><span class="co">##         Required:    "yes"</span></span>
-<span><span class="co">##         Description: "Unique subject identifier."</span></span>
-<span><span class="co">##      - entry:</span></span>
-<span><span class="co">##         sname:       "time"</span></span>
-<span><span class="co">##         Column:      "Time"</span></span>
-<span><span class="co">##         Required:    "yes"</span></span>
-<span><span class="co">##         Description: "Time since the first dose. Must be numeric."</span></span>
-<span><span class="co">##      - entry:</span></span>
-<span><span class="co">##         sname:       "ntime"</span></span>
-<span><span class="co">##         Column:      "Nominal Time"</span></span>
-<span><span class="co">##         Required:    "yes"</span></span>
-<span><span class="co">##         Description: "Time since the last dose in the cycle (same units as Time). Must be numeric."</span></span>
-<span><span class="co">##      - entry:</span></span>
-<span><span class="co">##         sname:       "conc"</span></span>
-<span><span class="co">##         Column:      "Concentration"</span></span>
-<span><span class="co">##         Required:    "yes"</span></span>
-<span><span class="co">##         Description: "Observed concentration. Must be numeric, no NA values. Missing values should be set to 0."</span></span>
-<span><span class="co">##      # BILL should this be the dose given at time zero or total dose given over a cycle</span></span>
-<span><span class="co">##      - entry:</span></span>
-<span><span class="co">##         sname:       "dose"</span></span>
-<span><span class="co">##         Column:      "Dose"</span></span>
-<span><span class="co">##         Required:    "yes"</span></span>
-<span><span class="co">##         Description: "Value of dose given (must be numeric)."</span></span>
-<span><span class="co">##      - entry:</span></span>
-<span><span class="co">##         sname:       "route"</span></span>
-<span><span class="co">##         Column:      "Route"</span></span>
-<span><span class="co">##         Required:    "yes"</span></span>
-<span><span class="co">##         Description: "Doseing route. It should be either 'extravascular' or 'intravascular' but ruminate will make an effort to figure out other values."</span></span>
-<span><span class="co">##      - entry:</span></span>
-<span><span class="co">##         sname:       "dur"</span></span>
-<span><span class="co">##         Column:      "Duration (optional)"</span></span>
-<span><span class="co">##         Required:    "no"</span></span>
-<span><span class="co">##         Description: "Doseing duration (same units as Time). If set to N/A a value of 0 will be assumed."</span></span>
-<span><span class="co">##      - entry:</span></span>
-<span><span class="co">##         sname:       "cycle"</span></span>
-<span><span class="co">##         Column:      "Dose cycle"</span></span>
-<span><span class="co">##         Required:    "yes"</span></span>
-<span><span class="co">##         Description: "Current dose cycle"</span></span></code></pre>
+<pre><code>MC:
+  code: # module specific code options
+    packages: ["PKNCA", "dplyr", "stringr", "formods", "ruminate"]
+    readOnly: TRUE
+    mode:     r
+    preamble: |-
+      # Non-compartmental analysis ----------------------------------------------
+  compact:
+    code:    TRUE
+    clip:    TRUE
+  reporting:
+    enabled: TRUE
+    # Text format determines how text will be rendered. It can be either "md"
+    # for Markdown or "text" for plain text. This will also control things
+    # like table headers.
+    text_format: "md"
+    # Priority of reporting relative to other modules (higher numbers are
+    # reported first)
+    priority: 10
+    # The order of the figure and table ids (e.g. fg_ind_obs) represents the
+    # order in which figures and tables will be reported. Each id should have
+    # the following optoins:
+    #
+    #   caption_single      Caption used when a table or figure needs only a
+    #                       single page.
+    #
+    #   caption_multiple    Caption used when a table or figure spans multiple
+    #                       pages.
+    #
+    #   title_single        Slide title used when a table or figure needs only a
+    #                       single page.
+    #
+    #   title_multiple      Slide title used when a table or figure spans multiple
+    #                       pages.
+    #
+    #   sub_title_single    Slide sub_title used when a table or figure needs only a
+    #                       single page.
+    #
+    #   sub_title_multiple  Slide sub_title used when a table or figure spans multiple
+    #                       pages.
+    #
+    # The following placeholders can be used bu surroudning them with ===. For
+    # example to include the total number of figures you would use
+    # ===FIGTOT===:
+    #
+    # NCADESC               Description of the NCA analysis provided by the
+    #                       user in the UI (tables and figures).
+    #
+    # FIGNUM                Number of the current figure for figures that span
+    #                       multiple pages (figures only).
+    #
+    # FIGTOT                Total number of figures for figures that span
+    #                       multiple pages (figures only).
+    #
+    # TABNUM                Number of the current table for tables that span
+    #                       multiple pages (tables only).
+    #
+    # TABTOT                Total number of tables for tables that span multiple
+    #                       pages (tables only).
+    #
+    #
+    figures:
+      fg_ind_obs:
+        caption_single:     "===NCADESC=== (Individual Observations)"
+        caption_multiple:   "===NCADESC=== (Individual Observations,  ===FIGNUM=== of ===FIGTOT===)"
+        title_single:       " Individual Observations"
+        title_multiple:     " Individual Observations"
+        sub_title_single:   "===NCADESC==="
+        sub_title_multiple: "===NCADESC=== (===FIGNUM=== of ===FIGTOT===)"
+    tables:
+      tb_ind_params:
+        caption_single:   "===NCADESC=== (Individual Parameters)"
+        caption_multiple: "===NCADESC=== (Individual Parameters, ===TABNUM=== of ===TABTOT===)"
+      tb_ind_obs:
+        caption_single:   "===NCADESC===, Individual Data"
+        caption_multiple: "===NCADESC===, Individual Data (===TABNUM=== of ===TABTOT===)"
+    # Default number of significant digits
+    digits: 3
+    # When reporting units the * will be replaced with this value:
+    mult_str: "⋅"
+    # You can use unicode here like this "∞"
+    # How infinity is represented in reports like table headers
+    # to change inf in parameters you need to change them for the individual
+    # parameters below.
+    infinity:    "inf"
+    not_calc:    "NC"
+    not_sampled: "NS"
+    blq:         "BLQ"
+    # Here we list all the notes that can be present in tables. You need an
+    # entry for whatever you put in not_calc and blq above here.
+    notes:
+      NC: "not calculated"
+      NS: "not sampled"
+      BLQ: "below the level of quantification"
+  notifications:
+    ana_add_int_success: "Interval added: ===DETAILS==="
+  # Put different formatting options (widths, heights,
+  # shinyWidgets button sizes, etc) here.
+  formatting:
+    # Dimensions of code snippet box
+    code:
+      width:  800
+      height: 300
+    # Dimensions of the notes text area
+    notes:
+      width:  "520px"
+      height: "75px"
+    # Width of textInput and selectInput UI elements in the
+    # nca configuration
+    nca_config_option:
+      width: 150
+    # Width of the figure preview (must be numeric)
+    # The options nrow and ncol refer to the default number of rows and
+    # columns when faceting. The options nrow_opt and nrow_col are values the
+    # user can select.
+    #
+    preview:
+      width:           "100%"
+      height:          "600px"
+      nrow:            4
+      ncol:            4
+      nrow_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+      ncol_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+      logy:            TRUE
+      fig_type:        "report"
+      tab_type:        "report"
+    # These apply to the intervals table
+    dose_from:
+      default:          "cols"
+      tooltip:          "Dosing information can be found in either columns (column for dose, dose cycle, nominal time) or rows (one row for each dose event distinguished by an event ID (EVID) column)."
+      tooltip_position: "top"
+    intervals:
+      width:  600
+      height: 175
+    intervals_start:
+      width:  50
+    intervals_stop:
+      width:  50
+    intervals_np_text:
+      width:  375
+    intervals_delete:
+      width:  75
+    button_ana_run:
+      size: "sm"
+      block: TRUE
+    button_ana_del:
+      size: "sm"
+      block: TRUE
+      tooltip: "Delete the current analysis."
+      tooltip_position: "right"
+    button_ana_save:
+      size: "sm"
+      block: TRUE
+      tooltip: "Save the caption and notes and apply the data view for the current analysis."
+      tooltip_position: "right"
+    button_ana_clip:
+      size: "sm"
+      block: TRUE
+      tooltip: "Copy the code to generate the current analysis to the clipboard."
+      tooltip_position: "right"
+    button_fg_save:
+      size: "sm"
+      block: TRUE
+     #tooltip: "tooltip"
+     #tooltip_position: "right"
+    button_tb_save:
+      size: "sm"
+      block: TRUE
+     #tooltip: "tooltip"
+     #tooltip_position: "right"
+    button_ana_copy:
+      size: "sm"
+      block: TRUE
+      tooltip: "Make a copy of the current analysis."
+      tooltip_position: "right"
+    button_ana_new:
+      size: "sm"
+      block: TRUE
+      tooltip: "Create a new analysis."
+      tooltip_position: "right"
+    button_ana_add_int:
+      size: "sm"
+      block: TRUE
+    button_ana_use_scenario:
+      size: "sm"
+      block: TRUE
+    check_fg_ind_obs:
+      width: 75
+    select_ana_interval_range:
+      width:  200
+    text_ana_interval_start:
+      width: 75
+    text_ana_interval_stop:
+      width: 75
+    select_current_view:
+      width: 200
+    select_ana_fig_view:
+      width: 250
+    select_ana_tab_view:
+      width: 250
+    select_ana_source_sampling:
+      width: 150
+    select_ana_nca_parameters:
+      width: 150
+    select_ana_col_id:
+      width: 150
+      tooltip:  "Unique id for each subject in the dataset (required)"
+      tooltip_position: "bottom"
+    select_ana_col_dose:
+      width: 150
+      tooltip: "Amount of dose (required)"
+      tooltip_position: "bottom"
+    select_ana_col_dur:
+      width: 150
+      tooltip: "Duration of infusion (optional)"
+      tooltip_position: "bottom"
+    select_ana_col_conc:
+      width: 150
+      tooltip: "Observed concentration (NA for missing values, required)"
+      tooltip_position: "bottom"
+    select_ana_col_route:
+      width: 150
+      tooltip: "Dosing route (intravascular  or extravascular, required)"
+      tooltip_position: "bottom"
+    select_ana_col_time:
+      width: 150
+      tooltip: "Observation time since the first dose (required)"
+      tooltip_position: "bottom"
+    select_ana_col_ntime:
+      width: 150
+      tooltip: "Time since the most recent dose (optional, needed to determine dosing from columns)"
+      tooltip_position: "bottom"
+    select_ana_col_group:
+      width: 150
+      tooltip: "Other columns used for grouping (optional)"
+      tooltip_position: "bottom"
+    select_ana_col_analyte:
+      width: 150
+      tooltip: "Used if multiple analytes are present in the dataset (optional)"
+      tooltip_position: "bottom"
+    select_ana_col_evid:
+      width: 150
+      tooltip: "EVID column from NONMEM used to distinguish dosing and observation records (optional, needed for dosing from rows)"
+      tooltip_position: "bottom"
+    select_ana_col_cycle:
+      width: 150
+      tooltip: "The most recent dose cycle or period (optional, needed for dosing from columns)"
+      tooltip_position: "bottom"
+    select_ana_units_dose:
+      width: 150
+    select_ana_units_time:
+      width: 150
+    select_ana_units_conc:
+      width: 150
+    select_ana_units_amt:
+      width: 150
+    select_ana_scenario:
+      width: 150
+    select_fg_ind_obs_ncol:
+      width: 50
+    select_fg_ind_obs_nrow:
+      width: 50
+    select_fg_ind_obs_page:
+      width: 100
+    select_tb_page:
+      width: 100
+  errors:
+    nca_run_filed: "Unable to run PKNCA. Please, see below for details."
+    bad_input: "Input error message"
+    nca_no_fig: "There are no figures to display. You must run the analysis first"
+    nca_no_tab: "There are no tables to display. You must run the analysis first"
+  tooltips:
+    # Set to FALSE to disable tool tips for this module
+    include: TRUE
+    notes:             "Optional analysis notes that will be carried over and used in other elements (e.g. reporting)."
+    ana_key:           "Unique description used for referencing analysis and in other elements (e.g. reporting)."
+    show_code:         "Show analysis code"
+    nca_intervals:     "Current NCA intervals"
+    url_dosing:        "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#dosing-information"
+    ph:
+      text_ana_interval_start: 0
+      text_ana_interval_stop:  "number or Inf"
+      notes:                   "Optional NCA notes that will be carried over and used in other elements (e.g. reporting)."
+  # This controls the figure and table selection for an analysis. The order of
+  # the keys (e.g., tb_ind_params, tb_sum_params, etc) controls the
+  # order they are dispalyed in the selector and the text controls what's show
+  # in the interface.
+  figures:
+    fg_ind_obs:
+      choice:  "Individual Profiles"
+      subtext: "Faceted view of individual time-course"
+  tables:
+    tb_ind_params:
+      choice:  "Individual NCA Parameters"
+      subtext: "Listings of subject-level NCA parmaeters"
+    tb_sum_params:
+      choice:  "Summarized NCA Parameters"
+      subtext: "Listings of NCA parmaeters summarized by group/analyte"
+    tb_ind_obs:
+      choice:  "Individual Data"
+      subtext: "Listings of subject-level time-course data"
+    tb_nca_raw:
+      choice:  "Raw NCA Output"
+      subtext: "Output from PKNCA with requested and dependent parameters"
+  labels:
+    ana_key:                         "title/caption"
+    new_ana:                         "New"
+    run_ana:                         "Run NCA"
+    save_ana:                        "Save"
+    del_ana:                         "Delete"
+    copy_ana:                        "Copy"
+    clip_ana:                        "Code"
+    fg_save:                         "Apply changes"
+    tb_save:                         "Apply changes"
+    curr_anas_none:                  "No figures yet created"
+    no_dataset:                      "No datasets available to analyze. You need to load a dataset to use this module."
+    ana_use_scenario:                "Analysis Template"
+    ana_add_int:                     "Add Interval"
+    no_intervals:                    "No intervals added yet"
+    panel_analysis_opts:             "Analysis Options"
+    panel_figures:                   "Figures"
+    panel_tables:                    "Tables"
+    panel_nca_config:                "Configuration"
+    text_ana_interval_start:         "Start"
+    text_ana_interval_stop:          "End"
+    select_ana_interval_range:       "Interval Range"
+    # Headings used in the UI
+    head_intervals:                  "Analysis Time Intervals"
+    head_intervals_current:          "Current Intervals"
+    head_analysis_template:          "Use Analysis Template"
+    head_intervals_create:           "Create an Interval"
+    head_dose_from:                  "Dosing Information"
+    head_col_mapping:                "Identify Columns"
+    head_col_mapping_required:       "Required"
+    head_col_mapping_optional:       "Optional"
+    head_run_analysis:               "Run Analysis"
+    head_units:                      "Units"
+    select_current_view:             "Data from"
+    select_current_ana:              "Current NCA"
+    select_ana_scenario:             NULL  # "Type of Analysis:"
+    select_ana_col_id:               "Subject ID"
+    select_ana_col_time:             "Time"
+    select_ana_col_ntime:            "Nominal Time"
+    select_ana_col_dose:             "Dose"
+    select_ana_col_dur:              "Dose Duration"
+    select_ana_col_conc:             "Concentration"
+    select_ana_col_route:            "Route"
+    select_ana_col_group:            "Other Grouping"
+    select_ana_col_cycle:            "Dosing Cycle or Period"
+    select_ana_col_evid:             "Event ID"
+    select_ana_col_analyte:          "Analyte"
+    select_ana_units_time:           "Time"
+    select_ana_units_dose:           "Dose"
+    select_ana_units_conc:           "Concentration"
+    select_ana_units_amt:            "Amount"
+    select_ana_nca_parameters:       "Parameters"
+    select_fg_ind_obs_nrow:          "Rows"
+    select_fg_ind_obs_ncol:          "Columns"
+    select_fg_ind_obs_page:          "Show Page"
+    select_tb_page:                  "Show Page"
+    check_fg_ind_obs_logy:           "Log 10 y-scale"
+    switch_ana_include_units:        "Include Units"
+    switch_ana_fig:                  NULL
+    switch_ana_fig_interactive:      "Interactive"
+    switch_ana_fig_report:           "Report Preview"
+    switch_ana_dose_from:            "Dosing Found In"
+    switch_ana_dose_from_rows:       "Rows"
+    switch_ana_dose_from_cols:       "Columns"
+    switch_ana_tab:                  NULL
+    switch_ana_tab_interactive:      "Interactive"
+    switch_ana_tab_report:           "Report Preview"
+    select_ana_source_sampling:      "Data Sampling"
+    busy:
+      run_nca:                       "Running NCA be patient."
+    PKNCA_raw:
+      ID:                            "Subject ID"
+      start:                         "Initial time of the analysis interval."
+      end:                           "Final time of the analysis interval."
+      PPTESTCD:                      "Parameter name from PKNCA."
+      PPORRES:                       "parameter value."
+      exclude:                       "Reason for parameter exclusion (NA when parameter was calculated)."
+      PPORRESU:                      "Parameter units."
+  # For details on the PKNCA options see this vignette:
+  # https://billdenney.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html
+  # This section contains information about different options, metadata about
+  # them, default values, etc. Using this, the options UI for an analysis is
+  # generated automatically. Each configuration option has the following:
+  #
+  # group        - This is how configuration options will be grouped in the app
+  # label        - Short textual description
+  # tooltip      - More detailed description of the option and what goes into it.
+  #                Set to NULL to not display a tool tip.
+  # type         - List of possible types. For example if you have "numeric" then
+  #                "character" the value will be evaluated as numeric, if this is
+  #                NA then it will be evaluated as character.
+  # value        - Default value in the UI
+  # options      - If set to NULL a text input box will be created for this option,
+  #                if there are options then a selection box will be created.
+  # pknca_option - The actual option set with PKNCA
+  nca_config:
+    adj_r_squared_factor:
+      group:         General
+      # BILL I need a better label for this
+      label:         "r² (Adj) factor"
+      tooltip:       "The adjusted r² for the calculation of λz has this factor times the number of data points added to it. It allows for more data points to be preferred in the calculation of half-life."
+      type:          "numeric"
+      value:         0.0001
+      options:       NULL
+      pknca_option:  adj.r.squared.factor
+    max_missing:
+      group:         General
+      label:         "Max missing (frac)"
+      tooltip:       "The maximum fraction of the data that may be missing (‘NA’) to calculate summary statistics."
+      type:          "numeric"
+      value:         0.5
+      options:       NULL
+      pknca_option:  max.missing
+    auc_method:
+      group:         AUC
+      label:         Method
+      tooltip:       "The method used to calculate the AUC and related statistics."
+      type:          "character"
+      value:         "lin up/log down"
+      options:       ["lin up/log down", "linear"]
+      pknca_option:  auc.method
+    conc_na:
+      group:         Missing and BLQ Values
+      label:         Missing values
+      tooltip:       "Determines how missing (NA) values are generally handled. Can be either drop or a numeric value to use. "
+      type:          "mixed"
+      value:         "drop"
+      options:       NULL
+      pknca_option:  conc.na
+    conc_blq_first:
+      group:         Missing and BLQ Values
+      label:         First value BLQ
+      tooltip:       "Indicates what to do if the first observation is BLQ. It can either be drop, keep, or a numeric value to use."
+      type:          "mixed"
+      value:         "keep"
+      options:       NULL
+      pknca_option:  conc.blq$first
+    conc_blq_middle:
+      group:         Missing and BLQ Values
+      label:         Middle values BLQ
+      tooltip:       "Indicates what to do if a value between the first and last observations is BLQ. It can either be drop, keep, or a numeric value to use."
+      type:          "mixed"
+      value:         "drop"
+      options:       NULL
+      pknca_option:  conc.blq$middle
+    conc_blq_last:
+      group:         "Missing and BLQ Values"
+      label:         "Last Value BLQ"
+      tooltip:       "Indicates what to do if the last observation is BLQ. It can either be drop, keep, or a numeric value to use."
+      type:          "mixed"
+      value:         "keep"
+      options:       NULL
+      pknca_option:  conc.blq$last
+    first_tmax:
+      group:         "General"
+      label:         "Multiple tmax use first"
+      tooltip:       "If there is more than one concentration equal to Cmax, should the time selected for Tmax be the first value? If TRUE, the first will be selected. If FALSE, the last will be selected."
+      type:          "logical"
+      value:         TRUE
+      options:       [TRUE, FALSE]
+      pknca_option:  first.tmax
+    allow_tmax_in_half_life:
+      group:         "Half-Life"
+      label:         "Allow tmax in half-life"
+      tooltip:       "Should the concentration and time at Tmax be allowed in the half-life calculation? TRUE is yes and FALSE is no."
+      type:          "logical"
+      value:         FALSE
+      options:       [TRUE, FALSE]
+      pknca_option:  allow.tmax.in.half.life
+    min_hl_points:
+      group:         "Half-Life"
+      label:         "Min points"
+      tooltip:       "What is the minimum number of points required to calculate half-life?"
+      type:          "numeric"
+      value:         3
+      options:       [ 2, 3, 4, 5 ]
+      pknca_option:  min.hl.points
+    min_span_ratio:
+      group:         "Half-Life"
+      label:         "Min span ratio"
+      # BILL this is a bit cryptic
+      tooltip:       "What is the minimum span ratio required to consider a half-life valid?"
+      type:          "logical"
+      value:         2
+      options:       NULL
+      pknca_option:  min.span.ratio
+    min_hl_r_squared:
+      group:         "Half-Life"
+      label:         "Min r² value"
+      tooltip:       "What is the minimum r² value to consider a half-life calculation valid?"
+      type:          "numeric"
+      value:         0.9
+      options:       NULL
+      pknca_option:  min.hl.r.squared
+    max_aucinf_pext:
+      group:         "AUC"
+      label:         "Max allowed extrap (%)"
+      tooltip:       "What is the maximum percent extrapolation to consider an AUC∞ valid?"
+      type:          "numeric"
+      value:         20
+      options:       NULL
+      pknca_option:  max.aucinf.pext
+  # Prefix used to create NCA analysis objects in generated code
+  nca_object_name: "myANA_"
+  # The following patterns are used when detecting columns in your dataset
+  # automatically. You can create a multiple patterns. They will be processed
+  # in order from left to right. The first pattern to match will return that
+  # column. For example if you set id to:
+  #
+  # id:   ["^(?i)id$",    "(?i)subject"]
+  #
+  # It will match any column that is id. The (?i) is case insensitive. But it
+  # wont match IDs for example because it looks for something that starts with
+  # i (^) and ends with d ($).
+  #
+  # If that fails it will look for any column with the text 'subject' in it
+  # regardless of case. So it would match SUBJECT, subject, Subjects,
+  # subject id, etc.
+  #
+  # If you set it to NULL no attempt will be made to detect the column.
+  detect_col:
+    id:      ["^(?i)id$",    "(?i)subject",    "(?i)animal"]
+    time:    ["^(?i)time",   "(?i)ntime"  ]
+    ntime:   ["^(?i)ntime",  "(?i)time"   ]
+    conc:    ["^(?i)conc",   "^(?i)dv$",      "^(?i)pcstresn$", "^(?i)lbstresn$", "^(?i)AVAL(N|NUM)?$"]
+    dose:    ["(?i)dose",    "^(?i)ecdose?$", "^(?i)exdose?$"]
+    evid:    ["(?i)evid"]
+    route:   ["(?i)route"]
+    cycle:   ["(?i)cycle",   "(?i)dose_num", "(?i)period"]
+    group:   NULL
+    analyte: NULL
+    dur:     NULL
+  # Routes may be specified in the dataset in a more detailed or convenient
+  # format than what is needed for analysis. Here you can specify patterns
+  # that can be used to detect routes. For details on the regular expressions
+  # that can be used see the detect_col section above. In general you can use
+  # the format of:
+  #
+  #   myroute: ["regex1", "regex2"]
+  #
+  # This will assign the route to 'myroute' in the ROUTE column if it matches
+  # regex1 or regex2.
+  #
+  detect_route:
+    intravascular: ["^(?i)iv$"]
+    extravascular: ["^(?i)sc$", "^(?i)oral"]
+  # These are default analysis scenarios that are shown in the App. They will
+  # be shown in the order defined. Each scenario has the following attributes:
+  #   - description: Free form textual description shown to the user
+  #   - nca_parameters: List of nca parameters to be calculated
+  #   - sampling: Can be either "serial" or "sparse"
+  #   BILL: Get relevant scenarios from bill here
+  ana_scenarios:
+    sd_iv:
+      description: "Single Dose (IV)"
+      nca_parameters: ["cmax", "auclast", "aucinf.obs"]
+      sampling:   "serial"
+      intervals:
+        - row:
+            start:         0
+            stop:          Inf
+            nca_parameters: ["aucinf.obs"]
+        - row:
+            start:         0
+            stop:          21
+            nca_parameters: ["cmax", "auclast"]
+    md_iv:
+      description: "Multiple Dose IV"
+      nca_parameters: ["cmax", "auclast", "aucinf.obs"]
+      sampling:   "serial"
+      intervals:
+        - row:
+            start:         0
+            stop:          Inf
+            nca_parameters: ["cmax", "auclast","aucinf.obs"]
+    sd_iv_sparse:
+      description: "Single Dose (IV) Sparse Sampling"
+      nca_parameters: ["cmax", "sparse_auclast"]
+      sampling:   "sparse"
+      intervals:
+        - row:
+            start:          0
+            stop:           Inf
+            nca_parameters: ["cmax", "sparse_auclast"]
+    md_iv_sparse:
+      description: "Multiple Dose IV Sparse Sampling"
+      nca_parameters: ["cmax", "sparse_auclast"]
+      sampling:   "sparse"
+      intervals:
+        - row:
+            start:          0
+            stop:           Inf
+            nca_parameters: ["cmax", "sparse_auclast"]
+  # This is the default shown when the app loads or a new analysis is created
+  ana_scenario_def: "sd_iv"
+  # Here are all of the available NCA parameters. Each field is the name of
+  # the parameter used in PKNCA. See the table in this vignette for the
+  # available parameters:
+  #
+  # https://cran.r-project.org/web/packages/PKNCA/vignettes/v03-selection-of-calculation-intervals.html
+  #
+  # Each of parameter has the following
+  #
+  #  - description: This is a verbose description of the parameter. If set to NULL the
+  #                 description from PKNCA will be used. Set it to other text to
+  #                 overwrite it. This description will also be used in exports as
+  #                 well.
+  #
+  #  - text:        Textual description to show the user. If set to NULL it
+  #                 will use the text form PKCNA.
+  #
+  #  - md:          Markdown formatted value of text.
+  #
+  #  - group:       This is how the paramters will be grouped in the UI that
+  #                 is generated.
+  #
+  # To limit the options the user sees you simply need to comment out the
+  # parameters you do not want in the App. Alterantively you can use the
+  # grouping below to have the most common parameters together at the top and
+  # the remaining in case they are needed.
+  #
+  # BILL can you go through the text and md elements below and make any
+  # changes you think make sense. For example is there a better way to label
+  # the parameter aucint.inf.obs.dose :).
+  #
+  nca_parameters:
+    aucall:
+      description: NULL
+      text:        NULL
+      md:          "AUC~all~"
+      group:       "Common Parameters"
+    adj.r.squared:
+      description: NULL
+      text:        "r² (Adj)"
+      md:          "Adj. R^2^"
+      group:       "Other"
+    ae:
+      description: NULL
+      text:        NULL
+      md:          "AE"
+      group:       "Other"
+    aucall.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUC~all,dn~"
+      group:       "Other"
+    aucinf.obs:
+      description: NULL
+      text:        NULL
+      md:          "AUC~inf,obs~"
+      group:       "Other"
+    aucinf.obs.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUC~inf,obs,dn~"
+      group:       "Other"
+    aucinf.pred.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUC~inf,pred,dn~"
+      group:       "Other"
+    aucint.all:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,all~"
+      group:       "Other"
+    aucint.all.dose:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,all,dose~"
+      group:       "Other"
+    aucint.inf.obs:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,inf,obs~"
+      group:       "Other"
+    aucint.inf.obs.dose:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,inf,obs,dose~"
+      group:       "Other"
+    aucint.inf.pred:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,inf,pred~"
+      group:       "Other"
+    aucint.inf.pred.dose:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,inf,pred,dose~"
+      group:       "Other"
+    aucint.last:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,last~"
+      group:       "Other"
+    aucint.last.dose:
+      description: NULL
+      text:        NULL
+      md:          "AUC~int,last,dose~"
+      group:       "Other"
+    aucivall:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,all~"
+      group:       "Other"
+    aucivinf.obs:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,inf,obs~"
+      group:       "Other"
+    aucivinf.pred:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,inf,pred~"
+      group:       "Other"
+    aucivint.all:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,int,all~"
+      group:       "Other"
+    aucivint.last:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,int,last~"
+      group:       "Other"
+    aucivlast:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,last~"
+      group:       "Other"
+    aucivpbextall:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,all~"
+      group:       "Other"
+    aucivpbextinf.obs:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,inf,obs~"
+      group:       "Other"
+    aucivpbextinf.pred:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,inf,pred~"
+      group:       "Other"
+    aucivpbextint.all:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,inf,all~"
+      group:       "Other"
+    aucivpbextint.last:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,inf,last~"
+      group:       "Other"
+    aucivpbextlast:
+      description: NULL
+      text:        NULL
+      md:          "AUC~iv,pbe,last~"
+      group:       "Other"
+    auclast:
+      description: NULL
+      text:        NULL
+      md:          "AUC~last~"
+      group:       "Other"
+    auclast.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUC~last,dn~"
+      group:       "Other"
+    aucpext.obs:
+      description: NULL
+      text:        NULL
+      md:          "AUC~pext,obs~"
+      group:       "Other"
+    aucpext.pred:
+      description: NULL
+      text:        NULL
+      md:          "AUC~pext,pred~"
+      group:       "Other"
+    aumcall:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~all~"
+      group:       "Other"
+    aumcall.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~all,dn~"
+      group:       "Other"
+    aumcinf.obs:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~inf,obs~"
+      group:       "Other"
+    aumcinf.obs.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~inf,obs,dn~"
+      group:       "Other"
+    aumcinf.pred.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~inf,pred,dn~"
+      group:       "Other"
+    aumclast:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~last~"
+      group:       "Other"
+    aumclast.dn:
+      description: NULL
+      text:        NULL
+      md:          "AUMC~last,dn~"
+      group:       "Other"
+    c0:
+      description: NULL
+      text:        NULL
+      md:          "C~0~"
+      group:       "Common Parameters"
+    cav:
+      description: NULL
+      text:        NULL
+      md:          "C~ave~"
+      group:       "Other"
+    cav.dn:
+      description: NULL
+      text:        NULL
+      md:          "C~ave,dn~"
+      group:       "Other"
+    ceoi:
+      description: NULL
+      text:        NULL
+      md:          "C~EOI~"
+      group:       "Other"
+    cl.all:
+      description: NULL
+      text:        NULL
+      md:          "CL"
+      group:       "Common Parameters"
+    cl.last:
+      description: NULL
+      text:        NULL
+      md:          "CL~last~"
+      group:       "Common Parameters"
+    cl.obs:
+      description: NULL
+      text:        NULL
+      md:          "CL~obs~"
+      group:       "Other"
+    cl.pred:
+      description: NULL
+      text:        NULL
+      md:          "CL~pred~"
+      group:       "Other"
+    clast.obs:
+      description: NULL
+      text:        NULL
+      md:          "CL~last,obs~"
+      group:       "Other"
+    clast.pred:
+      description: NULL
+      text:        NULL
+      md:          "CL~last,pred~"
+      group:       "Other"
+    clast.pred.dn:
+      description: NULL
+      text:        NULL
+      md:          "CL~last,pred,dn~"
+      group:       "Other"
+    clr.last:
+      description: NULL
+      text:        NULL
+      md:          "CL~R,last~"
+      group:       "Other"
+    clr.obs:
+      description: NULL
+      text:        NULL
+      md:          "CL~R,obs~"
+      group:       "Other"
+    clr.pred:
+      description: NULL
+      text:        NULL
+      md:          "CL~R,pred~"
+      group:       "Other"
+    cmax:
+      description: NULL
+      text:        NULL
+      md:          "C~max~"
+      group:       "Common Parameters"
+    cmax.dn:
+      description: NULL
+      text:        NULL
+      md:          "C~max,dn~"
+      group:       "Other"
+    cmin:
+      description: NULL
+      text:        NULL
+      md:          "C~min~"
+      group:       "Other"
+    cmin.dn:
+      description: NULL
+      text:        NULL
+      md:          "C~min,dn~"
+      group:       "Other"
+    ctrough:
+      description: NULL
+      text:        NULL
+      md:          "C~tr~"
+      group:       "Other"
+    ctrough.dn:
+      description: NULL
+      text:        NULL
+      md:          "C~tr,dn~"
+      group:       "Other"
+    deg.fluc:
+      description: NULL
+      text:        NULL
+      md:          "dgf"
+      group:       "Other"
+    end:
+      description: NULL
+      text:        NULL
+      md:          "t~end~"
+      group:       "Other"
+    f:
+      description: NULL
+      text:        NULL
+      md:          "f~b~"
+      group:       "Other"
+    fe:
+      description: NULL
+      text:        NULL
+      md:          "f~e~"
+      group:       "Other"
+    half.life:
+      description: NULL
+      text:        NULL
+      md:          "t~half~"
+      group:       "Common Parameters"
+    kel.iv.last:
+      description: NULL
+      text:        NULL
+      md:          "k~el,iv,last~"
+      group:       "Other"
+    kel.iv.obs:
+      description: NULL
+      text:        NULL
+      md:          "k~el,iv,obs~"
+      group:       "Other"
+    kel.iv.pred:
+      description: NULL
+      text:        NULL
+      md:          "k~el,iv,pred~"
+      group:       "Other"
+    kel.last:
+      description: NULL
+      text:        NULL
+      md:          "k~el,last~"
+      group:       "Other"
+    kel.obs:
+      description: NULL
+      text:        NULL
+      md:          "k~el,obs~"
+      group:       "Other"
+    kel.pred:
+      description: NULL
+      text:        NULL
+      md:          "k~el,pred~"
+      group:       "Other"
+    lambda.z:
+      description: NULL
+      text:        "λz"
+      md:          "&lt;ff:symbol&gt;l&lt;/ff&gt;~z~"
+      group:       "Other"
+    lambda.z.n.points:
+      description: NULL
+      text:        "λz,n"
+      md:          "&lt;ff:symbol&gt;l&lt;/ff&gt;~z,n~"
+      group:       "Other"
+    lambda.z.time.first:
+      description: NULL
+      text:        "λz (t 1ˢᵗ)"
+      md:          "&lt;ff:symbol&gt;l&lt;/ff&gt;~z~ (t 1^st^)"
+      group:       "Other"
+    mrt.iv.last:
+      description: NULL
+      text:        NULL
+      md:          "MRT~iv,last~"
+      group:       "Other"
+    mrt.iv.obs:
+      description: NULL
+      text:        NULL
+      md:          "MRT~iv,obs~"
+      group:       "Other"
+    mrt.iv.pred:
+      description: NULL
+      text:        NULL
+      md:          "MRT~iv,pred~"
+      group:       "Other"
+    mrt.last:
+      description: NULL
+      text:        NULL
+      md:          "MRT~last~"
+      group:       "Other"
+    mrt.md.obs:
+      description: NULL
+      text:        NULL
+      md:          "MRT~md,obs~"
+      group:       "Other"
+    mrt.md.pred:
+      description: NULL
+      text:        NULL
+      md:          "MRT~md,pred~"
+      group:       "Other"
+    mrt.obs:
+      description: NULL
+      text:        NULL
+      md:          "MRT~obs~"
+      group:       "Other"
+    mrt.pred:
+      description: NULL
+      text:        NULL
+      md:          "MRT~pred~"
+      group:       "Other"
+    ptr:
+      description: NULL
+      text:        NULL
+      md:          "PTR"
+      group:       "Other"
+    r.squared:
+      description: NULL
+      text:        "r²"
+      md:          "R^2^"
+      group:       "Common Parameters"
+    span.ratio:
+      description: NULL
+      text:        NULL
+      md:          "SR"
+      group:       "Other"
+    sparse_auclast:
+      description: NULL
+      text:        NULL
+      md:          "AUC~last,sp~"
+      group:       "Common Parameters"
+    start:
+      description: NULL
+      text:        NULL
+      md:          "t~start~"
+      group:       "Other"
+    swing:
+      description: NULL
+      text:        NULL
+      md:          "SWING"
+      group:       "Other"
+    tfirst:
+      description: NULL
+      text:        "t 1ˢᵗ"
+      md:          "t~first~"
+      group:       "Other"
+    thalf.eff.iv.last:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,iv,last~"
+      group:       "Other"
+    thalf.eff.iv.obs:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,iv,obs~"
+      group:       "Other"
+    thalf.eff.iv.pred:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,iv,pred~"
+      group:       "Other"
+    thalf.eff.last:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,last~"
+      group:       "Other"
+    thalf.eff.obs:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,obs~"
+      group:       "Other"
+    thalf.eff.pred:
+      description: NULL
+      text:        NULL
+      md:          "t~half,eff,pred~"
+      group:       "Other"
+    time_above:
+      # JMH how is the conconcentration specified
+      description: NULL
+      text:        NULL
+      md:          "t~ab~"
+      group:       "Other"
+    tlag:
+      description: NULL
+      text:        NULL
+      md:          "t~lag~"
+      group:       "Other"
+    tlast:
+      description: NULL
+      text:        NULL
+      md:          "t~last~"
+      group:       "Other"
+    vd.obs:
+      description: NULL
+      text:        NULL
+      md:          "V~d,obs~"
+      group:       "Other"
+    vd.pred:
+      description: NULL
+      text:        NULL
+      md:          "V~d,pred~"
+      group:       "Other"
+    vss.iv.last:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,iv,last~"
+      group:       "Other"
+    vss.iv.obs:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,iv,obs~"
+      group:       "Other"
+    vss.iv.pred:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,iv,pred~"
+      group:       "Other"
+    vss.last:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,iv,last~"
+      group:       "Other"
+    vss.md.obs:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,md,obs~"
+      group:       "Other"
+    vss.md.pred:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,md,pred~"
+      group:       "Other"
+    vss.obs:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,obs~"
+      group:       "Other"
+    vss.pred:
+      description: NULL
+      text:        NULL
+      md:          "V~ss,pred~"
+      group:       "Other"
+    vz.obs:
+      description: NULL
+      text:        NULL
+      md:          "V~z,obs~"
+      group:       "Other"
+    vz.pred:
+      description: NULL
+      text:        NULL
+      md:          "V~z,pred~"
+      group:       "Other"
+  units:
+    # For reference this is the units vignette from PKNCA
+    #
+    # http://billdenney.github.io/pknca/articles/v07-unit-conversion.html
+    #
+    # Default value for whether or not to include units. This can
+    # be overwritten in the app.
+    include_units: TRUE
+    # Add unit options here, they will appear in the order they are
+    # entered. The _def below is the default when a new analysis is
+    # initialize. It must be in the list.
+    # BILL how will PKNCA handle units like µg
+    conc:     ["ng/mL",   "µg/mL",  "g/L",    "molar",  "nM"]
+    conc_def:  "ng/mL"
+    dose:     ["g",  "mg",  "mg/kg",   "µg", "µg/kg",   "ng",   "ng/kg"]
+    dose_def:  "mg"
+    amt:      ["g",  "mg", "µg",  "ng", "g", "moles", "µmoles", "nmoles"]
+    amt_def:   "mg"
+    time:     ["day",     "hr",      "min",    "sec"         ]
+    time_def:  "day"
+    vol:      ["mL",     "L"]
+  # This is used to generate documentation about required columns in datasets.
+  # Yous hould only change the Column and Description elements. The others are
+  # used internally.
+  data_format:
+    columns:
+     - entry:
+        sname:       "id"
+        Column:      "Subject ID"
+        Required:    "yes"
+        Description: "Unique subject identifier."
+     - entry:
+        sname:       "time"
+        Column:      "Time"
+        Required:    "yes"
+        Description: "Time since the first dose. Must be numeric."
+     - entry:
+        sname:       "ntime"
+        Column:      "Nominal Time"
+        Required:    "yes"
+        Description: "Time since the last dose in the cycle (same units as Time). Must be numeric."
+     - entry:
+        sname:       "conc"
+        Column:      "Concentration"
+        Required:    "yes"
+        Description: "Observed concentration. Must be numeric, no NA values. Missing values should be set to 0."
+     # BILL should this be the dose given at time zero or total dose given over a cycle
+     - entry:
+        sname:       "dose"
+        Column:      "Dose"
+        Required:    "yes"
+        Description: "Value of dose given (must be numeric)."
+     - entry:
+        sname:       "route"
+        Column:      "Route"
+        Required:    "yes"
+        Description: "Doseing route. It should be either 'extravascular' or 'intravascular' but ruminate will make an effort to figure out other values."
+     - entry:
+        sname:       "dur"
+        Column:      "Duration (optional)"
+        Required:    "no"
+        Description: "Doseing duration (same units as Time). If set to N/A a value of 0 will be assumed."
+     - entry:
+        sname:       "cycle"
+        Column:      "Dose cycle"
+        Required:    "yes"
+        Description: "Current dose cycle"</code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

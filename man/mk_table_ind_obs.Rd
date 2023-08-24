@@ -49,6 +49,13 @@ to "id" there will be a column for ID and a column for each individual time.}
 \value{
 list containing the following elements
 \itemize{
+\item{isgood:}      Boolean indicating the exit status of the function.
+\item{one_table:}   Dataframe of the entire table with the first lines containing the header.
+\item{one_body:}    Dataframe of the entire table (data only).
+\item{one_header:}  Dataframe of the entire header (row and body, no data).
+\item{tables:}      Named list of tables. Each list element is of the output
+\item{msgs:}        Vector of text messages describing any errors that were found.
+format from \code{\link[onbrand]{build_span}}.
 }
 }
 \description{
@@ -57,21 +64,22 @@ individual observation data. This can be spread out of over several tables
 (pages) if necessary.
 }
 \examples{
-id     = "NCA"                                                                 
-id_UD  = "UD"                                                                  
-id_DW  = "DW"                                                                  
-id_ASM = "ASM"                                                                 
+id     = "NCA"
+id_UD  = "UD"
+id_DW  = "DW"
+id_ASM = "ASM"
 
-# We need a state variable to be define                             
- sess_res = NCA_test_mksession(session=list(),                                 
-      id     = id,                                                             
-      id_UD  = id_UD,                                                          
-      id_DW  = id_DW,                                                          
-      id_ASM = id_ASM)                                                         
+# We need a state variable to be define
+sess_res = NCA_test_mksession(session=list(),
+     id     = id,
+     id_UD  = id_UD,
+     id_DW  = id_DW,
+     id_ASM = id_ASM,
+     full_session=FALSE)
 
 state = sess_res$state
 
-# Pulls out the active analysis                                                
+# Pulls out the active analysis
 current_ana = NCA_fetch_current_ana(state)
 
 # This is the raw PKNCA output

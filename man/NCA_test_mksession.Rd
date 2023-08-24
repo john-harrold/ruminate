@@ -9,7 +9,8 @@ NCA_test_mksession(
   id = "NCA",
   id_UD = "UD",
   id_DW = "DW",
-  id_ASM = "ASM"
+  id_ASM = "ASM",
+  full_session = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ NCA_test_mksession(
 \item{id_DW}{An ID string that corresponds with the ID used to call the DW modules UI elements}
 
 \item{id_ASM}{An ID string that corresponds with the ID used to call the ASM modules UI elements}
+
+\item{full_session}{Boolean to indicate if the full test session should be created (default \code{TRUE}).}
 }
 \value{
 list with the following elements
@@ -37,5 +40,5 @@ list with the following elements
 Populates the supplied session variable for testing.
 }
 \examples{
-sess_res = NCA_test_mksession(session=list())
+sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
 }

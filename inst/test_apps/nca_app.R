@@ -41,15 +41,15 @@ CSS <- "
 "
 
 #https://fontawesome.com/icons?from=io
-logo_url = 
+logo_url =
   "https://raw.githubusercontent.com/john-harrold/ruminate/main/man/figures/logo.png"
-data_url = 
+data_url =
   "https://github.com/john-harrold/formods/raw/master/inst/test_data/TEST_DATA.xlsx"
-run_url  = 
+run_url  =
   "https://runruminate.ubiquity.tools/"
-use_url  = 
+use_url  =
   "https://useruminate.ubiquity.tools/"
-main_url = 
+main_url =
   "https://ruminate.ubiquity.tools/"
 issue_url =
   "https://github.com/john-harrold/ruminate/issues"
@@ -57,38 +57,29 @@ issue_url =
 intro_text = tags$p(
 "Ruminate is a shiny module for pharmacometric data processing,
 visualization, and analysis. It consists of separate shiny modules that
-provide interfaces into common R packages and provides the underlying code. 
+provide interfaces into common R packages and provides the underlying code.
 This is done to facilitate usage of those packages and to provide reproducible
-analyses." , 
-tags$li( "To find out more visit  ", 
+analyses." ,
+tags$li( "To find out more visit  ",
         tags$a("ruminate.ubiquity.tools", href=main_url),""),
-tags$li( "To give it a try you can download a test dataset ", 
+tags$li( "To give it a try you can download a test dataset ",
         tags$a("here", href=data_url),""),
-tags$li( "Go to  ", 
+tags$li( "Go to  ",
         tags$a("useruminate.ubiquity.tools", href=use_url)," for a video
         demonstrating how to use ruminate"),
 tags$li( "If you run into any problems, have questions, or want a feature please
-        visit the ", 
+        visit the ",
         tags$a("issues", href=issue_url)," page")
 )
 
-# intro_text = "Ruminate is a shiny module for pharmacometric data process,
-# visualization, and analysis. It consists of separate shiny modules that
-# provide interfaces into common R packages. The data transformation tools act
-# as an interface to {dplyr} and {tidyr}, the visualization module acts as an
-# interface to {ggplot}, and the NCA module acts as an interface to {PKNCA}. It
-# offers reporting of the components in Word, PowerPoint and Excel. The
-# internals of ruminate generate code on the fly and allow you view the code for
-# each module element. It will also generate a script that when you save an
-# analysis to reproduce all you didn within the interface."
 
 ui <- shinydashboard::dashboardPage(
   skin="black",
   shinydashboard::dashboardHeader(title="ruminate"),
   shinydashboard::dashboardSidebar(
      shinydashboard::sidebarMenu(
-       shinydashboard::menuItem("Load/Save",       
-                                tabName="loadsave",    
+       shinydashboard::menuItem("Load/Save",
+                                tabName="loadsave",
                                 icon=icon("arrow-down-up-across-line")) ,
        shinydashboard::menuItem("Transform Data",  tabName="wrangle",     icon=icon("shuffle")),
        shinydashboard::menuItem("Visualize",       tabName="plot",        icon=icon("chart-line")),
@@ -117,7 +108,7 @@ ui <- shinydashboard::dashboardPage(
                                         "Load Data"),
                    fluidRow(
                      column(width=6,
-                       div(style="display:inline-block;width:100%", 
+                       div(style="display:inline-block;width:100%",
                        htmlOutput(NS("UD", "ui_ud_load_data"))),
                        htmlOutput(NS("UD", "ui_ud_clean")),
                        htmlOutput(NS("UD", "ui_ud_select_sheets")),
@@ -148,7 +139,7 @@ ui <- shinydashboard::dashboardPage(
                    ))
                    )
                  )
-               ) 
+               )
          #     ),
                ),
        shinydashboard::tabItem(tabName="wrangle",

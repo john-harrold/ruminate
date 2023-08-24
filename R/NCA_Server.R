@@ -3871,7 +3871,7 @@ code}
 #'@examples
 #'
 #'# We need a state object to use below
-#'sess_res = NCA_test_mksession(session=list())
+#'sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
 #'state = sess_res$state
 #'
 #'rpt = list(summary = list(), sheets=list())
@@ -3891,26 +3891,27 @@ code}
 #'@seealso \code{\link{FM_generate_report}}
 #'@examples
 #' # We need a state object to use below
-#' sess_res = NCA_test_mksession(session=list())
-#' state = sess_res$state
+#'sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
+#'state = sess_res$state
 #'
-#' # here we need an empty report object for tabular data
-#' rpt = list(summary = list(), sheets=list())
+#'# here we need an empty report object for tabular data
+#'rpt = list(summary = list(), sheets=list())
 #'
-#' # Now we append the report indicating we want
-#' # Excel output:
-#' rpt_res = NCA_append_report(state,
-#'   rpt     = rpt,
-#'   rpttype = "xlsx")
+#'# Now we append the report indicating we want
+#'# Excel output:
+#'rpt_res = NCA_append_report(state,
+#'  rpt           = rpt,
+#'  rpttype       = "xlsx",
+#'  gen_code_only = TRUE)
 #'
-#' # Shows if report elements are present
-#' rpt_res$hasrptele
+#'# Shows if report elements are present
+#'rpt_res$hasrptele
 #'
-#' # Code chunk to generate report element
-#' cat(paste(rpt_res$code, collapse="\n"))
+#'# Code chunk to generate report element
+#'cat(paste(rpt_res$code, collapse="\n"))
 #'
-#' # Tabular results from the first NCA analysis
-#' rpt_res$rpt$sheets$NCA_1_RES
+#'# Tabular results from the first NCA analysis
+#'rpt_res$rpt$sheets$NCA_1_RES
 NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 
   isgood    = TRUE
@@ -4388,11 +4389,11 @@ res}
 #'  }
 #'}
 #'@examples
-#' # We need a state object to use below
-#' sess_res = NCA_test_mksession(session=list())
-#' state = sess_res$state
+#'# We need a state object to use below
+#'sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
+#'state = sess_res$state
 #'
-#' myDs = NCA_fetch_ds(state)
+#'myDs = NCA_fetch_ds(state)
 NCA_fetch_ds = function(state){
   hasds  = FALSE
   isgood = TRUE
@@ -5222,22 +5223,23 @@ current_ana}
 #' JMH update the return list below
 #'@return NCA state with the NCA for the current analysis built.
 #'@examples
-#' # Module IDs                                                                   
-#' id     = "NCA"                                                                 
-#' id_UD  = "UD"                                                                  
-#' id_DW  = "DW"                                                                  
-#' id_ASM = "ASM"                                                                 
-#' 
-#' # We need a module variables to be defined
-#'  sess_res = NCA_test_mksession(session=list(),                                 
-#'       id     = id,                                                             
-#'       id_UD  = id_UD,                                                          
-#'       id_DW  = id_DW,                                                          
-#'       id_ASM = id_ASM)                                                         
-#' 
-#' state = sess_res$state
-#' 
-#' state = nca_builder(state)
+#'# Module IDs
+#'id     = "NCA"
+#'id_UD  = "UD"
+#'id_DW  = "DW"
+#'id_ASM = "ASM"
+#'
+#'# We need a module variables to be defined
+#'sess_res = NCA_test_mksession(session=list(),
+#'      id     = id,
+#'      id_UD  = id_UD,
+#'      id_DW  = id_DW,
+#'      id_ASM = id_ASM,
+#'      full_session=FALSE)
+#'
+#'state = sess_res$state
+#'
+#'state = nca_builder(state)
 nca_builder = function(state){
 
   isgood             = TRUE
@@ -5971,31 +5973,39 @@ state}
 #'to "id" there will be a column for ID and a column for each individual time.
 #'@return list containing the following elements
 #'\itemize{
+#'   \item{isgood:}      Boolean indicating the exit status of the function.
+#'   \item{one_table:}   Dataframe of the entire table with the first lines containing the header.
+#'   \item{one_body:}    Dataframe of the entire table (data only).
+#'   \item{one_header:}  Dataframe of the entire header (row and body, no data).
+#'   \item{tables:}      Named list of tables. Each list element is of the output
+#'   \item{msgs:}        Vector of text messages describing any errors that were found.
+#'   format from \code{\link[onbrand]{build_span}}.
 #'}
 #'@examples
-#' id     = "NCA"                                                                 
-#' id_UD  = "UD"                                                                  
-#' id_DW  = "DW"                                                                  
-#' id_ASM = "ASM"                                                                 
+#'id     = "NCA"
+#'id_UD  = "UD"
+#'id_DW  = "DW"
+#'id_ASM = "ASM"
 #'
-#' # We need a state variable to be define                             
-#'  sess_res = NCA_test_mksession(session=list(),                                 
-#'       id     = id,                                                             
-#'       id_UD  = id_UD,                                                          
-#'       id_DW  = id_DW,                                                          
-#'       id_ASM = id_ASM)                                                         
+#'# We need a state variable to be define
+#' sess_res = NCA_test_mksession(session=list(),
+#'      id     = id,
+#'      id_UD  = id_UD,
+#'      id_DW  = id_DW,
+#'      id_ASM = id_ASM,
+#'      full_session=FALSE)
 #'
-#' state = sess_res$state
+#'state = sess_res$state
 #'
-#' # Pulls out the active analysis                                                
-#' current_ana = NCA_fetch_current_ana(state)
-#' 
-#' # This is the raw PKNCA output
-#' pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+#'# Pulls out the active analysis
+#'current_ana = NCA_fetch_current_ana(state)
 #'
-#' # Building the figure
-#' mk_res = mk_table_ind_obs(nca_res = pknca_res)
-#' mk_res$tables[["Table 1"]]$ft
+#'# This is the raw PKNCA output
+#'pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+#'
+#'# Building the figure
+#'mk_res = mk_table_ind_obs(nca_res = pknca_res)
+#'mk_res$tables[["Table 1"]]$ft
 mk_table_ind_obs = function(
   nca_res   ,
   obnd         = NULL,
@@ -6197,29 +6207,30 @@ res}
 #' \item{notes:} Placeholder for future notes, but NULL now.
 #'}
 #'@examples
-#' id     = "NCA"                                                                 
-#' id_UD  = "UD"                                                                  
-#' id_DW  = "DW"                                                                  
-#' id_ASM = "ASM"                                                                 
+#'id     = "NCA"
+#'id_UD  = "UD"
+#'id_DW  = "DW"
+#'id_ASM = "ASM"
 #'
-#' # We need a state variable to be define                             
-#'  sess_res = NCA_test_mksession(session=list(),                                 
-#'       id     = id,                                                             
-#'       id_UD  = id_UD,                                                          
-#'       id_DW  = id_DW,                                                          
-#'       id_ASM = id_ASM)                                                         
+#'# We need a state variable to be define
+#' sess_res = NCA_test_mksession(session=list(),
+#'      id     = id,
+#'      id_UD  = id_UD,
+#'      id_DW  = id_DW,
+#'      id_ASM = id_ASM,
+#'      full_session=FALSE)
 #'
-#' state = sess_res$state
+#'state = sess_res$state
 #'
-#' # Pulls out the active analysis                                                
-#' current_ana = NCA_fetch_current_ana(state)
-#' 
-#' # This is the raw PKNCA output
-#' pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+#'# Pulls out the active analysis
+#'current_ana = NCA_fetch_current_ana(state)
 #'
-#' # Building the figure
-#' mk_res = mk_figure_ind_obs(nca_res = pknca_res)
-#' mk_res$figures$Figure_1$gg
+#'# This is the raw PKNCA output
+#'pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+#'
+#'# Building the figure
+#'mk_res = mk_figure_ind_obs(nca_res = pknca_res)
+#'mk_res$figures$Figure_1$gg
 mk_figure_ind_obs = function(
   nca_res       ,
   OBS_LAB         = "Concentration ===CONCUNITS===",
@@ -6407,7 +6418,7 @@ res}
 #'}
 #'@examples
 #'# We need a state object to use below
-#'sess_res = NCA_test_mksession(session=list())
+#'sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
 #'state = sess_res$state
 #'
 #' # Current active table:
@@ -6585,32 +6596,33 @@ ruminate = function(host="127.0.0.1", port=3838, mksession = FALSE){
 #'   format from \code{\link[onbrand]{build_span}}.
 #'}
 #'@examples
-#' id     = "NCA"                                                                 
-#' id_UD  = "UD"                                                                  
-#' id_DW  = "DW"                                                                  
-#' id_ASM = "ASM"                                                                 
+#'id     = "NCA"
+#'id_UD  = "UD"
+#'id_DW  = "DW"
+#'id_ASM = "ASM"
 #'
-#' # We need a state variable to be define                             
-#'  sess_res = NCA_test_mksession(session=list(),                                 
-#'       id     = id,                                                             
-#'       id_UD  = id_UD,                                                          
-#'       id_DW  = id_DW,                                                          
-#'       id_ASM = id_ASM)                                                         
+#'# We need a state variable to be define
+#' sess_res = NCA_test_mksession(session=list(),
+#'      id     = id,
+#'      id_UD  = id_UD,
+#'      id_DW  = id_DW,
+#'      id_ASM = id_ASM,
+#'      full_session=FALSE)
 #'
-#' state = sess_res$state
+#'state = sess_res$state
 #'
-#' # Pulls out the active analysis                                                
-#' current_ana = NCA_fetch_current_ana(state)
-#' 
-#' # This is the raw PKNCA output
-#' pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+#'# Pulls out the active analysis
+#'current_ana = NCA_fetch_current_ana(state)
 #'
-#' # Parameter reporting details from the ruminate configuration
-#' nps  = state[["NCA"]][["nca_parameters"]][["summary"]]
+#'# This is the raw PKNCA output
+#'pknca_res = NCA_fetch_ana_pknca(state, current_ana)
 #'
-#' # Building the figure
-#' mk_res = mk_table_nca_params(nca_res = pknca_res, nps=nps, digits=3)
-#' mk_res$tables[["Table 1"]]$ft
+#'# Parameter reporting details from the ruminate configuration
+#'nps  = state[["NCA"]][["nca_parameters"]][["summary"]]
+#'
+#'# Building the figure
+#'mk_res = mk_table_nca_params(nca_res = pknca_res, nps=nps, digits=3)
+#'mk_res$tables[["Table 1"]]$ft
 mk_table_nca_params = function(
   nca_res   ,
   type         = "individual",
@@ -6848,6 +6860,7 @@ res}
 #'@param id_UD An ID string that corresponds with the ID used to call the UD modules UI elements
 #'@param id_DW An ID string that corresponds with the ID used to call the DW modules UI elements
 #'@param id_ASM An ID string that corresponds with the ID used to call the ASM modules UI elements
+#'@param full_session  Boolean to indicate if the full test session should be created (default \code{TRUE}).
 #'@return list with the following elements
 #' \itemize{
 #'   \item{isgood:} Boolean indicating the exit status of the function.
@@ -6857,8 +6870,8 @@ res}
 #'   \item{rsc:} The \code{react_state} components.
 #'}
 #'@examples
-#' sess_res = NCA_test_mksession(session=list())
-NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_ASM="ASM"){
+#'sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
+NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_ASM="ASM", full_session=TRUE){
 
   isgood = TRUE
   rsc    = NULL
@@ -6905,8 +6918,8 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
   current_ana[["col_dose"]]         = "DOSE"
   current_ana[["col_route"]]        = "ROUTE"
   current_ana[["col_cycle"]]        = "DOSE_NUM"
-  current_ana[["col_analyte"]]      = "N/A"    
-  current_ana[["col_dur"]]          = "N/A"   
+  current_ana[["col_analyte"]]      = "N/A"
+  current_ana[["col_dur"]]          = "N/A"
 
   # Defining where how dosing should be found:
   current_ana[["dose_from"]]        = "cols"
@@ -6923,41 +6936,43 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
   # And then this will run the intervals in the scenario:
   state = run_nca_components(state)
 
-  #browser()
+
   #------------------------------------
   # First First dose PK/PD with BQL values
   # Create a new analysis
-  state       = NCA_new_ana(state)
-  current_ana = NCA_fetch_current_ana(state)
-  # Setting the dataset:
-  current_ana[["ana_dsview"]] = "DW_myDS_6"
+  if(full_session){
+    state       = NCA_new_ana(state)
+    current_ana = NCA_fetch_current_ana(state)
+    # Setting the dataset:
+    current_ana[["ana_dsview"]] = "DW_myDS_6"
 
-  # Setting the caption/analysis key
-  current_ana[["key"]]              = "PK/PD NCA Analysis Example"
+    # Setting the caption/analysis key
+    current_ana[["key"]]              = "PK/PD NCA Analysis Example"
 
-  # Defining the columns
-  current_ana[["col_id"]]           = "ID"
-  current_ana[["col_time"]]         = "TIME_DY"
-  current_ana[["col_ntime"]]        = "NTIME_DY"
-  current_ana[["col_conc"]]         = "DV"
-  current_ana[["col_dose"]]         = "DOSE"
-  current_ana[["col_evid"]]         = "EVID"
-  current_ana[["col_route"]]        = "ROUTE"
-  current_ana[["col_cycle"]]        = "DOSE_NUM"
-  current_ana[["col_analyte"]]      = "CMT"    #Analyte
-  current_ana[["col_dur"]]          = "N/A"    #Duration
+    # Defining the columns
+    current_ana[["col_id"]]           = "ID"
+    current_ana[["col_time"]]         = "TIME_DY"
+    current_ana[["col_ntime"]]        = "NTIME_DY"
+    current_ana[["col_conc"]]         = "DV"
+    current_ana[["col_dose"]]         = "DOSE"
+    current_ana[["col_evid"]]         = "EVID"
+    current_ana[["col_route"]]        = "ROUTE"
+    current_ana[["col_cycle"]]        = "DOSE_NUM"
+    current_ana[["col_analyte"]]      = "CMT"    #Analyte
+    current_ana[["col_dur"]]          = "N/A"    #Duration
 
-  # Defining where how dosing should be found:
-  current_ana[["dose_from"]]        = "cols"
+    # Defining where how dosing should be found:
+    current_ana[["dose_from"]]        = "cols"
 
-  # This will update the changes to the current analysis:
-  state = NCA_set_current_ana(state, current_ana)
+    # This will update the changes to the current analysis:
+    state = NCA_set_current_ana(state, current_ana)
 
-  # This will load the scenario
-  state = NCA_load_scenario(state, "sd_iv")
+    # This will load the scenario
+    state = NCA_load_scenario(state, "sd_iv")
 
-  # And then this will run the intervals in the scenario:
-  state = run_nca_components(state)
+    # And then this will run the intervals in the scenario:
+    state = run_nca_components(state)
+  }
   #------------------------------------
 
   # This functions works both in a shiny app and outside of one
@@ -6981,7 +6996,7 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
     state   = state,
     rsc     = rsc
   )
-}
+res}
 
 #'@title Loads Pre-Defined Scenario
 #'@description Loads a pre-defined analysis scneario from the NCA YAML config
@@ -7237,7 +7252,7 @@ res}
 
 #'@export
 #'@title Fetch Analysis Dataset
-#'@description Fetches the dataset used for the specified analysis 
+#'@description Fetches the dataset used for the specified analysis
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@param current_ana Current value in the analysis
 #'@return Dataset from the \code{ds} field of FM_fetch_ds()
