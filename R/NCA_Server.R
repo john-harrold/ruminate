@@ -3869,7 +3869,7 @@ code}
 #'}
 #'@seealso \code{\link{FM_generate_report}}
 #'@examples
-#' # We need a state object to use below
+#'# We need a state object to use below
 #'sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
 #'state = sess_res$state
 #'
@@ -5701,8 +5701,9 @@ state}
 #'components:
 #' \itemize{
 #'  \item{nca:}               Run NCA analysis
-#'  \item{fg_ind_obs:}    Build the figure(s) with the indiviudal observations.
-#'  \item{tb_ind_obs:}     Build the table(s) with the indiviudal observations.
+#'  \item{fg_ind_obs:}        Build the figure(s) with the indiviudal observations.
+#'  \item{tb_ind_obs:}        Build the table(s) with the indiviudal observations.
+#'  \item{tb_ind_params:}     Build the table(s) with the indiviudal parameters.
 #'}
 #'@return List with the following components:
 #' \itemize{
@@ -5711,7 +5712,11 @@ state}
 #'  \item{nca_res:}   PKNCA results if run was successful.
 #'}
 #'@examples
-#' # JMH add example
+#'# We need a state object to use below
+#'sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
+#'state = sess_res$state
+#'
+#'state = run_nca_components(state, components="tb_ind_params")
 run_nca_components = function(
   state,
   components=c("nca",
@@ -6857,6 +6862,23 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
   sess_res = formods::DW_test_mksession(session=session, id=id_DW, id_UD = id_UD)
   if(!("ShinySession" %in% class(session))){
     session = sess_res[["session"]]
+  }
+
+  # When we dont want a full session we want to shrink the dataset to this
+  # will be faster on the CRAN win-builder system:
+  if(!full_session){
+    all_ids = unique(session[["userData"]][["FM"]][["FM_DW"]][["DW"]][["views"]][["view_7"]][["WDS"]][["ID"]])
+    nkeep = 3
+    if(length(all_ids) > nkeep){
+      keep_ids = all_ids[1:nkeep]
+    }else{
+      keep_ids = all_ids
+    }
+
+    bool_keep = session[["userData"]][["FM"]][["FM_DW"]][["DW"]][["views"]][["view_7"]][["WDS"]][["ID"]] %in% keep_ids
+
+    session[["userData"]][["FM"]][["FM_DW"]][["DW"]][["views"]][["view_7"]][["WDS"]] = 
+    session[["userData"]][["FM"]][["FM_DW"]][["DW"]][["views"]][["view_7"]][["WDS"]][bool_keep, ]
   }
 
   # Pulling out the react state components

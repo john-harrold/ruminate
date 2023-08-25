@@ -18,8 +18,9 @@ nca results you can just specify that component. These are the valid
 components:
 \itemize{
 \item{nca:}               Run NCA analysis
-\item{fg_ind_obs:}    Build the figure(s) with the indiviudal observations.
-\item{tb_ind_obs:}     Build the table(s) with the indiviudal observations.
+\item{fg_ind_obs:}        Build the figure(s) with the indiviudal observations.
+\item{tb_ind_obs:}        Build the table(s) with the indiviudal observations.
+\item{tb_ind_params:}     Build the table(s) with the indiviudal parameters.
 }}
 }
 \value{
@@ -35,5 +36,9 @@ Takes the current state and runs the current analysis in that
 state.
 }
 \examples{
-# JMH add example
+# We need a state object to use below
+sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
+state = sess_res$state
+
+state = run_nca_components(state, components="tb_ind_params")
 }
