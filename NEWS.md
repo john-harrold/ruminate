@@ -1,1 +1,2 @@
-# ruminate 0.1.0
+# ruminate 0.1.1
+- Initial release

@@ -5,14 +5,13 @@
 
 <!-- 
 ![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate)
+[![Codecov test coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
 -->
 <!-- badges: start -->
 
 ![Active](https://www.repostatus.org/badges/latest/active.svg)
 [![Lifecycle:
 Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
-[![Codecov test
-coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
 [![R-CMD-check](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml)
 
 <!-- badges: end -->
@@ -43,6 +42,8 @@ install.packages("ruminate")
 ```
 --->
 
+## Development version
+
 You can install the development version from
 [GitHub](https://github.com/john-harrold/ruminate/) with the following:
 
@@ -60,14 +61,16 @@ Note that because `{ruminate}` depends on `{formods}` and `{onbrand}`
 you will need to first install the development versions of `{onbrand}`
 and `{formods}`.
 
-## Running in RStudio
+# Running in ruminate
+
+## In RStudio
 
 ``` r
 library(ruminate)
 ruminate()
 ```
 
-# Running in a Docker container
+## In a Docker container
 
 Note this uses an `x86` image. So it will only work on Intel or AMD
 cpus. This means that you wont get very far with an M1 mac. If you want,

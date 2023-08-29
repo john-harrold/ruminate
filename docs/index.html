@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="Exploration of pharmacometrics data involves  both general tools (transformation and plotting) and  specific techniques (non-compartmental analysis). This kind of exploration  is generally accomplished by utilizing different packages. The purpose of ruminate is to create a shiny interface to make these tools more broadly available while creating reproducible results.">
+<meta name="description" content="Exploration of pharmacometrics data involves both general tools (transformation and plotting) and specific techniques (non-compartmental analysis). This kind of exploration is generally accomplished by utilizing different packages. The purpose of ruminate is to create a shiny interface to make these tools more broadly available while creating reproducible results.">
 <title>A Pharmacometrics Data Transformation and Analysis Tool • ruminate</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -18,7 +18,7 @@
 <script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="A Pharmacometrics Data Transformation and Analysis Tool">
-<meta property="og:description" content="Exploration of pharmacometrics data involves  both general tools (transformation and plotting) and  specific techniques (non-compartmental analysis). This kind of exploration  is generally accomplished by utilizing different packages. The purpose of ruminate is to create a shiny interface to make these tools more broadly available while creating reproducible results.">
+<meta property="og:description" content="Exploration of pharmacometrics data involves both general tools (transformation and plotting) and specific techniques (non-compartmental analysis). This kind of exploration is generally accomplished by utilizing different packages. The purpose of ruminate is to create a shiny interface to make these tools more broadly available while creating reproducible results.">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ruminate</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,6 +100,7 @@
 </div>
 <!-- 
 ![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate)
+[![Codecov test coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
 -->
 <!-- badges: start -->
 
@@ -120,6 +121,9 @@ You can install the released version of ``rumiante`` from [CRAN](https://cran.r-
 install.packages("ruminate")
 ```
 --->
+<div class="section level2">
+<h2 id="development-version">Development version<a class="anchor" aria-label="anchor" href="#development-version"></a>
+</h2>
 <p>You can install the development version from <a href="https://github.com/john-harrold/ruminate/" class="external-link">GitHub</a> with the following:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Installing devtools if it's not already installed</span></span>
@@ -130,17 +134,21 @@ install.packages("ruminate")
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"john-harrold/formods"</span>,  dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"john-harrold/ruminate"</span>, dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Note that because <a href="https://ruminate.ubiquity.tools/" class="external-link">ruminate</a> depends on <a href="https://formods.ubiquity.tools/" class="external-link">formods</a> and <a href="https://onbrand.ubiquity.tools/" class="external-link">onbrand</a> you will need to first install the development versions of <a href="https://onbrand.ubiquity.tools/" class="external-link">onbrand</a> and <a href="https://formods.ubiquity.tools/" class="external-link">formods</a>.</p>
+</div>
+</div>
+<div class="section level1">
+<h1 id="running-in-ruminate">Running in ruminate<a class="anchor" aria-label="anchor" href="#running-in-ruminate"></a>
+</h1>
 <div class="section level2">
-<h2 id="running-in-rstudio">Running in RStudio<a class="anchor" aria-label="anchor" href="#running-in-rstudio"></a>
+<h2 id="in-rstudio">In RStudio<a class="anchor" aria-label="anchor" href="#in-rstudio"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ruminate.ubiquity.tools/" class="external-link">ruminate</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/ruminate.html">ruminate</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
-</div>
-<div class="section level1">
-<h1 id="running-in-a-docker-container">Running in a Docker container<a class="anchor" aria-label="anchor" href="#running-in-a-docker-container"></a>
-</h1>
+<div class="section level2">
+<h2 id="in-a-docker-container">In a Docker container<a class="anchor" aria-label="anchor" href="#in-a-docker-container"></a>
+</h2>
 <p>Note this uses an <code>x86</code> image. So it will only work on Intel or AMD cpus. This means that you wont get very far with an M1 mac. If you want, you can download the Docker file <a href="https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container" class="external-link">here</a>. This will build the docker image from the repository on GitHub.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> ruminate <span class="at">--no-cache</span>  https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container</span></code></pre></div>
 <p>This will run the Docker image locally:</p>
@@ -152,6 +160,7 @@ install.packages("ruminate")
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="ex">docker</span> push <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
 <p>You can use this to pull the image from DockerHub:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">docker</span> pull <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
+</div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
@@ -190,7 +199,6 @@ install.packages("ruminate")
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: Experimental"></a></li>
-<li><a href="https://app.codecov.io/gh/john-harrold/ruminate?branch=master" class="external-link"><img src="https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
 </div>

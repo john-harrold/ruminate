@@ -44,6 +44,7 @@ install.packages("ruminate")
 ```
 --->
 
+## Development version
 
 You can install the development version from [GitHub](https://github.com/john-harrold/ruminate/) with the following:
 
@@ -59,23 +60,25 @@ devtools::install_github("john-harrold/ruminate", dependencies=TRUE)
 
 Note that because `{ruminate}` depends on `{formods}` and `{onbrand}` you will need to first install the development versions of `{onbrand}` and `{formods}`.
 
-## Running in RStudio
+# Running in ruminate
+
+## In RStudio
 
 ``` r 
 library(ruminate)
 ruminate()
 ```
 
-# Running in a Docker container
+## In a Docker container
 
 Note this uses an `x86` image. So it will only work on Intel or AMD cpus. This means that you wont get very far with an M1 mac.  If you want, you can download the Docker file [here](https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container). This will build the docker image from the repository on GitHub.
 
-```bash
+``` bash
 docker build -t ruminate --no-cache  https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container
 ```
 This will run the Docker image locally:
 
-```bash
+``` bash
 docker run --name ruminate --rm -p 3838:3838 ruminate
 ```
 

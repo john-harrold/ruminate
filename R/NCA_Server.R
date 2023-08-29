@@ -3773,6 +3773,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session
   current_dir = getwd()
   user_dir    = FM_fetch_user_files_path(state)
   setwd(user_dir)
+  on.exit( setwd(current_dir))
 
   tcres = formods::FM_tc(cmd = init_cmd, tc_env = list(), capture="rpt")
   state[["NCA"]][["docx_rpt"]] = tcres[["capture"]][["rpt"]]
@@ -6877,7 +6878,7 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
 
     bool_keep = session[["userData"]][["FM"]][["FM_DW"]][["DW"]][["views"]][["view_7"]][["WDS"]][["ID"]] %in% keep_ids
 
-    session[["userData"]][["FM"]][["FM_DW"]][["DW"]][["views"]][["view_7"]][["WDS"]] = 
+    session[["userData"]][["FM"]][["FM_DW"]][["DW"]][["views"]][["view_7"]][["WDS"]] =
     session[["userData"]][["FM"]][["FM_DW"]][["DW"]][["views"]][["view_7"]][["WDS"]][bool_keep, ]
   }
 
