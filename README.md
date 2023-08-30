@@ -35,12 +35,14 @@ instance and if many people are using it at once it can be slow.
 
 # Local installation
 
-<!---
-You can install the released version of ``rumiante`` from [CRAN](https://cran.r-project.org/package=ruminate) with:
-&#10;``` r
+## From CRAN
+
+You can install the released version of `rumiante` from
+[CRAN](https://cran.r-project.org/package=ruminate) with:
+
+``` r
 install.packages("ruminate")
 ```
---->
 
 ## Development version
 

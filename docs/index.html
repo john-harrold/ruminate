@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="index.html">ruminate</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,17 +115,18 @@
 <div class="section level1">
 <h1 id="local-installation">Local installation<a class="anchor" aria-label="anchor" href="#local-installation"></a>
 </h1>
-<!---
-You can install the released version of ``rumiante`` from [CRAN](https://cran.r-project.org/package=ruminate) with:
-&#10;``` r
-install.packages("ruminate")
-```
---->
+<div class="section level2">
+<h2 id="from-cran">From CRAN<a class="anchor" aria-label="anchor" href="#from-cran"></a>
+</h2>
+<p>You can install the released version of <code>rumiante</code> from <a href="https://cran.r-project.org/package=ruminate" class="external-link">CRAN</a> with:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ruminate"</span><span class="op">)</span></span></code></pre></div>
+</div>
 <div class="section level2">
 <h2 id="development-version">Development version<a class="anchor" aria-label="anchor" href="#development-version"></a>
 </h2>
 <p>You can install the development version from <a href="https://github.com/john-harrold/ruminate/" class="external-link">GitHub</a> with the following:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Installing devtools if it's not already installed</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"devtools"</span><span class="op">)</span> <span class="op">==</span> <span class="st">""</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span> </span>
@@ -142,7 +143,7 @@ install.packages("ruminate")
 <div class="section level2">
 <h2 id="in-rstudio">In RStudio<a class="anchor" aria-label="anchor" href="#in-rstudio"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ruminate.ubiquity.tools/" class="external-link">ruminate</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/ruminate.html">ruminate</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -150,22 +151,23 @@ install.packages("ruminate")
 <h2 id="in-a-docker-container">In a Docker container<a class="anchor" aria-label="anchor" href="#in-a-docker-container"></a>
 </h2>
 <p>Note this uses an <code>x86</code> image. So it will only work on Intel or AMD cpus. This means that you wont get very far with an M1 mac. If you want, you can download the Docker file <a href="https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container" class="external-link">here</a>. This will build the docker image from the repository on GitHub.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> ruminate <span class="at">--no-cache</span>  https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> ruminate <span class="at">--no-cache</span>  https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container</span></code></pre></div>
 <p>This will run the Docker image locally:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--name</span> ruminate <span class="at">--rm</span> <span class="at">-p</span> 3838:3838 ruminate</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--name</span> ruminate <span class="at">--rm</span> <span class="at">-p</span> 3838:3838 ruminate</span></code></pre></div>
 <p>If everything worked you can then point your web browser to:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>http<span class="sc">:</span><span class="er">//</span><span class="dv">127</span>.<span class="dv">0</span>.<span class="fl">0.1</span><span class="sc">:</span><span class="dv">3838</span><span class="sc">/</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>http<span class="sc">:</span><span class="er">//</span><span class="dv">127</span>.<span class="dv">0</span>.<span class="fl">0.1</span><span class="sc">:</span><span class="dv">3838</span><span class="sc">/</span></span></code></pre></div>
 <p>This will push the image to DockerHub:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">docker</span> tag ruminate <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="ex">docker</span> push <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">docker</span> tag ruminate <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="ex">docker</span> push <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
 <p>You can use this to pull the image from DockerHub:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">docker</span> pull <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="ex">docker</span> pull <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
 </div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=ruminate" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/john-harrold/ruminate/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/john-harrold/ruminate/issues" class="external-link">Report a bug</a></li>
 </ul>

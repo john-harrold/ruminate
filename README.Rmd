@@ -36,13 +36,13 @@ You can point your web browser to [runrumiate.ubiquity.tools](https://runruminat
 
 # Local installation
 
-<!---
+## From CRAN
+
 You can install the released version of ``rumiante`` from [CRAN](https://cran.r-project.org/package=ruminate) with:
 
 ``` r
 install.packages("ruminate")
 ```
---->
 
 ## Development version
 
