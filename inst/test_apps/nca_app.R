@@ -15,11 +15,12 @@ tags$style("@import url(https://use.fontawesome.com/releases/v6.4.0/css/all.css)
 
 # You can copy these locally and customize them for your own needs. Simply
 # change the assignment to the local copy you've modified.
-formods.yaml  = system.file(package="formods","templates", "formods.yaml")
-ASM.yaml      = system.file(package="formods","templates", "ASM.yaml")
-UD.yaml       = system.file(package="formods","templates", "UD.yaml")
-DW.yaml       = system.file(package="formods","templates", "DW.yaml")
-FG.yaml       = system.file(package="formods","templates", "FG.yaml")
+formods.yaml  = system.file(package="formods",  "templates",  "formods.yaml")
+ASM.yaml      = system.file(package="formods",  "templates",  "ASM.yaml")
+UD.yaml       = system.file(package="formods",  "templates",  "UD.yaml")
+DW.yaml       = system.file(package="formods",  "templates",  "DW.yaml")
+FG.yaml       = system.file(package="formods",  "templates",  "FG.yaml")
+NCA.yaml      = system.file(package="ruminate", "templates",  "NCA.yaml")
 
 # Making sure that the deployed object is created
 if(!exists("deployed")){
@@ -195,28 +196,34 @@ server <- function(input, output, session) {
 
   # Module servers
   formods::ASM_Server( id="ASM",
-                       deployed     = deployed,
-                       react_state  = react_FM,
-                       FM_yaml_file = formods.yaml,
-                       mod_ids      = mod_ids)
-  formods::UD_Server(  id="UD",  id_ASM = "ASM",
-                       deployed     = deployed,
-                       react_state=react_FM,
-                       FM_yaml_file=formods.yaml)
+                       deployed      = deployed,
+                       react_state   = react_FM,
+                       FM_yaml_file  = formods.yaml,
+                       MOD_yaml_file = ASM.yaml,
+                       mod_ids       = mod_ids)
+  formods::UD_Server(  id ="UD", id_ASM = "ASM",
+                       deployed         = deployed,
+                       react_state      = react_FM,
+                       MOD_yaml_file    = UD.yaml,
+                       FM_yaml_file     = formods.yaml)
   formods::DW_Server(  id="DW",       id_ASM = "ASM",
                        id_UD = "UD",
-                       deployed     = deployed,
-                       react_state=react_FM,
-                       FM_yaml_file=formods.yaml)
+                       deployed         = deployed,
+                       react_state      = react_FM,
+                       MOD_yaml_file    = DW.yaml,
+                       FM_yaml_file     = formods.yaml)
   formods::FG_Server(  id="FG",     id_ASM = "ASM",
                        id_UD = "UD", id_DW = "DW",
-                       deployed     = deployed,
-                       react_state=react_FM,
-                       FM_yaml_file=formods.yaml)
-  ruminate::NCA_Server(id="NCA",     id_ASM = "ASM",
-                       id_UD = "UD", id_DW = "DW",
-                       deployed     = deployed,
-                       react_state=react_FM)
+                       deployed         = deployed,
+                       react_state      = react_FM,
+                       MOD_yaml_file    = FG.yaml,
+                       FM_yaml_file     = formods.yaml)
+  ruminate::NCA_Server(id    ="NCA", id_ASM = "ASM",
+                       id_UD = "UD", id_DW  = "DW",
+                       deployed         = deployed,
+                       react_state      = react_FM,
+                       MOD_yaml_file    = NCA.yaml,
+                       FM_yaml_file     = formods.yaml)
 }
 
 shinyApp(ui, server)

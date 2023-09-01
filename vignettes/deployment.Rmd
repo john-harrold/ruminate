@@ -1,0 +1,113 @@
+---
+title: 'Deployment and Customization'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Deployment and Customization}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = TRUE, message=FALSE, eval=FALSE)
+# require(ggplot2)
+# require(rhandsontable)
+# require(flextable)
+# require(ruminate)
+# # Determining if ubiquity is installed
+# if(system.file(package="ubiquity") == ""){
+#   ubiquity_found = FALSE
+# } else {
+#   require(ubiquity)
+#   ubiquity_found = TRUE
+# }
+# if(system.file(package="gridExtra") == ""){
+#   gridExtra_found = FALSE
+# } else {
+#   require(gridExtra)
+#   gridExtra_found = TRUE
+# }
+# 
+# # The presim variable will contain presimulated data when eval is set to true
+# presim_loaded = FALSE
+```
+
+```{r echo=FALSE, results=FALSE}
+# presim= list()
+# if(file.exists("NCA_presim.RData")){
+#   file.remove("NCA_presim.RData")
+# }
+```
+
+```{r echo=FALSE, results=FALSE, eval=TRUE}
+# if(file.exists("NCA_presim.RData")){
+#   load("NCA_presim.RData")
+#   presim_loaded = TRUE
+# }
+# 
+# NCA_yaml = yaml::read_yaml(system.file(package="ruminate", "templates","NCA.yaml"))
+```
+
+
+# Introduction
+
+Running ruminate is simple and straight forward using the ruminate function:
+
+```r
+library(ruminate)
+ruminate()
+```
+
+This is the default and presents all of the modules in the standard format. However you may wish deploy ruminate on an internal server or customize it. 
+
+# Deployment
+
+To deploy ruminate you can create a copy of the app based on a template in the package:
+
+```r
+file.copy(from = system.file(package="ruminate","templates", "ruminate.R"), 
+          to   = "App.R")
+```
+
+Certain features of the app behave differently depending on whether it is running locally or deployed on a server. To *tell* the App it is deployed you need to create an empty file named `DEPLOYED` in the same directory as the deployed app file. 
+
+```r
+file.create("DEPLOYED")
+```
+Those two files (`App.R` and `DEPLOYED`) placed in the same direcory on a shiny
+server with ruminate installed should be enough to deploy the basic app.
+
+# Customization
+
+You can open the `App.R` file and run the app locally from there as well. You can also edit this file to customize the app. This includes the default text that is presented, any graphics you might want, and also the color scheme. Beyond that the individual modules are also customizable. 
+
+## App Layout
+
+The app is built around modules and the overall look and introductory text is controlled by this file. The default app uses the `{shinydashboard}` package. You can look through the documentation for that package to alter tabs, the default skin color, module icons, etc. The default package contains all of the modules, but you can simply remove the tabs for any modules you do not want. 
+
+## Modules
+
+At the top of the `App.R` file the locations of module configuration files are defined:
+
+```{r, eval=FALSE}
+formods.yaml  = system.file(package="formods",  "templates",  "formods.yaml")
+ASM.yaml      = system.file(package="formods",  "templates",  "ASM.yaml")
+UD.yaml       = system.file(package="formods",  "templates",  "UD.yaml")
+DW.yaml       = system.file(package="formods",  "templates",  "DW.yaml")
+FG.yaml       = system.file(package="formods",  "templates",  "FG.yaml")
+NCA.yaml      = system.file(package="ruminate", "templates",  "NCA.yaml")
+```
+
+Each of these controls different aspects of the module including the text displayed, icons used, certain behaviors of the app, etc. These options and are described in the comments of the configuration files. To use these you need to first make a copy of the specific configuration file. For example, to customize the NCA module you would make a copy of the `NCA.yaml` file:
+
+```{r, eval=FALSE}
+file.copy(from= system.file(package="ruminate", "templates",  "NCA.yaml"),
+          to = "myNCA.yaml")
+```
+
+Then you can make any changes you want in the `myNCA.yaml` file. Then you need specify in the `App.R` file that you want to use the new configuration file. 
+
+```{r, eval=FALSE}
+NCA.yaml      = "myNCA.yaml"
+```
+
+You can do the same thing for the other modules as well.

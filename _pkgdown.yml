@@ -35,6 +35,8 @@ navbar:
     menu:
        - text: "Video Tutorial"
          href: https://vimeo.com/user3889152/ruminate
+       - text: "Deployment & Customization"
+         href: articles/deployment.html
        - text: "Non-Compartmental Analysis"
          href: articles/noncompartmental_analysis.html
   - text: "Functions"

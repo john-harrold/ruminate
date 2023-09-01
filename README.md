@@ -4,11 +4,11 @@
 # ruminate <img src="man/figures/logo.png" align="right" height="138.5" />
 
 <!-- 
-![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate)
 [![Codecov test coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
 -->
 <!-- badges: start -->
 
+![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate)
 ![Active](https://www.repostatus.org/badges/latest/active.svg)
 [![Lifecycle:
 Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
@@ -41,7 +41,7 @@ You can install the released version of `rumiante` from
 [CRAN](https://cran.r-project.org/package=ruminate) with:
 
 ``` r
-install.packages("ruminate")
+install.packages("ruminate",  dependencies=TRUE)
 ```
 
 ## Development version
