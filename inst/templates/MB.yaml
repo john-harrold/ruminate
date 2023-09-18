@@ -1,0 +1,106 @@
+# The MC field is a skeleton for constructing new modules
+MC:
+  element_object_name: "MB_obj"
+  # This is a list of model sources. In the app the sources will be listed in
+  # the order shown here.
+  # possible sources:
+  #   type: "library"
+  #   name: "nlmixr2lib"
+  sources:
+  - source:
+      type: "nlmixr2lib"
+      name: "nlmixr2 Model Library"
+# The include section is optional. You can use this section to copy files 
+# from the directory where you are running the app to the user directory to be
+# used in the app and when saved. The source and dest options can be a path
+# command like below or a double
+# quoted string: '"/path/to/file"'
+# The dest should be relative to user directory (think the root of the zip
+# file that is exported). See formods.yaml for examples. 
+#
+# include:
+#   files:
+#   - file:
+#       source: 'file.path(system.file(package="onbrand"), "templates", "report.docx")'
+#       dest:   'file.path("config","report.docx")'
+  code: # module specific code options
+    packages: [ "nlmixr2lib",  "ubiquity" ]
+    readOnly: TRUE
+    mode:     r
+  # Controls what is shown in the compact ui mode:
+  compact:
+    code:    TRUE 
+    clip:    TRUE 
+  # This is where you put reporting options. The expected options are shown
+  # here, but module-specific options can also be added if needed:
+  reporting:
+    enabled: FALSE
+    # Priority of reporting relative to other modules 
+    # (higher numbers are reported first)
+    priority: 1
+  # put different formatting options (widths, heights,
+  # shinyWidgets button sizes, etc) here.
+  formatting:
+    # Dimensions of code snippet box
+    code:
+      width:  800
+      height: 300
+    preview:
+      width:  "800px"
+      height: "500px"
+    input:
+    current_element:
+      width:  "200px"
+    element_name:
+      width:  "200px"
+    button_clk_run:
+      size: "sm"
+      block: TRUE
+    button_clk_del:
+      size: "sm"
+      block: TRUE
+      tooltip: "Delete the current model."
+      tooltip_position: "right"
+    button_clk_save:
+      size: "sm"
+      block: TRUE
+      tooltip: "Save the name for the current model."
+      tooltip_position: "right"
+    button_clk_clip:
+      size: "sm"
+      block: TRUE
+      tooltip: "Copy the code to generate the current model to the clipboard."
+      tooltip_position: "right"
+    button_clk_copy:
+      size: "sm"
+      block: TRUE
+      tooltip: "Make a copy of the current model."
+      tooltip_position: "right"
+    button_clk_new:
+      size: "sm"
+      block: TRUE
+      tooltip: "Create a new model."
+      tooltip_position: "right"
+      width: 100
+    select_from_catalog:
+      width: 100
+  labels:
+    current_element: NULL # "Select model"
+    element_name :   NULL # "model name"
+    catalog_selection:   "Select base model"
+    catalog_empty:       "No models were found, the catalog is empty."
+    save_btn:            "Save"
+    clip_btn:            "Code" 
+    copy_btn:            "Copy"
+    del_btn:             "Delete"
+    new_btn:             "New"
+  errors:
+    nlmixr2lib_not_found: "The nlmixr2lib package was not found. This library will not be available."
+    ubiquity_not_found:   "The ubiquity package was not found, and ubiquity models will not be supported."
+  tooltips:
+    # Set to FALSE to disable tool tips for this module
+    include: TRUE
+    elements: "Show model components"
+    show_code: "Show model code" 
+    components:
+      input_tip: "My tool tip"

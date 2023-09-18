@@ -25,6 +25,42 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/reference/MB_Server.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_append_report.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_del_current_element.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_fetch_catalog.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_fetch_code.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_fetch_current_element.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_fetch_ds.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_fetch_state.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_init_state.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_new_element.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_set_current_element.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_test_mksession.html</loc>
+  </url>
+  <url>
     <loc>/reference/NCA_Server.html</loc>
   </url>
   <url>

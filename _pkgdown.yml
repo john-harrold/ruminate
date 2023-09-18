@@ -16,15 +16,20 @@ template:
     bg: "#F4EACA"
     fg: "#00445B"
 reference:
-#  - contents:
-#    - appply_route_map
-#    - mk_figure_ind_obs
-#    - mk_table_ind_obs
-#    - nca_builder
-#    - nca_components
-#  - title: "NCA Module functions"
-#  - contents:
-#    - starts_with("NCA_")
+   - title: "Running ruminate"
+   - contents:
+     - ruminate
+   - title: "MB Module functions"
+   - contents:
+     - starts_with("MB_")
+   - title: "NCA Module functions"
+   - contents:
+     - apply_route_map
+     - dose_records_builder
+     - starts_with("mk_")
+     - starts_with("NCA_")
+     - starts_with("nca_")
+     - run_nca_components
 navbar:
   left:
   - text: "Try Online"

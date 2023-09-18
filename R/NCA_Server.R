@@ -213,7 +213,6 @@ NCA_Server <- function(id,
                              id_DW           = id_DW,
                              react_state     = react_state)
       uiele = NULL
-      uiele = NULL
       if((system.file(package="clipr") != "") & !deployed){
         uiele = shinyWidgets::actionBttn(
                   inputId = NS(id, "button_ana_clip"),

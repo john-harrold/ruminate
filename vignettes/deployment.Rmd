@@ -84,7 +84,7 @@ You can open the `App.R` file and run the app locally from there as well. You ca
 
 The app is built around modules and the overall look and introductory text is controlled by this file. The default app uses the `{shinydashboard}` package. You can look through the documentation for that package to alter tabs, the default skin color, module icons, etc. The default package contains all of the modules, but you can simply remove the tabs for any modules you do not want. 
 
-## Modules
+## Individual Modules
 
 At the top of the `App.R` file the locations of module configuration files are defined:
 
@@ -97,11 +97,11 @@ FG.yaml       = system.file(package="formods",  "templates",  "FG.yaml")
 NCA.yaml      = system.file(package="ruminate", "templates",  "NCA.yaml")
 ```
 
-Each of these controls different aspects of the module including the text displayed, icons used, certain behaviors of the app, etc. These options and are described in the comments of the configuration files. To use these you need to first make a copy of the specific configuration file. For example, to customize the NCA module you would make a copy of the `NCA.yaml` file:
+Each of these controls different aspects of the module including the text displayed, icons used, certain behaviors of the app, default values, etc. These options and are described in the comments of the configuration files. To use these you need to first make a copy of the specific configuration file. For example, to customize the NCA module you would make a copy of the `NCA.yaml` file:
 
 ```{r, eval=FALSE}
-file.copy(from= system.file(package="ruminate", "templates",  "NCA.yaml"),
-          to = "myNCA.yaml")
+file.copy(from = system.file(package="ruminate", "templates",  "NCA.yaml"),
+          to   = "myNCA.yaml")
 ```
 
 Then you can make any changes you want in the `myNCA.yaml` file. Then you need specify in the `App.R` file that you want to use the new configuration file. 
