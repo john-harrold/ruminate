@@ -435,10 +435,13 @@ NCA_Server <- function(id,
         shinyWidgets::pickerInput(
           selected   = "PH",
           inputId    = NS(id, "select_current_view"),
-          label      = state[["MC"]][["labels"]][["select_current_view"]],
+          #label      = state[["MC"]][["labels"]][["select_current_view"]],
+          label      =  tagList(state[["MC"]][["labels"]][["select_current_view"]], icon_link(href=state[["MC"]][["tooltips"]][["url_data"]])),
           choices    = c("PH"),
           width      = state[["MC"]][["formatting"]][["select_current_view"]][["width"]],
           choicesOpt = choicesOpt)
+
+
 
       uiele})
     #------------------------------------

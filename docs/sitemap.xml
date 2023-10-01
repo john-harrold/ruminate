@@ -13,6 +13,9 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
+    <loc>/articles/model_builder.html</loc>
+  </url>
+  <url>
     <loc>/articles/noncompartmental_analysis.html</loc>
   </url>
   <url>
@@ -31,6 +34,9 @@
     <loc>/reference/MB_append_report.html</loc>
   </url>
   <url>
+    <loc>/reference/MB_build_code.html</loc>
+  </url>
+  <url>
     <loc>/reference/MB_del_current_element.html</loc>
   </url>
   <url>
@@ -40,10 +46,16 @@
     <loc>/reference/MB_fetch_code.html</loc>
   </url>
   <url>
+    <loc>/reference/MB_fetch_component.html</loc>
+  </url>
+  <url>
     <loc>/reference/MB_fetch_current_element.html</loc>
   </url>
   <url>
     <loc>/reference/MB_fetch_ds.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_fetch_mdl.html</loc>
   </url>
   <url>
     <loc>/reference/MB_fetch_state.html</loc>
@@ -58,7 +70,13 @@
     <loc>/reference/MB_set_current_element.html</loc>
   </url>
   <url>
+    <loc>/reference/MB_test_catalog.html</loc>
+  </url>
+  <url>
     <loc>/reference/MB_test_mksession.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MB_update_model.html</loc>
   </url>
   <url>
     <loc>/reference/NCA_Server.html</loc>
@@ -137,6 +155,9 @@
   </url>
   <url>
     <loc>/reference/mk_figure_ind_obs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/mk_rx_obj.html</loc>
   </url>
   <url>
     <loc>/reference/mk_table_ind_obs.html</loc>

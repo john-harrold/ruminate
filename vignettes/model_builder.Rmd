@@ -1,0 +1,59 @@
+---
+title: 'Model Building'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Model Building}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+The model building module ...
+
+
+# Model catalog
+
+The model catalog is built from the sources field of the configuration file. Each source has the following fields:
+
+- `group`: This is how models will be grouped in the selection pulldown.
+- `name`: Short name for the model: **NOTE that names need to be unique**.
+- `description`: Verbose description of the model.
+- `type`: Supported model types are `"nlmixr2lib"`, `"rxode2"` or `"NONMEM"`.
+- `obj`: For the rxode2 type you need to also specify the name of the object that is created. 
+This option is only used for the rxode2 type.
+- `file`: For both rxode2 and nlmixr2 you need to specify a character string with a file path. This will be evaluated as an R command, so keep that in mind. If the file is not found it
+will be skipped when the app loads.
+
+## Model Library   
+
+To include the {`nlmixr2lib`} library you can select the `"nlmixr2lib"` source type. You
+can also control how these models are grouped:
+
+```r
+  - source:
+      type:        "nlmixr2lib"
+      group:       "Model Library"
+```
+
+## User defined models
+
+User-defined models can be specified in either NONMEM or rxode2 formats. This 
+example shows you how to specify models for both formats:
+
+```r
+  - source:
+      group:       "User-defined Models"
+      name:        "rxode2 User model"
+      description: "User-defined rxode2 model"
+      type:        "rxode2"
+      obj:         "my_fcn"
+      file:        'file.path(getwd(),"user_model.R")'
+  - source:
+      group:       "User-defined Models"
+      name:        "NONMEM User model"
+      description: "User-defined NONMEM model"
+      type:        "NONMEM"
+      obj:         ""
+      file:        'file.path(getwd(),"user_model.ctl")'
+```

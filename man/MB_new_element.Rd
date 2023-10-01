@@ -2,7 +2,7 @@
 % Please edit documentation in R/MB_Server.R
 \name{MB_new_element}
 \alias{MB_new_element}
-\title{New ===Module_Name=== model}
+\title{New Model Building Model}
 \usage{
 MB_new_element(state)
 }
@@ -10,9 +10,9 @@ MB_new_element(state)
 \item{state}{MB state from \code{MB_fetch_state()}}
 }
 \value{
-===ZZ== state object containing a new model and that
+MB state object containing a new model and that
 model is set as the current active model. See the help for
-\code{MB_fetch_state()} for ===ELEMENT== format.
+\code{MB_fetch_state()} for model format.
 }
 \description{
 Appends a new empty model to the MB state object
@@ -36,6 +36,16 @@ state = MB_fetch_state(id              = "MB",
                        MOD_yaml_file   = MOD_yaml_file,
                        react_state     = NULL)
 
+# This will provide a list of the available models
+models = MB_fetch_catalog(state)
+
+# This will test the models in the catalog, set as_cran 
+# to FALSE to test all the models.
+mtres = MB_test_catalog(state, as_cran=TRUE)
+
+# This is a summary of the tables in the model:
+models$summary
+
 # Creates a new empty element
 state = MB_new_element(state)
 
@@ -45,12 +55,49 @@ state = MB_del_current_element(state)
 # Fetch a list of the current element
 element = MB_fetch_current_element(state)
 
-# You can modify the element
-element[["name"]] = "A more descriptive name"
+# This will attach a model to it:
+# Pulling the first model from the catalog
+fcn_def  = models[["summary"]][1, ][["Model"]]
+fcn_obj  = models[["summary"]][1, ][["Object"]]
+mdl_type = models[["summary"]][1, ][["Type"]]
+fcn_desc = models[["summary"]][1, ][["Description"]]
+  
+# This will build the rxode2 object from the model
+mk_rx_res = mk_rx_obj(
+  type  = mdl_type,
+  model = list(fcn_def = fcn_def,
+               fcn_obj = fcn_obj))
+
+# This will attach the model to the current element
+element = MB_update_model(
+  state       = state,
+  session     = session,
+  current_ele = element,
+  rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
+  note        = fcn_desc,
+  reset       = TRUE)
 
 # You can now place element back in the state
 state = MB_set_current_element(state, element)
 
-# This will provide a list of the available models
-models = MB_fetch_catalog(state)
+# This will fetch the current component
+component = MB_fetch_component(state, element)
+
+# You can use the component to build the code to generate the model:
+gen_code = 
+  MB_build_code(state        = state, session = session,
+              fcn_def      = component[["fcn_def"]],
+              fcn_obj_name = "my_fcn_obj",
+              rx_obj_name  = "my_obj_name")
+
+# Mode code to be included in a larger script
+cat(gen_code$model_code)
+
+# stand alone model code
+cat(gen_code$model_code_sa)
+
+
+
+# JMH to add:
+# MB_fetch_code
 }

@@ -49,21 +49,15 @@ ui <- dashboardPage(
            "MB_ui_text_element_name",
            htmlOutput(NS("MB", "MB_ui_text_element_name")),
          ),
-         box(title="Element",
-           "MB_ui_element",
-           htmlOutput(NS("MB", "MB_ui_element"))
-         )
-         ),
-       fluidRow(
          box(title="Model Catalog",
            "select_model_catalog",
            htmlOutput(NS("MB", "select_model_catalog")),
-         ),
-         box(title="Element 2",
-           "MB_ui_ele1",
-           htmlOutput(NS("MB", "MB_ui_ele2"))
          )
          ),
+       fluidRow(
+         box(title="Generated Model",
+           "ui_mb_model",
+           shinyAce::aceEditor(NS("MB", "ui_mb_model")), width=12)),
        fluidRow(
          box(title="Messages",
            "ui_mb_msg",

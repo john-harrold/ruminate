@@ -1,15 +1,39 @@
 # The MC field is a skeleton for constructing new modules
 MC:
+  # The prefix of object names created in the generated code
   element_object_name: "MB_obj"
   # This is a list of model sources. In the app the sources will be listed in
-  # the order shown here.
-  # possible sources:
-  #   type: "library"
-  #   name: "nlmixr2lib"
+  # the order shown here. This is also referred to as the model catalog. If
+  # the type is set to nlmixr2lib it will insert the models from nlmixr2lib.
+  # User defined models can be used as well. See the examples below for
+  # rxode2 and NONMEM models.
+  # 
+  # - `group`: This is how models will be grouped in the selection pulldown.
+  # - `name`: Short name for the model: **NOTE that names need to be unique**.
+  # - `description`: Verbose description of the model.
+  # - `type`: Supported model types are `"nlmixr2lib"`, `"rxode2"` or `"NONMEM"`.
+  # - `obj`: For the rxode2 type you need to also specify the name of the object that is created. 
+  # This option is only used for the rxode2 type.
+  # - `file`: For both rxode2 and nlmixr2 you need to specify a character string with a file path. This will be evaluated as an R command, so keep that in mind. If the file is not found it
+  #  will be skipped when the app loads.
   sources:
   - source:
-      type: "nlmixr2lib"
-      name: "nlmixr2 Model Library"
+      group:       "User-defined Models"
+      name:        "rxode2 User model"
+      description: "User-defined rxode2 model"
+      type:        "rxode2"
+      obj:         "my_fcn"
+      file:        'file.path(getwd(),"user_model.R")'
+  - source:
+      group:       "User-defined Models"
+      name:        "NONMEM User model"
+      description: "User-defined NONMEM model"
+      type:        "NONMEM"
+      file:        'file.path(getwd(),"user_model.ctl")'
+  - source:
+      group:       "Model Library"
+      type:        "nlmixr2lib"
+      name:        "nlmixr2 Model Library"
 # The include section is optional. You can use this section to copy files 
 # from the directory where you are running the app to the user directory to be
 # used in the app and when saved. The source and dest options can be a path
@@ -24,7 +48,7 @@ MC:
 #       source: 'file.path(system.file(package="onbrand"), "templates", "report.docx")'
 #       dest:   'file.path("config","report.docx")'
   code: # module specific code options
-    packages: [ "nlmixr2lib",  "ubiquity" ]
+    packages: [ "rxode2",  "ubiquity" ]
     readOnly: TRUE
     mode:     r
   # Controls what is shown in the compact ui mode:
@@ -51,6 +75,8 @@ MC:
     input:
     current_element:
       width:  "200px"
+      tooltip: "Change the current model."
+      tooltip_position: "right"
     element_name:
       width:  "200px"
     button_clk_run:
@@ -82,21 +108,31 @@ MC:
       tooltip: "Create a new model."
       tooltip_position: "right"
       width: 100
-    select_from_catalog:
-      width: 100
+    catalog_selection:
+      width: "200px"
+      tooltip: "Base model can be used as a basis to build a model."
+      tooltip_position: "right"
   labels:
     current_element: NULL # "Select model"
     element_name :   NULL # "model name"
-    catalog_selection:   "Select base model"
-    catalog_empty:       "No models were found, the catalog is empty."
-    save_btn:            "Save"
-    clip_btn:            "Code" 
-    copy_btn:            "Copy"
-    del_btn:             "Delete"
-    new_btn:             "New"
+    catalog_selection:    "Select base model"
+    catalog_empty:        "No models were found, the catalog is empty."
+    save_btn:             "Save"
+    clip_btn:             "Code" 
+    copy_btn:             "Copy"
+    del_btn:              "Delete"
+    new_btn:              "New"
+    building_model:       "Building model, be patient."
+    element_name_diff:    "The model name has changed."
+    model_code_diff:      "The model has changed."
+    save_change_detected: "You need to click on the save button for these changes to take effect."
   errors:
-    nlmixr2lib_not_found: "The nlmixr2lib package was not found. This library will not be available."
-    ubiquity_not_found:   "The ubiquity package was not found, and ubiquity models will not be supported."
+    no_model_found:             "No model was found."
+    base_model_build_failed:    "The base model build failed."
+    manual_model_update_failed: "Manual model update failed."     
+    nlmixr2lib_not_found:       "The nlmixr2lib package was not found. This library will not be available."
+    selected_id_bad_list:       "Unable to find a list for the selected component."
+    selected_id_bad_row:        "Selected component should have 1 row."
   tooltips:
     # Set to FALSE to disable tool tips for this module
     include: TRUE

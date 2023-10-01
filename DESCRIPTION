@@ -19,11 +19,14 @@ Imports:
   flextable,
   formods,
   ggplot2,
+  nlmixr2lib,
+  nonmem2rx,
   onbrand (>= 1.0.3),
   PKNCA (>= 0.10.2),
   plotly,
   rhandsontable,
   rlang,
+  rxode2,
   shiny,
   shinyAce,
   shinyWidgets,
@@ -40,8 +43,7 @@ Suggests:
   rmarkdown,
   readxl,
   shinydashboard,
-  testthat (>= 3.0.0),
-  ubiquity
+  testthat (>= 3.0.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Config/testthat/edition: 3

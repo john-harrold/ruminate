@@ -120,6 +120,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   source: file.path(system.file(package="onbrand"), "templates", "report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   dest:   file.path("config","report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: State initialized</span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
 <span class="r-in"><span><span class="va">input</span>   <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">input</span></span></span>
@@ -142,6 +144,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   source: file.path(system.file(package="onbrand"), "templates", "report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   dest:   file.path("config","report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: State initialized</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">state</span></span></span>
@@ -366,10 +370,54 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[1]]$source</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[1]]$source$type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nlmixr2lib"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[1]]$source$group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "User-defined Models"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[1]]$source$name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxode2 User model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[1]]$source$description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "User-defined rxode2 model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[1]]$source$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxode2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[1]]$source$obj</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "my_fcn"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[1]]$source$file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "file.path(getwd(),\"user_model.R\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[2]]$source</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[2]]$source$group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "User-defined Models"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[2]]$source$name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NONMEM User model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[2]]$source$description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "User-defined NONMEM model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[2]]$source$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NONMEM"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[2]]$source$file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "file.path(getwd(),\"user_model.ctl\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[3]]$source</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[3]]$source$group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Model Library"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[3]]$source$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nlmixr2lib"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sources[[3]]$source$name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nlmixr2 Model Library"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -377,7 +425,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$code</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$code$packages</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nlmixr2lib" "ubiquity"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxode2"   "ubiquity"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$code$readOnly</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
@@ -425,6 +473,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$current_element</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$current_element$width</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "200px"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$current_element$tooltip</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Change the current model."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$current_element$tooltip_position</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "right"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$element_name</span>
@@ -513,9 +567,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$select_from_catalog</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$select_from_catalog$width</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$catalog_selection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$catalog_selection$width</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "200px"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$catalog_selection$tooltip</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Base model can be used as a basis to build a model."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$catalog_selection$tooltip_position</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "right"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -547,13 +607,37 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$new_btn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "New"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$building_model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Building model, be patient."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$element_name_diff</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The model name has changed."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$model_code_diff</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The model has changed."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$save_change_detected</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "You need to click on the save button for these changes to take effect."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$no_model_found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "No model was found."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$base_model_build_failed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The base model build failed."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$manual_model_update_failed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Manual model update failed."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$nlmixr2lib_not_found</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The nlmixr2lib package was not found. This library will not be available."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$ubiquity_not_found</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The ubiquity package was not found, and ubiquity models will not be supported."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$selected_id_bad_list</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Unable to find a list for the selected component."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$selected_id_bad_row</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Selected component should have 1 row."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$tooltips</span>
@@ -607,6 +691,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$button_clk_new</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$MB_ui_select_element</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$ui_mb_model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$element_selection</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -618,9 +708,10 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_ids</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "button_clk_save"   "button_clk_clip"   "button_clk_del"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "button_clk_copy"   "button_clk_new"    "element_selection"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [7] "catalog_selection" "element_name"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "button_clk_save"      "button_clk_clip"      "button_clk_del"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "button_clk_copy"      "button_clk_new"       "MB_ui_select_element"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "ui_mb_model"          "element_selection"    "catalog_selection"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "element_name"        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$isgood</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
@@ -633,11 +724,59 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[1]]$source</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[1]]$source$group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "User-defined Models"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[1]]$source$name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxode2 User model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[1]]$source$description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "User-defined rxode2 model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[1]]$source$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxode2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[1]]$source$obj</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "my_fcn"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[1]]$source$file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "file.path(getwd(),\"user_model.R\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[2]]$source</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[2]]$source$group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "User-defined Models"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[2]]$source$name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NONMEM User model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[2]]$source$description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "User-defined NONMEM model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[2]]$source$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NONMEM"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[2]]$source$file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "file.path(getwd(),\"user_model.ctl\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[3]]$source</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[3]]$source$group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Model Library"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[3]]$source$type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nlmixr2lib"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources$name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources[[3]]$source$name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nlmixr2 Model Library"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$summary</span>
@@ -699,44 +838,44 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13                                                                          Oncology tumor growth model in xenograft models</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$PK_1cmt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$PK_1cmt</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$PK_1cmt_des</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$PK_1cmt_des</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$PK_2cmt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$PK_2cmt</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_3"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$PK_2cmt_des</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$PK_2cmt_des</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_4"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$PK_2cmt_tdcl_des</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$PK_2cmt_tdcl_des</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_5"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$PK_3cmt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$PK_3cmt</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_6"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$PK_3cmt_des</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$PK_3cmt_des</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_7"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$PK_2cmt_mAb_Davda_2014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$PK_2cmt_mAb_Davda_2014</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_8"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$Kovalenko_2020_dupilumab</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$Kovalenko_2020_dupilumab</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_9"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$Soehoel_2022_tralokinumab</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$Soehoel_2022_tralokinumab</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_10"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$Zhu_2017_lebrikizumab</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$Zhu_2017_lebrikizumab</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_11"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$oncology_sdm_lobo_2002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$oncology_sdm_lobo_2002</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_12"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`nlmixr2 Model Library`$oncology_xenograft_simeoni_2004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$select_group$`Model Library`$oncology_xenograft_simeoni_2004</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mod_13"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -813,6 +952,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$ui</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$ui$ui_mb_model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$ui$element_name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Model 1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -826,23 +968,38 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$idx</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$element_ds_object_name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB_obj_1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$fcn_obj_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB_obj_1_fcn"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$rx_obj_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB_obj_1_rx"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$msgs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$code_previous</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB_obj_1 = "</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$elements_table</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$update_model_code</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$components_table</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> data frame with 0 columns and 0 rows</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$selected_component_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$components_list</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$code</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$base_model_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$code_dw_only</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$base_model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -860,7 +1017,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/formods/templates/formods.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MOD_yaml_file</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/l9/6pm7xq5j1hn6l00zrs22j6mc0000gn/T/RtmpFB52wn/temp_libpathada94f7a9d/ruminate/templates/MB.yaml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/l9/6pm7xq5j1hn6l00zrs22j6mc0000gn/T/RtmpnPWldi/temp_libpath15565b4dec73/ruminate/templates/MB.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

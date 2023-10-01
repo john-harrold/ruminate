@@ -277,6 +277,7 @@ MC:
     show_code:         "Show analysis code"
     nca_intervals:     "Current NCA intervals"
     url_dosing:        "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#dosing-information"
+    url_data:          "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#data-format"
     ph:
       text_ana_interval_start: 0
       text_ana_interval_stop:  "number or Inf"
