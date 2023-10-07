@@ -35,6 +35,7 @@
     <a class="external-link dropdown-item" href="https://vimeo.com/user3889152/ruminate">Video Tutorial</a>
     <a class="dropdown-item" href="../articles/deployment.html">Deployment &amp; Customization</a>
     <a class="dropdown-item" href="../articles/noncompartmental_analysis.html">Non-Compartmental Analysis</a>
+    <a class="dropdown-item" href="../articles/model_builder.html">Building Models</a>
   </div>
 </li>
 <li class="active nav-item">
@@ -110,7 +111,7 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Within shiny both session and input variables will exist,</span></span></span>
 <span class="r-in"><span><span class="co"># this creates examples here for testing purposes:</span></span></span>
-<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="MB_test_mksession.html">MB_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="MB_test_mksession.html">MB_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   dest:   file.path("config","report.docx")</span>
@@ -123,6 +124,12 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
 <span class="r-in"><span><span class="va">input</span>   <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">input</span></span></span>
 <span class="r-in"><span></span></span>
@@ -425,7 +432,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$code</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$code$packages</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxode2"   "ubiquity"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxode2"    "nonmem2rx"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$code$readOnly</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
@@ -571,11 +578,130 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$catalog_selection$width</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "200px"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$catalog_selection$truncate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 65</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$catalog_selection$tooltip</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Base model can be used as a basis to build a model."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Select base model from the catalog."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$catalog_selection$tooltip_position</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "top"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$model_type_selection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$model_type_selection$width</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "200px"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$model_type_selection$tooltip</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Select the type of the model being uploaded."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$model_type_selection$tooltip_position</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "right"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$model_type_selection$choices</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$model_type_selection$choices$rxode2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxode2 function"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$model_type_selection$choices$NONMEM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NONMEM (XML, lst, or ctl)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$model_type_selection$default</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxode2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$upload_model_file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$upload_model_file$width</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "400px"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$base_from</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$base_from$size</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "normal"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$base_from$status</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "primary"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$base_from$tooltip</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "You can select the base model from a catalog or upload your own"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$base_from$tooltip_position</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "bottom"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$base_from$choices</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$base_from$choices$catalog</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Model Catalog"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$base_from$choices$user</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "User-defined model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$base_from$default</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "catalog"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$width</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "200px"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$default</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "weeks"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$tooltip</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Choose the timescale of the model."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$tooltip_position</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "top"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$months</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$months$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "60*60*24*4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$months$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Months"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$weeks</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$weeks$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "60*60*24*7"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$weeks$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Weeks"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$days</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$days$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "60*60*24"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$days$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Days"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$hours</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$hours$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "60*60"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$hours$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Seconds"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$min</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$min$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "60*60"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$min$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Seconds"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$sec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$sec$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$sec$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Seconds"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -586,11 +712,23 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$element_name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$upload_model_file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$base_from</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$catalog_selection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Select base model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$model_type_selection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$time_scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$catalog_empty</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "No models were found, the catalog is empty."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "No models were found, the catalog is empty"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$save_btn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Save"</span>
@@ -619,6 +757,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$save_change_detected</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "You need to click on the save button for these changes to take effect."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$head_base_model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Starting model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$head_model_code</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Model code"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$head_time_scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Model time-scale"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$no_model_found</span>
@@ -629,6 +776,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$manual_model_update_failed</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Manual model update failed."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$user_file_upload_failed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "User-defined model failed."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$nlmixr2lib_not_found</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The nlmixr2lib package was not found. This library will not be available."</span>
@@ -649,6 +799,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$tooltips$show_code</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Show model code"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$tooltips$url_rxode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://nlmixr2.github.io/rxode2/articles/rxode2-syntax.html"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$tooltips$url_model_types</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "url_model_types"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$tooltips$components</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$tooltips$components$input_tip</span>
@@ -691,10 +847,22 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$button_clk_new</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$MB_ui_select_element</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$model_type_selection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$ui_select_element</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$ui_mb_model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$time_scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$uploaded_model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$base_from</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_hold$element_selection</span>
@@ -709,18 +877,25 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_ids</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "button_clk_save"      "button_clk_clip"      "button_clk_del"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "button_clk_copy"      "button_clk_new"       "MB_ui_select_element"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "ui_mb_model"          "element_selection"    "catalog_selection"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "element_name"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "button_clk_copy"      "button_clk_new"       "model_type_selection"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "ui_select_element"    "ui_mb_model"          "time_scale"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "model_type_selection" "uploaded_model"       "base_from"           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "element_selection"    "catalog_selection"    "element_name"        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$isgood</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ui_ele</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "catalog_selection"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "catalog_selection" "element_name"      "time_scale"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$element_cntr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_type_selection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxode2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$base_from</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "catalog"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$model_catalog$sources</span>
@@ -955,6 +1130,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$ui$ui_mb_model</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$ui$time_scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "weeks"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$elements$element_1$ui$element_name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Model 1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1017,7 +1195,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/formods/templates/formods.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MOD_yaml_file</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/l9/6pm7xq5j1hn6l00zrs22j6mc0000gn/T/RtmpnPWldi/temp_libpath15565b4dec73/ruminate/templates/MB.yaml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/l9/6pm7xq5j1hn6l00zrs22j6mc0000gn/T/Rtmp4If9E8/temp_libpathdcdc370f01fd/ruminate/templates/MB.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

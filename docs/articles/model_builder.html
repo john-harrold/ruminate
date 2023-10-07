@@ -49,7 +49,7 @@
     Try Online
   </a>
 </li>
-<li class="nav-item dropdown">
+<li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown--tutorial">
     <span class="fas fa fas fa-chalkboard-teacher"></span>
      
@@ -59,6 +59,7 @@
     <a class="external-link dropdown-item" href="https://vimeo.com/user3889152/ruminate">Video Tutorial</a>
     <a class="dropdown-item" href="../articles/deployment.html">Deployment &amp; Customization</a>
     <a class="dropdown-item" href="../articles/noncompartmental_analysis.html">Non-Compartmental Analysis</a>
+    <a class="dropdown-item" href="../articles/model_builder.html">Building Models</a>
   </div>
 </li>
 <li class="nav-item">
@@ -108,72 +109,258 @@
 
     
     
+<p><strong><em>NOTE: This module is currently under active develpment
+and this documentation is a work in progress</em></strong></p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The model building module …</p>
+<p>The model building module is constructed around the
+{<code>rxode2</code>} package. It allows you to load a base model from
+either the model catalog or a user-create file. Once loaded the user can
+modify a model (change the structure, parameter values, etc), make a
+copy, etc. You can upload a model in rxode2 format and also NONMEM
+format. The NONMEM file (control stream or listing output) will be
+converted after upload into rxode2 using the {<code>nonmem2rx</code>}
+package.</p>
 </div>
 <div class="section level2">
 <h2 id="model-catalog">Model catalog<a class="anchor" aria-label="anchor" href="#model-catalog"></a>
 </h2>
 <p>The model catalog is built from the sources field of the
-configuration file. Each source has the following fields:</p>
+configuration file. It can include the models from the
+{<code>nlmixr2lib</code>} model library. You can also include user
+defined files. If they are specified but not found, they will be
+skipped. Edit the MB yaml file to to alter this. If you have a rxode2
+model you can name it <code>user_model.R</code> and place it in the app
+directory to be included in the catalog. Similarly if you have a NONMEM
+control stream you can name it <code>user_model.ctl</code>, and it will
+be included automatically.</p>
+<div class="section level3">
+<h3 id="user-defined-models">User-defined models<a class="anchor" aria-label="anchor" href="#user-defined-models"></a>
+</h3>
+<p>User-defined models can be included in the catalog or uploaded into
+the app. These models can be specified in either NONMEM or rxode2
+formats. For NONMEM models it can be either the XML output from an
+estimation (best), the listing output from an estimation (good), or a
+control () stream or the listing output. To use an nlmixr2 model you
+simply need a function definition assigned to the object
+<code>my_fcn</code>. For examples see:</p>
 <ul>
-<li>
-<code>group</code>: This is how models will be grouped in the
-selection pulldown.</li>
-<li>
-<code>name</code>: Short name for the model: <strong>NOTE that names
-need to be unique</strong>.</li>
-<li>
-<code>description</code>: Verbose description of the model.</li>
-<li>
-<code>type</code>: Supported model types are
-<code>"nlmixr2lib"</code>, <code>"rxode2"</code> or
-<code>"NONMEM"</code>.</li>
-<li>
-<code>obj</code>: For the rxode2 type you need to also specify the
-name of the object that is created. This option is only used for the
-rxode2 type.</li>
-<li>
-<code>file</code>: For both rxode2 and nlmixr2 you need to specify a
-character string with a file path. This will be evaluated as an R
-command, so keep that in mind. If the file is not found it will be
-skipped when the app loads.</li>
+<li><code>system.file(package="ruminate", "templates", "MB_model_rxode2.R")</code></li>
+<li><code>system.file(package="ruminate", "templates", "MB_model_NONMEM.ctl")</code></li>
 </ul>
-<div class="section level3">
-<h3 id="model-library">Model Library<a class="anchor" aria-label="anchor" href="#model-library"></a>
-</h3>
-<p>To include the {<code>nlmixr2lib</code>} library you can select the
-<code>"nlmixr2lib"</code> source type. You can also control how these
-models are grouped:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span>  <span class="op">-</span> <span class="va">source</span><span class="op">:</span></span>
-<span>      <span class="va">type</span><span class="op">:</span>        <span class="st">"nlmixr2lib"</span></span>
-<span>      <span class="va">group</span><span class="op">:</span>       <span class="st">"Model Library"</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="user-defined-models">User defined models<a class="anchor" aria-label="anchor" href="#user-defined-models"></a>
-</h3>
-<p>User-defined models can be specified in either NONMEM or rxode2
-formats. This example shows you how to specify models for both
-formats:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span>  <span class="op">-</span> <span class="va">source</span><span class="op">:</span></span>
-<span>      <span class="va">group</span><span class="op">:</span>       <span class="st">"User-defined Models"</span></span>
-<span>      <span class="va">name</span><span class="op">:</span>        <span class="st">"rxode2 User model"</span></span>
-<span>      <span class="va">description</span><span class="op">:</span> <span class="st">"User-defined rxode2 model"</span></span>
-<span>      <span class="va">type</span><span class="op">:</span>        <span class="st">"rxode2"</span></span>
-<span>      <span class="va">obj</span><span class="op">:</span>         <span class="st">"my_fcn"</span></span>
-<span>      <span class="va">file</span><span class="op">:</span>        <span class="st">'file.path(getwd(),"user_model.R")'</span></span>
-<span>  <span class="op">-</span> <span class="va">source</span><span class="op">:</span></span>
-<span>      <span class="va">group</span><span class="op">:</span>       <span class="st">"User-defined Models"</span></span>
-<span>      <span class="va">name</span><span class="op">:</span>        <span class="st">"NONMEM User model"</span></span>
-<span>      <span class="va">description</span><span class="op">:</span> <span class="st">"User-defined NONMEM model"</span></span>
-<span>      <span class="va">type</span><span class="op">:</span>        <span class="st">"NONMEM"</span></span>
-<span>      <span class="va">obj</span><span class="op">:</span>         <span class="st">""</span></span>
-<span>      <span class="va">file</span><span class="op">:</span>        <span class="st">'file.path(getwd(),"user_model.ctl")'</span></span></code></pre></div>
 </div>
+<div class="section level2">
+<h2 id="configuration-file">Configuration File<a class="anchor" aria-label="anchor" href="#configuration-file"></a>
+</h2>
+<pre><code># The MC field is a skeleton for constructing new modules
+MC:
+  # The prefix of object names created in the generated code
+  element_object_name: "MB_obj"
+  # This is a list of model sources. In the app the sources will be listed in
+  # the order shown here. This is also referred to as the model catalog. If
+  # the type is set to nlmixr2lib it will insert the models from nlmixr2lib.
+  # User defined models can be used as well. See the examples below for
+  # rxode2 and NONMEM models.
+  # 
+  # - `group`: This is how models will be grouped in the selection pulldown.
+  # - `name`: Short name for the model: **NOTE that names need to be unique**.
+  # - `description`: Verbose description of the model.
+  # - `type`: Supported model types are `"nlmixr2lib"`, `"rxode2"` or `"NONMEM"`.
+  # - `obj`: For the rxode2 type you need to also specify the name of the object that is created. 
+  # This option is only used for the rxode2 type.
+  # - `file`: For both rxode2 and nlmixr2 you need to specify a character string with a file path. This will be evaluated as an R command, so keep that in mind. If the file is not found it
+  #  will be skipped when the app loads.
+  sources:
+  - source:
+      group:       "User-defined Models"
+      name:        "rxode2 User model"
+      description: "User-defined rxode2 model"
+      type:        "rxode2"
+      obj:         "my_fcn"
+      file:        'file.path(getwd(),"user_model.R")'
+  - source:
+      group:       "User-defined Models"
+      name:        "NONMEM User model"
+      description: "User-defined NONMEM model"
+      type:        "NONMEM"
+      file:        'file.path(getwd(),"user_model.ctl")'
+  - source:
+      group:       "Model Library"
+      type:        "nlmixr2lib"
+      name:        "nlmixr2 Model Library"
+# The include section is optional. You can use this section to copy files 
+# from the directory where you are running the app to the user directory to be
+# used in the app and when saved. The source and dest options can be a path
+# command like below or a double
+# quoted string: '"/path/to/file"'
+# The dest should be relative to user directory (think the root of the zip
+# file that is exported). See formods.yaml for examples. 
+#
+# include:
+#   files:
+#   - file:
+#       source: 'file.path(system.file(package="onbrand"), "templates", "report.docx")'
+#       dest:   'file.path("config","report.docx")'
+  code: # module specific code options
+    packages: [ "rxode2", "nonmem2rx"]
+    readOnly: TRUE
+    mode:     r
+  # Controls what is shown in the compact ui mode:
+  compact:
+    code:    TRUE 
+    clip:    TRUE 
+  # This is where you put reporting options. The expected options are shown
+  # here, but module-specific options can also be added if needed:
+  reporting:
+    enabled: FALSE
+    # Priority of reporting relative to other modules 
+    # (higher numbers are reported first)
+    priority: 1
+  # put different formatting options (widths, heights,
+  # shinyWidgets button sizes, etc) here.
+  formatting:
+    # Dimensions of code snippet box
+    code:
+      width:  800
+      height: 300
+    preview:
+      width:  "800px"
+      height: "500px"
+    input:
+    current_element:
+      width:  "200px"
+      tooltip: "Change the current model."
+      tooltip_position: "right"
+    element_name:
+      width:  "200px"
+    button_clk_run:
+      size: "sm"
+      block: TRUE
+    button_clk_del:
+      size: "sm"
+      block: TRUE
+      tooltip: "Delete the current model."
+      tooltip_position: "right"
+    button_clk_save:
+      size: "sm"
+      block: TRUE
+      tooltip: "Save the name for the current model."
+      tooltip_position: "right"
+    button_clk_clip:
+      size: "sm"
+      block: TRUE
+      tooltip: "Copy the code to generate the current model to the clipboard."
+      tooltip_position: "right"
+    button_clk_copy:
+      size: "sm"
+      block: TRUE
+      tooltip: "Make a copy of the current model."
+      tooltip_position: "right"
+    button_clk_new:
+      size: "sm"
+      block: TRUE
+      tooltip: "Create a new model."
+      tooltip_position: "right"
+      width: 100
+    catalog_selection:
+      width:   "200px"
+      truncate: 65
+      tooltip:  "Select base model from the catalog."
+      tooltip_position: "top"    
+    model_type_selection:
+      width: "200px"
+      tooltip: "Select the type of the model being uploaded."
+      tooltip_position: "right"
+      choices:
+        rxode2: "rxode2 function"
+        NONMEM: "NONMEM (XML, lst, or ctl)"
+      default:   "rxode2"
+    upload_model_file:   
+      width: "400px"
+    base_from:            
+      size:    "normal"
+      status:  "primary"
+      tooltip: "You can select the base model from a catalog or upload your own"
+      tooltip_position: "bottom"
+      choices:
+        catalog: "Model Catalog"
+        user:    "User-defined model"
+      default: "catalog"
+    # The timescales here can be altered manually. This is the general format:
+    #   short_name:
+    #     conv: "10"
+    #     verb: "A more verbose name"
+    # Generally you dont want to  change what is already here in terms of
+    # these short name used. You can remove timescales you don't want to use
+    # or add timescales that you need but are not present.
+    #   -verb  You can change the verb field (what the user sees). 
+    #   The order of
+    # Appearance is the same order seen here. The default is the selected
+    # short name for the specified timescale
+    time_scales:
+      width: "200px"
+      default: "weeks"
+      tooltip: "Choose the timescale of the model."
+      tooltip_position: "top"
+      choices: 
+        months:
+          conv: "60*60*24*4"
+          verb: "Months"
+        weeks:
+          conv: "60*60*24*7"
+          verb: "Weeks"
+        days:
+          conv: "60*60*24"
+          verb: "Days"
+        hours:
+          conv: "60*60"
+          verb: "Seconds"
+        min:  
+          conv: "60*60"
+          verb: "Seconds"
+        sec:
+          conv: "1"
+          verb: "Seconds"
+  labels:
+    current_element: NULL # "Select model"
+    element_name :   NULL # "model name"
+    upload_model_file:    NULL
+    base_from:            NULL
+    catalog_selection:    NULL
+    model_type_selection: NULL
+    time_scale:           NULL
+    catalog_empty:        "No models were found, the catalog is empty"
+    save_btn:             "Save"
+    clip_btn:             "Code" 
+    copy_btn:             "Copy"
+    del_btn:              "Delete"
+    new_btn:              "New"
+    building_model:       "Building model, be patient."
+    element_name_diff:    "The model name has changed."
+    model_code_diff:      "The model has changed."
+    save_change_detected: "You need to click on the save button for these changes to take effect."
+    head_base_model:      "Starting model"
+    head_model_code:      "Model code"
+    head_time_scale:      "Model time-scale"
+  errors:
+    no_model_found:             "No model was found."
+    base_model_build_failed:    "The base model build failed."
+    manual_model_update_failed: "Manual model update failed."     
+    user_file_upload_failed:    "User-defined model failed."     
+    nlmixr2lib_not_found:       "The nlmixr2lib package was not found. This library will not be available."
+    selected_id_bad_list:       "Unable to find a list for the selected component."
+    selected_id_bad_row:        "Selected component should have 1 row."
+  tooltips:
+    # Set to FALSE to disable tool tips for this module
+    include: TRUE
+    elements: "Show model components"
+    show_code: "Show model code" 
+    url_rxode: "https://nlmixr2.github.io/rxode2/articles/rxode2-syntax.html" 
+    url_model_types: "url_model_types"  # JMH update with final url
+    components:
+      input_tip: "My tool tip"</code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

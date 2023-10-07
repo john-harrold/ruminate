@@ -35,6 +35,7 @@
     <a class="external-link dropdown-item" href="https://vimeo.com/user3889152/ruminate">Video Tutorial</a>
     <a class="dropdown-item" href="../articles/deployment.html">Deployment &amp; Customization</a>
     <a class="dropdown-item" href="../articles/noncompartmental_analysis.html">Non-Compartmental Analysis</a>
+    <a class="dropdown-item" href="../articles/model_builder.html">Building Models</a>
   </div>
 </li>
 <li class="active nav-item">
@@ -78,7 +79,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">MB_test_mksession</span><span class="op">(</span><span class="va">session</span>, id <span class="op">=</span> <span class="st">"MB"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">MB_test_mksession</span><span class="op">(</span><span class="va">session</span>, id <span class="op">=</span> <span class="st">"MB"</span>, full_session <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -104,7 +105,7 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu">MB_test_mksession</span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu">MB_test_mksession</span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   dest:   file.path("config","report.docx")</span>
@@ -117,6 +118,12 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/My Drive/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

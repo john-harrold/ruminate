@@ -276,8 +276,10 @@ MC:
     ana_key:           "Unique description used for referencing analysis and in other elements (e.g. reporting)."
     show_code:         "Show analysis code"
     nca_intervals:     "Current NCA intervals"
+    # Set urls to NULL to disable
     url_dosing:        "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#dosing-information"
     url_data:          "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#data-format"
+    url_intervals:     "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#nca-analysis-intervals"
     ph:
       text_ana_interval_start: 0
       text_ana_interval_stop:  "number or Inf"

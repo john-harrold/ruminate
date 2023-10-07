@@ -29,7 +29,10 @@ current element.
 }
 \examples{
 library(ruminate)
-sess_res = MB_test_mksession(session=list())
+# This will get the full session:
+sess_res = MB_test_mksession(session=list(), full_session=TRUE)
+# This is just for CRAN
+#sess_res = MB_test_mksession(session=list())
 session = sess_res$session
 input   = sess_res$input
 

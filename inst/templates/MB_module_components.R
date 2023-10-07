@@ -44,14 +44,22 @@ ui <- dashboardPage(
        width=12)),
        fluidRow(
          box(title="Select current element",
-           "MB_ui_select_element",
-           htmlOutput(NS("MB", "MB_ui_select_element")),
-           "MB_ui_text_element_name",
-           htmlOutput(NS("MB", "MB_ui_text_element_name")),
+           "ui_select_element",
+           htmlOutput(NS("MB", "ui_select_element")),
+           "ui_text_element_name",
+           htmlOutput(NS("MB", "ui_text_element_name")),
+           "ui_select_time_scale",
+           htmlOutput(NS("MB", "ui_select_time_scale")),
          ),
-         box(title="Model Catalog",
-           "select_model_catalog",
-           htmlOutput(NS("MB", "select_model_catalog")),
+         box(title="Base Model From:",
+           "ui_select_base_from",    
+           htmlOutput(NS("MB", "ui_select_base_from")),
+           "ui_select_model_catalog",
+           htmlOutput(NS("MB", "ui_select_model_catalog")),
+           "ui_upload_model_type",
+           htmlOutput(NS("MB", "ui_upload_model_type")),
+           "ui_upload_model_file",
+           htmlOutput(NS("MB", "ui_upload_model_file"))
          )
          ),
        fluidRow(
@@ -71,8 +79,8 @@ ui <- dashboardPage(
            verbatimTextOutput("ui_state"),width=12))
        ),
        tabItem(tabName="compact",
-          "ui_mb_compact",
-          htmlOutput(NS("MB", "ui_mb_compact")))
+          "MB_ui_compact",
+          htmlOutput(NS("MB", "MB_ui_compact")))
       )
     )
   )

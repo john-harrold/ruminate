@@ -4,7 +4,7 @@
 \alias{MB_test_mksession}
 \title{Populate Session Data for Module Testing}
 \usage{
-MB_test_mksession(session, id = "MB")
+MB_test_mksession(session, id = "MB", full_session = TRUE)
 }
 \arguments{
 \item{session}{Shiny session variable (in app) or a list (outside of app)}
@@ -25,5 +25,5 @@ list with the following elements
 Populates the supplied session variable for testing.
 }
 \examples{
-sess_res = MB_test_mksession(session=list())
+sess_res = MB_test_mksession(session=list(), full_session=FALSE)
 }

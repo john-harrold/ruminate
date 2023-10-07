@@ -230,7 +230,6 @@ save(presim, file="NCA_presim.RData")
 
 # Configuration File
 
-
 ```{r echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE,  style="max-height: 100px;", comment=""}
 #yaml= file.path(system.file(package="ruminate"), "templates", "NCA.yaml")
 cat(readLines(file.path(system.file(package="ruminate"), "templates", "NCA.yaml")), sep="\n")

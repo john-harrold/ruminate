@@ -24,8 +24,148 @@ MB_Server <- function(id,
 
     #------------------------------------
     # Generating the model selection catalog
-    output$select_model_catalog = renderUI({
+    output$ui_select_model_catalog = renderUI({
       input$element_selection
+      req(input[["base_from"]])
+      uiele = NULL
+      if(input[["base_from"]] == "catalog"){
+        state = MB_fetch_state(id              = id,
+                               id_ASM          = id_ASM,
+                               input           = input,
+                               session         = session,
+                               FM_yaml_file    = FM_yaml_file,
+                               MOD_yaml_file   = MOD_yaml_file,
+                               react_state     = react_state)
+
+        # Extracting the model catalog:
+        model_catalog = state[["MB"]][["model_catalog"]]
+
+        current_ele = MB_fetch_current_element(state)
+
+        if( model_catalog[["isgood"]]){
+
+           # If there are multiple sources we display the items grouped by
+           # source if there is only one source we use the plain method
+           if(length(names(model_catalog[["select_group"]])) > 1){
+             choices = model_catalog[["select_group"]]
+           } else {
+             choices = model_catalog[["select_plain"]]
+           }
+
+           choicesOpt = list(
+            subtext = stringr::str_trunc(model_catalog[["select_subtext"]],
+                                         width= state[["MC"]][["formatting"]][["catalog_selection"]][["truncate"]]
+            )
+           )
+
+           uiele =
+           shinyWidgets::pickerInput(
+             selected   = current_ele[["ui"]][["catalog_selection"]],
+             inputId    = NS(id, "catalog_selection"),
+             label      = state[["MC"]][["labels"]][["catalog_selection"]],
+             choices    = choices,
+             width      = state[["MC"]][["formatting"]][["catalog_selection"]][["width"]],
+             options    = list(
+               size          = state[["yaml"]][["FM"]][["ui"]][["select_size"]],
+               'live-search' =TRUE),
+             choicesOpt = choicesOpt)
+
+          uiele = formods::FM_add_ui_tooltip(state, uiele,
+            tooltip     = state[["MC"]][["formatting"]][["catalog_selection"]][["tooltip"]],
+            position    = state[["MC"]][["formatting"]][["catalog_selection"]][["tooltip_position"]])
+
+        } else {
+          if(is.null( model_catalog[["msgs"]])){
+            uiele = "Unable to extract catalog"
+          } else {
+            uiele =   model_catalog[["msgs"]]
+          }
+        }
+      }
+
+      uiele})
+    #------------------------------------
+    # Generating the
+    output$ui_select_time_scale    = renderUI({
+        state = MB_fetch_state(id              = id,
+                               id_ASM          = id_ASM,
+                               input           = input,
+                               session         = session,
+                               FM_yaml_file    = FM_yaml_file,
+                               MOD_yaml_file   = MOD_yaml_file,
+                               react_state     = react_state)
+
+        current_ele = MB_fetch_current_element(state)
+
+        choices = list()
+        for(cname in names(state[["MC"]][["formatting"]][["time_scales"]][["choices"]])){
+          choices[[ state[["MC"]][["formatting"]][["time_scales"]][["choices"]][[cname]][["verb"]] ]] =
+            cname
+        }
+
+        uiele =
+        shinyWidgets::pickerInput(
+          selected   = current_ele[["ui"]][["time_scale"]],
+          inputId    = NS(id, "time_scale"),
+          label      = state[["MC"]][["labels"]][["time_scales"]],
+          choices    = choices,
+          width      = state[["MC"]][["formatting"]][["time_scales"]][["width"]])
+
+        uiele = formods::FM_add_ui_tooltip(state, uiele,
+          tooltip     = state[["MC"]][["formatting"]][["time_scales"]][["tooltip"]],
+          position    = state[["MC"]][["formatting"]][["time_scales"]][["tooltip_position"]])
+      uiele})
+    #------------------------------------
+    output$ui_upload_model_file = renderUI({
+      req(input[["base_from"]])
+      uiele = NULL
+      if(input[["base_from"]] == "user"){
+        state = MB_fetch_state(id              = id,
+                               id_ASM          = id_ASM,
+                               input           = input,
+                               session         = session,
+                               FM_yaml_file    = FM_yaml_file,
+                               MOD_yaml_file   = MOD_yaml_file,
+                               react_state     = react_state)
+
+        uiele = fileInput(NS(id, "uploaded_model"),
+           width = state[["MC"]][["formatting"]][["upload_model_file"]][["width"]],
+           label = state[["MC"]][["labels"]][["upload_model_file"]])
+      }
+      uiele})
+    #------------------------------------
+    output$ui_upload_model_type = renderUI({
+      req(input[["base_from"]])
+      uiele = NULL
+      if(input[["base_from"]] == "user"){
+        state = MB_fetch_state(id              = id,
+                               id_ASM          = id_ASM,
+                               input           = input,
+                               session         = session,
+                               FM_yaml_file    = FM_yaml_file,
+                               MOD_yaml_file   = MOD_yaml_file,
+                               react_state     = react_state)
+        choices = list()
+        for(cname in names(state[["MC"]][["formatting"]][["model_type_selection"]][["choices"]])){
+          choices[[ state[["MC"]][["formatting"]][["model_type_selection"]][["choices"]][[cname]] ]] =
+            cname
+        }
+
+        uiele =
+        shinyWidgets::pickerInput(
+          selected   = state[["MB"]][["model_type_selection"]],
+          inputId    = NS(id, "model_type_selection"),
+          label      = state[["MC"]][["labels"]][["model_type_selection"]],
+          choices    = choices,
+          width      = state[["MC"]][["formatting"]][["model_type_selection"]][["width"]])
+
+        uiele = formods::FM_add_ui_tooltip(state, uiele,
+          tooltip     = state[["MC"]][["formatting"]][["model_type_selection"]][["tooltip"]],
+          position    = state[["MC"]][["formatting"]][["model_type_selection"]][["tooltip_position"]])
+      }
+    uiele})
+    #------------------------------------
+    output$ui_select_base_from = renderUI({
       state = MB_fetch_state(id              = id,
                              id_ASM          = id_ASM,
                              input           = input,
@@ -33,50 +173,34 @@ MB_Server <- function(id,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
-
-      # Extracting the model catalog:
-      model_catalog = state[["MB"]][["model_catalog"]]
-
-      current_ele = MB_fetch_current_element(state)
-
-      if( model_catalog[["isgood"]]){
-
-         # If there are multiple sources we display the items grouped by
-         # source if there is only one source we use the plain method
-         if(length(names(model_catalog[["select_group"]])) > 1){
-           choices = model_catalog[["select_group"]]
-         } else {
-           choices = model_catalog[["select_plain"]]
-         }
-
-         choicesOpt = list(subtext =  model_catalog[["select_subtext"]])
-
-         uiele =
-         shinyWidgets::pickerInput(
-           selected   = current_ele[["ui"]][["catalog_selection"]],
-           inputId    = NS(id, "catalog_selection"),
-           label      = state[["MC"]][["labels"]][["catalog_selection"]],
-           choices    = choices,
-           width      = state[["MC"]][["formatting"]][["catalog_selection"]][["width"]],
-           choicesOpt = choicesOpt)
-
-        uiele = formods::FM_add_ui_tooltip(state, uiele,
-          tooltip     = state[["MC"]][["formatting"]][["catalog_selection"]][["tooltip"]],
-          position    = state[["MC"]][["formatting"]][["catalog_selection"]][["tooltip_position"]])
-
-      } else {
-        if(is.null( model_catalog[["msgs"]])){
-          uiele = "Unable to extract catalog"
-        } else {
-          uiele =   model_catalog[["msgs"]]
-        }
+      choices = list()
+      for(cname in names(state[["MC"]][["formatting"]][["base_from"]][["choices"]])){
+        choices[[ state[["MC"]][["formatting"]][["base_from"]][["choices"]][[cname]] ]] =
+          cname
       }
 
-      uiele})
+      uiele =
+      shinyWidgets::radioGroupButtons(
+        inputId    = NS(id, "base_from"),
+        selected   = state[["MB"]][["base_from"]],
+        label      = state[["MC"]][["labels"]][["base_from"]],
+        choices    = choices,
+        status     = state[["MC"]][["formatting"]][["base_from"]][["status"]],
+        checkIcon = list(
+           yes = icon("ok",
+           lib = "glyphicon"),
+           no  = icon("remove",
+           lib = "glyphicon"))
+        )
 
+
+      uiele = formods::FM_add_ui_tooltip(state, uiele,
+        tooltip     = state[["MC"]][["formatting"]][["base_from"]][["tooltip"]],
+        position    = state[["MC"]][["formatting"]][["base_from"]][["tooltip_position"]])
+    uiele})
     #------------------------------------
     # Select the active model
-    output$MB_ui_select_element = renderUI({
+    output$ui_select_element = renderUI({
       input$button_clk_save
       input$button_clk_del
       input$button_clk_copy
@@ -109,7 +233,7 @@ MB_Server <- function(id,
       uiele})
     #------------------------------------
     # Current model name:
-    output$MB_ui_text_element_name = renderUI({
+    output$ui_text_element_name = renderUI({
       input$element_selection
       input$catalog_selection
       state = MB_fetch_state(id              = id,
@@ -135,10 +259,12 @@ MB_Server <- function(id,
     #------------------------------------
     # Generated model
     observe({
-      #input[["element_selection"]]
       req(input[["element_selection"]])
       req(input[["catalog_selection"]])
       input[["button_clk_save"]]
+      input[["button_clk_del"]]
+      input[["uploaded_model"]]
+
       state = MB_fetch_state(id              = id,
                              id_ASM          = id_ASM,
                              input           = input,
@@ -183,6 +309,7 @@ MB_Server <- function(id,
       req(input[["element_selection"]])
       req(input[["catalog_selection"]])
       input[["button_clk_save"]]
+      input$uploaded_model
 
       state = MB_fetch_state(id              = id,
                              id_ASM          = id_ASM,
@@ -344,9 +471,11 @@ MB_Server <- function(id,
     #------------------------------------
     # User messages:
     output$ui_mb_msg = renderText({
-      input$element_name
-      input$ui_mb_model
-      input$button_clk_save
+      input[["element_name"]]
+      input[["time_scale"]]
+      input[["ui_mb_model"]]
+      input[["button_clk_save"]]
+      input[["uploaded_model"]]
       state = MB_fetch_state(id              = id,
                              id_ASM          = id_ASM,
                              input           = input,
@@ -361,7 +490,7 @@ MB_Server <- function(id,
     # Creates the ui for the compact view of the module
     #------------------------------------
     # Compact ui
-    output$ui_mb_compact  =  renderUI({
+    output$MB_ui_compact  =  renderUI({
       state = MB_fetch_state(id              = id,
                              id_ASM          = id_ASM,
                              input           = input,
@@ -411,9 +540,13 @@ MB_Server <- function(id,
      #)
 
       uiele = tagList(
-        div(style="display:inline-block", "Place model name, attributes and inputs here."),
+        div(style="display:inline-block", htmlOutput(NS(id, "ui_select_element"))),
+        div(style="display:inline-block", htmlOutput(NS(id, "ui_text_element_name"))),
+      # tags$br(),
+      # div(style="display:inline-block", htmlOutput(NS(id, "ui_element_notes"))),
         tags$br(),
-        div(style="display:inline-block", htmlOutput(NS(id, "ui_mb_msg")))
+        div(style="display:inline-block", verbatimTextOutput(NS(id, "ui_mb_msg"))),
+        tags$br()
       )
 
       # We only show the clip button if it's enabled
@@ -439,9 +572,12 @@ MB_Server <- function(id,
         "width:",   state[["MC"]][["formatting"]][["preview"]][["width"]],  ";",
         "height: ", state[["MC"]][["formatting"]][["preview"]][["height"]])
       uiele_preview = div(style=div_style,
-                          "Place your module model preview here.")
+           shinyAce::aceEditor(NS(id, "ui_mb_model"),
+             height = state[["MC"]][["formatting"]][["preview"]][["height"]]
+                               ))
       uiele = tagList(
         uiele,
+        tags$h3(state[["MC"]][["labels"]][["head_model_code"]], icon_link(href=state[["MC"]][["tooltips"]][["url_rxode"]])),
         uiele_preview,
         uiele_buttons_right,
         tags$br()
@@ -450,7 +586,19 @@ MB_Server <- function(id,
 
       uiele = tagList( uiele,
         tags$br(),
-        "Place module construction elements here."
+        column(7,
+          tags$h3(state[["MC"]][["labels"]][["head_base_model"]]),
+          div(style="display:inline-block", htmlOutput(NS(id, "ui_select_base_from"))),
+          div(style="display:inline-block", htmlOutput(NS(id, "ui_upload_model_type"))),
+          div(style="display:inline-block", icon_link(href=state[["MC"]][["tooltips"]][["url_model_types"]])),
+          tags$br(),
+          div(style="display:inline-block", htmlOutput(NS(id, "ui_upload_model_file"))),
+          div(style="display:inline-block", htmlOutput(NS(id, "ui_select_model_catalog"))),
+        ),
+        column(5,
+        tags$h3(state[["MC"]][["labels"]][["head_time_scale"]]),
+        htmlOutput(NS("MB", "ui_select_time_scale"))
+        )
       )
       uiele
     })
@@ -491,6 +639,7 @@ MB_Server <- function(id,
       list(
        input[["element_selection"]],
        input[["catalog_selection"]],
+       input[["uploaded_model"]],
        input[["button_clk_save"]],
        input[["button_clk_copy"]],
        input[["button_clk_del"]],
@@ -574,7 +723,7 @@ MB_Server <- function(id,
 #'@examples
 #' # Within shiny both session and input variables will exist,
 #' # this creates examples here for testing purposes:
-#' sess_res = MB_test_mksession(session=list())
+#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
 #' session = sess_res$session
 #' input   = sess_res$input
 #'
@@ -842,6 +991,12 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
     state[["MB"]][["current_element"]] =
        state[["MB"]][["ui"]][["element_selection"]]
 
+    # Forces the ui to update the model code
+    current_ele = MB_fetch_current_element(state)
+    current_ele[["update_model_code"]] = TRUE
+    state = MB_set_current_element(
+      state   = state,
+      element = current_ele)
     # Setting the hold for all the other UI elements
     state = set_hold(state)
   }
@@ -887,7 +1042,6 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
     if(update_basemodel){
       note_str    = paste0("base model: ", model_row[["Name"]])
 
-
       FM_pause_screen(
           state   = state,
           session = session,
@@ -906,14 +1060,10 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
       }
 
       if(model_row[["Type"]][1] == "NONMEM"){
-        cmds = c(
-        'rx_obj = nonmem2rx::nonmem2rx(model_file, save=FALSE, determineError=FALSE)',
-        'fun_obj = rx_obj$fun')
-
-        mk_rx_res = 
-          FM_tc(cmd = paste0(cmds, collapse="\n"),
-                tc_env = list(model_file = model_row[["Model"]][1]),
-                capture = c("rx_obj", "fun_obj")) 
+        mk_rx_res = mk_rx_obj(
+          type="NONMEM",
+          model = list(model_file = model_row[["Model"]][1])
+         )
       }
 
       FM_resume_screen(state, session)
@@ -953,6 +1103,78 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
         state   = state,
         element = current_ele)
     }
+  }
+  #---------------------------------------------
+  # model upload detected
+  if(any(c("uploaded_model") %in% changed_uis)){
+
+    model_type = state[["MB"]][["ui"]][["model_type_selection"]]
+    model_file = state[["MB"]][["ui"]][["uploaded_model"]]
+
+    FM_pause_screen(
+        state   = state,
+        session = session,
+        message = state[["MC"]][["labels"]][["building_model"]])
+
+    if(model_type == "rxode2"){
+      fcn_def = paste(readLines(model_file[["datapath"]]), collapse="\n")
+      fcn_obj = "my_fcn"
+      mk_rx_res = mk_rx_obj(
+        type="rxode2",
+        model = list(fcn_def = fcn_def,
+                     fcn_obj = fcn_obj))
+    }
+
+    if(model_type == "NONMEM"){
+      mk_rx_res = mk_rx_obj(
+        type="NONMEM",
+        model = list(model_file = model_file[["datapath"]])
+       )
+    }
+
+    FM_resume_screen(state, session)
+
+    if(mk_rx_res[["isgood"]]){
+      # Pulling out the current output
+      current_ele = MB_fetch_current_element(state)
+
+      note_str    = paste0("User-file: ", model_file[["name"]])
+
+      current_ele = MB_update_model(
+        state       = state,
+        session     = session,
+        current_ele = current_ele,
+        rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
+        note        = note_str,
+        reset       = FALSE)
+
+      state = FM_set_notification(
+        state       = state,
+        notify_text = note_str,
+        notify_id   = "User-file upload",
+        type        = "success")
+
+      state = MB_set_current_element(
+        state   = state,
+        element = current_ele)
+
+      FM_le(state, note_str)
+
+    }else{
+      state = FM_set_notification(
+        state       = state,
+        notify_text = state[["MC"]][["errors"]][["user_file_upload_failed"]],
+        notify_id   = "User-file upload failed",
+        type        = "failure")
+
+      msgs = c(msgs,
+               state[["MC"]][["errors"]][["user_file_upload_failed"]],
+               mk_rx_res[["msgs"]])
+
+      FM_le(state, state[["MC"]][["errors"]][["user_file_upload_failed"]])
+      FM_le(state, mk_rx_res[["msgs"]])
+    }
+
   }
 
   # Triggering save messages:
@@ -1002,7 +1224,7 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
 #'@examples
 #' # Within shiny both session and input variables will exist,
 #' # this creates examples here for testing purposes:
-#' sess_res = MB_test_mksession(session=list())
+#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
 #' session = sess_res$session
 #' input   = sess_res$input
 #'
@@ -1028,8 +1250,13 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
 
   # This contains all of the relevant ui_ids in the module
   ui_ids          = c(button_counters,
-                      "MB_ui_select_element",
+                      "model_type_selection",
+                      "ui_select_element",
                       "ui_mb_model",
+                      "time_scale",
+                      "model_type_selection",
+                      "uploaded_model",
+                      "base_from",
                       "element_selection",
                       "catalog_selection",
                       "element_name")
@@ -1040,7 +1267,9 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
 
   # These are the module ui elements that are associated with
   # the current element
-  ui_ele          = c("catalog_selection")
+  ui_ele          = c("catalog_selection",
+                      "element_name",
+                      "time_scale")
 
   state = FM_init_state(
     FM_yaml_file    = FM_yaml_file,
@@ -1060,9 +1289,18 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
   state[["MB"]][["elements"]]             = NULL
   state[["MB"]][["current_element"]]      = NULL
   state[["MB"]][["element_cntr"]]         = 0
+  state[["MB"]][["model_type_selection"]] =
+    state[["MC"]][["formatting"]][["model_type_selection"]][["default"]]
+  state[["MB"]][["base_from"]] =
+    state[["MC"]][["formatting"]][["base_from"]][["default"]]
+
 
   # Pulling out the model sources
   state[["MB"]][["model_catalog"]]        =  MB_fetch_catalog(state)
+
+  # Creating the timescales
+  # JMH
+  #browser()
 
   # Creating a default element:
   state = MB_new_element(state)
@@ -1077,7 +1315,7 @@ state}
 #'@return Character object vector with the lines of code
 #'@examples
 #' # We need a module state:
-#' sess_res = MB_test_mksession(session=list())
+#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
 #' state = sess_res$state
 #'
 #' code = MB_fetch_code(state)
@@ -1156,7 +1394,7 @@ res}
 #'}
 #'@examples
 #' # We need a module state:
-#' sess_res = MB_test_mksession(session=list())
+#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
 #' state = sess_res$state
 #'
 #' ds = MB_fetch_ds(state)
@@ -1211,8 +1449,8 @@ res}
 #'   \item{rsc:} The \code{react_state} components.
 #'}
 #'@examples
-#' sess_res = MB_test_mksession(session=list())
-MB_test_mksession = function(session, id = "MB"){
+#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
+MB_test_mksession = function(session, id = "MB", full_session=TRUE){
 
   isgood = TRUE
   rsc    = list()
@@ -1229,6 +1467,87 @@ MB_test_mksession = function(session, id = "MB"){
                          FM_yaml_file    = FM_yaml_file,
                          MOD_yaml_file   = MOD_yaml_file,
                          react_state     = NULL)
+
+  # This will provide a list of the available models
+  models = MB_fetch_catalog(state)
+
+  #-------------------------------------------------------
+  # Simplest model:
+  ridx = which(models[["summary"]][["Name"]] == "PK_1cmt")
+  model_row  = models[["summary"]][ridx, ]
+
+  mk_rx_res = mk_rx_obj(
+    type="rxode2",
+    model = list(fcn_def = model_row[["Model"]][1],
+                 fcn_obj = model_row[["Object"]][1]))
+
+  current_ele = MB_fetch_current_element(state)
+  current_ele = MB_update_model(
+    state       = state,
+    session     = session,
+    current_ele = current_ele,
+    rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
+    note        = "base model",
+    reset       = TRUE)
+
+  current_ele[["ui"]][["element_name"]] = "One compartment model"
+
+  current_ele[["base_model"]]      =  model_row[["mod_id"]][1]
+  current_ele[["base_model_name"]] =  model_row[["Name"]][1]
+
+
+  state = MB_set_current_element(
+    state   = state,
+    element = current_ele)
+
+
+
+  #-------------------------------------------------------
+  if(full_session){
+    # New element
+    state = MB_new_element(state)
+
+    ridx = which(models[["summary"]][["Name"]] == "PK_2cmt_mAb_Davda_2014" )
+    model_row  = models[["summary"]][ridx, ]
+
+    mk_rx_res = mk_rx_obj(
+      type="rxode2",
+      model = list(fcn_def = model_row[["Model"]][1],
+                   fcn_obj = model_row[["Object"]][1]))
+
+    current_ele = MB_fetch_current_element(state)
+    current_ele = MB_update_model(
+      state       = state,
+      session     = session,
+      current_ele = current_ele,
+      rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
+      note        = "base model",
+      reset       = TRUE)
+
+    current_ele[["base_model"]]           =  model_row[["mod_id"]][1]
+    current_ele[["base_model_name"]]      =  model_row[["Name"]][1]
+    current_ele[["ui"]][["element_name"]] = "mAb Model (Davda 2014)"
+
+    state = MB_set_current_element(
+      state   = state,
+      element = current_ele)
+
+  }
+
+  # JMH when loading ruminate with the session populated it the Model code
+  # isn't switching correctly between the elements
+#  browser()
+
+  # This functions works both in a shiny app and outside of one
+  # if we're in a shiny app then the 'session' then the class of
+  # session will be a ShinySession. Otherwise it'll be a list if
+  # we're not in the app (ie just running test examples) then
+  # we need to set the state manually
+  if(("ShinySession" %in% class(session))){
+    FM_set_mod_state(session, id, state)
+  } else {
+    session = FM_set_mod_state(session, id, state)
+  }
 
   res = list(
     isgood  = isgood,
@@ -1271,9 +1590,10 @@ MB_new_element = function(state){
          isgood                 = TRUE,
          ui                     =
            list(
-                ui_mb_model         = "",
-                element_name        = paste0("Model ", state[["MB"]][["element_cntr"]]),
-                catalog_selection   = model_catalog[["summary"]][1, "mod_id"]
+                ui_mb_model          = "",
+                time_scale           = state[["MC"]][["formatting"]][["time_scales"]][["default"]],
+                element_name         = paste0("Model ", state[["MB"]][["element_cntr"]]),
+                catalog_selection    = model_catalog[["summary"]][1, "mod_id"]
                 ),
          id                     = element_id,
          idx                    = state[["MB"]][["element_cntr"]],
@@ -1398,7 +1718,7 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
     }
 
     # String for creating model function in R
-    fcn_def    = paste0(deparse(rx_obj$fun), collapse="\n")
+    fcn_def    = paste0(deparse(as.function(rx_obj$fun)), collapse="\n")
 
     if(nrow(current_ele[["components_table"]]) == 0){
       component_id = 1
@@ -1726,7 +2046,7 @@ MB_fetch_catalog   = function(state){
     }
   }
 
-  if(length(mod_src) > 0){
+  if(length(mod_srcs) > 0){
     hasmdl = TRUE
   } else {
     # If there are no models we flip both of the is/has bits:
@@ -1824,7 +2144,14 @@ mk_rx_obj   = function(type, model){
         capture = c("rx_obj", "fcn_obj"))
     }
     if(type == "NONMEM"){
-      # JMH add NONMEM code here
+      cmds = c(
+        'rx_obj = nonmem2rx::nonmem2rx(model_file, save=FALSE, determineError=FALSE)',
+        'fun_obj = rx_obj$fun')
+
+      tcres =
+        FM_tc(cmd = paste0(cmds, collapse="\n"),
+              tc_env = list(model_file = model[["model_file"]]),
+              capture = c("rx_obj", "fun_obj"))
     }
   }else{
     tcres = list(

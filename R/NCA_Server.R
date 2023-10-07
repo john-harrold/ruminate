@@ -428,7 +428,11 @@ NCA_Server <- function(id,
                              id_UD           = id_UD,
                              id_DW           = id_DW,
                              react_state     = react_state)
-
+      if(!is.null(state[["MC"]][["tooltips"]][["url_data"]])){
+        data_link = icon_link(href=state[["MC"]][["tooltips"]][["url_data"]])
+      }else{
+        data_link = NULL
+      }
       # This creates the selection but it is updated in the observe() below
       choicesOpt = NULL
       uiele =
@@ -436,7 +440,7 @@ NCA_Server <- function(id,
           selected   = "PH",
           inputId    = NS(id, "select_current_view"),
           #label      = state[["MC"]][["labels"]][["select_current_view"]],
-          label      =  tagList(state[["MC"]][["labels"]][["select_current_view"]], icon_link(href=state[["MC"]][["tooltips"]][["url_data"]])),
+          label      =  tagList(state[["MC"]][["labels"]][["select_current_view"]], data_link),
           choices    = c("PH"),
           width      = state[["MC"]][["formatting"]][["select_current_view"]][["width"]],
           choicesOpt = choicesOpt)
@@ -2806,6 +2810,21 @@ NCA_Server <- function(id,
                  htmlOutput(NS(id, "ui_nca_new_ana"))
                  ))
 
+        if(!is.null(state[["MC"]][["tooltips"]][["url_dosing"]])){
+          dosing_link = icon_link(href=state[["MC"]][["tooltips"]][["url_dosing"]])
+        }else{
+          dosing_link = NULL
+        }
+        if(!is.null(state[["MC"]][["tooltips"]][["url_intervals"]])){
+          interval_link = icon_link(href=state[["MC"]][["tooltips"]][["url_intervals"]])
+        }else{
+          interval_link = NULL
+        }
+        if(!is.null(state[["MC"]][["tooltips"]][["url_data"]])){
+          data_link = icon_link(href=state[["MC"]][["tooltips"]][["url_data"]])
+        }else{
+          data_link = NULL
+        }
 
         # Main NCA options tab
         uiele_nca_options = tagList(
@@ -2817,7 +2836,7 @@ NCA_Server <- function(id,
             htmlOutput(NS(id, "ui_nca_ana_scenario_use")), tags$br()
             ),
           tags$br(),
-          tags$h3(state[["MC"]][["labels"]][["head_intervals"]]),
+          tags$h3(state[["MC"]][["labels"]][["head_intervals"]], interval_link),
           tags$h4(state[["MC"]][["labels"]][["head_intervals_create"]]),
           div(style="display:inline-block;vertical-align:bottom",
             htmlOutput(NS(id, "ui_nca_ana_int_range"))
@@ -2832,11 +2851,11 @@ NCA_Server <- function(id,
           #tags$h4(state[["MC"]][["labels"]][["head_intervals_current"]]),
           #tagList(rhandsontable::rHandsontableOutput(NS(id, "hot_nca_intervals"))),
           tags$br(),
-          tags$h3(state[["MC"]][["labels"]][["head_dose_from"]], icon_link(href=state[["MC"]][["tooltips"]][["url_dosing"]])),
+          tags$h3(state[["MC"]][["labels"]][["head_dose_from"]], dosing_link),
            div(style="display:inline-block",
              htmlOutput(NS("NCA", "ui_nca_ana_dose_from"))),
           tags$br(),
-          tags$h3(state[["MC"]][["labels"]][["head_col_mapping"]]),
+          tags$h3(state[["MC"]][["labels"]][["head_col_mapping"]], data_link),
           tags$h4(state[["MC"]][["labels"]][["head_col_mapping_required"]]),
            div(style="display:inline-block",
              htmlOutput(NS("NCA", "ui_nca_ana_col_id"))),
@@ -6539,7 +6558,9 @@ ruminate = function(host="127.0.0.1", port=3838, mksession = FALSE){
 
   shiny::runApp(system.file(package="ruminate", "templates","ruminate.R"),
                 host  = host,
-                port  = port)}
+                port  = port)
+
+}
 
 
 #'@export
@@ -6975,7 +6996,6 @@ NCA_test_mksession = function(session, id = "NCA", id_UD="UD", id_DW="DW", id_AS
     state = run_nca_components(state)
   }
   #------------------------------------
-
   # This functions works both in a shiny app and outside of one
   # if we're in a shiny app then the 'session' then the class of
   # session will be a ShinySession. Otherwise it'll be a list if

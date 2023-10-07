@@ -44,6 +44,8 @@ navbar:
          href: articles/deployment.html
        - text: "Non-Compartmental Analysis"
          href: articles/noncompartmental_analysis.html
+       - text: "Building Models"
+         href: articles/model_builder.html
   - text: "Functions"
     icon: fas fa-hat-wizard
     href: reference/index.html

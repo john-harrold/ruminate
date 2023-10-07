@@ -7,53 +7,27 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+***NOTE: This module is currently under active develpment and this documentation is a work in progress***
+
 # Introduction
 
-The model building module ...
-
+The model building module is constructed around the {`rxode2`} package. It allows you to load a base model from either the model catalog or a user-create file. Once loaded the user can modify a model (change the structure, parameter values, etc), make a copy, etc. You can upload a model in rxode2 format and also NONMEM format. The NONMEM file (control stream or listing output) will be converted after upload into rxode2 using the {`nonmem2rx`} package. 
 
 # Model catalog
 
-The model catalog is built from the sources field of the configuration file. Each source has the following fields:
+The model catalog is built from the sources field of the configuration file. It can include the models from the {`nlmixr2lib`} model library. You can also include user defined files. If they are specified but not found, they will be skipped. Edit the MB yaml file to to alter this. If you have a rxode2 model you can name it `user_model.R` and place it in the app directory to be included in the catalog.  Similarly if you have a NONMEM control stream you can name it `user_model.ctl`, and it will be included automatically. 
 
-- `group`: This is how models will be grouped in the selection pulldown.
-- `name`: Short name for the model: **NOTE that names need to be unique**.
-- `description`: Verbose description of the model.
-- `type`: Supported model types are `"nlmixr2lib"`, `"rxode2"` or `"NONMEM"`.
-- `obj`: For the rxode2 type you need to also specify the name of the object that is created. 
-This option is only used for the rxode2 type.
-- `file`: For both rxode2 and nlmixr2 you need to specify a character string with a file path. This will be evaluated as an R command, so keep that in mind. If the file is not found it
-will be skipped when the app loads.
+## User-defined models
 
-## Model Library   
+User-defined models can be included in the catalog or uploaded into the app. These models can be specified in either NONMEM or rxode2 formats. For NONMEM models it can be either the XML output from an estimation (best), the listing output from an estimation (good), or a control () stream or the listing output. To use an nlmixr2 model you simply need a function definition assigned to the object `my_fcn`. For examples see:
 
-To include the {`nlmixr2lib`} library you can select the `"nlmixr2lib"` source type. You
-can also control how these models are grouped:
+- `system.file(package="ruminate", "templates", "MB_model_rxode2.R")`
+- `system.file(package="ruminate", "templates", "MB_model_NONMEM.ctl")`
 
-```r
-  - source:
-      type:        "nlmixr2lib"
-      group:       "Model Library"
+# Configuration File
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE,  style="max-height: 100px;", comment=""}
+#yaml= file.path(system.file(package="ruminate"), "templates", "MB.yaml")
+cat(readLines(file.path(system.file(package="ruminate"), "templates", "MB.yaml")), sep="\n")
 ```
 
-## User defined models
-
-User-defined models can be specified in either NONMEM or rxode2 formats. This 
-example shows you how to specify models for both formats:
-
-```r
-  - source:
-      group:       "User-defined Models"
-      name:        "rxode2 User model"
-      description: "User-defined rxode2 model"
-      type:        "rxode2"
-      obj:         "my_fcn"
-      file:        'file.path(getwd(),"user_model.R")'
-  - source:
-      group:       "User-defined Models"
-      name:        "NONMEM User model"
-      description: "User-defined NONMEM model"
-      type:        "NONMEM"
-      obj:         ""
-      file:        'file.path(getwd(),"user_model.ctl")'
-```

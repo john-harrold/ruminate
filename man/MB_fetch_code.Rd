@@ -17,7 +17,7 @@ Fetches the code to generate results seen in the app
 }
 \examples{
 # We need a module state:
-sess_res = MB_test_mksession(session=list())
+sess_res = MB_test_mksession(session=list(), full_session=FALSE)
 state = sess_res$state
 
 code = MB_fetch_code(state)
