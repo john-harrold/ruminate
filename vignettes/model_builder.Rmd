@@ -11,18 +11,20 @@ vignette: >
 
 # Introduction
 
-The model building module is constructed around the {`rxode2`} package. It allows you to load a base model from either the model catalog or a user-create file. Once loaded the user can modify a model (change the structure, parameter values, etc), make a copy, etc. You can upload a model in rxode2 format and also NONMEM format. The NONMEM file (control stream or listing output) will be converted after upload into rxode2 using the {`nonmem2rx`} package. 
+The model building module is constructed around the `{rxode2}` package. It allows you to load a base model from either the model catalog or a user-create file. Once loaded the user can modify a model (change the structure, parameter values, etc), make a copy, etc. You can upload a model in rxode2 format and also NONMEM format. The NONMEM file (control stream or listing output) will be converted after upload into rxode2 using the `{nonmem2rx}` package. 
 
 # Model catalog
 
-The model catalog is built from the sources field of the configuration file. It can include the models from the {`nlmixr2lib`} model library. You can also include user defined files. If they are specified but not found, they will be skipped. Edit the MB yaml file to to alter this. If you have a rxode2 model you can name it `user_model.R` and place it in the app directory to be included in the catalog.  Similarly if you have a NONMEM control stream you can name it `user_model.ctl`, and it will be included automatically. 
+The model catalog is built from the sources field of the configuration file. It can include the models from the `{nlmixr2lib}` model library. You can also include user defined files. If they are specified but not found, they will be skipped. Edit the MB yaml file to to alter this. 
 
 ## User-defined models
 
-User-defined models can be included in the catalog or uploaded into the app. These models can be specified in either NONMEM or rxode2 formats. For NONMEM models it can be either the XML output from an estimation (best), the listing output from an estimation (good), or a control () stream or the listing output. To use an nlmixr2 model you simply need a function definition assigned to the object `my_fcn`. For examples see:
+User-defined models can be included in the catalog or uploaded into the app. These models can be specified in either NONMEM or rxode2 formats. For NONMEM models it can be a control stream (good), the listing output from an estimation (better), or the XML output from an estimation (best). To use an nlmixr2 model you simply need a function definition assigned to the object `my_fcn`. For examples see:
 
 - `system.file(package="ruminate", "templates", "MB_model_rxode2.R")`
 - `system.file(package="ruminate", "templates", "MB_model_NONMEM.ctl")`
+
+Modules are specified in the `sources` section of the configuration file. The default configuration file will look in the working directory of the App for `user_model.R` and `user_model.ctl`.  So if you have a rxode2 model you can name it `user_model.R` and place it in the app directory to be included in the catalog.  Similarly if you have a NONMEM control stream you can name it `user_model.ctl`, and it will be included automatically. If these do not exist they will be skipped. You can create as many entries as you want. 
 
 # Configuration File
 

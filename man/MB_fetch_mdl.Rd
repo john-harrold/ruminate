@@ -2,7 +2,7 @@
 % Please edit documentation in R/MB_Server.R
 \name{MB_fetch_mdl}
 \alias{MB_fetch_mdl}
-\title{Fetch Model Builder Module Datasets}
+\title{Fetch Model Builder Module Models}
 \usage{
 MB_fetch_mdl(state)
 }
@@ -10,36 +10,35 @@ MB_fetch_mdl(state)
 \item{state}{MB state from \code{MB_fetch_state()}}
 }
 \value{
-Character object vector with the lines of code
-
 list containing the following elements
 \itemize{
 \item{isgood:}    Return status of the function.
-\item{hasds:}     Boolean indicator if the module has any datasets
+\item{hasmdl:}    Boolean indicator if the module has any models
 \item{msgs:}      Messages to be passed back to the user.
-\item{ds:}        List with datasets. Each list element has the name of
+\item{mdl:}       List with models. Each list element has the name of
 the R-object for that dataset. Each element has the following structure:
 \itemize{
-\item{label: Text label for the dataset}
-\item{MOD_TYPE: Short name for the type of module.}
-\item{id: module ID}
-\item{DS: Dataframe containing the actual dataset.}
-\item{DSMETA: Metadata describing DS}
-\item{code: Complete code to build dataset.}
-\item{checksum: Module checksum.}
-\item{DSchecksum: Dataset checksum.}
+\item{label:}      Text label for the model (e.g. one-compartment model).
+\item{MOD_TYPE:}   Type of module.
+\item{id:}         Module ID.
+\item{rx_obj:}     The rxode2 object name that holds the model.
+\item{fcn_def:}    Text to define the model
+\item{MDLMETA:}    Notes about the model.
+\item{code:}       Code to generate the model.
+\item{checksum:}   Module checksum.
+\item{MDLchecksum:} Model checksum.
 }
 }
 }
 \description{
-Fetches the datasets contained in the module.
+Fetches the models contained in the module.
 }
 \examples{
 # We need a module state:
 sess_res = MB_test_mksession(session=list(), full_session=FALSE)
 state = sess_res$state
 
-ds = MB_fetch_ds(state)
+mdls = MB_fetch_mdl(state)
 
-ds
+names(mdls)
 }

@@ -115,12 +115,12 @@ and this documentation is a work in progress</em></strong></p>
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>The model building module is constructed around the
-{<code>rxode2</code>} package. It allows you to load a base model from
+<a href="https://nlmixr2.github.io/rxode2/" class="external-link">rxode2</a> package. It allows you to load a base model from
 either the model catalog or a user-create file. Once loaded the user can
 modify a model (change the structure, parameter values, etc), make a
 copy, etc. You can upload a model in rxode2 format and also NONMEM
 format. The NONMEM file (control stream or listing output) will be
-converted after upload into rxode2 using the {<code>nonmem2rx</code>}
+converted after upload into rxode2 using the <a href="https://nlmixr2.github.io/nonmem2rx/" class="external-link">nonmem2rx</a>
 package.</p>
 </div>
 <div class="section level2">
@@ -128,27 +128,32 @@ package.</p>
 </h2>
 <p>The model catalog is built from the sources field of the
 configuration file. It can include the models from the
-{<code>nlmixr2lib</code>} model library. You can also include user
+<a href="https://github.com/nlmixr2/nlmixr2lib" class="external-link">nlmixr2lib</a> model library. You can also include user
 defined files. If they are specified but not found, they will be
-skipped. Edit the MB yaml file to to alter this. If you have a rxode2
-model you can name it <code>user_model.R</code> and place it in the app
-directory to be included in the catalog. Similarly if you have a NONMEM
-control stream you can name it <code>user_model.ctl</code>, and it will
-be included automatically.</p>
+skipped. Edit the MB yaml file to to alter this.</p>
 <div class="section level3">
 <h3 id="user-defined-models">User-defined models<a class="anchor" aria-label="anchor" href="#user-defined-models"></a>
 </h3>
 <p>User-defined models can be included in the catalog or uploaded into
 the app. These models can be specified in either NONMEM or rxode2
-formats. For NONMEM models it can be either the XML output from an
-estimation (best), the listing output from an estimation (good), or a
-control () stream or the listing output. To use an nlmixr2 model you
-simply need a function definition assigned to the object
-<code>my_fcn</code>. For examples see:</p>
+formats. For NONMEM models it can be a control stream (good), the
+listing output from an estimation (better), or the XML output from an
+estimation (best). To use an nlmixr2 model you simply need a function
+definition assigned to the object <code>my_fcn</code>. For examples
+see:</p>
 <ul>
 <li><code>system.file(package="ruminate", "templates", "MB_model_rxode2.R")</code></li>
 <li><code>system.file(package="ruminate", "templates", "MB_model_NONMEM.ctl")</code></li>
 </ul>
+<p>Modules are specified in the <code>sources</code> section of the
+configuration file. The default configuration file will look in the
+working directory of the App for <code>user_model.R</code> and
+<code>user_model.ctl</code>. So if you have a rxode2 model you can name
+it <code>user_model.R</code> and place it in the app directory to be
+included in the catalog. Similarly if you have a NONMEM control stream
+you can name it <code>user_model.ctl</code>, and it will be included
+automatically. If these do not exist they will be skipped. You can
+create as many entries as you want.</p>
 </div>
 </div>
 <div class="section level2">
@@ -164,14 +169,15 @@ MC:
   # User defined models can be used as well. See the examples below for
   # rxode2 and NONMEM models.
   # 
-  # - `group`: This is how models will be grouped in the selection pulldown.
-  # - `name`: Short name for the model: **NOTE that names need to be unique**.
-  # - `description`: Verbose description of the model.
-  # - `type`: Supported model types are `"nlmixr2lib"`, `"rxode2"` or `"NONMEM"`.
-  # - `obj`: For the rxode2 type you need to also specify the name of the object that is created. 
-  # This option is only used for the rxode2 type.
-  # - `file`: For both rxode2 and nlmixr2 you need to specify a character string with a file path. This will be evaluated as an R command, so keep that in mind. If the file is not found it
-  #  will be skipped when the app loads.
+  # - group: This is how models will be grouped in the selection pulldown.
+  # - name: Short name for the model: **NOTE that names need to be unique**.
+  # - description: Verbose description of the model.
+  # - type: Supported model types are "nlmixr2lib", "rxode2" or "NONMEM".
+  # - obj: For the rxode2 type you need to also specify the name of the object 
+  #   that is created. This option is only used for the rxode2 type.
+  # - file: For both rxode2 and nlmixr2 you need to specify a character string 
+  #   with a file path. This will be evaluated as an R command, so keep that 
+  #   in mind. If the file is not found it will be skipped when the app loads.
   sources:
   - source:
       group:       "User-defined Models"
@@ -358,7 +364,7 @@ MC:
     elements: "Show model components"
     show_code: "Show model code" 
     url_rxode: "https://nlmixr2.github.io/rxode2/articles/rxode2-syntax.html" 
-    url_model_types: "url_model_types"  # JMH update with final url
+    url_model_types: "https://ruminate.ubiquity.tools/articles/model_builder.html#model-catalog"
     components:
       input_tip: "My tool tip"</code></pre>
 </div>

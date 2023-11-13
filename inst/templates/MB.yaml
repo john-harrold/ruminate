@@ -203,6 +203,6 @@ MC:
     elements: "Show model components"
     show_code: "Show model code" 
     url_rxode: "https://nlmixr2.github.io/rxode2/articles/rxode2-syntax.html" 
-    url_model_types: "url_model_types"  # JMH update with final url
+    url_model_types: "https://ruminate.ubiquity.tools/articles/model_builder.html#model-catalog"
     components:
       input_tip: "My tool tip"

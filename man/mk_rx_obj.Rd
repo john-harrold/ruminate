@@ -12,12 +12,15 @@ mk_rx_obj(type, model)
 \item{model}{List containing the relevant information about the model. This
 will depend on the model types.
 \itemize{
-\item{rxode2} The supplied model is in the rxode2 format.
+\item{rxode2:} The supplied model is in the rxode2 format.
 \itemize{
-\item{fcn_def} Character string containing function definition.
-\item{fcn_obj} Name of the funciton object created in \code{fcn_def}.
+\item{fcn_def:} Character string containing function definition.
+\item{fcn_obj:} Name of the funciton object created in \code{fcn_def}.
 }
-\item NONMEM JMH add NONMEM
+\item{NONMEM:} The supplied model is in NONMEM format (either a control
+\itemize{
+\item{model_file:} Character string containing the NONMEM model file.
+}
 }}
 
 \item{state}{MB state from \code{MB_fetch_state()}}
@@ -29,13 +32,13 @@ failure. See the documentation for \code{FM_tc()} for the format returned
 when evaluation results in a failure and how to address those. When
 successful the \code{capture} field will contain the following:
 \itemize{
-\item{fcn_obj} The function name.
-\item{rx_obj} The built rxode2 object.
+\item{fcn_obj:} The function name.
+\item{rx_obj:} The built rxode2 object.
 }
 }
 \description{
-Creates an rxode2 object from a model. The model can be of the
-following formats: JMH
+Creates an rxode2 object from a model (either rxode2 function
+or a NONMEM file)
 }
 \examples{
 fcn_def = ' my_func = function ()

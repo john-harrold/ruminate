@@ -1305,6 +1305,8 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
   # Creating a default element:
   state = MB_new_element(state)
 
+  state = MB_update_checksum(state)
+
   FM_le(state, "State initialized")
 state}
 
@@ -1370,69 +1372,85 @@ MB_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 res}
 
 #'@export
-#'@title Fetch Model Builder Module Datasets
-#'@description Fetches the datasets contained in the module.
+#'@title Fetch Model Builder Module Models
+#'@description Fetches the models contained in the module.
 #'@param state MB state from \code{MB_fetch_state()}
-#'@return Character object vector with the lines of code
 #'@return list containing the following elements
 #'\itemize{
 #'  \item{isgood:}    Return status of the function.
-#'  \item{hasds:}     Boolean indicator if the module has any datasets
+#'  \item{hasmdl:}    Boolean indicator if the module has any models
 #'  \item{msgs:}      Messages to be passed back to the user.
-#'  \item{ds:}        List with datasets. Each list element has the name of
+#'  \item{mdl:}       List with models. Each list element has the name of
 #'  the R-object for that dataset. Each element has the following structure:
 #'  \itemize{
-#'    \item{label: Text label for the dataset}
-#'    \item{MOD_TYPE: Short name for the type of module.}
-#'    \item{id: module ID}
-#'    \item{DS: Dataframe containing the actual dataset.}
-#'    \item{DSMETA: Metadata describing DS}
-#'    \item{code: Complete code to build dataset.}
-#'    \item{checksum: Module checksum.}
-#'    \item{DSchecksum: Dataset checksum.}
+#'    \item{label:}      Text label for the model (e.g. one-compartment model).
+#'    \item{MOD_TYPE:}   Type of module.
+#'    \item{id:}         Module ID.
+#'    \item{rx_obj:}     The rxode2 object name that holds the model.
+#'    \item{fcn_def:}    Text to define the model
+#'    \item{MDLMETA:}    Notes about the model.
+#'    \item{code:}       Code to generate the model.
+#'    \item{checksum:}   Module checksum.
+#'    \item{MDLchecksum:} Model checksum.
 #'  }
 #'}
 #'@examples
-#' # We need a module state:
-#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
-#' state = sess_res$state
+#'# We need a module state:
+#'sess_res = MB_test_mksession(session=list(), full_session=FALSE)
+#'state = sess_res$state
 #'
-#' ds = MB_fetch_ds(state)
+#'mdls = MB_fetch_mdl(state)
 #'
-#' ds
+#'names(mdls)
 MB_fetch_mdl = function(state){
 
-  # JMH conver to fetch_mdl
-  hasds  = FALSE
+  hasmdl  = FALSE
   isgood = TRUE
   msgs   = c()
-  ds     = list()
-
-  # Empty list for new datasets
-  NEWDS = list(label      = NULL,
-               MOD_TYPE   = NULL,
-               id         = NULL,
-               DS         = NULL,
-               DSMETA     = NULL,
-               code       = NULL,
-               checksum   = NULL,
-               DSchecksum = NULL)
+  mdl    = list()
 
   # This prevents returning a dataset if this is triggered before data has
   # been loaded
+
   if(state[["MB"]][["isgood"]]){
 
-    # Fill in the DS creation stuff here
-    isgood = FALSE
+    # Checksum for the module
+    m_checksum = state[["MB"]][["checksum"]]
+    elements = names(state[["MB"]][["elements"]])
+    if(!is.null(elements)){
+      # We have at least 1 model
+      hasmdl = TRUE
+      for(element in elements){
+        # current element
+        ce = state[["MB"]][["elements"]][[element]]
+        ce_checksum = ce[["checksum"]]
 
-    # Putting it all into the ds object to be returned
-    ds[[object_name]] = NEWDS
+        # current component of the current element
+        cc = MB_fetch_component(state, ce)
+
+        # JMH
+        mdl[[ ce[["rx_obj_name"]] ]] = 
+          list(label       = ce[["ui"]][["element_name"]],
+               MOD_TYPE    = "MB",
+               id          = state[["id"]],
+               rx_obj      = cc[["rx_obj"]],
+               fcn_def     = cc[["fcn_def"]],
+               MDLMETA     = cc[["note"]],
+               code        = cc[["model_code"]],
+               checksum    = m_checksum,
+               MDLchecksum = ce_checksum)
+      }
+    }
+
+  } else {
+    isgood = FALSE
+    msgs = c(msgs, "Bad MB state")
   }
 
-  res = list(hasds  = hasds,
+  res = list(hasmdl  = hasmdl,
              isgood = isgood,
              msgs   = msgs,
-             ds     = ds)
+             mdl    = mdl)
 res}
 
 #'@export
@@ -1620,10 +1638,54 @@ MB_new_element = function(state){
 
   # Dropping the new element into the state
   state[["MB"]][["elements"]][[element_id]] = element_def
+
+  # updating the checksum for the current element
+  state[["MB"]][["elements"]][[element_id]][["checksum"]] = digest::digest(element_def, algo=c("md5"))
+
   # Setting the new element as current
   state[["MB"]][["current_element"]]     = element_id
 
 state}
+
+
+#'@export
+#'@title Update MB Module Checksum
+#'@description Takes a MB state and updates the checksum used to trigger
+#'downstream updates
+#'@param state MB state from \code{MB_fetch_state()}
+#'@return MB state object with the checksum updated
+#'@examples
+#' # Within shiny both session and input variables will exist,
+#' # this creates examples here for testing purposes:
+#' sess_res = MB_test_mksession(session=list())
+#' session = sess_res$session
+#' input   = sess_res$input
+#'
+#' # We also need a state variable
+#' state = sess_res$state
+#'
+#' state = MB_update_checksum(state)
+MB_update_checksum     = function(state){
+
+  # checksum string
+  chk_str = ""
+
+  # We'll concatinate all the individual checksums together
+  # and create a checksum of those:
+  view_ids = names(state[["MB"]][["elements"]])
+  for(view_id in view_ids){
+    # We trigger updates when the dataframe changes:
+    chk_str = paste0(chk_str, ":", state[["MB"]][["elements"]][[view_id]][["checksum"]])
+
+    # We also trigger updates when the key has changed as well:
+    chk_str = paste0(chk_str, ":", state[["MB"]][["elements"]][[view_id]][["key"]])
+  }
+
+  state[["MB"]][["checksum"]] = digest::digest(chk_str, algo=c("md5"))
+  FM_le(state, paste0("module checksum updated:", state[["MB"]][["checksum"]]))
+
+state}
+
 
 #'@export
 #'@title Fetches Current model
@@ -1649,14 +1711,23 @@ current_element}
 #'model
 #'@param state MB state from \code{MB_fetch_state()}
 #'@param element Element list from \code{MB_fetch_current_element()}
-#'@return ===ZZ== state object with the current model set using the
+#'@return MB state object with the current model set using the
 #'supplied value.
 #'@example inst/test_apps/MB_funcs.R
 MB_set_current_element    = function(state, element){
 
   element_id = state[["MB"]][["current_element"]]
 
+  # updating the checksum for the current element:
+  tmp_ele = element
+  tmp_ele[["checksum"]]  = ""
+  element[["checksum"]]  = digest::digest(tmp_ele, algo=c("md5"))
+
+  # this saves the element
   state[["MB"]][["elements"]][[element_id]] = element
+
+  # This will update the checksum for the module
+  state = MB_update_checksum(state)
 
 state}
 
@@ -1775,11 +1846,14 @@ current_ele}
 #'@param component_id The numeric component id to select (default \code{NULL})
 #'will return the selected ID.
 #'@return list with the current component with the following attributes
-#' JMH fill in this list
 #'\itemize{
-#'  \item{}
-#'  \item{}
-#'  \item{}
+#'  \item{isgood:} Boolean object indicating success.
+#'  \item{rx_obj:} rxode2 object for the model.
+#'  \item{fcn_def:} Just the model function definition.
+#'  \item{note:} Note field from the components_table
+#'  \item{model_code:} Code to generate model.
+#'  \item{model_code_sa:} Stand-alone code to generate model with
+#'  \item{msgs:}      Messages to be passed back to the user.
 #'}
 #'@example inst/test_apps/MB_funcs.R
 MB_fetch_component = function(state, current_ele, component_id = NULL){
@@ -1879,7 +1953,17 @@ mc}
 #'@description Creates a catalog of the models available in the system file.
 #'@param state MB state from \code{MB_fetch_state()}
 #'@return List with the following attributes:
-#' JMH populate with the final information
+#'\itemize{
+#'  \item{summary:} Dataframe with a summary of the models in the catlog
+#'  \item{sources:} Same information a that found in the summary table but in
+#'  list form.
+#'  \item{select_group:} List with the models grouped by source.
+#'  \item{select_plain:} Flat list with the models (ungrouped).
+#'  \item{select_subtext:} Subtext for pulldown menus.
+#'  \item{msgs:} Messages to be passed back to the user.
+#'  \item{hasmdl:} Boolean value indicating if any models were found.
+#'  \item{isgood:} Boolean variable indicating success or failure.
+#'}
 #'@example inst/test_apps/MB_funcs.R
 MB_fetch_catalog   = function(state){
 
@@ -2070,19 +2154,22 @@ catalog}
 
 #'@export
 #'@title Makes an rxode2 Object
-#'@description Creates an rxode2 object from a model. The model can be of the
-#'following formats: JMH
+#'@description Creates an rxode2 object from a model (either rxode2 function
+#'or a NONMEM file)
 #'@param state MB state from \code{MB_fetch_state()}
 #'@param type Type of supplied model can be "rxode2", "NONMEM"
 #'@param model List containing the relevant information about the model. This
 #'will depend on the model types.
 #'\itemize{
-#'   \item{rxode2} The supplied model is in the rxode2 format.
+#'   \item{rxode2:} The supplied model is in the rxode2 format.
 #'   \itemize{
-#'     \item{fcn_def} Character string containing function definition.
-#'     \item{fcn_obj} Name of the funciton object created in \code{fcn_def}.
+#'     \item{fcn_def:} Character string containing function definition.
+#'     \item{fcn_obj:} Name of the funciton object created in \code{fcn_def}.
 #'   }
-#'   \item NONMEM JMH add NONMEM
+#'   \item{NONMEM:} The supplied model is in NONMEM format (either a control
+#'   \itemize{
+#'     \item{model_file:} Character string containing the NONMEM model file.
+#'   }
 #'}
 #'@return Results of \code{FM_tc()} when running the model. This will include
 #'a field \code{isgood} which is a boolean variable indicating success or
@@ -2090,8 +2177,8 @@ catalog}
 #'when evaluation results in a failure and how to address those. When
 #'successful the \code{capture} field will contain the following:
 #'\itemize{
-#'  \item{fcn_obj} The function name.
-#'  \item{rx_obj} The built rxode2 object.
+#'  \item{fcn_obj:} The function name.
+#'  \item{rx_obj:} The built rxode2 object.
 #'}
 #'@examples
 #' fcn_def = ' my_func = function ()
@@ -2168,11 +2255,12 @@ tcres}
 #'@param as_cran Boolean to indicate if you're running this on CRAN
 #'@param verbose Boolean to indicate if messages should be displayed.
 #'@return List with the following attributes:
-#'@example inst/test_apps/MB_funcs.R
 #'\itemize{
-#' \item{isgood} Boolean varaible indicating if all the models in the catalog
+#' \item{isgood:} Boolean varaible indicating if all the models in the catalog
 #' passed the test.
+#' \item{msgs:} Messages indicating if the test was successful or not.
 #'}
+#'@example inst/test_apps/MB_funcs.R
 MB_test_catalog   = function(state, as_cran=FALSE, verbose=TRUE){
 
   msgs   = c()

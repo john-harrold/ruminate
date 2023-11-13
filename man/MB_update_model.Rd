@@ -50,13 +50,14 @@ state = MB_fetch_state(id              = "MB",
 
 # This will provide a list of the available models
 models = MB_fetch_catalog(state)
-
-# This will test the models in the catalog, set as_cran 
-# to FALSE to test all the models.
-mtres = MB_test_catalog(state, as_cran=TRUE)
-
 # This is a summary of the tables in the model:
 models$summary
+
+# This will test the models in the catalog, set as_cran
+# to FALSE to test all the models.
+mtres = MB_test_catalog(state, as_cran=TRUE)
+mtres$isgood
+
 
 # Creates a new empty element
 state = MB_new_element(state)
@@ -73,7 +74,7 @@ fcn_def  = models[["summary"]][1, ][["Model"]]
 fcn_obj  = models[["summary"]][1, ][["Object"]]
 mdl_type = models[["summary"]][1, ][["Type"]]
 fcn_desc = models[["summary"]][1, ][["Description"]]
-  
+
 # This will build the rxode2 object from the model
 mk_rx_res = mk_rx_obj(
   type  = mdl_type,
@@ -96,19 +97,17 @@ state = MB_set_current_element(state, element)
 component = MB_fetch_component(state, element)
 
 # You can use the component to build the code to generate the model:
-gen_code = 
+gen_code =
   MB_build_code(state        = state, session = session,
               fcn_def      = component[["fcn_def"]],
               fcn_obj_name = "my_fcn_obj",
               rx_obj_name  = "my_obj_name")
 
-# Mode code to be included in a larger script
-cat(gen_code$model_code)
+# Model code to be included in a larger script
+cat(paste0(gen_code$model_code, collapse="\n"))
 
-# stand alone model code
-cat(gen_code$model_code_sa)
-
-
+# Stand-alone model code
+cat(paste0(gen_code$model_code_sa, collapse="\n"))
 
 # JMH to add:
 # MB_fetch_code
