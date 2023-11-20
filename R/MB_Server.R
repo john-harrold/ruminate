@@ -1428,8 +1428,8 @@ MB_fetch_mdl = function(state){
         # current component of the current element
         cc = MB_fetch_component(state, ce)
 
-        # JMH
-        mdl[[ ce[["rx_obj_name"]] ]] = 
+        # Saving the model
+        mdl[[ ce[["rx_obj_name"]] ]] =
           list(label       = ce[["ui"]][["element_name"]],
                MOD_TYPE    = "MB",
                id          = state[["id"]],
@@ -1683,6 +1683,14 @@ MB_update_checksum     = function(state){
 
   state[["MB"]][["checksum"]] = digest::digest(chk_str, algo=c("md5"))
   FM_le(state, paste0("module checksum updated:", state[["MB"]][["checksum"]]))
+
+  old_chk = state[["MB"]][["checksum"]]
+  new_chk = digest::digest(chk_str, algo=c("md5"))
+
+  if(has_changed(old_chk, new_chk)){
+    state[["MB"]][["checksum"]] = digest::digest(chk_str, algo=c("md5"))
+    FM_le(state, paste0("module checksum updated:", state[["MB"]][["checksum"]]))
+  }
 
 state}
 

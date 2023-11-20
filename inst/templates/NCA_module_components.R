@@ -168,13 +168,13 @@ ui <- dashboardPage(
              htmlOutput(NS("NCA", "ui_nca_ana_results_fig"))
              )
            ),
-           tabPanel(id="panel_table",  title=tagList(shiny::icon("table"), "Tables"),   
+           tabPanel(id="panel_table",  title=tagList(shiny::icon("table"), "Tables"),
              tagList(
              "ui_nca_ana_results_tab",
              htmlOutput(NS("NCA", "ui_nca_ana_results_tab"))
              )
            ),
-           tabPanel(id="panel_config", title=tagList(shiny::icon("gear"), "Config."),  
+           tabPanel(id="panel_config", title=tagList(shiny::icon("gear"), "Config."),
             tagList(
              "ui_nca_ana_options",
              htmlOutput(NS("NCA", "ui_nca_ana_options"))
@@ -202,7 +202,7 @@ server <- function(input, output, session) {
    react_FM = reactiveValues()
 
    # This will prepopulate with datasets
-   DW_test_mksession(session)
+   NCA_test_mksession(session)
 
    # Module server
    NCA_Server(id="NCA", react_state=react_FM)

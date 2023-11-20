@@ -1924,9 +1924,6 @@ NCA_Server <- function(id,
               null_ok  = TRUE,
               dscols   = dscols)
 
-            #JMH add multiple option to NCA_find_col
-            # react to dose, id and time and remove those options
-
             # Pulling out column header formatting information.
             hfmt = FM_fetch_data_format(ds[["DS"]], state)
             sel_style   = c(rep("", length(dscols)))
@@ -2000,9 +1997,6 @@ NCA_Server <- function(id,
               null_ok  = TRUE,
               dscols   = dscols)
 
-            #JMH add multiple option to NCA_find_col
-            # react to dose, id and time and remove those options
-
             # Pulling out column header formatting information.
             hfmt = FM_fetch_data_format(ds[["DS"]], state)
             sel_style   = c(rep("", length(dscols)))
@@ -2075,9 +2069,6 @@ NCA_Server <- function(id,
             null_ok  = TRUE,
             dscols   = dscols)
 
-          #JMH add multiple option to NCA_find_col
-          # react to dose, id and time and remove those options
-
           # Pulling out column header formatting information.
           hfmt = FM_fetch_data_format(ds[["DS"]], state)
           sel_style   = c(rep("", length(dscols)))
@@ -2127,7 +2118,6 @@ NCA_Server <- function(id,
                              id_DW           = id_DW,
                              react_state     = react_state)
 
-
       current_ana = NCA_fetch_current_ana(state)
       uiele = NULL
       if(!is.null(current_ana[["ana_dsview"]])){
@@ -2146,9 +2136,6 @@ NCA_Server <- function(id,
             patterns = state[["MC"]][["detect_col"]][["analyte"]],
             null_ok  = TRUE,
             dscols   = dscols)
-
-          #JMH add multiple option to NCA_find_col
-          # react to dose, id and time and remove those options
 
           # Pulling out column header formatting information.
           hfmt = FM_fetch_data_format(ds[["DS"]], state)
@@ -3217,7 +3204,10 @@ NCA_fetch_state = function(id, input, session,
   # Here we update the state based on user input
   for(ui_name in state[["NCA"]][["ui_ids"]]){
     if(!is.null(isolate(input[[ui_name]]))){
-       state[["NCA"]][["ui"]][[ui_name]] = isolate(input[[ui_name]])
+      # Prevents updating when the ui is being held.
+      if(!fetch_hold(state, ui_name)){
+         state[["NCA"]][["ui"]][[ui_name]] = isolate(input[[ui_name]])
+      }
      } else {
        state[["NCA"]][["ui"]][[ui_name]] = ""
      }
@@ -3226,8 +3216,6 @@ NCA_fetch_state = function(id, input, session,
 
   #---------------------------------------------
   # This will sync the analysis options in the UI to the values in the UI
-  # JMH probably need to put some logic here if the analysis has changed using
-  # the selector
   for(ui_name in names(state[["NCA"]][["ui_ana_map"]])){
     # We only update if there are no holds set:
     # for the current ui_name
@@ -3467,7 +3455,10 @@ NCA_fetch_state = function(id, input, session,
 
     # Changing the current view to the one selected in the UI
     # JMH create NCA_mkactive_ana here to set active
-    state[["NCA"]][["current_ana"]]  =  state[["NCA"]][["ui"]][["select_current_ana"]]
+    # state[["NCA"]][["current_ana"]]  =  state[["NCA"]][["ui"]][["select_current_ana"]]
+    state = NCA_mkactive_ana(state, state[["NCA"]][["ui"]][["select_current_ana"]])
+    state = set_hold(state)
+    # browser()
   }
   #---------------------------------------------
   # Copy Analysis
@@ -3638,7 +3629,6 @@ NCA_fetch_state = function(id, input, session,
   #---------------------------------------------
   # Saving the state
   FM_set_mod_state(session, id, state)
-
   # Returning the state
   state}
 
@@ -4698,8 +4688,13 @@ NCA_find_col             = function(curr_ana = NULL,
   value     = NULL
   COL_FOUND = FALSE
 
-
-  # JMH add curr_ana parsing here
+  # if curr_ana is supplied and it exisits in the dataset then that is used.
+  if(!is.null(curr_ana)){
+    if(curr_ana %in% dscols){
+      value = curr_ana
+      COL_FOUND = TRUE
+    }
+  }
 
   if(!COL_FOUND){
     if(!is.null(curr_ui)){
@@ -5801,9 +5796,6 @@ run_nca_components = function(
         # Running the analysis and trapping any errors
         nca_run_res = formods::FM_tc(cmd, tc_env, capture)
 
-        #browser()
-
-
         # Capturing the exit status
         if(nca_run_res[["isgood"]]){
           # Pulling out the capture objects and saving them
@@ -6160,7 +6152,6 @@ mk_table_ind_obs = function(
   # We need to attach the units to the rows as well:
   row_common_head = rbind(row_common_head, units_data)
 
-  #browser()
   stres = onbrand::span_table(
              table_body      = table_body,
              row_common      = row_common,
@@ -7300,3 +7291,30 @@ ds}
 NCA_fetch_ana_pknca = function(state, current_ana){
   pknca_res = current_ana[["objs"]][["res"]][["value"]]
 pknca_res}
+
+#'@export
+#'@title Fetch PKNCA Results Object
+#'@description Fetches the PKNCA output for a specified analysis
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@param ana_id Analysis ID to make active.
+#'@return State with the analysis ID made active.
+#' JMH add to example script below
+#'@example inst/test_apps/NCA_funcs.R
+NCA_mkactive_ana  = function(state, ana_id){
+    state[["NCA"]][["current_ana"]]  =  state[["NCA"]][["ui"]][["select_current_ana"]]
+
+    # Column values are found based on heuristics that include the current
+    # value in the ui. This will overwrite the current ui column values tracked with
+    # those for the current analysis.
+    current_ana = NCA_fetch_current_ana(state)
+
+    col_uis = names(state[["NCA"]][["ui"]])
+    col_uis = col_uis[ stringr::str_detect(col_uis, "^select_ana_col") ]
+
+    for(col_ui in col_uis){
+      ana_name =  state[["NCA"]][["ui_ana_map"]][[col_ui]]
+      state[["NCA"]][["ui"]][[col_ui]] = current_ana[[ana_name]]
+    }
+    #state = NCA_set_current_ana(state, current_ana)
+
+state}
