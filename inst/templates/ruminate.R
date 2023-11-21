@@ -27,6 +27,11 @@ if(!exists("deployed")){
   deployed = FALSE
 }
 
+# If the SETUP.R file exists we source it 
+if(file.exists("SETUP.R")){
+  source("SETUP.R")
+}
+
 # If the DEPLOYED file marker existrs we set deployed to TRUE
 if(file.exists("DEPLOYED")){
   deployed = TRUE
@@ -178,6 +183,11 @@ ui <- shinydashboard::dashboardPage(
                           title=tagList(shiny::icon("clipboard-list"),
                                         "App Log"),
                  verbatimTextOutput(NS("ASM", "ui_asm_sys_log"))
+                 ),
+                 shiny::tabPanel(id="sys_options",
+                          title=tagList(shiny::icon("sliders"),
+                                        "R Options"),
+                 htmlOutput(NS("ASM", "ui_asm_sys_options"))
                  )
          #       )
                ))
@@ -187,6 +197,7 @@ ui <- shinydashboard::dashboardPage(
 
 # Main app server
 server <- function(input, output, session) {
+
   # Empty reactive object to track and react to
   # changes in the module state outside of the module
   react_FM = reactiveValues()
