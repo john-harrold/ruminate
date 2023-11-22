@@ -87,6 +87,7 @@ MB_Server <- function(id,
     #------------------------------------
     # Generating the
     output$ui_select_time_scale    = renderUI({
+        input[["element_name"]]
         state = MB_fetch_state(id              = id,
                                id_ASM          = id_ASM,
                                input           = input,

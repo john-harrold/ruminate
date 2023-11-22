@@ -1,30 +1,25 @@
 FROM rocker/shiny-verse:4.2.0
 #FROM rocker/shiny-verse:4.3.1
 
-# Install R libraries
-# We need remotes for below, this forces PKNCA and shiny to be installed from
-# CRAN so we get the latest version
-RUN R -e "install.packages('remotes', repos='http://cran.rstudio.com/')"
-RUN R -e "install.packages('PKNCA',   repos='http://cran.rstudio.com/')"
-RUN R -e "install.packages('shiny',   repos='http://cran.rstudio.com/')"
+# Installing packages
+RUN apt-get update && apt-get -y install cmake
+RUN apt-get update && apt-get -y install curl
+RUN apt-get update && apt-get -y install libmpfr6
+RUN apt-get update && apt-get -y install libmpfr-dev
 
-RUN R -e "install.packages(c('dparser', 'nlmixr2data', 'lotri', 'rxode2ll', 'rxode2parse', 'rxode2random', 'rxode2et', 'rxode2', 'nlmixr2est', 'nlmixr2extra', 'nlmixr2plot', 'nlmixr2'), repos = c('https://nlmixr2.r-universe.dev', 'https://cloud.r-project.org'))"
+# Install R packages
+RUN curl https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/install_packages.R --output /tmp/install_packages.R
+RUN R -e 'source("/tmp/install_packages.R")'
 
-RUN R -e "remotes::install_github('john-harrold/onbrand',  dependencies=TRUE)"
-RUN R -e "remotes::install_github('john-harrold/formods',  dependencies=TRUE)"
-RUN R -e "remotes::install_github('john-harrold/ruminate', dependencies=TRUE)"
+# Setting the deployed flag:
 RUN touch /srv/shiny-server/DEPLOYED
-
-#RUN mkdir /ruminate
-#COPY . /ruminate
-#RUN R -e "remotes::install_github('john-harrold/ruminate', dependencies=TRUE)"
-#RUN mkdir "/srv/shiny-server/ruminate"
-#RUN R -e "file.copy(system.file(package='ruminate', 'templates', 'ruminate.R'), '/srv/shiny-server/ruminate/App.R')"
 
 # Making the ruminate App the main app for the site:
 RUN rm 'srv/shiny-server/index.html'
 RUN R -e "file.copy(system.file(package='ruminate', 'templates', 'ruminate.R'), '/srv/shiny-server/App.R')"
+
 # Creating setup script to define options for the server
 RUN echo 'options(shiny.maxRequestSize = 20 * 1024^2)' >> 'srv/shiny-server/SETUP.R'
-## Open the port for Shiny
+
+# Open the port for Shiny
 EXPOSE 3838

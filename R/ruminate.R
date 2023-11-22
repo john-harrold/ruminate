@@ -23,7 +23,7 @@
 #'@param server_opts List of options (names) and their vlues (value) e.g.
 #'\code{list(shiny.maxRequestSize = 30 * 1024^2)}.
 #'@param mksession Boolean value, when TRUE will load test session data
-#'for app testing (FALSE)
+#'for app testing and will also load development modules (\code{FALSE}).
 #'@return Nothing is returned, this function just runs the built-in ruminate
 #'app.
 #'@examples
