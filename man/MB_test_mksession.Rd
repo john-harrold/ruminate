@@ -10,6 +10,8 @@ MB_test_mksession(session, id = "MB", full_session = TRUE)
 \item{session}{Shiny session variable (in app) or a list (outside of app)}
 
 \item{id}{An ID string that corresponds with the ID used to call the modules UI elements}
+
+\item{full_session}{Boolean to indicate if the full test session should be created (default \code{TRUE}).}
 }
 \value{
 list with the following elements

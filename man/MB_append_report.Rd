@@ -10,7 +10,8 @@ MB_append_report(state, rpt, rpttype, gen_code_only = FALSE)
 \item{state}{MB state from \code{MB_fetch_state()}}
 
 \item{rpt}{Report with the current content of the report which will be appended to in
-this function. For details on the structure see the documentation for \code{\link{formods::FM_generate_report}}.}
+this function. For details on the structure see the documentation for
+\code{\link[formods]{FM_generate_report}}}
 
 \item{rpttype}{Type of report to generate (supported "xlsx", "pptx", "docx").}
 
@@ -28,8 +29,8 @@ list containing the following elements
 }
 }
 \description{
-Description
+Appends report elements to a formods report.
 }
 \seealso{
-\code{\link{formods::FM_generate_report}}
+\code{\link[formods]{FM_generate_report}}
 }

@@ -88,7 +88,9 @@ ftmptest = file.path(tempdir(), "ruminate.test")
 
 # If the ftmptest file is present we load the development modules
 if(file.exists(ftmptest)){
-  dev_modules = shinydashboard::menuItem("Models",          tabName="model",       icon=icon("trowel-bricks"))
+  dev_modules = shinydashboard::menuItem("Models",          
+                                         tabName = "model",       
+                                         icon    = icon("trowel-bricks"))
 }else {
   dev_modules = NULL
 }
@@ -101,12 +103,12 @@ ui <- shinydashboard::dashboardPage(
        shinydashboard::menuItem("Load/Save",
                                 tabName="loadsave",
                                 icon=icon("arrow-down-up-across-line")) ,
-       shinydashboard::menuItem("Transform Data",  tabName="wrangle",     icon=icon("shuffle")),
-       shinydashboard::menuItem("Visualize",       tabName="plot",        icon=icon("chart-line")),
-       shinydashboard::menuItem("NCA",             tabName="nca",         icon=icon("chart-area")),
+       shinydashboard::menuItem("Transform Data", tabName="wrangle", icon=icon("shuffle")),
+       shinydashboard::menuItem("Visualize",      tabName="plot",    icon=icon("chart-line")),
+       shinydashboard::menuItem("NCA",            tabName="nca",     icon=icon("chart-area")),
        dev_modules,
-      #shinydashboard::menuItem("Models",          tabName="model",       icon=icon("trowel-bricks")),
-       shinydashboard::menuItem("App Info",        tabName="sysinfo",     icon=icon("book-medical"))
+      #shinydashboard::menuItem("Models",         tabName="model",   icon=icon("trowel-bricks")),
+       shinydashboard::menuItem("App Info",       tabName="sysinfo", icon=icon("book-medical"))
      )
   ),
   shinydashboard::dashboardBody(

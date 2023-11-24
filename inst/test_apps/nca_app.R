@@ -28,10 +28,16 @@ if(!exists("deployed")){
   deployed = FALSE
 }
 
+# Making sure that the run_dev object is created
+if(!exists("run_dev")){
+  run_dev  = FALSE
+}
+
 # If the SETUP.R file exists we source it 
 if(file.exists("SETUP.R")){
   source("SETUP.R")
 }
+
 
 # If the DEPLOYED file marker existrs we set deployed to TRUE
 if(file.exists("DEPLOYED")){
@@ -79,6 +85,16 @@ tags$li( "If you run into any problems, have questions, or want a feature please
         tags$a("issues", href=issue_url)," page")
 )
 
+ftmptest = file.path(tempdir(), "ruminate.test")
+
+# If the ftmptest file is present we load the development modules
+if(file.exists(ftmptest)){
+  dev_modules = shinydashboard::menuItem("Models",          
+                                         tabName = "model",       
+                                         icon    = icon("trowel-bricks"))
+}else {
+  dev_modules = NULL
+}
 
 ui <- shinydashboard::dashboardPage(
   skin="black",
@@ -88,11 +104,12 @@ ui <- shinydashboard::dashboardPage(
        shinydashboard::menuItem("Load/Save",
                                 tabName="loadsave",
                                 icon=icon("arrow-down-up-across-line")) ,
-       shinydashboard::menuItem("Transform Data",  tabName="wrangle",     icon=icon("shuffle")),
-       shinydashboard::menuItem("Visualize",       tabName="plot",        icon=icon("chart-line")),
-       shinydashboard::menuItem("NCA",             tabName="nca",         icon=icon("chart-area")),
-       shinydashboard::menuItem("Models",          tabName="model",       icon=icon("trowel-bricks")),
-       shinydashboard::menuItem("App Info",        tabName="sysinfo",     icon=icon("book-medical"))
+       shinydashboard::menuItem("Transform Data", tabName="wrangle", icon=icon("shuffle")),
+       shinydashboard::menuItem("Visualize",      tabName="plot",    icon=icon("chart-line")),
+       shinydashboard::menuItem("NCA",            tabName="nca",     icon=icon("chart-area")),
+       dev_modules,
+      #shinydashboard::menuItem("Models",         tabName="model",   icon=icon("trowel-bricks")),
+       shinydashboard::menuItem("App Info",       tabName="sysinfo", icon=icon("book-medical"))
      )
   ),
   shinydashboard::dashboardBody(
@@ -182,7 +199,7 @@ ui <- shinydashboard::dashboardPage(
                  ),
                  shiny::tabPanel(id="sys_log",
                           title=tagList(shiny::icon("clipboard-list"),
-                                        "App Log"),
+                                        "Log"),
                  verbatimTextOutput(NS("ASM", "ui_asm_sys_log"))
                  ),
                  shiny::tabPanel(id="sys_options",
@@ -207,7 +224,6 @@ server <- function(input, output, session) {
   mod_ids = c("UD", "DW", "FG", "NCA", "MB")
 
   # If the ftmptest file is present we load test data
-  ftmptest = file.path(tempdir(), "ruminate.test")
   if(file.exists(ftmptest)){
     NCA_test_mksession(
       session,

@@ -26,6 +26,8 @@ MB_fetch_state(
 \item{FM_yaml_file}{App configuration file with FM as main section.}
 
 \item{MOD_yaml_file}{Module configuration file with MC as main section.}
+
+\item{react_state}{Variable passed to server to allow reaction outside of module (\code{NULL})}
 }
 \value{
 list containing the current state of the app including default
@@ -44,6 +46,7 @@ used to detect changes in the state.
 \item{id:} Character data containing the module id module in the session variable.
 \item{FM_yaml_file:} App configuration file with FM as main section.
 \item{MOD_yaml_file:}  Module configuration file with MC as main section.
+}
 }
 \description{
 Merges default app options with the changes made in the UI

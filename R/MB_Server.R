@@ -500,107 +500,120 @@ MB_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
 
+      found_rxode2    = formods::is_installed("rxode2")
+      found_nonmem2rx = formods::is_installed("nonmem2rx")
 
-      uiele_code_button = NULL
-      # Generating code button if enabled
-      if( state[["MC"]][["compact"]][["code"]]){
-        uiele_code = tagList(shinyAce::aceEditor(
-          NS(id, "ui_mb_code"),
-          height  = state[["MC"]][["formatting"]][["code"]][["height"]]
-          ))
-
-        uiele_code_button = tagList(
-         shinyWidgets::dropdownButton(
-           uiele_code,
-           inline  = FALSE,
-           right   = TRUE ,
-           size    = "sm",
-           circle  = FALSE,
-           width   = state[["MC"]][["formatting"]][["code"]][["width"]],
-           status  = "danger btn-custom-mb",
-           icon    = icon("code", lib="font-awesome"),
-           tooltip = shinyWidgets::tooltipOptions(title = state[["MC"]][["tooltips"]][["show_code"]]))
-        )
-
-      }
-
-      # Button with MB elements table
-      uiele_mb_elements_button = NULL
-     # Uncomment this if your model has a components table
-     #uiele_mb_elements = rhandsontable::rHandsontableOutput(NS(id, "hot_mb_elements"))
-     #uiele_mb_elements_button = tagList(
-     # shinyWidgets::dropdownButton(
-     #   uiele_mb_elements,
-     #   inline  = FALSE,
-     #   right   = TRUE ,
-     #   size    = "sm",
-     #   circle  = FALSE,
-     #   status  = "primary btn-custom-mb",
-     #   icon    = icon("layer-group", lib="font-awesome"),
-     #   tooltip = tooltipOptions(title = state[["MC"]][["tooltips"]][["elements"]]))
-     #)
-
-      uiele = tagList(
-        div(style="display:inline-block", htmlOutput(NS(id, "ui_select_element"))),
-        div(style="display:inline-block", htmlOutput(NS(id, "ui_text_element_name"))),
-      # tags$br(),
-      # div(style="display:inline-block", htmlOutput(NS(id, "ui_element_notes"))),
-        tags$br(),
-        div(style="display:inline-block", verbatimTextOutput(NS(id, "ui_mb_msg"))),
-        tags$br()
-      )
-
-      # We only show the clip button if it's enabled
-      uiele_clip_button = NULL
-      if(state[["MC"]][["compact"]][["clip"]]){
-        uiele_clip_button = htmlOutput(NS(id, "ui_mb_clip_code"))
-      }
-
-      uiele_buttons_right = tagList(
-               tags$style(".btn-custom-mb {width: 100px;}"),
-               div(style="display:inline-block;vertical-align:top;height:100px",
-               uiele_mb_elements_button,
-               uiele_code_button,
-               uiele_clip_button,
-               htmlOutput(NS(id, "ui_mb_save_btn")),
-               htmlOutput(NS(id, "ui_mb_copy_btn")),
-               htmlOutput(NS(id, "ui_mb_del_btn")),
-               htmlOutput(NS(id, "ui_mb_new_btn"))
-               ))
-
-      # Appending the preview
-      div_style = paste0("display:inline-block;vertical-align:top;",
-        "width:",   state[["MC"]][["formatting"]][["preview"]][["width"]],  ";",
-        "height: ", state[["MC"]][["formatting"]][["preview"]][["height"]])
-      uiele_preview = div(style=div_style,
-           shinyAce::aceEditor(NS(id, "ui_mb_model"),
-             height = state[["MC"]][["formatting"]][["preview"]][["height"]]
-                               ))
-      uiele = tagList(
-        uiele,
-        tags$h3(state[["MC"]][["labels"]][["head_model_code"]], icon_link(href=state[["MC"]][["tooltips"]][["url_rxode"]])),
-        uiele_preview,
-        uiele_buttons_right,
-        tags$br()
-      )
-
-
-      uiele = tagList( uiele,
-        tags$br(),
-        column(7,
-          tags$h3(state[["MC"]][["labels"]][["head_base_model"]]),
-          div(style="display:inline-block", htmlOutput(NS(id, "ui_select_base_from"))),
-          div(style="display:inline-block", htmlOutput(NS(id, "ui_upload_model_type"))),
-          div(style="display:inline-block", icon_link(href=state[["MC"]][["tooltips"]][["url_model_types"]])),
+      if(all(c(found_rxode2, found_nonmem2rx))){
+        uiele_code_button = NULL
+        # Generating code button if enabled
+        if( state[["MC"]][["compact"]][["code"]]){
+          uiele_code = tagList(shinyAce::aceEditor(
+            NS(id, "ui_mb_code"),
+            height  = state[["MC"]][["formatting"]][["code"]][["height"]]
+            ))
+        
+          uiele_code_button = tagList(
+           shinyWidgets::dropdownButton(
+             uiele_code,
+             inline  = FALSE,
+             right   = TRUE ,
+             size    = "sm",
+             circle  = FALSE,
+             width   = state[["MC"]][["formatting"]][["code"]][["width"]],
+             status  = "danger btn-custom-mb",
+             icon    = icon("code", lib="font-awesome"),
+             tooltip = shinyWidgets::tooltipOptions(title = state[["MC"]][["tooltips"]][["show_code"]]))
+          )
+        
+        }
+        
+        # Button with MB elements table
+        uiele_mb_elements_button = NULL
+     ### Uncomment this if your model has a components table
+     ###uiele_mb_elements = rhandsontable::rHandsontableOutput(NS(id, "hot_mb_elements"))
+     ###uiele_mb_elements_button = tagList(
+     ### shinyWidgets::dropdownButton(
+     ###   uiele_mb_elements,
+     ###   inline  = FALSE,
+     ###   right   = TRUE ,
+     ###   size    = "sm",
+     ###   circle  = FALSE,
+     ###   status  = "primary btn-custom-mb",
+     ###   icon    = icon("layer-group", lib="font-awesome"),
+     ###   tooltip = tooltipOptions(title = state[["MC"]][["tooltips"]][["elements"]]))
+     ###)
+        
+        uiele = tagList(
+          div(style="display:inline-block", htmlOutput(NS(id, "ui_select_element"))),
+          div(style="display:inline-block", htmlOutput(NS(id, "ui_text_element_name"))),
+        # tags$br(),
+        # div(style="display:inline-block", htmlOutput(NS(id, "ui_element_notes"))),
           tags$br(),
-          div(style="display:inline-block", htmlOutput(NS(id, "ui_upload_model_file"))),
-          div(style="display:inline-block", htmlOutput(NS(id, "ui_select_model_catalog"))),
-        ),
-        column(5,
-        tags$h3(state[["MC"]][["labels"]][["head_time_scale"]]),
-        htmlOutput(NS("MB", "ui_select_time_scale"))
+          div(style="display:inline-block", verbatimTextOutput(NS(id, "ui_mb_msg"))),
+          tags$br()
         )
-      )
+        
+        # We only show the clip button if it's enabled
+        uiele_clip_button = NULL
+        if(state[["MC"]][["compact"]][["clip"]]){
+          uiele_clip_button = htmlOutput(NS(id, "ui_mb_clip_code"))
+        }
+        
+        uiele_buttons_right = tagList(
+                 tags$style(".btn-custom-mb {width: 100px;}"),
+                 div(style="display:inline-block;vertical-align:top;height:100px",
+                 uiele_mb_elements_button,
+                 uiele_code_button,
+                 uiele_clip_button,
+                 htmlOutput(NS(id, "ui_mb_save_btn")),
+                 htmlOutput(NS(id, "ui_mb_copy_btn")),
+                 htmlOutput(NS(id, "ui_mb_del_btn")),
+                 htmlOutput(NS(id, "ui_mb_new_btn"))
+                 ))
+        
+        # Appending the preview
+        div_style = paste0("display:inline-block;vertical-align:top;",
+          "width:",   state[["MC"]][["formatting"]][["preview"]][["width"]],  ";",
+          "height: ", state[["MC"]][["formatting"]][["preview"]][["height"]])
+        uiele_preview = div(style=div_style,
+             shinyAce::aceEditor(NS(id, "ui_mb_model"),
+               height = state[["MC"]][["formatting"]][["preview"]][["height"]]
+                                 ))
+        uiele = tagList(
+          uiele,
+          tags$h3(state[["MC"]][["labels"]][["head_model_code"]], icon_link(href=state[["MC"]][["tooltips"]][["url_rxode"]])),
+          uiele_preview,
+          uiele_buttons_right,
+          tags$br()
+        )
+        
+        
+        uiele = tagList( uiele,
+          tags$br(),
+          column(7,
+            tags$h3(state[["MC"]][["labels"]][["head_base_model"]]),
+            div(style="display:inline-block", htmlOutput(NS(id, "ui_select_base_from"))),
+            div(style="display:inline-block", htmlOutput(NS(id, "ui_upload_model_type"))),
+            div(style="display:inline-block", icon_link(href=state[["MC"]][["tooltips"]][["url_model_types"]])),
+            tags$br(),
+            div(style="display:inline-block", htmlOutput(NS(id, "ui_upload_model_file"))),
+            div(style="display:inline-block", htmlOutput(NS(id, "ui_select_model_catalog"))),
+          ),
+          column(5,
+          tags$h3(state[["MC"]][["labels"]][["head_time_scale"]]),
+          htmlOutput(NS("MB", "ui_select_time_scale"))
+          )
+        )
+      } else {
+        uiele = NULL
+         if(!found_rxode2){
+           uiele = tagList(uiele, "rxode2 package was not found.", tags$br())
+         }
+         if(!found_nonmem2rx){
+           uiele = tagList(uiele, "rnonmem2rx package was not found.", tags$br())
+         }
+      }
+
       uiele
     })
 
@@ -705,6 +718,7 @@ MB_Server <- function(id,
 #'@param session Shiny session variable
 #'@param FM_yaml_file App configuration file with FM as main section.
 #'@param MOD_yaml_file  Module configuration file with MC as main section.
+#'@param react_state Variable passed to server to allow reaction outside of module (\code{NULL})
 #'@return list containing the current state of the app including default
 #'values from the yaml file as well as any changes made by the user. The list
 #'has the following structure:
@@ -721,6 +735,7 @@ MB_Server <- function(id,
 #'  \item{id:} Character data containing the module id module in the session variable.
 #'  \item{FM_yaml_file:} App configuration file with FM as main section.
 #'  \item{MOD_yaml_file:}  Module configuration file with MC as main section.
+#' }
 #'@examples
 #' # Within shiny both session and input variables will exist,
 #' # this creates examples here for testing purposes:
@@ -1332,10 +1347,11 @@ code}
 
 #'@export
 #'@title Append Report Elements
-#'@description Description
+#'@description Appends report elements to a formods report.
 #'@param state MB state from \code{MB_fetch_state()}
 #'@param rpt Report with the current content of the report which will be appended to in
-#'this function. For details on the structure see the documentation for \code{\link{formods::FM_generate_report}}.
+#'this function. For details on the structure see the documentation for 
+#' \code{\link[formods]{FM_generate_report}} 
 #'@param rpttype Type of report to generate (supported "xlsx", "pptx", "docx").
 #'@param gen_code_only Boolean value indicating that only code should be
 #'generated (\code{FALSE}).
@@ -1347,7 +1363,7 @@ code}
 #'  \item{msgs:}      Messages to be passed back to the user.
 #'  \item{rpt:}       Report with any additions passed back to the user.
 #'}
-#'@seealso \code{\link{formods::FM_generate_report}}
+#'@seealso \code{\link[formods]{FM_generate_report}} 
 MB_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 
   isgood    = TRUE
@@ -1459,6 +1475,7 @@ res}
 #'@description Populates the supplied session variable for testing.
 #'@param session Shiny session variable (in app) or a list (outside of app)
 #'@param id An ID string that corresponds with the ID used to call the modules UI elements
+#'@param full_session  Boolean to indicate if the full test session should be created (default \code{TRUE}).
 #'@return list with the following elements
 #' \itemize{
 #'   \item{isgood:} Boolean indicating the exit status of the function.
@@ -1944,8 +1961,14 @@ component}
 #'@example inst/test_apps/MB_funcs.R
 MB_build_code  = function(state, session, fcn_def, fcn_obj_name, rx_obj_name){
 
-  model_code = c(paste0(fcn_obj_name, " = ", fcn_def),
-                 paste0(rx_obj_name,  " =  rxode2::rxode2(", fcn_obj_name,")"))
+  found_rxode2    = formods::is_installed("rxode2")
+
+  if(found_rxode2){
+    model_code = c(paste0(fcn_obj_name, " = ", fcn_def),
+                   paste0(rx_obj_name,  " =  rxode2::rxode2(", fcn_obj_name,")"))
+  } else {
+    model_code  = "# rxode2 package was not found."
+  }
 
   deps          = FM_fetch_deps(state = state, session = session)
   model_code_sa = c(deps[["package_code"]],
@@ -2165,7 +2188,6 @@ catalog}
 #'@title Makes an rxode2 Object
 #'@description Creates an rxode2 object from a model (either rxode2 function
 #'or a NONMEM file)
-#'@param state MB state from \code{MB_fetch_state()}
 #'@param type Type of supplied model can be "rxode2", "NONMEM"
 #'@param model List containing the relevant information about the model. This
 #'will depend on the model types.
@@ -2226,33 +2248,51 @@ catalog}
 #' rx_res[["capture"]][["rx_obj"]]
 mk_rx_obj   = function(type, model){
 
-  if(type %in% c("rxode2", "NONMEM")){
-    if(type == "rxode2"){
-      mc = c(
-        model[["fcn_def"]],
-        paste0("fcn_obj = ", model[["fcn_obj"]]),
-        paste0("rx_obj  = rxode2::rxode2(fcn_obj)")
+  found_rxode2    = formods::is_installed("rxode2")
+  found_nonmem2rx = formods::is_installed("nonmem2rx")
+
+  if(all(c(found_rxode2, found_nonmem2rx))){
+    if(type %in% c("rxode2", "NONMEM")){
+      if(type == "rxode2"){
+        mc = c(
+          model[["fcn_def"]],
+          paste0("fcn_obj = ", model[["fcn_obj"]]),
+          paste0("rx_obj  = rxode2::rxode2(fcn_obj)")
+        )
+   
+        tcres = FM_tc(
+          cmd     = paste0(mc, collapse="\n"),
+          tc_env  = NULL,
+          capture = c("rx_obj", "fcn_obj"))
+      }
+      if(type == "NONMEM"){
+        cmds = c(
+          'rx_obj = nonmem2rx::nonmem2rx(model_file, save=FALSE, determineError=FALSE)',
+          'fun_obj = rx_obj$fun')
+   
+        tcres =
+          FM_tc(cmd = paste0(cmds, collapse="\n"),
+                tc_env = list(model_file = model[["model_file"]]),
+                capture = c("rx_obj", "fun_obj"))
+      }
+    }else{
+      tcres = list(
+        isgood = FALSE,
+        msgs   = c(paste0("Unknown model type: ", type), "mx_rx_obj()")
       )
-
-      tcres = FM_tc(
-        cmd     = paste0(mc, collapse="\n"),
-        tc_env  = NULL,
-        capture = c("rx_obj", "fcn_obj"))
-    }
-    if(type == "NONMEM"){
-      cmds = c(
-        'rx_obj = nonmem2rx::nonmem2rx(model_file, save=FALSE, determineError=FALSE)',
-        'fun_obj = rx_obj$fun')
-
-      tcres =
-        FM_tc(cmd = paste0(cmds, collapse="\n"),
-              tc_env = list(model_file = model[["model_file"]]),
-              capture = c("rx_obj", "fun_obj"))
     }
   }else{
+    msgs = c()
+    if(!found_rxode2){
+      msgs = c(msgs, "rxode2 package was not found.")
+    }
+    if(!found_nonmem2rx){
+      msgs = c(msgs, "rnonmem2rx package was not found.")
+    }
+
     tcres = list(
       isgood = FALSE,
-      msgs   = c(paste0("Unknown model type: ", type), "mx_rx_obj()")
+      msgs   = c("Needed packages missing mx_rx_obj()")
     )
   }
 tcres}

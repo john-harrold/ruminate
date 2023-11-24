@@ -22,7 +22,7 @@ ruminate(
 \code{list(shiny.maxRequestSize = 30 * 1024^2)}.}
 
 \item{mksession}{Boolean value, when TRUE will load test session data
-for app testing (FALSE)}
+for app testing and will also load development modules (\code{FALSE}).}
 }
 \value{
 Nothing is returned, this function just runs the built-in ruminate

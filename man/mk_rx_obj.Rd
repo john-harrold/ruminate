@@ -22,8 +22,6 @@ will depend on the model types.
 \item{model_file:} Character string containing the NONMEM model file.
 }
 }}
-
-\item{state}{MB state from \code{MB_fetch_state()}}
 }
 \value{
 Results of \code{FM_tc()} when running the model. This will include
