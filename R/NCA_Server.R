@@ -5418,20 +5418,6 @@ nca_builder = function(state){
         col_args,
         paste0(    '    dose_from = "', dose_from , '")[["dose_rec"]]' ))
 
-  # JMH dose_rec_fix delete
-  # # Creating dosing records
-  # cmd=c(cmd,
-  #   "",
-  #   "# Creating dosing records by reducing the dataset to one row for each unique:",
-  #   "# Subject, Dose number, Grouping (optional) combination",
-  #   paste0(nca_drec_object_name, " = "),
-  #   paste0("  dplyr::group_by(", nca_ds_object_name,",", paste0(plus_cols, collapse=","),") |> "),
-  #   "  dplyr::filter(dplyr::row_number() == 1) |> ",
-  #   "  dplyr::ungroup() |>",
-  #   paste0("  dplyr::select(",paste0(dose_select_cols, collapse=", "),") |> "),
-  #   paste0("  dplyr::mutate(", col_time, " = ", col_time,"-", col_ntime ,")  # Calculating the dose time from on the nominal offset")
-  #   )
-  #
     # Constructing dose_obj
     cmd=c(cmd,
       "",
@@ -5445,6 +5431,15 @@ nca_builder = function(state){
              ")"
         )
       )
+
+    # If we dose from rows we need to strip those out
+    if(dose_from == "rows"){
+      cmd=c(cmd,
+        "",
+        "# Redusing the NCA dataset to just the observations",
+        paste0(nca_ds_object_name, " = dplyr::filter(", nca_ds_object_name, ", EVID == 0)")
+        )
+    }
 
     # Constructing conc_obj
     col_dur_component =  NULL
