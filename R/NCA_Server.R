@@ -85,8 +85,19 @@ NCA_Server <- function(id,
         # Adding the preamble to load necessary packages
         mod_deps = FM_fetch_deps(state = state, session = session)
         if("package_code" %in% names(mod_deps)){
-          uiele = paste0(c(mod_deps$package_code, "",
-                           nps_def, "", uiele), collapse="\n")
+
+          uiele = paste0(c(mod_deps$package_code, 
+                           "",
+                           "# Metadata about NCA parameters",
+                           nps_def, 
+                           "",
+                           "# Report object used for creating tables below",
+                           'rpt =  onbrand::read_template(',
+                           '  template = file.path(system.file(package = "onbrand"), "templates", "report.docx"),',
+                           '  mapping = file.path(system.file(package = "onbrand"), "templates", "report.yaml")',
+                           ')',
+                           "", 
+                           uiele), collapse="\n")
         }
 
       }

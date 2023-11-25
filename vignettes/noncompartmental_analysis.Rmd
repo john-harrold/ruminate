@@ -13,6 +13,7 @@ require(ggplot2)
 require(rhandsontable)
 require(flextable)
 require(ruminate)
+require(dplyr)
 # Determining if ubiquity is installed
 if(system.file(package="ubiquity") == ""){
   require(ubiquity)
@@ -228,6 +229,24 @@ If you select an interval for analysis, it is necessary that you have observatio
 ```{r warning=FALSE, message=FALSE, echo=FALSE}
 save(presim, file="NCA_presim.RData")
 ```
+
+
+## NCA parameters 
+
+The following shows the different NCA parameters that can be calculated. The PKNCA parameter is value used in PKNCA, and the App Parameter Name is the value shown in the app. 
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, eval=TRUE}
+NCA_meta = NCA_fetch_PKNCA_meta()
+NCA_meta = NCA_meta[["parameters"]] |>
+  dplyr::select(-data_type) |>
+  dplyr::rename("PKNCA Parameter"    = parameter)    |>
+  dplyr::rename("App Parameter Name" = pretty_name)  |>
+  dplyr::rename("Type of Units"      = unit_type)    |>
+  dplyr::rename("Description"        = desc)      
+
+DT::datatable(NCA_meta)
+```
+
 
 # Configuration File
 

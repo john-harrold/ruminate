@@ -1,6 +1,6 @@
 MC:
   code: # module specific code options
-    packages: ["PKNCA", "dplyr", "stringr", "formods", "ruminate"]
+    packages: ["PKNCA", "dplyr", "stringr", "formods", "ruminate", "onbrand"]
     readOnly: TRUE
     mode:     r
     preamble: |-
@@ -320,10 +320,10 @@ MC:
     ana_use_scenario:                "Analysis Template"
     ana_add_int:                     "Add Interval"
     no_intervals:                    "No intervals added yet"
-    panel_analysis_opts:             "Analysis Options"
+    panel_analysis_opts:             "Analysis Details"
     panel_figures:                   "Figures"
     panel_tables:                    "Tables"
-    panel_nca_config:                "Configuration"
+    panel_nca_config:                "NCA Options"
     text_ana_interval_start:         "Start"
     text_ana_interval_stop:          "End"
     select_ana_interval_range:       "Interval Range"
