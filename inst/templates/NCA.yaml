@@ -319,7 +319,7 @@ MC:
     curr_anas_none:                  "No figures yet created"
     no_dataset:                      "No datasets available to analyze. You need to load a dataset to use this module."
     ana_use_scenario:                "Analysis Template"
-    ana_add_int:                     "Add Interval"
+    ana_add_int:                     "Add/Update Interval"
     no_intervals:                    "No intervals added yet"
     panel_analysis_opts:             "Analysis Details"
     panel_figures:                   "Figures"

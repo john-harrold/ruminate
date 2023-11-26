@@ -4970,17 +4970,38 @@ NCA_add_int = function(state, interval_start, interval_stop, nca_parameters){
   current_ana = NCA_fetch_current_ana(state)
 
 
-  # This adds the row
-  current_ana[["intervals"]] =
-  rbind( current_ana[["intervals"]],
-    data.frame("start"        = interval_start,
-               "stop"         = interval_stop,
-               "np_actual"    = params_string,
-               "np_text"      = names_string,
-               "delete"       = FALSE))
-  # Saving the current analysis with the interval added
-  state = NCA_set_current_ana(state, current_ana)
 
+  # This determines if the new interval already exists:
+  int_exists = FALSE
+  if(!is.null(current_ana[["intervals"]])){
+    if(any((current_ana[["intervals"]][["start"]] == interval_start) &
+           (current_ana[["intervals"]][["stop"]]  == interval_stop))){
+     int_exists = TRUE
+    }
+  }
+
+  # This adds a new interval:
+  if(int_exists){
+    # If the interval exists we replace the values
+    int_ridx = which(c((current_ana[["intervals"]][["start"]] == interval_start) & (current_ana[["intervals"]][["stop"]]  == interval_stop)))
+    # Now we update just the parameters:
+    current_ana[["intervals"]][int_ridx, "np_actual"] = params_string
+    current_ana[["intervals"]][int_ridx, "np_text" ]  = names_string
+    formods::FM_le(state, "NCA_add_int: update")
+  } else {
+    # If the interval does not exist we add a new one:
+    current_ana[["intervals"]] =
+    rbind( current_ana[["intervals"]],
+      data.frame("start"        = interval_start,
+                 "stop"         = interval_stop,
+                 "np_actual"    = params_string,
+                 "np_text"      = names_string,
+                 "delete"       = FALSE))
+    formods::FM_le(state, "NCA_add_int: append")
+  }
+
+  # Saving the current analysis with the interval added/updated
+  state = NCA_set_current_ana(state, current_ana)
 
 state}
 

@@ -1,0 +1,12 @@
+﻿ID,TIME_DY,NTIME_DY,TIME,AMT,EVID,CONC,DOSE,ROUTE
+1,0,0,0,3000000,1,0,3000000,intravascular
+1,0,0,0,0,0,0,3000000,intravascular
+1,1,1,24,0,0,690.5,3000000,intravascular
+1,2,2,48,0,0,588.2,3000000,intravascular
+1,3,3,72,0,0,505.5,3000000,intravascular
+1,4,4,96,0,0,438.5,3000000,intravascular
+1,7,7,168,0,0,303.2,3000000,intravascular
+1,21,21,504,0,0,122.9,3000000,intravascular
+1,28,28,672,0,0,95.48,3000000,intravascular
+1,35,35,840,0,0,75.83,3000000,intravascular
+1,42,42,1008,0,0,60.57,3000000,intravascular
