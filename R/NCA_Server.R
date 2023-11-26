@@ -74,32 +74,10 @@ NCA_Server <- function(id,
 
       current_ana = NCA_fetch_current_ana(state)
 
-      if(is.null(current_ana[["code"]])){
+      if(is.null(current_ana[["code_sa"]])){
         uiele = "# Run analysis to see code."
       } else {
-        uiele = current_ana[["code"]]
-
-        # This will define the nca parameter summary (nps) table.
-        nps_def = 'NCA_nps = NCA_fetch_np_meta()[["summary"]]'
-
-        # Adding the preamble to load necessary packages
-        mod_deps = FM_fetch_deps(state = state, session = session)
-        if("package_code" %in% names(mod_deps)){
-
-          uiele = paste0(c(mod_deps$package_code,
-                           "",
-                           "# Metadata about NCA parameters",
-                           nps_def,
-                           "",
-                           "# Report object used for creating tables below",
-                           'rpt =  onbrand::read_template(',
-                           '  template = file.path(system.file(package = "onbrand"), "templates", "report.docx"),',
-                           '  mapping = file.path(system.file(package = "onbrand"), "templates", "report.yaml")',
-                           ')',
-                           "",
-                           uiele), collapse="\n")
-        }
-
+        uiele = paste0(current_ana[["code_sa"]], collapse="\n")
       }
 
 
@@ -3006,10 +2984,10 @@ NCA_Server <- function(id,
 
         current_ana = NCA_fetch_current_ana(state)
 
-        if(is.null(current_ana[["code"]])){
+        if(is.null(current_ana[["code_sa"]])){
           uiele = "# Run analysis to see code."
         } else {
-          uiele = current_ana[["code"]]
+          uiele = paste0(current_ana[["code_sa"]], collapse="\n")
         }
 
         clipr::write_clip(uiele)
@@ -3811,6 +3789,8 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session
   state[["NCA"]][["anas"]]          = NULL
   state[["NCA"]][["ana_cntr"]]      = 0
   state[["NCA"]][["current_ana"]]   = NULL
+
+  state[["NCA"]][["mod_deps"]]      =  FM_fetch_deps(state = state, session = session)
 
   formods::FM_le(state, "State initialized")
 
@@ -5683,10 +5663,26 @@ nca_builder = function(state){
     isgood = FALSE
   }
 
- #myDS = ds$DS
- #eval(parse(text=code_ana_only))
- #a = paste(code, collapse = "\n")
- #browser()
+
+
+
+  # Creating the stand-alone code:
+  nps_def  = 'NCA_nps = NCA_fetch_np_meta()[["summary"]]'
+  mod_deps = state[["NCA"]][["mod_deps"]]
+  code_sa  = c(mod_deps$package_code,
+              "",
+              "# Metadata about NCA parameters",
+              nps_def,
+              "",
+              "# Report object used for creating tables below",
+              'rpt =  onbrand::read_template(',
+              '  template = file.path(system.file(package = "onbrand"), "templates", "report.docx"),',
+              '  mapping = file.path(system.file(package = "onbrand"), "templates", "report.yaml")',
+              ')',
+              "",
+              code)
+
+
 
   # saving any messages:
   msgs = c(msgs, current_ana[["msgs"]])
@@ -5696,6 +5692,7 @@ nca_builder = function(state){
   # Saving the state information
   current_ana[["isgood"]]            = isgood
   current_ana[["code"]]              = code
+  current_ana[["code_sa"]]           = code_sa
   current_ana[["code_components"]]   = list(
     code_previous      = code_previous,
     code_ana_only      = code_ana_only,

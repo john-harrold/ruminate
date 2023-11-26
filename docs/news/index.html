@@ -77,7 +77,9 @@
 <ul><li>Added MB (model builder) module with
 <ul><li>Support for rxode2 and NONMEM models</li>
 </ul></li>
-<li>Fixed bug in NCA module where column details didn’t update properly when switching between analyses</li>
+<li>Fixed bug in NCA module where column details didn’t update properly when switching between analyses.</li>
+<li>Fixed bug where detecting dosing from rows left the dosing records in the data frame for subsequent NCA.</li>
+<li>Fixed bug where the same parameter(s) were added over the same interval resulting in [[numeric]] in the reported values. Now if the same time interval is added more than once subsequent additions will update the parameters of the interval.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.1" id="ruminate-011">ruminate 0.1.1<a class="anchor" aria-label="anchor" href="#ruminate-011"></a></h2><p class="text-muted">CRAN release: 2023-08-29</p>
