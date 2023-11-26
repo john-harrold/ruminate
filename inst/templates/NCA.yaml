@@ -280,6 +280,7 @@ MC:
     url_dosing:        "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#dosing-information"
     url_data:          "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#data-format"
     url_intervals:     "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#nca-analysis-intervals"
+    url_parameters:    "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#nca-parameters"
     ph:
       text_ana_interval_start: 0
       text_ana_interval_stop:  "number or Inf"

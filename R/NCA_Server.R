@@ -86,17 +86,17 @@ NCA_Server <- function(id,
         mod_deps = FM_fetch_deps(state = state, session = session)
         if("package_code" %in% names(mod_deps)){
 
-          uiele = paste0(c(mod_deps$package_code, 
+          uiele = paste0(c(mod_deps$package_code,
                            "",
                            "# Metadata about NCA parameters",
-                           nps_def, 
+                           nps_def,
                            "",
                            "# Report object used for creating tables below",
                            'rpt =  onbrand::read_template(',
                            '  template = file.path(system.file(package = "onbrand"), "templates", "report.docx"),',
                            '  mapping = file.path(system.file(package = "onbrand"), "templates", "report.yaml")',
                            ')',
-                           "", 
+                           "",
                            uiele), collapse="\n")
         }
 
@@ -593,11 +593,17 @@ NCA_Server <- function(id,
       # Choice list
       choices = state[["NCA"]][["nca_parameters"]][["choices"]]
 
+      if(!is.null(state[["MC"]][["tooltips"]][["url_parameters"]])){
+        parameters_link = icon_link(href=state[["MC"]][["tooltips"]][["url_parameters"]])
+      }else{
+        parameters_link = NULL
+      }
+
       uiele =
       shinyWidgets::pickerInput(
         inputId    = NS(id, "select_ana_nca_parameters"),
         choices    = choices,
-        label      = state[["MC"]][["labels"]][["select_ana_nca_parameters"]],
+        label      = tagList(state[["MC"]][["labels"]][["select_ana_nca_parameters"]], parameters_link),
         selected   = value,
         multiple   = TRUE,
         width      = state[["MC"]][["formatting"]][["select_ana_nca_parameters"]][["width"]],
@@ -4575,9 +4581,11 @@ NCA_new_ana    = function(state){
     dscols   = dscols)
   nca_def[["col_dur"]] = NCA_find_col(
     patterns = state[["MC"]][["detect_col"]][["dur"]],
+    null_ok  = TRUE,
     dscols   = dscols)
   nca_def[["col_analyte"]] = NCA_find_col(
     patterns = state[["MC"]][["detect_col"]][["analyte"]],
+    null_ok  = TRUE,
     dscols   = dscols)
   nca_def[["col_conc"]] = NCA_find_col(
     patterns = state[["MC"]][["detect_col"]][["conc"]],
