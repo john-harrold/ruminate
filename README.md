@@ -41,7 +41,16 @@ You can install the released version of `rumiante` from
 [CRAN](https://cran.r-project.org/package=ruminate) with:
 
 ``` r
-install.packages("ruminate",  dependencies=TRUE)
+# Dependencies:
+install.packages("clipr")
+install.packages("gridExtra")
+install.packages("prompter")
+install.packages("readxl")
+install.packages("shinydashboard")
+install.packages("ubiquity")
+
+# Actual package
+install.packages("ruminate")
 ```
 
 ## Development version

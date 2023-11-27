@@ -4917,7 +4917,7 @@ NCA_fetch_np_meta = function(
       if(system.file(package="cli")==""){
         message(msg)
       } else {
-        cli::cli_alert_danger(msg)
+        FM_message(msg, entry_type="danger")
       }
     }
   }
