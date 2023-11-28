@@ -62,9 +62,18 @@ You can install the development version from [GitHub](https://github.com/john-ha
 if(system.file(package="devtools") == ""){
   install.packages("devtools") 
 }
+
+# Dependencies:
+install.packages("clipr")
+install.packages("gridExtra")
+install.packages("prompter")
+install.packages("readxl")
+install.packages("shinydashboard")
+install.packages("ubiquity")
+
 devtools::install_github("john-harrold/onbrand",  dependencies=TRUE)
 devtools::install_github("john-harrold/formods",  dependencies=TRUE)
-devtools::install_github("john-harrold/ruminate", dependencies=TRUE)
+devtools::install_github("john-harrold/ruminate")
 ```
 
 Note that because `{ruminate}` depends on `{formods}` and `{onbrand}` you will need to first install the development versions of `{onbrand}` and `{formods}`.

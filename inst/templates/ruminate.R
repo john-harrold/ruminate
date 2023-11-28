@@ -28,7 +28,9 @@ if(!exists("deployed")){
 }
 
 # Making sure that the run_dev object is created
-if(!exists("run_dev")){
+if(file.exists(file.path(tempdir(), "RUMINTE_DEVELOPMENT"))){
+  run_dev  = TRUE
+}else{
   run_dev  = FALSE
 }
 
@@ -87,7 +89,7 @@ tags$li( "If you run into any problems, have questions, or want a feature please
 ftmptest = file.path(tempdir(), "ruminate.test")
 
 # If the ftmptest file is present we load the development modules
-if(file.exists(ftmptest)){
+if(run_dev){
   dev_modules = shinydashboard::menuItem("Models",          
                                          tabName = "model",       
                                          icon    = icon("trowel-bricks"))

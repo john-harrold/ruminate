@@ -17,7 +17,7 @@ Imports:
   dplyr,
   DT,
   flextable,
-  formods,
+  formods (>= 0.1.2),
   ggplot2,
   nlmixr2lib,
   onbrand (>= 1.0.3),

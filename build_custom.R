@@ -3,19 +3,21 @@ setwd(repo_root)
 
 devtools::load_all()
 
-# creating app example
+#-----------------------------------
+# creating app example in test_apps
 ruminate_app= system.file(package="ruminate", "templates", "ruminate.R")
 
-nca_app_contents = readLines(ruminate_app)
-nca_app_contents = c("if(interactive()){",
-          nca_app_contents,
+ruminate_app_contents = readLines(ruminate_app)
+ruminate_app_contents = c("if(interactive()){",
+          ruminate_app_contents,
           "}")
 
 nca_app = file.path(repo_root, "inst", "test_apps", "nca_app.R")
 
 fileConn=file(nca_app)
-writeLines(nca_app_contents, fileConn)
+writeLines(ruminate_app_contents, fileConn)
 close(fileConn)
+#-----------------------------------
 
 # building documentation
 devtools::document(roclets = c('rd', 'collate', 'namespace', 'vignette'))

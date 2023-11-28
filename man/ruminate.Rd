@@ -9,6 +9,7 @@
 ruminate(
   host = "127.0.0.1",
   port = 3838,
+  development = FALSE,
   server_opts = list(shiny.maxRequestSize = 30 * 1024^2),
   mksession = FALSE
 )
@@ -17,6 +18,8 @@ ruminate(
 \item{host}{Hostname of the server ("127.0.0.1")}
 
 \item{port}{Port number for the app (3838)}
+
+\item{development}{Boolean variable indicating}
 
 \item{server_opts}{List of options (names) and their vlues (value) e.g.
 \code{list(shiny.maxRequestSize = 30 * 1024^2)}.}

@@ -176,7 +176,9 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Making sure that the run_dev object is created</span></span></span>
-<span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html" class="external-link">exists</a></span><span class="op">(</span><span class="st">"run_dev"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"RUMINTE_DEVELOPMENT"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">run_dev</span>  <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="kw">else</span><span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">run_dev</span>  <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
@@ -235,7 +237,7 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span><span class="va">ftmptest</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"ruminate.test"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># If the ftmptest file is present we load the development modules</span></span></span>
-<span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">ftmptest</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="va">run_dev</span><span class="op">)</span><span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">dev_modules</span> <span class="op">=</span> <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/sidebarMenu.html" class="external-link">menuItem</a></span><span class="op">(</span><span class="st">"Models"</span>,          </span></span>
 <span class="r-in"><span>                                         tabName <span class="op">=</span> <span class="st">"model"</span>,       </span></span>
 <span class="r-in"><span>                                         icon    <span class="op">=</span> <span class="fu">icon</span><span class="op">(</span><span class="st">"trowel-bricks"</span><span class="op">)</span><span class="op">)</span></span></span>

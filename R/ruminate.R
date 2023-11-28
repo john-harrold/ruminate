@@ -20,6 +20,7 @@
 #'@description Runs the pharmacometrics ruminate app.
 #'@param host Hostname of the server ("127.0.0.1")
 #'@param port Port number for the app (3838)
+#'@param development Boolean variable indicating 
 #'@param server_opts List of options (names) and their vlues (value) e.g.
 #'\code{list(shiny.maxRequestSize = 30 * 1024^2)}.
 #'@param mksession Boolean value, when TRUE will load test session data
@@ -32,6 +33,7 @@
 #'}
 ruminate = function(host        = "127.0.0.1", 
                     port        = 3838, 
+                    development = FALSE,
                     server_opts = list(shiny.maxRequestSize = 30 * 1024^2), 
                     mksession   = FALSE){
 
@@ -46,14 +48,23 @@ ruminate = function(host        = "127.0.0.1",
   # File used to indicate we're in test mode
   ftmptest = file.path(tempdir(), "ruminate.test")
 
+  # File used to indicate if we are running development versions
+  ftmpdev  = file.path(tempdir(), "RUMINTE_DEVELOPMENT")
+
   # Deleteing any existing files
   if(file.exists(ftmptest)){
     unlink(ftmptest)
   }
+  if(file.exists(ftmpdev)){
+    unlink(ftmpdev)
+  }
 
-  # If mksession is true we set this value to true
+  # If mksession is true we create the temporary file
   if(mksession){
     file.create(ftmptest)
+  }
+  if(development){
+    file.create(ftmpdev)
   }
 
   shiny::runApp(system.file(package="ruminate", "templates","ruminate.R"),
