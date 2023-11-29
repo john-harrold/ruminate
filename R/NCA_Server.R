@@ -5884,18 +5884,6 @@ run_nca_components = function(
 
             # There should be at least one element here:
             if(!is.null(list_names)){
-              # This checks the currently selected list element for this
-              # component. If it doesn't exist we replace that value with the
-              # first element:
-             ## JMH broken here:
-             #cat(paste0(fig_tab, "\n"))
-             #if(fig_tab == "tb_ind_params"){
-             #  NCA_1_res = tc_env$NCA_1_res
-             #  rpt = tc_env$rpt
-             #  NCA_nps = tc_env$NCA_nps
-             #
-             #  browser()
-             #}
               if(!(current_ana[[ fig_tabs[[fig_tab]][["current"]] ]] %in% list_names)){
                 current_ana[[ fig_tabs[[fig_tab]][["current"]] ]] = list_names[1]
               }

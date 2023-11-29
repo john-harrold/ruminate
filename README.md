@@ -4,10 +4,11 @@
 # ruminate <img src="man/figures/logo.png" align="right" height="138.5" />
 
 <!-- 
-[![Codecov test coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
 -->
 <!-- badges: start -->
 
+[![Codecov test
+coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
 ![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate)
 ![Active](https://www.repostatus.org/badges/latest/active.svg)
 [![Lifecycle:
@@ -63,9 +64,18 @@ You can install the development version from
 if(system.file(package="devtools") == ""){
   install.packages("devtools") 
 }
+
+# Dependencies:
+install.packages("clipr")
+install.packages("gridExtra")
+install.packages("prompter")
+install.packages("readxl")
+install.packages("shinydashboard")
+install.packages("ubiquity")
+
 devtools::install_github("john-harrold/onbrand",  dependencies=TRUE)
 devtools::install_github("john-harrold/formods",  dependencies=TRUE)
-devtools::install_github("john-harrold/ruminate", dependencies=TRUE)
+devtools::install_github("john-harrold/ruminate")
 ```
 
 Note that because `{ruminate}` depends on `{formods}` and `{onbrand}`
