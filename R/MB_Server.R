@@ -500,10 +500,11 @@ MB_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
 
-      found_rxode2    = formods::is_installed("rxode2")
-      found_nonmem2rx = formods::is_installed("nonmem2rx")
+      found_rxode2     = formods::is_installed("rxode2")
+      found_nonmem2rx  = formods::is_installed("nonmem2rx")
+      found_nlmixr2lib = formods::is_installed("nlmixr2lib")
 
-      if(all(c(found_rxode2, found_nonmem2rx))){
+      if(all(c(found_rxode2, found_nonmem2rx, found_nlmixr2lib))){
         uiele_code_button = NULL
         # Generating code button if enabled
         if( state[["MC"]][["compact"]][["code"]]){
@@ -610,7 +611,10 @@ MB_Server <- function(id,
            uiele = tagList(uiele, "rxode2 package was not found.", tags$br())
          }
          if(!found_nonmem2rx){
-           uiele = tagList(uiele, "rnonmem2rx package was not found.", tags$br())
+           uiele = tagList(uiele, "nonmem2rx package was not found.", tags$br())
+         }
+         if(!found_nlmixr2lib){
+           uiele = tagList(uiele, "nlmixr2lib package was not found.", tags$br())
          }
       }
 
