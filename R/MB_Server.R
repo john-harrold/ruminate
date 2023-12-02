@@ -1535,6 +1535,13 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
   current_ele[["base_model"]]      =  model_row[["mod_id"]][1]
   current_ele[["base_model_name"]] =  model_row[["Name"]][1]
 
+  # Synching the catlog selection with the base model 
+  current_ele[["ui"]][["catalog_selection"]] = model_row[["mod_id"]][1]
+
+  current_ele[["ui"]][["time_scale"]] = "hours"
+
+  # Timescales are found here:
+  # state[["MC"]][["formatting"]][["time_scales"]][["choices"]]
 
   state = MB_set_current_element(
     state   = state,
@@ -1567,6 +1574,11 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
     current_ele[["base_model"]]           =  model_row[["mod_id"]][1]
     current_ele[["base_model_name"]]      =  model_row[["Name"]][1]
     current_ele[["ui"]][["element_name"]] = "mAb Model (Davda 2014)"
+
+    # Synching the catlog selection with the base model 
+    current_ele[["ui"]][["catalog_selection"]] = model_row[["mod_id"]][1]
+
+    current_ele[["ui"]][["time_scale"]] = 'days' 
 
     state = MB_set_current_element(
       state   = state,
