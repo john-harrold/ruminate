@@ -1,5 +1,10 @@
+# ruminate 0.2.1 (development version)
+
+- Fixed use of suggests that were not conditional. 
+
 # ruminate 0.2.0 
-- Added MB (model builder) module with
+
+- Added MB (model builder) module with (in development)
   - Support for rxode2 and NONMEM models
 - Fixed bug in NCA module where column details didn't update properly when switching between analyses. 
 - Fixed bug where detecting dosing from rows left the dosing records in the data frame for subsequent NCA.
@@ -7,4 +12,5 @@
 - Fixed stand-alone code generation and copy clipboard. 
 
 # ruminate 0.1.1
+
 - Initial release

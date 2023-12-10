@@ -500,11 +500,7 @@ MB_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
 
-      found_rxode2     = formods::is_installed("rxode2")
-      found_nonmem2rx  = formods::is_installed("nonmem2rx")
-      found_nlmixr2lib = formods::is_installed("nlmixr2lib")
-
-      if(all(c(found_rxode2, found_nonmem2rx, found_nlmixr2lib))){
+      if(MB_mod_ok(pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib"))){
         uiele_code_button = NULL
         # Generating code button if enabled
         if( state[["MC"]][["compact"]][["code"]]){
@@ -607,13 +603,13 @@ MB_Server <- function(id,
         )
       } else {
         uiele = NULL
-         if(!found_rxode2){
+         if(!MB_mod_ok("rxode2")){
            uiele = tagList(uiele, "rxode2 package was not found.", tags$br())
          }
-         if(!found_nonmem2rx){
+         if(!MB_mod_ok("nonmem2rx")){
            uiele = tagList(uiele, "nonmem2rx package was not found.", tags$br())
          }
-         if(!found_nlmixr2lib){
+         if(!MB_mod_ok("nlmixr2lib")){
            uiele = tagList(uiele, "nlmixr2lib package was not found.", tags$br())
          }
       }
@@ -1492,76 +1488,38 @@ res}
 #' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
 MB_test_mksession = function(session, id = "MB", full_session=TRUE){
 
+  
   isgood = TRUE
   rsc    = list()
   input  = list()
+  state  = list()
 
-  # Configuration files
-  FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
-  MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
-
-  # Creating an empty state object
-  state = MB_fetch_state(id              = "MB",
-                         input           = input,
-                         session         = session,
-                         FM_yaml_file    = FM_yaml_file,
-                         MOD_yaml_file   = MOD_yaml_file,
-                         react_state     = NULL)
-
-  # This will provide a list of the available models
-  models = MB_fetch_catalog(state)
-
-  #-------------------------------------------------------
-  # Simplest model:
-  ridx = which(models[["summary"]][["Name"]] == "PK_1cmt")
-  model_row  = models[["summary"]][ridx, ]
-
-  mk_rx_res = mk_rx_obj(
-    type="rxode2",
-    model = list(fcn_def = model_row[["Model"]][1],
-                 fcn_obj = model_row[["Object"]][1]))
-
-  current_ele = MB_fetch_current_element(state)
-  current_ele = MB_update_model(
-    state       = state,
-    session     = session,
-    current_ele = current_ele,
-    rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
-    note        = "base model",
-    reset       = TRUE)
-
-  current_ele[["ui"]][["element_name"]] = "One compartment model"
-
-  current_ele[["base_model"]]      =  model_row[["mod_id"]][1]
-  current_ele[["base_model_name"]] =  model_row[["Name"]][1]
-
-  # Synching the catlog selection with the base model 
-  current_ele[["ui"]][["catalog_selection"]] = model_row[["mod_id"]][1]
-
-  current_ele[["ui"]][["time_scale"]] = "hours"
-
-  # Timescales are found here:
-  # state[["MC"]][["formatting"]][["time_scales"]][["choices"]]
-
-  state = MB_set_current_element(
-    state   = state,
-    element = current_ele)
-
-
-
-  #-------------------------------------------------------
-  if(full_session){
-    # New element
-    state = MB_new_element(state)
-
-    ridx = which(models[["summary"]][["Name"]] == "PK_2cmt_mAb_Davda_2014" )
+    # Configuration files
+    FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
+    MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
+    
+    # Creating an empty state object
+    state = MB_fetch_state(id              = "MB",
+                           input           = input,
+                           session         = session,
+                           FM_yaml_file    = FM_yaml_file,
+                           MOD_yaml_file   = MOD_yaml_file,
+                           react_state     = NULL)
+    
+  if(MB_mod_ok(pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib"))){
+    # This will provide a list of the available models
+    models = MB_fetch_catalog(state)
+    
+    #-------------------------------------------------------
+    # Simplest model:
+    ridx = which(models[["summary"]][["Name"]] == "PK_1cmt")
     model_row  = models[["summary"]][ridx, ]
-
+    
     mk_rx_res = mk_rx_obj(
       type="rxode2",
       model = list(fcn_def = model_row[["Model"]][1],
                    fcn_obj = model_row[["Object"]][1]))
-
+    
     current_ele = MB_fetch_current_element(state)
     current_ele = MB_update_model(
       state       = state,
@@ -1570,35 +1528,79 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
       rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
       note        = "base model",
       reset       = TRUE)
-
-    current_ele[["base_model"]]           =  model_row[["mod_id"]][1]
-    current_ele[["base_model_name"]]      =  model_row[["Name"]][1]
-    current_ele[["ui"]][["element_name"]] = "mAb Model (Davda 2014)"
-
+    
+    current_ele[["ui"]][["element_name"]] = "One compartment model"
+    
+    current_ele[["base_model"]]      =  model_row[["mod_id"]][1]
+    current_ele[["base_model_name"]] =  model_row[["Name"]][1]
+    
     # Synching the catlog selection with the base model 
     current_ele[["ui"]][["catalog_selection"]] = model_row[["mod_id"]][1]
-
-    current_ele[["ui"]][["time_scale"]] = 'days' 
-
+    
+    current_ele[["ui"]][["time_scale"]] = "hours"
+    
+    # Timescales are found here:
+    # state[["MC"]][["formatting"]][["time_scales"]][["choices"]]
+    
     state = MB_set_current_element(
       state   = state,
       element = current_ele)
-
-  }
-
-  # JMH when loading ruminate with the session populated it the Model code
-  # isn't switching correctly between the elements
-#  browser()
-
-  # This functions works both in a shiny app and outside of one
-  # if we're in a shiny app then the 'session' then the class of
-  # session will be a ShinySession. Otherwise it'll be a list if
-  # we're not in the app (ie just running test examples) then
-  # we need to set the state manually
-  if(("ShinySession" %in% class(session))){
-    FM_set_mod_state(session, id, state)
+    
+    
+    
+    #-------------------------------------------------------
+    if(full_session){
+      # New element
+      state = MB_new_element(state)
+    
+      ridx = which(models[["summary"]][["Name"]] == "PK_2cmt_mAb_Davda_2014" )
+      model_row  = models[["summary"]][ridx, ]
+    
+      mk_rx_res = mk_rx_obj(
+        type="rxode2",
+        model = list(fcn_def = model_row[["Model"]][1],
+                     fcn_obj = model_row[["Object"]][1]))
+    
+      current_ele = MB_fetch_current_element(state)
+      current_ele = MB_update_model(
+        state       = state,
+        session     = session,
+        current_ele = current_ele,
+        rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
+        note        = "base model",
+        reset       = TRUE)
+    
+      current_ele[["base_model"]]           =  model_row[["mod_id"]][1]
+      current_ele[["base_model_name"]]      =  model_row[["Name"]][1]
+      current_ele[["ui"]][["element_name"]] = "mAb Model (Davda 2014)"
+    
+      # Synching the catlog selection with the base model 
+      current_ele[["ui"]][["catalog_selection"]] = model_row[["mod_id"]][1]
+    
+      current_ele[["ui"]][["time_scale"]] = 'days' 
+    
+      state = MB_set_current_element(
+        state   = state,
+        element = current_ele)
+    
+    }
+    
+    # JMH when loading ruminate with the session populated it the Model code
+    # isn't switching correctly between the elements
+#    browser()
+    
+    # This functions works both in a shiny app and outside of one
+    # if we're in a shiny app then the 'session' then the class of
+    # session will be a ShinySession. Otherwise it'll be a list if
+    # we're not in the app (ie just running test examples) then
+    # we need to set the state manually
+    if(("ShinySession" %in% class(session))){
+      FM_set_mod_state(session, id, state)
+    } else {
+      session = FM_set_mod_state(session, id, state)
+    }
   } else {
-    session = FM_set_mod_state(session, id, state)
+    isgood = FALSE
   }
 
   res = list(
@@ -1609,6 +1611,34 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
     rsc     = rsc
   )
 }
+
+
+#'@export
+#'@title Makes Sure Suggests are Installed
+#'@description Simple check to make sure the suggested packages are installed.
+#'@param pkgs  List of suggested packages (default "rxode2", "nonmem2rx" and "nlmixr2lib")
+#'@return Boolean value indicating if the module is OK
+#'@examples
+#' MB_mod_ok()
+MB_mod_ok = function(pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib")){
+
+  res = TRUE
+  for(pkg in pkgs){
+    if(!is_installed(pkg)){
+      res = FALSE
+
+      # this is a temp file created to make sure that notifications have only
+      # been issued once
+      pkg_file = file.path(tempdir(), paste0("MB_mod_ok_", pkg))
+
+      if(!file.exists(pkg_file)){
+        FM_message(paste0("The package ", pkg, " is not installed"), entry_type="warning")
+        file.create(pkg_file)
+      }
+    }
+  }
+res}
+
 
 #'@export
 #'@title New Model Building Model
@@ -1824,53 +1854,57 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
   # Any checks of the rx_obj can be made here:
   # XXX
 
-  if(isgood){
-    # If a reset is called then we zero out the components table:
-    if(reset){
-      current_ele[["components_table"]] = data.frame()
+  if(MB_mod_ok(pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib"))){
+    if(isgood){
+      # If a reset is called then we zero out the components table:
+      if(reset){
+        current_ele[["components_table"]] = data.frame()
+      }
+    
+      # String for creating model function in R
+      fcn_def    = paste0(deparse(as.function(rx_obj$fun)), collapse="\n")
+    
+      if(nrow(current_ele[["components_table"]]) == 0){
+        component_id = 1
+      }else{
+        component_id = max(current_ele[["components_table"]][["id"]]) + 1
+      }
+    
+      component_id_str = paste0("component_", component_id)
+    
+      bcres =
+        MB_build_code(state        = state,
+                      session      = session,
+                      fcn_def      = fcn_def,
+                      fcn_obj_name = current_ele[["fcn_obj_name"]],
+                      rx_obj_name  = current_ele[["rx_obj_name"]])
+    
+      tmpdf =
+      data.frame(id            = component_id,
+                 id_str        = component_id_str,
+                 note          = note,
+                 model_code    = paste0(bcres[["model_code"]],    collapse="\n"),
+                 model_code_sa = paste0(bcres[["model_code_sa"]], collapse="\n"),
+                 fcn_def       = fcn_def)
+    
+    
+      if(is.null(current_ele[["components_table"]])){
+        current_ele[["components_table"]] = tmpdf
+      }else{
+        current_ele[["components_table"]] = rbind(
+          current_ele[["components_table"]],
+          tmpdf)
+      }
+    
+      # Saving the rxode2 object. The component ID is saved as a string
+      # "component_N":
+      current_ele[["components_list"]][[component_id_str]][["rx_obj"]] = rx_obj
+    
+      # Setting the added component as the selected id:
+      current_ele[["selected_component_id"]]  = component_id
     }
-
-    # String for creating model function in R
-    fcn_def    = paste0(deparse(as.function(rx_obj$fun)), collapse="\n")
-
-    if(nrow(current_ele[["components_table"]]) == 0){
-      component_id = 1
-    }else{
-      component_id = max(current_ele[["components_table"]][["id"]]) + 1
-    }
-
-    component_id_str = paste0("component_", component_id)
-
-    bcres =
-      MB_build_code(state        = state,
-                    session      = session,
-                    fcn_def      = fcn_def,
-                    fcn_obj_name = current_ele[["fcn_obj_name"]],
-                    rx_obj_name  = current_ele[["rx_obj_name"]])
-
-    tmpdf =
-    data.frame(id            = component_id,
-               id_str        = component_id_str,
-               note          = note,
-               model_code    = paste0(bcres[["model_code"]],    collapse="\n"),
-               model_code_sa = paste0(bcres[["model_code_sa"]], collapse="\n"),
-               fcn_def       = fcn_def)
-
-
-    if(is.null(current_ele[["components_table"]])){
-      current_ele[["components_table"]] = tmpdf
-    }else{
-      current_ele[["components_table"]] = rbind(
-        current_ele[["components_table"]],
-        tmpdf)
-    }
-
-    # Saving the rxode2 object. The component ID is saved as a string
-    # "component_N":
-    current_ele[["components_list"]][[component_id_str]][["rx_obj"]] = rx_obj
-
-    # Setting the added component as the selected id:
-    current_ele[["selected_component_id"]]  = component_id
+  } else {
+    isgood = FALSE
   }
 
   # Triggering the update of the model code in the editor
@@ -1977,9 +2011,7 @@ component}
 #'@example inst/test_apps/MB_funcs.R
 MB_build_code  = function(state, session, fcn_def, fcn_obj_name, rx_obj_name){
 
-  found_rxode2    = formods::is_installed("rxode2")
-
-  if(found_rxode2){
+  if(MB_mod_ok("rxode2")){
     model_code = c(paste0(fcn_obj_name, " = ", fcn_def),
                    paste0(rx_obj_name,  " =  rxode2::rxode2(", fcn_obj_name,")"))
   } else {
@@ -2023,7 +2055,7 @@ MB_fetch_catalog   = function(state){
   select_plain   = list()
 
   # looking for packages to use conditionally below
-  found_nlmixr2lib = formods::is_installed("nlmixr2lib")
+  found_nlmixr2lib = MB_mod_ok("nlmixr2lib")
 
 
   mod_idx  = 1
@@ -2264,8 +2296,8 @@ catalog}
 #' rx_res[["capture"]][["rx_obj"]]
 mk_rx_obj   = function(type, model){
 
-  found_rxode2    = formods::is_installed("rxode2")
-  found_nonmem2rx = formods::is_installed("nonmem2rx")
+  found_rxode2    = MB_mod_ok("rxode2")
+  found_nonmem2rx = MB_mod_ok("nonmem2rx")
 
   if(all(c(found_rxode2, found_nonmem2rx))){
     if(type %in% c("rxode2", "NONMEM")){
@@ -2332,44 +2364,48 @@ MB_test_catalog   = function(state, as_cran=FALSE, verbose=TRUE){
   isgood = TRUE
   models = MB_fetch_catalog(state)
 
-  if(models[["isgood"]]){
-    model_summary = models[["summary"]]
-    # If we're running it as cran we pair it down to a single model
-    # to speed thigns up:
-    if(as_cran){
-      if(which(model_summary$Name == "PK_1cmt") > 0){
-        # First we look for PK_1cmt to choose a simple exmaple
-        model_summary = model_summary[model_summary$Name == "PK_1cmt" , ]
-      } else {
-        # If that doesn't exist we choose the first catalog entry
-        model_summary = model_summary[1, ]
-      }
-    }
-
-    # Now we walk through each model and attempt to build it:
-    for(ridx in 1:nrow(model_summary)){
-      model = list(
-        fcn_def=model_summary[ridx, ]$Model,
-        fcn_obj=model_summary[ridx, ]$Object)
-
-      mod_type = model_summary[ridx, ]$Type
-
-      rx_res   = mk_rx_obj(mod_type, model)
-      if(rx_res[["isgood"]]){
-        if(verbose){
-          FM_le(state, model_summary[ridx,][["Name"]], entry_type="success")
-        }
-      }else{
-        isgood = FALSE
-        if(verbose){
-          FM_le(state, model_summary[ridx,][["Name"]], entry_type="failure")
+  if(MB_mod_ok(pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib"))){
+    if(models[["isgood"]]){
+      model_summary = models[["summary"]]
+      # If we're running it as cran we pair it down to a single model
+      # to speed thigns up:
+      if(as_cran){
+        if(which(model_summary$Name == "PK_1cmt") > 0){
+          # First we look for PK_1cmt to choose a simple exmaple
+          model_summary = model_summary[model_summary$Name == "PK_1cmt" , ]
+        } else {
+          # If that doesn't exist we choose the first catalog entry
+          model_summary = model_summary[1, ]
         }
       }
+    
+      # Now we walk through each model and attempt to build it:
+      for(ridx in 1:nrow(model_summary)){
+        model = list(
+          fcn_def=model_summary[ridx, ]$Model,
+          fcn_obj=model_summary[ridx, ]$Object)
+    
+        mod_type = model_summary[ridx, ]$Type
+    
+        rx_res   = mk_rx_obj(mod_type, model)
+        if(rx_res[["isgood"]]){
+          if(verbose){
+            FM_le(state, model_summary[ridx,][["Name"]], entry_type="success")
+          }
+        }else{
+          isgood = FALSE
+          if(verbose){
+            FM_le(state, model_summary[ridx,][["Name"]], entry_type="failure")
+          }
+        }
+      }
+    
+    } else {
+      isgood = FALSE
+      msgs = c(msgs, "Unable to fetch the model catalog.")
     }
-
   } else {
     isgood = FALSE
-    msgs = c(msgs, "Unable to fetch the model catalog.")
   }
 
 

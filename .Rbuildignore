@@ -12,3 +12,4 @@ README.RMD
 ^codecov\.yml$
 ^\.github$
 vignettes/transient/*
+check_depsonly.R
