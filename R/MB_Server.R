@@ -1524,6 +1524,7 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
     FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
     MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
     
+  message("pre fetch state")
     # Creating an empty state object
     state = MB_fetch_state(id              = "MB",
                            input           = input,
@@ -1531,6 +1532,7 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
                            FM_yaml_file    = FM_yaml_file,
                            MOD_yaml_file   = MOD_yaml_file,
                            react_state     = NULL)
+  message("post fetch state")
     
   if(state[["MB"]][["suggested"]][["found"]]){
     # This will provide a list of the available models
@@ -1628,6 +1630,8 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
   } else {
     isgood = FALSE
   }
+
+  message("bottom")
 
   res = list(
     isgood  = isgood,
