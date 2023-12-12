@@ -1535,7 +1535,6 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
 
   message("post fetch state")
   message(paste0(" suggets: ", state[["MB"]][["suggested"]][["found"]]))
-  message(str(state$MB$suggested))
     
   if(state[["MB"]][["suggested"]][["found"]]){
     # This will provide a list of the available models
