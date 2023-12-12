@@ -1532,7 +1532,10 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
                            FM_yaml_file    = FM_yaml_file,
                            MOD_yaml_file   = MOD_yaml_file,
                            react_state     = NULL)
+
   message("post fetch state")
+  message(paste0(" suggets: ", state[["MB"]][["suggested"]][["found"]]))
+  message(str(state$MB$suggested))
     
   if(state[["MB"]][["suggested"]][["found"]]){
     # This will provide a list of the available models
