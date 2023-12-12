@@ -9,7 +9,7 @@ on.exit( setwd(current_dir))
 
 setwd(tempdir())
 
-if(MB_mod_ok(pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib"))){
+if(sess_res$state[["MB"]][["suggested"]][["found"]]){
   test_that("Building model catalog", {
       state = sess_res$state
       mtres = suppressMessages(suppressWarnings(MB_test_catalog(state, as_cran=TRUE)))

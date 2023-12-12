@@ -28,7 +28,7 @@ Takes an rxode2 object and updates the model components of the
 current element.
 }
 \examples{
-library(ruminate)
+#library(ruminate)
 # This will get the full session:
 sess_res = MB_test_mksession(session=list(), full_session=TRUE)
 # This is just for CRAN

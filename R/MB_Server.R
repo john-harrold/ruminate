@@ -500,7 +500,7 @@ MB_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
 
-      if(MB_mod_ok(pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib"))){
+      if(state[["MB"]][["suggested"]][["found"]]){
         uiele_code_button = NULL
         # Generating code button if enabled
         if( state[["MC"]][["compact"]][["code"]]){
@@ -603,14 +603,14 @@ MB_Server <- function(id,
         )
       } else {
         uiele = NULL
-         if(!MB_mod_ok("rxode2")){
-           uiele = tagList(uiele, "rxode2 package was not found.", tags$br())
+         if(!state[["MB"]][["suggested"]][["pkgs"]][["rxode2"]][["found"]]){
+           uiele = tagList(uiele, state[["MB"]][["suggested"]][["pkgs"]][["rxode2"]][["msg"]], tags$br())
          }
-         if(!MB_mod_ok("nonmem2rx")){
-           uiele = tagList(uiele, "nonmem2rx package was not found.", tags$br())
+         if(!state[["MB"]][["suggested"]][["pkgs"]][["nonmem2rx"]][["found"]]){
+           uiele = tagList(uiele, state[["MB"]][["suggested"]][["pkgs"]][["nonmem2rx"]][["msg"]], tags$br())
          }
-         if(!MB_mod_ok("nlmixr2lib")){
-           uiele = tagList(uiele, "nlmixr2lib package was not found.", tags$br())
+         if(!state[["MB"]][["suggested"]][["pkgs"]][["nlmixr2lib"]][["found"]]){
+           uiele = tagList(uiele, state[["MB"]][["suggested"]][["pkgs"]][["nlmixr2lib"]][["msg"]], tags$br())
          }
       }
 
@@ -1311,6 +1311,32 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
     state[["MC"]][["formatting"]][["base_from"]][["default"]]
 
 
+
+  #------------------------------------
+  # Checking for rxpackages
+  # If all the suggested packages are found this will be true:
+  state[["MB"]][["suggested"]][["found"]]        =  TRUE
+
+  pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib")
+  for(pkg in pkgs){
+    if(!is_installed(pkg)){
+      state[["MB"]][["suggested"]][["pkgs"]][[pkg]][["found"]] =  FALSE
+      state[["MB"]][["suggested"]][["pkgs"]][[pkg]][["msg"]]   =  paste0(pkg, " package was not found.")
+      state[["MB"]][["suggested"]][["found"]]                  =  FALSE
+      # this is a temp file created to make sure that notifications have only
+      # been issued once
+      pkg_file = file.path(tempdir(), paste0("MB_pkg_not_found_", pkg))
+
+      if(!file.exists(pkg_file)){
+        FM_message(paste0("The package ", pkg, " is not installed"), entry_type="warning")
+        file.create(pkg_file)
+      }
+    } else {
+      state[["MB"]][["suggested"]][["pkgs"]][[pkg]][["found"]] =  TRUE
+      state[["MB"]][["suggested"]][["pkgs"]][[pkg]][["msg"]]   =  ""
+    }
+  }
+  #------------------------------------
   # Pulling out the model sources
   state[["MB"]][["model_catalog"]]        =  MB_fetch_catalog(state)
 
@@ -1506,7 +1532,7 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
                            MOD_yaml_file   = MOD_yaml_file,
                            react_state     = NULL)
     
-  if(MB_mod_ok(pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib"))){
+  if(state[["MB"]][["suggested"]][["found"]]){
     # This will provide a list of the available models
     models = MB_fetch_catalog(state)
     
@@ -1611,34 +1637,6 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
     rsc     = rsc
   )
 }
-
-
-#'@export
-#'@title Makes Sure Suggests are Installed
-#'@description Simple check to make sure the suggested packages are installed.
-#'@param pkgs  List of suggested packages (default "rxode2", "nonmem2rx" and "nlmixr2lib")
-#'@return Boolean value indicating if the module is OK
-#'@examples
-#' MB_mod_ok()
-MB_mod_ok = function(pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib")){
-
-  res = TRUE
-  for(pkg in pkgs){
-    if(!is_installed(pkg)){
-      res = FALSE
-
-      # this is a temp file created to make sure that notifications have only
-      # been issued once
-      pkg_file = file.path(tempdir(), paste0("MB_mod_ok_", pkg))
-
-      if(!file.exists(pkg_file)){
-        FM_message(paste0("The package ", pkg, " is not installed"), entry_type="warning")
-        file.create(pkg_file)
-      }
-    }
-  }
-res}
-
 
 #'@export
 #'@title New Model Building Model
@@ -1854,7 +1852,7 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
   # Any checks of the rx_obj can be made here:
   # XXX
 
-  if(MB_mod_ok(pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib"))){
+  if(state[["MB"]][["suggested"]][["found"]]){
     if(isgood){
       # If a reset is called then we zero out the components table:
       if(reset){
@@ -2011,7 +2009,7 @@ component}
 #'@example inst/test_apps/MB_funcs.R
 MB_build_code  = function(state, session, fcn_def, fcn_obj_name, rx_obj_name){
 
-  if(MB_mod_ok("rxode2")){
+  if(state[["MB"]][["suggested"]][["pkgs"]][["rxode2"]][["found"]]){
     model_code = c(paste0(fcn_obj_name, " = ", fcn_def),
                    paste0(rx_obj_name,  " =  rxode2::rxode2(", fcn_obj_name,")"))
   } else {
@@ -2055,8 +2053,7 @@ MB_fetch_catalog   = function(state){
   select_plain   = list()
 
   # looking for packages to use conditionally below
-  found_nlmixr2lib = MB_mod_ok("nlmixr2lib")
-
+  found_nlmixr2lib = state[["MB"]][["suggested"]][["pkgs"]][["nlmixr2lib"]][["found"]]
 
   mod_idx  = 1
   mod_srcs = state[["MC"]][["sources"]]
@@ -2296,8 +2293,8 @@ catalog}
 #' rx_res[["capture"]][["rx_obj"]]
 mk_rx_obj   = function(type, model){
 
-  found_rxode2    = MB_mod_ok("rxode2")
-  found_nonmem2rx = MB_mod_ok("nonmem2rx")
+  found_rxode2    = is_installed("rxode2")
+  found_nonmem2rx = is_installed("nonmem2rx")
 
   if(all(c(found_rxode2, found_nonmem2rx))){
     if(type %in% c("rxode2", "NONMEM")){
@@ -2364,7 +2361,7 @@ MB_test_catalog   = function(state, as_cran=FALSE, verbose=TRUE){
   isgood = TRUE
   models = MB_fetch_catalog(state)
 
-  if(MB_mod_ok(pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib"))){
+  if( state[["MB"]][["suggested"]][["found"]]){
     if(models[["isgood"]]){
       model_summary = models[["summary"]]
       # If we're running it as cran we pair it down to a single model

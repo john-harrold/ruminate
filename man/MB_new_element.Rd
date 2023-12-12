@@ -19,7 +19,7 @@ Appends a new empty model to the MB state object
 and makes this new model the active model.
 }
 \examples{
-library(ruminate)
+#library(ruminate)
 # This will get the full session:
 sess_res = MB_test_mksession(session=list(), full_session=TRUE)
 # This is just for CRAN

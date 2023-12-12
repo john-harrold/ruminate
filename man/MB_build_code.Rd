@@ -33,7 +33,7 @@ object name and an rxode object name and creates the code to build those
 objects.
 }
 \examples{
-library(ruminate)
+#library(ruminate)
 # This will get the full session:
 sess_res = MB_test_mksession(session=list(), full_session=TRUE)
 # This is just for CRAN

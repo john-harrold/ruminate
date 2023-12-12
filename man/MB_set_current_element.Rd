@@ -20,7 +20,7 @@ Takes a MB state and returns the current active
 model
 }
 \examples{
-library(ruminate)
+#library(ruminate)
 # This will get the full session:
 sess_res = MB_test_mksession(session=list(), full_session=TRUE)
 # This is just for CRAN

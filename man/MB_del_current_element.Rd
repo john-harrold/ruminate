@@ -17,7 +17,7 @@ Takes a MB state and deletes the current model.
 If that is the last element, then a new default will be added.
 }
 \examples{
-library(ruminate)
+#library(ruminate)
 # This will get the full session:
 sess_res = MB_test_mksession(session=list(), full_session=TRUE)
 # This is just for CRAN
