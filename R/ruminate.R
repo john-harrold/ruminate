@@ -14,13 +14,39 @@
 
 #'@import shiny
 
+.onLoad <- function(libname, pkgname){
+
+
+  #------------------------------------
+  # Checking for rxpackages
+  # If all the suggested packages are found this will be true:
+  suggested_found = TRUE
+  #mr = FM_message("Loading ruminate", entry_type="h1")
+
+  mr = FM_message("Checking for required nlmixr2 family of tools", entry_type="alert")
+  pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib")
+  for(pkg in pkgs){
+    pkg_var = paste0("ruminate_", pkg, "_found")
+    if(!requireNamespace(pkg, quietly=TRUE)){
+      pkg_val = FALSE
+      suggested_found = FALSE
+      mr = FM_message(paste0("missing ", pkg), entry_type="danger")
+    } else {
+      pkg_val = TRUE
+      mr = FM_message(paste0("found ", pkg), entry_type="success")
+    }
+   eval(parse( text= paste0("Sys.setenv(", pkg_var, "=", pkg_val,")") ))
+  }
+
+  Sys.setenv(ruminate_rxfamily_found = suggested_found)
+}
 
 #'@export
 #'@title Run the {ruminate} Shiny App
 #'@description Runs the pharmacometrics ruminate app.
 #'@param host Hostname of the server ("127.0.0.1")
 #'@param port Port number for the app (3838)
-#'@param development Boolean variable indicating 
+#'@param development Boolean variable indicating
 #'@param server_opts List of options (names) and their vlues (value) e.g.
 #'\code{list(shiny.maxRequestSize = 30 * 1024^2)}.
 #'@param mksession Boolean value, when TRUE will load test session data
@@ -31,10 +57,10 @@
 #'if (interactive()) {
 #' ruminate()
 #'}
-ruminate = function(host        = "127.0.0.1", 
-                    port        = 3838, 
+ruminate = function(host        = "127.0.0.1",
+                    port        = 3838,
                     development = FALSE,
-                    server_opts = list(shiny.maxRequestSize = 30 * 1024^2), 
+                    server_opts = list(shiny.maxRequestSize = 30 * 1024^2),
                     mksession   = FALSE){
 
 
@@ -42,7 +68,7 @@ ruminate = function(host        = "127.0.0.1",
   if(exists("server_opts")){
     for(oname in names(server_opts)){
       eval(parse(text=paste0('options(',oname,'= server_opts[[oname]])')))
-    } 
+    }
   }
 
   # File used to indicate we're in test mode
@@ -72,3 +98,6 @@ ruminate = function(host        = "127.0.0.1",
                 port  = port)
 
 }
+
+
+

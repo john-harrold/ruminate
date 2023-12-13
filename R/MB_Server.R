@@ -500,7 +500,7 @@ MB_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
 
-      if(state[["MB"]][["suggested"]][["found"]]){
+     if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
         uiele_code_button = NULL
         # Generating code button if enabled
         if( state[["MC"]][["compact"]][["code"]]){
@@ -603,14 +603,14 @@ MB_Server <- function(id,
         )
       } else {
         uiele = NULL
-         if(!state[["MB"]][["suggested"]][["pkgs"]][["rxode2"]][["found"]]){
-           uiele = tagList(uiele, state[["MB"]][["suggested"]][["pkgs"]][["rxode2"]][["msg"]], tags$br())
+         if( Sys.getenv("ruminate_rxode2_found")=="FALSE"){
+           uiele = tagList(uiele, "rxode2 package was not found.", tags$br())
          }
-         if(!state[["MB"]][["suggested"]][["pkgs"]][["nonmem2rx"]][["found"]]){
-           uiele = tagList(uiele, state[["MB"]][["suggested"]][["pkgs"]][["nonmem2rx"]][["msg"]], tags$br())
+         if( Sys.getenv("ruminate_nonmem2rx_found")=="FALSE"){
+           uiele = tagList(uiele, "nonmem2rx package was not found.", tags$br())
          }
-         if(!state[["MB"]][["suggested"]][["pkgs"]][["nlmixr2lib"]][["found"]]){
-           uiele = tagList(uiele, state[["MB"]][["suggested"]][["pkgs"]][["nlmixr2lib"]][["msg"]], tags$br())
+         if( Sys.getenv("ruminate_nlmixr2lib_found")=="FALSE"){
+           uiele = tagList(uiele, "nlmixr2lib package was not found.", tags$br())
          }
       }
 
@@ -1534,9 +1534,9 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
                            react_state     = NULL)
 
   message("post fetch state")
-  message(paste0(" suggets: ", state[["MB"]][["suggested"]][["found"]]))
+  message(paste0(" suggets: ", Sys.getenv("ruminate_rxfamily_found")))
     
-  if(state[["MB"]][["suggested"]][["found"]]){
+  if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
     # This will provide a list of the available models
     models = MB_fetch_catalog(state)
     
@@ -1858,7 +1858,7 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
   # Any checks of the rx_obj can be made here:
   # XXX
 
-  if(state[["MB"]][["suggested"]][["found"]]){
+  if( Sys.getenv("ruminate_rxfamily_found")){
     if(isgood){
       # If a reset is called then we zero out the components table:
       if(reset){
@@ -2015,7 +2015,7 @@ component}
 #'@example inst/test_apps/MB_funcs.R
 MB_build_code  = function(state, session, fcn_def, fcn_obj_name, rx_obj_name){
 
-  if(state[["MB"]][["suggested"]][["pkgs"]][["rxode2"]][["found"]]){
+  if( Sys.getenv("ruminate_rxode2_found")){
     model_code = c(paste0(fcn_obj_name, " = ", fcn_def),
                    paste0(rx_obj_name,  " =  rxode2::rxode2(", fcn_obj_name,")"))
   } else {
@@ -2059,7 +2059,7 @@ MB_fetch_catalog   = function(state){
   select_plain   = list()
 
   # looking for packages to use conditionally below
-  found_nlmixr2lib = state[["MB"]][["suggested"]][["pkgs"]][["nlmixr2lib"]][["found"]]
+  found_nlmixr2lib = Sys.getenv("ruminate_nlmixr2lib_found")
 
   mod_idx  = 1
   mod_srcs = state[["MC"]][["sources"]]
@@ -2078,7 +2078,7 @@ MB_fetch_catalog   = function(state){
       #---------------------------------------
       # Appends all of the nlmixr2lib models
       if(mod_src[["type"]] == "nlmixr2lib"){
-        if(found_nlmixr2lib){
+        if(found_nlmixr2lib == "TRUE"){
           for(ridx in 1:nrow(nlmixr2lib::modeldb)){
             model_row = nlmixr2lib::modeldb[ridx, ]
 
@@ -2299,10 +2299,10 @@ catalog}
 #' rx_res[["capture"]][["rx_obj"]]
 mk_rx_obj   = function(type, model){
 
-  found_rxode2    = is_installed("rxode2")
-  found_nonmem2rx = is_installed("nonmem2rx")
+  found_rxode2    = Sys.getenv("ruminate_rxode2_found")
+  found_nonmem2rx = Sys.getenv("ruminate_nonmem2rx_found")
 
-  if(all(c(found_rxode2, found_nonmem2rx))){
+  if(found_rxode2 == "TRUE" & found_nonmem2rx == "TRUE"){
     if(type %in% c("rxode2", "NONMEM")){
       if(type == "rxode2"){
         mc = c(
@@ -2334,10 +2334,10 @@ mk_rx_obj   = function(type, model){
     }
   }else{
     msgs = c()
-    if(!found_rxode2){
+    if(found_rxode2 == "FALSE"){
       msgs = c(msgs, "rxode2 package was not found.")
     }
-    if(!found_nonmem2rx){
+    if(found_nonmem2rx == "FALSE"){
       msgs = c(msgs, "rnonmem2rx package was not found.")
     }
 
@@ -2367,7 +2367,8 @@ MB_test_catalog   = function(state, as_cran=FALSE, verbose=TRUE){
   isgood = TRUE
   models = MB_fetch_catalog(state)
 
-  if( state[["MB"]][["suggested"]][["found"]]){
+  #if( state[["MB"]][["suggested"]][["found"]]){
+  if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
     if(models[["isgood"]]){
       model_summary = models[["summary"]]
       # If we're running it as cran we pair it down to a single model

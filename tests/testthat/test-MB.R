@@ -9,7 +9,7 @@ on.exit( setwd(current_dir))
 
 setwd(tempdir())
 
-if(sess_res$state[["MB"]][["suggested"]][["found"]]){
+if( Sys.getenv("ruminate_rxfamily_found")){
   test_that("Building model catalog", {
       state = sess_res$state
       mtres = suppressMessages(suppressWarnings(MB_test_catalog(state, as_cran=TRUE)))
