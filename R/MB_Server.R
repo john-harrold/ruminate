@@ -778,11 +778,11 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
          state[["MB"]][["ui"]][[ui_name]] = 0
        } else {
          state[["MB"]][["ui"]][[ui_name]] = ""
+       }
 
-         # initializing the previous ui values as well:
-         if(is.null(state[["MB"]][["ui_prev"]][[ui_name]])){
-           state[["MB"]][["ui_old"]][[ui_name]] = state[["MB"]][["ui"]][[ui_name]]
-         }
+       # initializing the previous ui values as well:
+       if(is.null(state[["MB"]][["ui_old"]][[ui_name]])){
+         state[["MB"]][["ui_old"]][[ui_name]] = state[["MB"]][["ui"]][[ui_name]]
        }
      }
    }
@@ -811,7 +811,7 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
       if(ui_name %in% names(state[["MB"]][["button_counters"]])){
         # Button changes are compared to the button click tracking values
         change_detected =
-          has_changed(ui_val  = state[["MB"]][["ui"]][[ui_name]],
+          has_updated(ui_val  = state[["MB"]][["ui"]][[ui_name]],
                       old_val = state[["MB"]][["button_counters"]][[ui_name]])
         if(change_detected){
           formods::FM_le(state, paste0("button click: ", ui_name, " = ", state[["MB"]][["ui"]][[ui_name]]))
@@ -822,10 +822,13 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
 
           # logging the changed ui name:
           changed_uis = c(changed_uis, ui_name)
+
+          # Flagging the ui as initialized
+          state[["MB"]][["ui_ids_init"]][[ui_name]] = TRUE
         }
       }else{
         change_detected =
-          has_changed(ui_val  = state[["MB"]][["ui"]][[ui_name]],
+          has_updated(ui_val  = state[["MB"]][["ui"]][[ui_name]],
                       old_val = state[["MB"]][["ui_old"]][[ui_name]])
         if(change_detected){
           formods::FM_le(state, paste0("setting model : ", ui_name, " = ", paste(state[["MB"]][["ui"]][[ui_name]], collapse=", ")))
@@ -835,6 +838,9 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
 
           # logging the changed ui name:
           changed_uis = c(changed_uis, ui_name)
+
+          # Flagging the ui as initialized
+          state[["MB"]][["ui_ids_init"]][[ui_name]] = TRUE
 
           # This also updates the current element if that ui_name is part of
           # an element
@@ -1263,29 +1269,26 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
                       "button_clk_del",
                       "button_clk_copy",
                       "button_clk_new")
+  # These are the module ui elements that are associated with
+  # the current element
+  ui_ele          = c("catalog_selection",
+                      "base_from",
+                      "element_name",
+                      "time_scale")
 
   # This contains all of the relevant ui_ids in the module
-  ui_ids          = c(button_counters,
+  ui_ids          = c(button_counters, ui_ele,
                       "model_type_selection",
                       "ui_select_element",
                       "ui_mb_model",
-                      "time_scale",
                       "model_type_selection",
                       "uploaded_model",
-                      "base_from",
-                      "element_selection",
-                      "catalog_selection",
-                      "element_name")
+                      "element_selection")
 
   # Making all the ui_ids holdable
   ui_hold         = ui_ids
 
 
-  # These are the module ui elements that are associated with
-  # the current element
-  ui_ele          = c("catalog_selection",
-                      "element_name",
-                      "time_scale")
 
   state = FM_init_state(
     FM_yaml_file    = FM_yaml_file,
@@ -1524,7 +1527,6 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
     FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
     MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
     
-  message("pre fetch state")
     # Creating an empty state object
     state = MB_fetch_state(id              = "MB",
                            input           = input,
@@ -1533,9 +1535,6 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
                            MOD_yaml_file   = MOD_yaml_file,
                            react_state     = NULL)
 
-  message("post fetch state")
-  message(paste0(" suggets: ", Sys.getenv("ruminate_rxfamily_found")))
-    
   if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
     # This will provide a list of the available models
     models = MB_fetch_catalog(state)
@@ -1740,23 +1739,17 @@ MB_update_checksum     = function(state){
 
   # We'll concatinate all the individual checksums together
   # and create a checksum of those:
-  view_ids = names(state[["MB"]][["elements"]])
-  for(view_id in view_ids){
-    # We trigger updates when the dataframe changes:
-    chk_str = paste0(chk_str, ":", state[["MB"]][["elements"]][[view_id]][["checksum"]])
-
-    # We also trigger updates when the key has changed as well:
-    chk_str = paste0(chk_str, ":", state[["MB"]][["elements"]][[view_id]][["key"]])
+  element_ids = names(state[["MB"]][["elements"]])
+  for(element_id in element_ids){
+    # We trigger updates when the element changes:
+    chk_str = paste0(chk_str, ":", state[["MB"]][["elements"]][[element_id]][["checksum"]])
   }
-
-  state[["MB"]][["checksum"]] = digest::digest(chk_str, algo=c("md5"))
-  FM_le(state, paste0("module checksum updated:", state[["MB"]][["checksum"]]))
 
   old_chk = state[["MB"]][["checksum"]]
   new_chk = digest::digest(chk_str, algo=c("md5"))
 
-  if(has_changed(old_chk, new_chk)){
-    state[["MB"]][["checksum"]] = digest::digest(chk_str, algo=c("md5"))
+  if(has_updated(old_chk, new_chk)){
+    state[["MB"]][["checksum"]] = new_chk 
     FM_le(state, paste0("module checksum updated:", state[["MB"]][["checksum"]]))
   }
 
@@ -1797,7 +1790,11 @@ MB_set_current_element    = function(state, element){
   # updating the checksum for the current element:
   tmp_ele = element
   tmp_ele[["checksum"]]  = ""
-  element[["checksum"]]  = digest::digest(tmp_ele, algo=c("md5"))
+  tmp_checksum  = digest::digest(tmp_ele, algo=c("md5"))
+  if(has_updated(element[["checksum"]], tmp_checksum)){
+    FM_le(state, paste0("model checksum updated: ", tmp_checksum))
+    element[["checksum"]]  = tmp_checksum
+  }
 
   # this saves the element
   state[["MB"]][["elements"]][[element_id]] = element
