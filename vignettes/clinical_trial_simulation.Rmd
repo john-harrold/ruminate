@@ -1,0 +1,566 @@
+---
+title: 'Clinical Trial Simulation'
+output: rmarkdown::html_document 
+vignette: >
+  %\VignetteIndexEntry{Clinical Trial Simulation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, eval=TRUE, warning = FALSE)
+require(ggplot2)
+library(devtools)
+devtools::load_all()
+
+# Determining if ubiquity is installed
+if(is_installed("rxode2")){
+  library(rxode2)
+  rxode2_found = TRUE
+} else {
+  rxode2_found = FALSE
+}
+
+
+# The presim variable will contain presimulated data when eval is set to true
+presim_loaded = FALSE
+```
+
+```{r echo=FALSE, results=FALSE}
+presim= list()
+if(file.exists("CTS_presim.RData")){
+  file.remove("CTS_presim.RData")
+}
+```
+
+```{r echo=FALSE, results=FALSE, eval=TRUE}
+if(file.exists("CTS_presim.RData")){
+  #load("CTS_presim.RData")
+  presim_loaded = TRUE
+}
+
+sim_call_keep = c("time", "C_ng_ml", "BM", "id")
+
+```
+
+***NOTE: This module is currently under active development and this documentation is a work in progress***
+
+# Introduction
+
+Normally when we want to simulate a patients response we define a regimen and just simulate forward to a specified point in time. This works well for compounds that are relatively safe, the PK is consistent over time, and for which the drug concentrations required to achieve efficacy are consistent. In fact these restrictions apply to many different compounds. However, there are many scenarios where it is necessary to adjust dosing based on periodic clinical visits: compounds with a narrow therapeutic index, disease progression which alters the drug PK or requires increases in the dose amount, etc. While it is possible to do this manually with the current simulation tools provided, this section outlines a generalized framework to make this easier for the users.
+
+# Overview
+
+```{r child = 'rmdhunks/simulate_rules.Rmd'}
+```
+
+# Example: Fixed dosing
+
+To explore this framework a simple system describing antibody PK driving a change in a biomarker through an indirect response will be used. The timescale of this model is days and the system is shown at the bottom if you want to look through it. You can also find it in the `{rumiante}` package here:
+
+```{r echo=TRUE, results=FALSE}
+system.file(package="ruminate", "test_apps", "test_rxode2_system.R")
+```
+
+## Creating the `rxode2` object
+
+If you source the example file above it will create the function `my_model`. We can then we convert it into an `rxode2` object:
+
+```{r echo=TRUE, results=FALSE, eval=FALSE}
+source(system.file(package="ruminate", "test_apps", "test_rxode2_system.R"))
+object = rxode2(my_model)
+```
+
+```{r echo=FALSE, results=FALSE}
+if(rxode2_found){
+source(system.file(package="ruminate", "test_apps", "test_rxode2_system.R"))
+object = rxode2(my_model)
+}
+```
+
+## Defining subjects
+
+The first thing you want to do is create subjects. You can do this using the interindividual variability in the system. For systems where there are covariates you will need to define those. In this example there are three covariates that are needed. This list will create those by sampling `SEX_ID` randomly from a discrete distribution, fixing the `SUBTYPE_ID` at 0, and sampling the `WT` from a log-normal distribution. 
+
+```{r echo=TRUE, results=FALSE}
+covs = list(
+  SEX_ID     = list(type     = "discrete", 
+                    values   = c(0,1)),
+  SUBTYPE_ID = list(type     = "fixed",
+                    values   = c(0)),
+  WT         = list(type     = "continuous",
+                    sampling = "log-normal",
+                    values   = c(70, .15))
+)
+```
+
+```{r echo=TRUE,  results=FALSE, eval=FALSE}
+set.seed(8675309)
+subs = mk_subjects(object = object,
+                   nsub   = 6,
+                   covs   = covs)
+```
+
+```{r echo=FALSE, results=TRUE}
+if(rxode2_found){
+subs = mk_subjects(object = object,
+                   nsub   = 6,
+                   covs   = covs)
+presim[["subs"]] =subs
+}
+```
+
+```{r echo=FALSE, results=TRUE}
+head(presim[["subs"]][["subjects"]])
+```
+
+
+
+## Creating rules
+
+The `rules` are a named list. The list names are arbitrary and should be used for you to track what is going on. Each of these are a list with two required elements. A `condition` and an `action`. The condition is should be character string that when evaluated results in either `TRUE` or `FALSE`. The `action` should be a list and have a `type` and other list elements based on that `type`. Shown below is the `"dose"` type of action:
+ 
+```{r echo=TRUE, results=TRUE}
+rules = list(
+  low_dose = list(
+    condition = "TRUE",
+    true_value  = "3mg",
+    false_value = "0",
+    action    = list(
+      type  = "dose",
+      state     = "Ac", 
+      values    = "c(3,  3,  3,  3)*1e6/MW",
+      times     = "c(0, 14, 28, 42)",
+      durations = "c(0,  0,  0,  0)")
+    ) 
+)
+```
+
+You can optionally add a `true_value` and a `false_value` that will be stored in the simulated output to indicate the evaluation status of the condition. When setting a dose type you need to also provide elements for `values`, `times`, and `durations`. These are all character objects that can be evaluated to provide vectors. It's important to note the following when providing a dose type of action:
+
+* The lengths of these should be equal.
+* Times are relative to the evaluation time point.
+
+## Evaluation times
+
+With the subjects and rules defined we need to define the timepoints where the rules will be evaluated. In this case we are considering 7 cycles (0 to 6) of 8 weeks (2*28) each.
+
+```{r echo=TRUE, results=TRUE}
+eval_times =  (0:6)*28*2
+```
+
+
+## Running simulations
+
+This will define the output times we want for the simulation. Note that the last evlation point is on day 336 (`6*2*8`), so we follow the timecourse out for one more cycle to day 392 (`7*2*8`).
+```{r echo=TRUE, results=TRUE}
+output_times = seq(0, 7*28*2, 10)
+```
+
+If we want to pass any options to `rxode2` we can do that by creating a named list with the option name and value paired together:
+
+```{r echo=TRUE, results=TRUE}
+rx_options = list(
+   covsInterpolation = "locf",
+   addCov=TRUE
+)
+```
+
+
+Lastly all of these can be passed to `simulate_rules()`:
+
+```{r echo=TRUE, results=TRUE, eval=FALSE}
+set.seed(8675309)
+simres = 
+simulate_rules(object        = object,
+               subjects      = subs[["subjects"]],
+               eval_times    = eval_times,
+               output_times  = output_times, 
+               rules         = rules,
+               rx_options    = rx_options)
+```
+```{r echo=FALSE, results=TRUE}
+if(rxode2_found){
+set.seed(8675309)
+simres = 
+simulate_rules(object        = object,
+               subjects      = subs[["subjects"]],
+               eval_times    = eval_times,
+               output_times  = output_times, 
+               rules         = rules,
+               rx_options    = rx_options)
+
+presim[["exfd"]][["simall"]]=simres[["simall"]] |> dplyr::select(all_of(sim_call_keep))
+}
+```
+
+
+```{r echo=FALSE, results='asis', eval=TRUE, fig.width=7, fig.height=6}
+p = 
+ggplot(data=presim[["exfd"]][["simall"]]) +
+  geom_line(aes(x=time, y=C_ng_ml, group=id))+
+  scale_y_continuous(trans="log10")+
+  xlab("Time (days)") + ylab("Concentration (ng/ml)") +
+  theme_linedraw()+
+  facet_wrap(.~id)
+#rhtdf = presim[["exfd"]][["simall"]]
+#rownames(rhtdf) = NULL
+#cat("### Simulation results {.tabset} \n\n")
+#cat("#### Timecourse \n\n")
+print(p)
+#cat('\n\n')
+#cat("#### Simulated data \n\n")
+#rhandsontable::rhandsontable(rhtdf)
+#cat('\n\n')
+```
+
+# Example Resetting states
+
+The action type `"set state"` can be used to arbitrarily set the value of any state in the system. Below we are setting the central compartment to a value of 10 at time zero. Then at time 56 we increase the value in the peripheral compartment `Cp` by a factor of 5.
+
+
+```{r echo=TRUE, results=TRUE, eval=FALSE}
+rules = list(
+  reset_Ac    = list(
+   condition = "time == 0",
+   true_flag  = "Ac set",
+   false_flag = "",
+   action    = list(
+     type     = "set state",
+     state    = "Ac",
+     value    = "10")
+   ),
+ reset_Cp    = list(
+   condition = "time == 56",
+   true_flag  = "Cp set",
+   false_flag = "",
+   action    = list(
+     type     = "set state",
+     state    = "Cp",
+     value    = "Cp*5")
+  )
+)
+
+set.seed(8675309)
+simres = 
+simulate_rules(object        = object,
+               subjects      = subs[["subjects"]],
+               eval_times    = eval_times,
+               output_times  = output_times, 
+               rules         = rules,
+               rx_options    = rx_options)
+```
+
+```{r echo=FALSE, results=TRUE}
+if(rxode2_found){
+rules = list(
+  reset_Ac    = list(
+   condition = "time == 0",
+   true_flag  = "Ac set",
+   false_flag = "",
+   action    = list(
+     type     = "set state",
+     state    = "Ac",
+     value    = "10")
+   ),
+ reset_Cp    = list(
+   condition = "time == 56",
+   true_flag  = "Cp set",
+   false_flag = "",
+   action    = list(
+     type     = "set state",
+     state    = "Cp",
+     value    = "10")
+  )
+)
+
+set.seed(8675309)
+simres = 
+simulate_rules(object        = object,
+               subjects      = subs[["subjects"]],
+               eval_times    = eval_times,
+               output_times  = output_times, 
+               rules         = rules,
+               rx_options    = rx_options)
+presim[["exsr"]][["simall"]]=simres[["simall"]]  |> dplyr::select(all_of(sim_call_keep)) 
+}
+```
+```{r echo=FALSE, results='asis', eval=TRUE, fig.width=7, fig.height=6}
+p = 
+ggplot(data=presim[["exsr"]][["simall"]]) +
+  geom_line(aes(x=time, y=C_ng_ml, group=id))+
+  scale_y_continuous(trans="log10")+
+  theme_linedraw()+
+  xlab("Time (days)") + ylab("Concentration (ng/ml)") +
+  facet_wrap(.~id)
+#rhtdf = presim[["exsr"]][["simall"]]
+#rownames(rhtdf) = NULL
+#cat("### Simulation results {.tabset} \n\n")
+#cat("#### Timecourse \n\n")
+print(p)
+#cat('\n\n')
+#cat("#### Simulated data \n\n")
+#rhandsontable::rhandsontable(rhtdf)
+#cat('\n\n')
+```
+
+
+
+# Example: Manual code evaluation
+
+If you find you need to do something more complicated you can include functions in the preamble and use those functions in the methods above. Alternatively you can create your own code and use the `"manual"` rule type to modify the event table using the objects in the rule evaluation environment above. In the code below we are simply setting a state for the current subject id to a value. 
+
+```{r echo=TRUE, results=TRUE, eval=FALSE}
+code="
+SI_interval_ev = etRbind(SI_interval_ev,
+et(cmt  = 'Ac',
+   id   = id,
+   amt  = 10,
+   evid = 4,
+   time = time))"
+
+rules = list(
+  manual_example = list(
+    condition = "time == 56",
+    true_flag  = "manual",
+    false_flag = "",
+    action    = list(
+      type  = "manual",
+      code      = code
+    )
+  )
+)
+
+set.seed(8675309)
+simres = 
+simulate_rules(object        = object,
+               subjects      = subs[["subjects"]],
+               eval_times    = eval_times,
+               output_times  = output_times, 
+               rules         = rules,
+               rx_options    = rx_options)
+```
+```{r echo=FALSE, results=TRUE}
+if(rxode2_found){
+code="
+SI_interval_ev = etRbind(SI_interval_ev,
+et(cmt  = 'Ac',
+   id   = id,
+   amt  = 10,
+   evid = 4,
+   time = time))"
+
+rules = list(
+  manual_example = list(
+    condition = "time == 56",
+    true_flag  = "manual",
+    false_flag = "",
+    action    = list(
+      type  = "manual",
+      code      = code
+    )
+  )
+)
+
+set.seed(8675309)
+simres = 
+simulate_rules(object        = object,
+               subjects      = subs[["subjects"]],
+               eval_times    = eval_times,
+               output_times  = output_times, 
+               rules         = rules,
+               rx_options    = rx_options)
+presim[["exman"]][["simall"]]=simres[["simall"]]  |> dplyr::select(all_of(sim_call_keep)) 
+}
+```
+```{r echo=FALSE, results='asis', eval=TRUE, fig.width=7, fig.height=6}
+p = 
+ggplot(data=presim[["exman"]][["simall"]]) +
+  geom_line(aes(x=time, y=C_ng_ml, group=id))+
+  theme_linedraw()+
+  scale_y_continuous(trans="log10")+
+  xlab("Time (days)") + ylab("Concentration (ng/ml)") +
+  facet_wrap(.~id)
+#rhtdf = presim[["exman"]][["simall"]]
+#rownames(rhtdf) = NULL
+#cat("### Simulation results {.tabset} \n\n")
+#cat("#### Timecourse \n\n")
+print(p)
+#cat('\n\n')
+#cat("#### Simulated data \n\n")
+#rhandsontable::rhandsontable(rhtdf)
+#cat('\n\n')
+```
+
+# Example: Titrated dosing of a biomarker
+
+The examples before this demonstrate the mechanics of how to perform rule-based simualtions. This example should provide a more concrete example. Here we want to titrate dosing until a biomarker is within a range. Once in that range we want to maintain that dose. The first rule is only active at time 0 and it will initialize dosing at 0.1 mg. The remaining rules will only be active after the first dose at time 0 if the biomarker is below the range (`ss_dose_increase` ), above the range (`ss_dose_decrease`), or in the range (`ss_dose_keep`). These each use the simulation internal function `SI_fpd` to fetch the previous dose and select the new dose as a fraction of the previous. If you need to you can create your own functions to use in the action fields. You just need to create a character string with the function definitions and pass those as the `preamble` input to `simulate_rules()`. 
+
+
+```{r echo=TRUE, results=TRUE, eval=FALSE}
+rules = list(
+ first_cycle = list(
+   condition = "time == 0",
+   true_flag  = "first cycle",
+   false_flag = "",
+   action    = list(
+     type  = "dose",
+     state     = "Ac", 
+     values    = "c(0.1,  0.1,  0.1,  0.1)*1e6/MW",
+     times     = "c(0, 14, 28, 42)",
+     durations = "c(0,  0,  0,  0)")
+   ) ,
+ ss_dose_keep         = list(
+   condition = "((BM <=  7e4) & (BM >=5e4)) & (time > 0)",
+   true_flag  = "keep last",
+   false_flag = "",
+   action    = list(
+     type  = "dose",
+     state     = "Ac", 
+     values    = "c( 1.0,  1.00,  1.00,  1.00)*SI_fpd(id=id, state='Ac')",
+     times     = "c(0, 14, 28, 42)",
+     durations = "c(0,  0,  0,  0)")
+   ) ,
+ ss_dose_decrease     = list(
+   condition = "(BM >  7e4) & (time > 0)",
+   true_flag  = "titrate down",
+   false_flag = "",
+   action    = list(
+     type  = "dose",
+     state     = "Ac", 
+     values    = "c( .90,   .90,   .90,   .90)*SI_fpd(id=id, state='Ac')",
+     times     = "c(0, 14, 28, 42)",
+     durations = "c(0,  0,  0,  0)")
+   ) ,
+ ss_dose_increase = list(
+   condition = "(BM <  5e4) & (time > 0)",
+   true_flag  = "titrate up",
+   false_flag = "",
+   action    = list(
+     type  = "dose",
+     state     = "Ac", 
+     values    = "c(1.30,  1.30,  1.30,  1.30)*SI_fpd(id=id, state='Ac')",
+     times     = "c(0, 14, 28, 42)",
+     durations = "c(0,  0,  0,  0)")
+   )
+)
+
+set.seed(8675309)
+simres = 
+simulate_rules(object        = object,
+               subjects      = subs[["subjects"]],
+               eval_times    = eval_times,
+               output_times  = output_times, 
+               rules         = rules,
+               rx_options    = rx_options)
+```
+```{r echo=FALSE, results=TRUE}
+load_all()
+if(rxode2_found){
+rules = list(
+ first_cycle = list(
+   condition = "time == 0",
+   true_flag  = "first cycle",
+   false_flag = "",
+   action    = list(
+     type  = "dose",
+     state     = "Ac", 
+     values    = "c(0.1,  0.1,  0.1,  0.1)*1e6/MW",
+     times     = "c(0, 14, 28, 42)",
+     durations = "c(0,  0,  0,  0)")
+   ) ,
+ ss_dose_keep         = list(
+   condition = "((BM <=  7e4) & (BM >=5e4)) & (time > 0)",
+   true_flag  = "keep last",
+   false_flag = "",
+   action    = list(
+     type  = "dose",
+     state     = "Ac", 
+     values    = "c( 1.0,  1.00,  1.00,  1.00)*SI_fpd(id=id, state='Ac')",
+     times     = "c(0, 14, 28, 42)",
+     durations = "c(0,  0,  0,  0)")
+   ) ,
+ ss_dose_decrease     = list(
+   condition = "(BM >  7e4) & (time > 0)",
+   true_flag  = "titrate down",
+   false_flag = "",
+   action    = list(
+     type  = "dose",
+     state     = "Ac", 
+     values    = "c( .90,   .90,   .90,   .90)*SI_fpd(id=id, state='Ac')",
+     times     = "c(0, 14, 28, 42)",
+     durations = "c(0,  0,  0,  0)")
+   ) ,
+ ss_dose_increase = list(
+   condition = "(BM <  5e4) & (time > 0)",
+   true_flag  = "titrate up",
+   false_flag = "",
+   action    = list(
+     type  = "dose",
+     state     = "Ac", 
+     values    = "c(1.30,  1.30,  1.30,  1.30)*SI_fpd(id=id, state='Ac')",
+     times     = "c(0, 14, 28, 42)",
+     durations = "c(0,  0,  0,  0)")
+   )
+)
+
+set.seed(8675309)
+simres = 
+simulate_rules(object        = object,
+               subjects      = subs[["subjects"]],
+               eval_times    = eval_times,
+               output_times  = output_times, 
+               rules         = rules,
+               rx_options    = rx_options)
+presim[["exbmbound"]][["simall"]]=simres[["simall"]]  |> dplyr::select(all_of(sim_call_keep)) 
+presim[["exbmbound"]][["ev_history"]]=simres[["ev_history"]]
+}
+```
+
+```{r echo=FALSE, results='asis', eval=TRUE, fig.width=7, fig.height=6}
+p = 
+ggplot(data=presim[["exbmbound"]][["simall"]]) +
+  geom_line(aes(x=time, y=C_ng_ml, group=id), color="blue")+
+  geom_line(aes(x=time, y=BM, group=id), color="orange")+
+  geom_hline(yintercept=5e4)+
+  geom_hline(yintercept=7e4)+
+  scale_y_continuous(trans="log10", limits=c(1e3, 1e6))+
+  theme_linedraw()+
+  xlab("Time (days)") + ylab("Concentration (ng/ml)") +
+  facet_wrap(.~id)
+
+tmp_dosing =  presim[["exbmbound"]][["ev_history"]] |>
+  dplyr::filter(evid==1) |>
+  dplyr::mutate(id=as.factor(id)) 
+
+p_d = ggplot(data=tmp_dosing) +
+  xlab("Time (days)") + ylab("Amount (nmoles)") +
+  geom_line(aes(x=time, y=amt, group=id, color=id)) +
+  theme_linedraw()+
+  geom_point(aes(x=time, y=amt, group=id, color=id)) +
+  facet_wrap(.~id)
+
+
+rhtdf = presim[["exbmbound"]][["simall"]]
+rownames(rhtdf) = NULL
+cat("### Simulation results {.tabset} \n\n")
+cat("#### Timecourse \n\n")
+print(p)
+cat('\n\n')
+cat("#### Dosing values \n\n")
+print(p_d)
+cat('\n\n')
+```
+
+
+# Antibody-PK and biomarker system
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE,  style="max-height: 100px;", comment=""}
+pkbm_system = system.file(package="ruminate", "test_apps", "test_rxode2_system.R")
+cat(readLines(pkbm_system), sep="\n")
+```
+
+
+```{r warning=FALSE, message=FALSE, echo=FALSE}
+#save(presim, file="CTS_presim.RData", compress=TRUE)
+```

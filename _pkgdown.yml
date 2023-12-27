@@ -22,11 +22,20 @@ reference:
    - title: "MB Module functions"
    - contents:
      - starts_with("MB_")
+     - mk_rx_obj
+   - title: "CTS Module functions"
+   - contents:
+     - starts_with("CTS_")
+     - fetch_rxinfo
+     - fetch_rxtc
+     - mk_subjects
+     - simulate_rules
    - title: "NCA Module functions"
    - contents:
      - apply_route_map
      - dose_records_builder
-     - starts_with("mk_")
+     - starts_with("mk_table")
+     - starts_with("mk_figure")
      - starts_with("NCA_")
      - starts_with("nca_")
      - run_nca_components
@@ -46,6 +55,8 @@ navbar:
          href: articles/noncompartmental_analysis.html
        - text: "Building Models"
          href: articles/model_builder.html
+       - text: "Clinical Trial Simulations"
+         href: articles/clinical_trial_simulation.html
   - text: "Functions"
     icon: fas fa-hat-wizard
     href: reference/index.html

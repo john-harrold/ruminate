@@ -42,13 +42,18 @@ You can install the released version of `rumiante` from
 [CRAN](https://cran.r-project.org/package=ruminate) with:
 
 ``` r
-# Dependencies:
+# General dependencies:
 install.packages("clipr")
 install.packages("gridExtra")
 install.packages("prompter")
 install.packages("readxl")
 install.packages("shinydashboard")
 install.packages("ubiquity")
+
+# Dependencies for the MB and CTS modules
+install.packages("nlmixr2lib")
+install.packages("nonmem2rx")
+install.packages("rxode2")
 
 # Actual package
 install.packages("ruminate")
@@ -65,13 +70,18 @@ if(system.file(package="devtools") == ""){
   install.packages("devtools") 
 }
 
-# Dependencies:
+# General dependencies:
 install.packages("clipr")
 install.packages("gridExtra")
 install.packages("prompter")
 install.packages("readxl")
 install.packages("shinydashboard")
 install.packages("ubiquity")
+
+# Dependencies for the MB and CTS modules
+install.packages("nlmixr2lib")
+install.packages("nonmem2rx")
+install.packages("rxode2")
 
 devtools::install_github("john-harrold/onbrand",  dependencies=TRUE)
 devtools::install_github("john-harrold/formods",  dependencies=TRUE)

@@ -1,4 +1,8 @@
-# ruminate 0.2.1 (development version)
+# ruminate 0.2.2 (development version)
+
+- Added CTS (Clinical trial simulator) modle (in development)
+
+# ruminate 0.2.1 
 
 - Fixed use of suggests that were not conditional. 
 

@@ -1,0 +1,121 @@
+
+The underlying simulations are run using `rxode2`, and as such we need an
+`rxode2` system object. From that we can either simulate subjects or load them
+from a file. Next we need to define a set of rules. These will be a set of
+conditions and actions. At each evaluation time point the conditions are
+evaluated.  When a condition is met the actions associated with that condition
+are executed.  For example, if during a visit (an evaluation time point) the
+trough PK is below a certain level (condition) we may want to increase the
+dosing regimen for the next dosing cycle (action).
+
+## Creating subjects
+
+Subjects are expected in a data frame with the following column headers:
+
+* `id` Individual subject id
+* Names of parameters and iiv as specified in the `ini` section of the
+  `rxode2` function specification
+* Names of covariates used in the model.
+
+`mk_subjects()` --- Creates subjects for simulation sampling based on
+between-subject variability and generating covariate information based on user
+specifications. 
+
+### Covariates
+
+The `covs` input is a list with the following structure:
+
+* type: Can be either "fixed", "discrete", or "continuous".
+* sampling: This field is only needed for a "continuous" covariate ' type and can be either "random", "normal" or "continuous".
+* values: This field depends on the type and optional sampling above.
+  * fixed: A single value.
+  * discrete: A vector of possible discrete elements.
+  * continuous, random: Two values the first is the lower bound and the second is the upper bound.
+  * continuous, normal: Two values the first is the mean and the second is the variance.
+  * continuous, log-normal: Two values the first is the mean and the second is the variance.
+  
+This examples shows the `SEX_ID` randomly sampled from the values specified,
+`SUBTYPE_ID` fixed at a value, and `WT` sampled from a log-normal
+distribution.
+
+```{r, eval=FALSE}
+covs = list(
+  SEX_ID     = list(type     = "discrete", 
+                    values   = c(0,1)),
+  SUBTYPE_ID = list(type     = "fixed",
+                    values   = c(0)),
+  WT         = list(type     = "continuous",
+                    sampling = "log-normal",
+                    values   = c(70, .15))
+)
+```
+
+## Rule-based simulations
+
+`simulate_rules()` --- This will run simulations based on the rule definitions
+below. 
+
+### Rules
+
+Rules are a named list where the list name can be a short descriptive label
+used to remember what the rule does. These names will be returned as columns
+in the simulated data frame.
+
+ * `condition`: Character string that evaluates to either `TRUE` or `FALSE`. When true the `action` portion will be triggered. For a list of objects available see the Rule-evaluation environment below.
+ * `fail_flag`: Flag set in the `rule_id` column when the condition is not met (set to `"false"` if not specified).
+ * `true_flag`: Flag set in the `rule_id` column when the condition is met (set to `"true"` if not specified).
+ * `action`: This is what the rule will trigger can be any of the following: 
+   * `type`:  This defines the action type and can be either `"dose"`,  `"set state"`, or `"manual"`.
+
+Based on the `type` the `action` field will expect different elements. 
+
+Dosing:
+
+* `action`
+  * `type`:  `"dose"`
+  * `values`:     Character string that evaluates as a numeric vector  dosing amounts (e.g. `"c(3,  3,  3,  3)"`)
+  * `times`:      Character string that evaluates as a numeric vector of times (e.g. `"c(0, 14, 28, 42)"`)
+  * `durations`:  Character string that evaluates as a numeric vector of durations  (e.g. `"c(0, 0, 0, 0)"`, zero for bolus dosing)
+
+Changing a state value:
+
+* `action`
+  * `type`:  `"set state"`
+  * `state`:     Character string with the name of the state to set (`"Ac"`)
+  * `value`:     Character string that evaluates as a numeric value for state (e.g. `"Ac/2"` would set the state to half the value of Ac at the evaluation point)
+
+Manual modification of the simulation:
+
+* `action`
+  * `type`:  `"manual"`
+  * `code`:  Character string of code to evaluate.
+
+### Rule-evaluation environment
+
+Beyond simple simulations it will be necessary to execute actions based on the
+current or previous state of the system. For this reason,  when a `condition`
+or elements of the action (e.g., the `values`, `times` and `durations` of a
+dose action type) are being evaluated, the following objects will be available
+at each evaluation point:
+
+* states:     The value of each named state or compartment.
+* covariates: The value of each named covariate.
+* subject-level parameters: The value of each named parameter.
+* rule value: The last value the rule evaluated as.
+* `SI_SUB_HISTORY`: A data frame of the simulation history of the current subject up to the current evaluation point.
+* `SI_subjects`: The subjects data frame.
+* `SI_eval_times`: Vector of the evaluation times.
+* `SI_interval_ev`: The events table in it's current state for the given simulation interval.
+* `SI_ev_history`: This is the history of the event table containing all
+  the events leading up to the current interval.
+* `SI_ud_history`: This is a free form object the user can define within
+  the "manual"action type. 
+
+####  The following functions will be available:
+
+* `SI_fpd`: This function will fetch the previous (fpd) for the given id and state. For
+example for the current `id` and the state `Ac` you would do the following:
+
+```{r, eval=FALSE}
+SI_fpd(id=id, state="Ac")
+```

@@ -7,6 +7,9 @@
     <loc>/LICENSE-text.html</loc>
   </url>
   <url>
+    <loc>/articles/clinical_trial_simulation.html</loc>
+  </url>
+  <url>
     <loc>/articles/deployment.html</loc>
   </url>
   <url>
@@ -17,6 +20,9 @@
   </url>
   <url>
     <loc>/articles/noncompartmental_analysis.html</loc>
+  </url>
+  <url>
+    <loc>/articles/rmdhunks/simulate_rules.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>
@@ -157,6 +163,12 @@
     <loc>/reference/dose_records_builder.html</loc>
   </url>
   <url>
+    <loc>/reference/fetch_rxinfo.html</loc>
+  </url>
+  <url>
+    <loc>/reference/fetch_rxtc.html</loc>
+  </url>
+  <url>
     <loc>/reference/ft_apply_md.html</loc>
   </url>
   <url>
@@ -167,6 +179,9 @@
   </url>
   <url>
     <loc>/reference/mk_rx_obj.html</loc>
+  </url>
+  <url>
+    <loc>/reference/mk_subjects.html</loc>
   </url>
   <url>
     <loc>/reference/mk_table_ind_obs.html</loc>
@@ -182,6 +197,9 @@
   </url>
   <url>
     <loc>/reference/run_nca_components.html</loc>
+  </url>
+  <url>
+    <loc>/reference/simulate_rules.html</loc>
   </url>
   <url>
     <loc>/reference/span_table.html</loc>
