@@ -1,4 +1,7 @@
 #'@import dplyr
+#'@import rxode2
+#'@importfrom stats rnorm  runif
+
 
 #'@export
 #'@title Rule-Based simulates
@@ -237,9 +240,9 @@ simulate_rules <- function(object,
     # Simulating before the fist eval_time to get
     # a snapshot of the simulation:
     tmp_ot  = sort(unique(c(ot_sim[ot_sim < min(eval_times)], min(eval_times))))
-    init_ev  = et(time=tmp_ot, id=sub_ids)
+    init_ev  = rxode2et::et(time=tmp_ot, id=sub_ids)
     sim_cmd = paste0(c(preamble,
-                     paste0("sim = rxSolve(object, params=subjects, events=ev", rx_options_str, ")")),
+                     paste0("sim = rxode2::rxSolve(object, params=subjects, events=ev", rx_options_str, ")")),
                      collapse="\n")
     tcres = FM_tc(
       cmd     = sim_cmd,
@@ -432,8 +435,9 @@ simulate_rules <- function(object,
                             sub_ot = sub_ot[sub_ot >= t_min & sub_ot <=t_max]
                           }
 
-                          interval_ev = etRbind(interval_ev,
-                                           et(cmt  = tmp_cmt,
+                          interval_ev = rxode2et::etRbind(interval_ev,
+                                           rxode2et::et(
+                                              cmt  = tmp_cmt,
                                               id   = sub_id,
                                               amt  = dvals,
                                               time = dtimes,
@@ -552,8 +556,9 @@ simulate_rules <- function(object,
               } else {
                new_state_amt  = sub_state[[state]]
               }
-              interval_ev = etRbind(interval_ev,
-                               et(cmt  = state,
+              interval_ev = rxode2et::etRbind(interval_ev,
+                               rxode2et::et(
+                                  cmt  = state,
                                   id   = sub_id,
                                   amt  = new_state_amt,
                                   evid = 4,
@@ -563,8 +568,8 @@ simulate_rules <- function(object,
             # Combining the subject specific sampling with
             # the interval samples:
             sub_ot       = sort(unique(c(sub_ot, tmp_ot)))
-            interval_ev  = etRbind(interval_ev,
-                           et(time=sub_ot, id=sub_id))
+            interval_ev  = rxode2et::etRbind(interval_ev,
+                           rxode2et::et(time=sub_ot, id=sub_id))
 
 
           }
@@ -574,7 +579,7 @@ simulate_rules <- function(object,
           sim_cmd = paste0(c(
                     cmd_init,
                     preamble,
-                    paste0("sim = rxSolve(object, params=subjects, events=ev", rx_options_str, ")")),
+                    paste0("sim = rxode2::rxSolve(object, params=subjects, events=ev", rx_options_str, ")")),
                     collapse = "\n")
           tcres = FM_tc(
             cmd     = sim_cmd,
@@ -584,7 +589,7 @@ simulate_rules <- function(object,
                            ev       = interval_ev))
 
           # Storing all of the events in a single table to return to the user
-          ev_history  = etRbind(ev_history , interval_ev)
+          ev_history  = rxode2et::etRbind(ev_history , interval_ev)
 
           if(tcres[["isgood"]]){
 
@@ -767,7 +772,7 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
           if(covs[[covname]][["sampling"]] %in% c("normal", "log-normal")){
             if(covs[[covname]][["sampling"]] == "normal"){
               iCov[[covname]] = covs[[covname]][["values"]][1] +
-                rnorm(
+                stats::rnorm(
                 mean = 0,
                 sd   = covs[[covname]][["values"]][2],
                 n    = nsub
@@ -775,7 +780,7 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
             }
             if(covs[[covname]][["sampling"]] == "log-normal"){
               iCov[[covname]] = covs[[covname]][["values"]][1] *
-                exp(rnorm(
+                exp(stats::rnorm(
                     mean = 0,
                     sd   = covs[[covname]][["values"]][2],
                     n    = nsub
@@ -783,18 +788,18 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
             }
           }
           if(covs[[covname]][["sampling"]] == "random"){
-            iCov[[covname]] =  runif(min = covs[[covname]][["values"]][1],
-                                     max = covs[[covname]][["values"]][2],
-                                     n   = nsub)
+            iCov[[covname]] =  stats::runif(min = covs[[covname]][["values"]][1],
+                                            max = covs[[covname]][["values"]][2],
+                                            n   = nsub)
           }
         }
       }
 
       #-----------------------------------------------------------------
       # JMH figure out a better way to do this using low level functions
-      ev <-et(amt=0, cmt=1, id=c(1:nsub)) |>
+      ev <-rxode2et::et(amt=0, cmt=1, id=c(1:nsub)) |>
            add.sampling(c(0,1))
-      sim  <- rxSolve(object, ev, nSub=nsub, iCov = iCov)
+      sim  <- rxode2::rxSolve(object, ev, nSub=nsub, iCov = iCov)
       params = as.data.frame(sim$params)
 
       # Just extracting the parameters we need for running simulations:
