@@ -142,7 +142,7 @@ structure:</p>
 <ul>
 <li>type: Can be either “fixed”, “discrete”, or “continuous”.</li>
 <li>sampling: This field is only needed for a “continuous” covariate ’
-type and can be either “random”, “normal” or “continuous”.</li>
+type and can be either “random”, “normal” or “log-normal”.</li>
 <li>values: This field depends on the type and optional sampling above.
 <ul>
 <li>fixed: A single value.</li>
@@ -298,9 +298,10 @@ define within the “manual”action type.</li>
 </h4>
 <ul>
 <li>
-<code>SI_fpd</code>: This function will fetch the previous (fpd) for
-the given id and state. For example for the current <code>id</code> and
-the state <code>Ac</code> you would do the following:</li>
+<code>SI_fpd</code>: This function will fetch the previous dose
+(fpd) for the given id and state. For example for the current
+<code>id</code> and the state <code>Ac</code> you would do the
+following:</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">SI_fpd</span><span class="op">(</span>id<span class="op">=</span><span class="va">id</span>, state<span class="op">=</span><span class="st">"Ac"</span><span class="op">)</span></span></code></pre></div>

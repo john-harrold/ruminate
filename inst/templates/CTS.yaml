@@ -1,0 +1,232 @@
+# The MC field is a skeleton for constructing new modules
+MC:
+  element_object_name: "CTS_obj"
+# The include section is optional. You can use this section to copy files 
+# from the directory where you are running the app to the user directory to be
+# used in the app and when saved. The source and dest options can be a path
+# command like below or a double
+# quoted string: '"/path/to/file"'
+# The dest should be relative to user directory (think the root of the zip
+# file that is exported). See formods.yaml for examples. 
+#
+# include:
+#   files:
+#   - file:
+#       source: 'file.path(system.file(package="onbrand"), "templates", "report.docx")'
+#       dest:   'file.path("config","report.docx")'
+  code: # module specific code options
+    packages: ["XXX"]
+    readOnly: TRUE
+    mode:     r
+  # Controls what is shown in the compact ui mode:
+  compact:
+    code:    TRUE 
+    clip:    TRUE 
+  # This is where you put reporting options. The expected options are shown
+  # here, but module-specific options can also be added if needed:
+  reporting:
+    enabled: FALSE
+    # Priority of reporting relative to other modules 
+    # (higher numbers are reported first)
+    priority: 1
+  # put different formatting options (widths, heights,
+  # shinyWidgets button sizes, etc) here.
+  formatting:
+    # Dimensions of code snippet box
+    code:
+      width:  800
+      height: 300
+    current_element:
+      width:  "200px"
+    source_model:   
+      width:  "200px"
+    element_name:
+      width:  "200px"
+    preview:
+      width:  "800px"
+      height: "500px"
+    input:
+    button_clk_run:
+      size: "sm"
+      block: TRUE
+    button_clk_del:
+      size: "sm"
+      block: TRUE
+      tooltip: "Delete the current cohort."
+      tooltip_position: "right"
+    button_clk_save:
+      size: "sm"
+      block: TRUE
+      tooltip: "Save the name for the current cohort."
+      tooltip_position: "right"
+    button_clk_clip:
+      size: "sm"
+      block: TRUE
+      tooltip: "Copy the code to generate the current cohort to the clipboard."
+      tooltip_position: "right"
+    button_clk_copy:
+      size: "sm"
+      block: TRUE
+      tooltip: "Make a copy of the current cohort."
+      tooltip_position: "right"
+    button_clk_new:
+      size: "sm"
+      block: TRUE
+      tooltip: "Create a new cohort."
+      tooltip_position: "right"
+      width: 100
+    rule_condition:
+      width:  300
+      height: 100
+      tooltip: "This is a condition that should evaluate to either TRUE (if the action should be taken) or FALSE (if it should be skipped)."
+      tooltip_position: "bottom"
+      placeholder: "examples: TRUE will run the action at at every visit or (time > 0) & (Ac < 10) will be more selective."
+    action_dosing_state:
+      width:  200
+    action_dosing_values:
+      width:  200
+      placeholder: "c(1, 1, 1)"
+      tooltip: "Expression defining dosing amounts that will evaluate as a numeric vector of numbers."
+    action_dosing_times:
+      width:  200
+      placeholder: "c(0, 7, 14)"
+      tooltip: "Expression defining dosing times that will evaluate as a numeric vector of numbers."
+      tooltip_position: "bottom"
+    action_dosing_durations:
+      width:  200
+      placeholder: "c(0, 0, 0)"
+      tooltip: "Expression containing dosing duration that will evaluate as a numeric vector of numbers (zeros for bolus dosing)."
+      tooltip_position: "bottom"
+    action_set_state_state:
+      width:  200
+    action_set_state_value:
+      width:  200
+      placeholder: "A value like 20 or an expression in terms of a system element such as Ac/2"
+      tooltip: "An expression that evaluates to a new number."
+    action_manual_code:   
+      width:  200
+      height: 75 
+      placeholder: |- 
+        SI_interval_ev = etRbind(SI_interval_ev,
+          et(cmt  = 'Ac',
+             id   = id,
+             amt  = 10,
+             evid = 4,
+             time = time))
+      tooltip: "Expression with code to manually update the event table."
+    rule_type:
+      width: 100
+      options:
+        dose: 
+          choice:      "Dosing"
+          subtext:     "Add bolus or infusion dosing"
+          value:       "dose"
+        state_reset:
+          choice:      "Set State"
+          subtext:     "Reset the named state or compartment to a specified value"
+          value:       "set state"
+        manual:     
+          choice:      "Manual"
+          subtext:     "Alter the event table directly."
+          value:       "manual"    
+  labels:
+    current_element:     NULL # "Select cohort"
+    element_name :       NULL # "cohort name"
+    save_btn:            "Save"
+    clip_btn:            "Code" 
+    copy_btn:            "Copy"
+    del_btn:             "Delete"
+    new_btn:             "New"
+    source_model:        "Select Model"
+    rule_type:           "Type of rule"
+    rule_condition:      "Condition to trigger rule"
+    action_dosing_state: "Dosing into"
+    action_dosing_values:    "Values"
+    action_dosing_times:     "Times"
+    action_manual_code:      "Code to evaluate"
+    action_dosing_durations: "Durations"
+    action_set_state_state:  "State/compartment to reset"
+    action_set_state_value:  "New value for state/compartment"
+  errors:
+    bad_input: "Input error message"
+  tooltips:
+    # Set to FALSE to disable tool tips for this module
+    include: TRUE
+    elements:     "Show cohort components"
+    show_code:    "Show cohort code" 
+    # Set urls to NULL to disable the icon links.
+    url_manual:   "https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html#example-manual-code-evaluation" 
+    url_rule_env: "https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html#rule-evaluation-environment"
+  # This is the content in the app that describes the rule evaluation
+  # environment. THis code is evaluated in the app. You can use any html tags
+  # you like. You also have access to the current state as well as the output
+  # of fetch_rxinfo for the current source model (found in the rx_details
+  # object).
+  rule_env_content: |-
+    uiele = tagList(tags$b("Simulation environment"), tags$br(),
+                    "The condition and actions (e.g., dose times, amounts,
+                    durations) that are triggered are all
+                    evaluated in an environment with different objects that
+                    you can use. For details on this see the ", 
+                    tags$a(href=state[["MC"]][["tooltips"]][["url_rule_env"]],
+                     "Clinical Trial Simulation"), " vignette.")
+    uiele = tagList(uiele, tags$br())
+    uiele = tagList(uiele, "For the current system the following are available", tags$br())
+    uiele = tagList(uiele, tags$br())
+    uiele = tagList(uiele, rx_details[["ht_info"]])
+  # For details on the simulation options see the help rxode2::rxSolve
+  # https://billdenney.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html
+  # This section contains information about different options, metadata about
+  # them, default values, etc. Using this, the options UI for an analysis is
+  # generated automatically. Each configuration option has the following:
+  #
+  # group        - This is how configuration options will be grouped in the app
+  # label        - Short textual description
+  # tooltip      - More detailed description of the option and what goes into it.
+  #                Set to NULL to not display a tool tip.
+  # type         - List of possible types. For example if you have "numeric" then
+  #                "character" the value will be evaluated as numeric, if this is
+  #                NA then it will be evaluated as character. Allowed types:
+  #                  - numeric
+  #                  - character
+  #                  - mixed (numeric and character)
+  #                  - logical (TRUE or FALSE)
+  # value        - Default value in the UI
+  # options      - If set to NULL a text input box will be created for this option,
+  #                if there are options then a selection box will be created.
+  # use          - This idicates where the configuration is being used. Allowed types:
+  #                  - rxSolve
+  sim_config:
+    atol:    
+      group:         "ODE Solver"
+      label:         "Absolute tolerance"
+      tooltip:       "Absolute tolerance used by the ODE solver to determine if a good solution has been achieved; This is also used in the solved linear model to check if prior doses do not add anything to the solution."
+      type:          "numeric"
+      value:         1e-8
+      options:       NULL
+      use:           "rxSolve"
+    rtol:    
+      group:         "ODE Solver"
+      label:         "Absolute tolerance"
+      tooltip:       "Relative tolerance used by the ODE solver to determine if a good solution has been achieved. This is also used in the solved linear model to check if prior doses do not add anything to the solution."
+      type:          "numeric"
+      value:         1e-6
+      options:       NULL
+      use:           "rxSolve"
+    sigdig:  
+      group:         "ODE Solver"
+      label:         "Absolute tolerance"
+      tooltip:       'Specifies the "significant digits" that the ode solving requests. When specified this controls the relative and absolute tolerances of the ODE solvers. By default the tolerance is 0.5*10^(-sigdig-2) for regular ODEs. For the sensitivity equations the default is ⁠0.5*10\^(-sigdig-1.5)⁠ (sensitivity changes only applicable for liblsoda). This also controls the atol/rtol of the steady state solutions. The ssAtol/ssRtol is ⁠0.5*10\^(-sigdig)⁠ and for the sensitivities ⁠0.5*10\^(-sigdig+0.625)⁠. By default this is unspecified (NULL) and uses the standard atol/rtol.'
+      type:          "numeric"
+      value:         NULL
+      options:       NULL
+      use:           "rxSolve"
+#   method:  
+#     group:         "ODE Solver"
+#     label:         "Solver method"
+#     tooltip:       "Relative tolerance used by the ODE solver to determine if a good solution has been achieved. This is also used in the solved linear model to check if prior doses do not add anything to the solution."
+#     type:          "numeric"
+#     value:         1e-6
+#     options:       ["liblsoda", "lsoda", "dop853", "indLin"]
+#     use:           "rxSolve"
+

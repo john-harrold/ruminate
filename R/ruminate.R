@@ -16,14 +16,13 @@
 
 .onLoad <- function(libname, pkgname){
 
-
   #------------------------------------
   # Checking for rxpackages
   # If all the suggested packages are found this will be true:
   suggested_found = TRUE
-  #mr = FM_message("Loading ruminate", entry_type="h1")
+  mr = FM_message("Loading ruminate", entry_type="h1")
+  mr = FM_message("Checking for required nlmixr2 family of tools", entry_type="h2")
 
-  mr = FM_message("Checking for required nlmixr2 family of tools", entry_type="alert")
   pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib", "rxode2et")
   for(pkg in pkgs){
     pkg_var = paste0("ruminate_", pkg, "_found")
@@ -39,6 +38,20 @@
   }
 
   Sys.setenv(ruminate_rxfamily_found = suggested_found)
+
+  mr = FM_message("Checking for other suggested packages", entry_type="h2")
+
+  other_pkgs = c(
+    "clipr",       "gridExtra", "prompter",
+    "rmarkdown",   "readxl",    "shinydashboard",
+    "ubiquity")
+  for(pkg in other_pkgs){
+    if(!requireNamespace(pkg, quietly=TRUE)){
+      mr = FM_message(paste0("missing ", pkg), entry_type="danger")
+    } else {
+      mr = FM_message(paste0("found ", pkg), entry_type="success")
+    }
+  }
 }
 
 #'@export

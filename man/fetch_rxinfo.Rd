@@ -29,6 +29,10 @@ etc from an rxode2 object.
 library(formods)
 library(rxode2)
 library(ggplot2)
+
+# For more information see the Clinical Trial Simulation vignette:
+# https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html
+
 # None of this will work if rxode2 isn't installed:
 if(is_installed("rxode2")){
 set.seed(8675309)
@@ -83,25 +87,25 @@ rules = list(
       values    = "c(3,  3,  3,  3)*1e6/MW",
       times     = "c(0, 14, 28, 42)",
       durations = "c(0,  0,  0,  0)")
-    ) #,
-#reset_Ac    = list(
-#  condition = "time == 45",
-#  true_flag  = "Ac/2",
-#  false_flag = "",
-#  action    = list(
-#    type     = "set state",
-#    state    = "Ac",
-#    value    = "Ac/2")
-#  ),
-#reset_Cp    = list(
-#  condition = "time == 45",
-#  true_flag  = "Cp/2",
-#  false_flag = "",
-#  action    = list(
-#    type     = "set state",
-#    state    = "Cp",
-#    value    = "Cp/2")
-#)
+    ),
+  reset_Ac    = list(
+    condition = "time == 45",
+    true_flag  = "Ac/2",
+    false_flag = "",
+    action    = list(
+      type     = "set state",
+      state    = "Ac",
+      value    = "Ac/2")
+    ),
+  reset_Cp    = list(
+    condition = "time == 45",
+    true_flag  = "Cp/2",
+    false_flag = "",
+    action    = list(
+      type     = "set state",
+      state    = "Cp",
+      value    = "Cp/2")
+  )
 )
 
 

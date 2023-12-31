@@ -1,6 +1,6 @@
 #'@import dplyr
 #'@import rxode2
-#'@importfrom stats rnorm  runif
+#'@importFrom stats rnorm  runif
 
 
 #'@export
@@ -52,147 +52,151 @@ simulate_rules <- function(object,
   rx_details  = fetch_rxinfo(object)
   nsub        = length(unique(subjects[["id"]]))
 
-  #---------------------------------------------------
-  # Extracting covariates and parameters from subjects:
-  iCov = list()
-  params = subjects
-  if(!is.null(rx_details[["elements"]][["covariates"]])){
-    iCov_cols = rx_details[["elements"]][["covariates"]]
-    # Removing the coviariates from the parameters table
-    for(cname in c("time", iCov_cols)){
-      iCov[[cname]] = params[[cname]]
-      params[[cname]] = NULL
-    }
-    iCov = as.data.frame(iCov)
-    if(!("time" %in% names(iCov))){
-      iCov[["time"]] = 0
-    }
-  }
-
-  params = dplyr::group_by(params, .data[["id"]]) |>
-    dplyr::filter(row_number()==1)                |>
-    dplyr::ungroup()
-
-  # If there is a time column we remove that
-  if("time" %in% names(params)){
-    params[["time"]] = NULL
-  }
-  #---------------------------------------------------
-
-  # Converting rx_options into a string to use below
-  rx_options_str = ""
-
-  if(!is.null(names(rx_options))){
-    for(optname in names(rx_options)){
-      rx_options_str = paste0(rx_options_str, ", ", optname, "=", deparse(rx_options[[optname]]))
-    }
-  }
-
-  # Creating standard functions
-  std_fcns = '
-  SI_fpd = function(id=NULL, state=NULL){
-    fpd = -1
-
-    if(is.null(id) | is.null(state) | is.null(SI_ev_history)){
-      fpd = -1
-    }else{
-
-      # All of the events as a data frame:
-      evall = as.data.frame(SI_ev_history)
-
-      # Just the dosing records for the current subject/state
-      drecs =  evall[evall[["id"]] == id & evall[["cmt"]] == state & evall[["evid"]] == 1, ]
-      if(nrow(drecs) > 0){
-        # Making sure everything is sorted correctly:
-        drecs = drecs[with(drecs, order(time)),]
-
-        # Pulling out the last dose
-        fpd = drecs[nrow(drecs), ][["amt"]]
+  if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
+    #---------------------------------------------------
+    # Extracting covariates and parameters from subjects:
+    iCov = list()
+    params = subjects
+    if(length(rx_details[["elements"]][["covariates"]])>0){
+      iCov_cols = rx_details[["elements"]][["covariates"]]
+      # Removing the coviariates from the parameters table
+      for(cname in c("time", iCov_cols)){
+        iCov[[cname]] = params[[cname]]
+        params[[cname]] = NULL
+      }
+      iCov = as.data.frame(iCov)
+      if(!("time" %in% names(iCov))){
+        iCov[["time"]] = 0
       }
     }
 
+    params = dplyr::group_by(params, .data[["id"]]) |>
+      dplyr::filter(row_number()==1)                |>
+      dplyr::ungroup()
 
-  fpd}
-'
-
-  preamble = paste0(c(std_fcns, preamble), collapse="\n")
-
-  #------------------------------------
-  # Checking rules:
-  for(rule_id in names(rules)){
-    # This makes sure there are flags for the true and false evaluations
-    if(!("true_flag" %in% names(rules[[rule_id]]))){
-      rules[[rule_id]][["true_flag"]] = "true"
-      msgs = c(msgs, paste0('The true_flag is defaulting to "true" for rule: ', rule_id))
+    # If there is a time column we remove that
+    if("time" %in% names(params)){
+      params[["time"]] = NULL
     }
-    if(!("false_flag" %in% names(rules[[rule_id]]))){
-      rules[[rule_id]][["false_flag"]] = "false"
-      msgs = c(msgs, paste0('The false_flag is defaulting to "false" for rule: ', rule_id))
-    }
+    #---------------------------------------------------
+    # Converting rx_options into a string to use below
+    rx_options_str = ""
 
-
-    # Next we walk through all the required fields and sub fields to make sure
-    # they exist
-    if(!("condition" %in% names(rules[[rule_id]]))){
-      isgood = FALSE
-      msgs = c(msgs, pasete0("No condition has been defined for rule: ", rule_id,))
+    if(!is.null(names(rx_options))){
+      for(optname in names(rx_options)){
+        rx_options_str = paste0(rx_options_str, ", ", optname, "=", deparse(rx_options[[optname]]))
+      }
     }
 
-    if(("action" %in% names(rules[[rule_id]]))){
-      if("type" %in% names(rules[[rule_id]][["action"]])){
-        allowed_types = c("dose", "set state", "manual")
-        if(rules[[rule_id]][["action"]][["type"]] %in% allowed_types){
-          # The required fields depend on the action type:
-          if(rules[[rule_id]][["action"]][["type"]] == "dose"){
-            required_fields = c("values", "times", "durations") }
-          if(rules[[rule_id]][["action"]][["type"]] == "set state"){
-            required_fields = c("state", "value") }
-          if(rules[[rule_id]][["action"]][["type"]] == "manual"){
-            required_fields = c("code") }
+    # Creating standard functions
+    std_fcns = '
+    SI_fpd = function(id=NULL, state=NULL){
+      fpd = -1
 
-          if(!all(required_fields %in% names(rules[[rule_id]][["action"]]))){
+      if(is.null(id) | is.null(state) | is.null(SI_ev_history)){
+        fpd = -1
+      }else{
+
+        # All of the events as a data frame:
+        evall = as.data.frame(SI_ev_history)
+
+        # Just the dosing records for the current subject/state
+        drecs =  evall[evall[["id"]] == id & evall[["cmt"]] == state & evall[["evid"]] == 1, ]
+        if(nrow(drecs) > 0){
+          # Making sure everything is sorted correctly:
+          drecs = drecs[with(drecs, order(time)),]
+
+          # Pulling out the last dose
+          fpd = drecs[nrow(drecs), ][["amt"]]
+        }
+      }
+
+
+    fpd}
+    '  
+
+    preamble = paste0(c(std_fcns, preamble), collapse="\n")
+
+    #------------------------------------
+    # Checking rules:
+    for(rule_id in names(rules)){
+      # This makes sure there are flags for the true and false evaluations
+      if(!("true_flag" %in% names(rules[[rule_id]]))){
+        rules[[rule_id]][["true_flag"]] = "true"
+        msgs = c(msgs, paste0('The true_flag is defaulting to "true" for rule: ', rule_id))
+      }
+      if(!("false_flag" %in% names(rules[[rule_id]]))){
+        rules[[rule_id]][["false_flag"]] = "false"
+        msgs = c(msgs, paste0('The false_flag is defaulting to "false" for rule: ', rule_id))
+      }
+
+
+      # Next we walk through all the required fields and sub fields to make sure
+      # they exist
+      if(!("condition" %in% names(rules[[rule_id]]))){
+        isgood = FALSE
+        msgs = c(msgs, paste0("No condition has been defined for rule: ", rule_id,))
+      }
+
+      if(("action" %in% names(rules[[rule_id]]))){
+        if("type" %in% names(rules[[rule_id]][["action"]])){
+          allowed_types = c("dose", "set state", "manual")
+          if(rules[[rule_id]][["action"]][["type"]] %in% allowed_types){
+            # The required fields depend on the action type:
+            if(rules[[rule_id]][["action"]][["type"]] == "dose"){
+              required_fields = c("values", "times", "durations") }
+            if(rules[[rule_id]][["action"]][["type"]] == "set state"){
+              required_fields = c("state", "value") }
+            if(rules[[rule_id]][["action"]][["type"]] == "manual"){
+              required_fields = c("code") }
+
+            if(!all(required_fields %in% names(rules[[rule_id]][["action"]]))){
+              isgood = FALSE
+              msgs = c(msgs, paste0("The following required fields are missing for rule: ", rule_id))
+              msgs = c(msgs, paste0("  - missing fields: ",paste0( required_fields[!(required_fields %in% names(rules[[rule_id]][["action"]]))], collapse=", ")))
+            }
+          } else {
             isgood = FALSE
-            msgs = c(msgs, paste0("The following required fields are missing for rule: ", rule_id))
-            msgs = c(msgs, paste0("  - missing fields: ",paste0( required_fields[!(required_fields %in% names(rules[[rule_id]][["action"]]))], collapse=", ")))
+            msgs = c(msgs, paste0("Unrecognized action type: ", rules[[rule_id]][["action"]][["type"]], " for rule: ", rule_id))
+            msgs = c(msgs, paste0("  - allowed types: ", paste0(allowed_types, collapse=", ")))
           }
         } else {
           isgood = FALSE
-          msgs = c(msgs, paste0("Unrecognized action type: ", rules[[rule_id]][["action"]][["type"]], " for rule: ", rule_id))
-          msgs = c(msgs, paste0("  - allowed types: ", paste0(allowed_types, collapse=", ")))
+          msgs = c(msgs, paste0("No action type has been defined for rule: ", rule_id,))
         }
       } else {
         isgood = FALSE
-        msgs = c(msgs, pasete0("No action type has been defined for rule: ", rule_id,))
+        msgs = c(msgs, paste0("No action has been defined for rule: ", rule_id,))
       }
-    } else {
-      isgood = FALSE
-      msgs = c(msgs, pasete0("No action has been defined for rule: ", rule_id,))
+
     }
 
-  }
+    #------------------------------------
+    # Making sure there is a time column
+    # If we add time it breaks everything.
+   #if(!("time" %in% names(subjects))){
+   #  subjects[["time"]] = 0
+   #}
 
-  #------------------------------------
-  # Making sure there is a time column
-  # If we add time it breaks everything.
- #if(!("time" %in% names(subjects))){
- #  subjects[["time"]] = 0
- #}
+    #------------------------------------
+    # Checking covariates:
+    if(length(rx_details[["elements"]][["covariates"]])>0){
+      if(!all(rx_details[["elements"]][["covariates"]] %in% names(subjects))){
+        missing_covs =
+        rx_details[["elements"]][["covariates"]] [
+          !(rx_details[["elements"]][["covariates"]] %in% names(subjects))
+                                                 ]
 
-  #------------------------------------
-  # Checking covariates:
-  if(!is.null(rx_details[["elements"]][["covariates"]])){
-    if(!all(rx_details[["elements"]][["covariates"]] %in% names(subjects))){
-      missing_covs =
-      rx_details[["elements"]][["covariates"]] [
-        !(rx_details[["elements"]][["covariates"]] %in% names(subjects))
-                                               ]
+        missing_covs = paste0(missing_covs, collapse=", ")
 
-      missing_covs = paste0(missing_covs, collapse=", ")
-
-      isgood = FALSE
-      msgs = c(msgs, paste0("The following covariates are not defined in subjects: "))
-      msgs = c(msgs, paste0("  > ", missing_covs ))
+        isgood = FALSE
+        msgs = c(msgs, paste0("The following covariates are not defined in subjects: "))
+        msgs = c(msgs, paste0("  > ", missing_covs ))
+      }
     }
+  } else {
+    isgod = FALSE
+    msgs = c(msgs, "One or more packages from the rxode2 family are missing")
   }
 
   # Tracking errors found to prevent repeated reporting. As errors are
@@ -677,10 +681,12 @@ res}
 #'@example inst/test_apps/CTS_funcs.R
 fetch_rxinfo <- function(object){
 
-  isgood = TRUE
-  msgs   = c()
+  isgood    = TRUE
+  msgs      = c()
+  txt_info  = c()
+  ht_info   = tagList()
 
-  if(is_installed("rxode2")){
+  if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
     # use str(object) to get the names of the list elements
     covariates = object$allCovs
     parameters = names(object$theta)
@@ -691,15 +697,68 @@ fetch_rxinfo <- function(object){
       parameters = parameters,
       iiv        = iiv,
       states     = states)
+
+    # State details
+    txt_info = c(txt_info, "States/Compartments\n")
+    ht_info  = tagList(ht_info, tags$b("States/Compartments"), tags$br())
+    if(length(states) > 0){
+      txt_info = c(txt_info, paste0(states, collapse=", "), "\n\n")
+      ht_info  = tagList(ht_info, paste0(states, collapse=", "), tags$br(), tags$br())
+    } else{
+      txt_info = c(txt_info, "None found\n")
+      ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+      isgood   = FALSE
+      msgs = c(msgs, "No state/compartment information found.")
+    }
+    # Covariates details
+    txt_info = c(txt_info, "Covariates\n")
+    ht_info  = tagList(ht_info, tags$b("Covariates"), tags$br())
+    if(length(covariates) > 0){
+      txt_info = c(txt_info, paste0(covariates, collapse=", "), "\n\n")
+      ht_info  = tagList(ht_info, paste0(covariates, collapse=", "), tags$br(), tags$br())
+    } else{
+      txt_info = c(txt_info, "None found\n")
+      ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+    }
+    # Parameters details
+    txt_info = c(txt_info, "Parameters\n")
+    ht_info  = tagList(ht_info, tags$b("Parameters"), tags$br())
+    if(length(parameters) > 0){
+      txt_info = c(txt_info, paste0(parameters, collapse=", "), "\n\n")
+      ht_info  = tagList(ht_info, paste0(parameters, collapse=", "), tags$br(), tags$br())
+    } else{
+      txt_info = c(txt_info, "None found\n")
+      ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+    }
+    # IIV details
+    txt_info = c(txt_info, "Between-subject variability\n")
+    ht_info  = tagList(ht_info, tags$b("Between-subject variability"), tags$br(),)
+    if(length(iiv) > 0){
+      txt_info = c(txt_info, paste0(iiv, collapse=", "), "\n\n")
+      ht_info  = tagList(ht_info, paste0(iiv, collapse=", "), tags$br(), tags$br())
+    } else{
+      txt_info = c(txt_info, "None found\n")
+      ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+    }
+
   } else {
     isgood   = FALSE
     elements = NULL
     msgs = c(msgs, "rxode2 not installed")
   }
 
+  if(is.null(txt_info)){
+    txt_info = ""
+  }
+
+
+
   res = list(
-    isgood = isgood,
-    elements = elements)
+    isgood   = isgood,
+    msgs     = msgs,
+    elements = elements,
+    txt_info = paste0(txt_info, collapse=""),
+    ht_info  = ht_info)
 res}
 
 
@@ -730,10 +789,10 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
   missing_covs = c()
 
 
-  if(is_installed("rxode2")){
+  if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
     rx_details = fetch_rxinfo(object)
 
-    if(is.null(covs) & !is.null(rx_details[["elements"]][["covariates"]])){
+    if(is.null(covs) & length(rx_details[["elements"]][["covariates"]])>0){
       isgood = FALSE
       msgs = c(msgs, "Covariates were found in the model but not specified.")
       missing_covs =
@@ -841,28 +900,31 @@ res }
 #'@return  Dataframe of the simulated time course.
 fetch_rxtc <- function(rx_details, sim){
 
-  # This is a temporary (hopefully) fix until this feature is added:
-  # https://github.com/nlmixr2/rxode2/issues/638
-  rxtc   = as.data.frame(sim)
-
-  # Catching the case where there is 1 subject and no "id" column
-  if(!("id" %in% names(rxtc))){
-    rxtc[["id"]] = 1
+  rxtc = NULL
+  if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
+    # This is a temporary (hopefully) fix until this feature is added:
+    # https://github.com/nlmixr2/rxode2/issues/638
+    rxtc   = as.data.frame(sim)
+   
+    # Catching the case where there is 1 subject and no "id" column
+    if(!("id" %in% names(rxtc))){
+      rxtc[["id"]] = 1
+    }
+   
+   ## Merging any covariates from params
+   #if(length(rx_details[["elements"]][["covariates"]])>0){
+   #  params = as.data.frame(sim$params)
+   #  # Catching the case where there is 1 subject and no "id" column
+   #  if(!("id" %in% names(params))){
+   #    params[["id"]] = 1
+   #  }
+   #
+   #  iCov_cols = c("id", rx_details[["elements"]][["covariates"]])
+   #  iCov   = dplyr::select(params, dplyr::all_of(iCov_cols)) |>
+   #           dplyr::mutate("id" := as.numeric(.data[["id"]]))
+   #  rxtc = dplyr::left_join(rxtc, iCov, by="id")
+   #}
   }
-
- ## Merging any covariates from params
- #if(!is.null(rx_details[["elements"]][["covariates"]])){
- #  params = as.data.frame(sim$params)
- #  # Catching the case where there is 1 subject and no "id" column
- #  if(!("id" %in% names(params))){
- #    params[["id"]] = 1
- #  }
- #
- #  iCov_cols = c("id", rx_details[["elements"]][["covariates"]])
- #  iCov   = dplyr::select(params, dplyr::all_of(iCov_cols)) |>
- #           dplyr::mutate("id" := as.numeric(.data[["id"]]))
- #  rxtc = dplyr::left_join(rxtc, iCov, by="id")
- #}
 
 
 rxtc}

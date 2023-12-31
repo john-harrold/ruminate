@@ -396,7 +396,11 @@ MC:
   #                Set to NULL to not display a tool tip.
   # type         - List of possible types. For example if you have "numeric" then
   #                "character" the value will be evaluated as numeric, if this is
-  #                NA then it will be evaluated as character.
+  #                NA then it will be evaluated as character. Allowed types:
+  #                  - numeric
+  #                  - character
+  #                  - mixed (numeric and character)
+  #                  - logical (TRUE or FALSE)
   # value        - Default value in the UI
   # options      - If set to NULL a text input box will be created for this option,
   #                if there are options then a selection box will be created.

@@ -26,7 +26,7 @@ specifications.
 The `covs` input is a list with the following structure:
 
 * type: Can be either "fixed", "discrete", or "continuous".
-* sampling: This field is only needed for a "continuous" covariate ' type and can be either "random", "normal" or "continuous".
+* sampling: This field is only needed for a "continuous" covariate ' type and can be either "random", "normal" or "log-normal".
 * values: This field depends on the type and optional sampling above.
   * fixed: A single value.
   * discrete: A vector of possible discrete elements.
@@ -113,8 +113,9 @@ at each evaluation point:
 
 ####  The following functions will be available:
 
-* `SI_fpd`: This function will fetch the previous (fpd) for the given id and state. For
-example for the current `id` and the state `Ac` you would do the following:
+* `SI_fpd`: This function will fetch the previous dose (fpd) for the given id
+  and state. For example for the current `id` and the state `Ac` you would do
+  the following:
 
 ```{r, eval=FALSE}
 SI_fpd(id=id, state="Ac")

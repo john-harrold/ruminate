@@ -163,7 +163,7 @@ structure:</p>
 <ul>
 <li>type: Can be either “fixed”, “discrete”, or “continuous”.</li>
 <li>sampling: This field is only needed for a “continuous” covariate ’
-type and can be either “random”, “normal” or “continuous”.</li>
+type and can be either “random”, “normal” or “log-normal”.</li>
 <li>values: This field depends on the type and optional sampling above.
 <ul>
 <li>fixed: A single value.</li>
@@ -319,9 +319,10 @@ define within the “manual”action type.</li>
 </h5>
 <ul>
 <li>
-<code>SI_fpd</code>: This function will fetch the previous (fpd) for
-the given id and state. For example for the current <code>id</code> and
-the state <code>Ac</code> you would do the following:</li>
+<code>SI_fpd</code>: This function will fetch the previous dose
+(fpd) for the given id and state. For example for the current
+<code>id</code> and the state <code>Ac</code> you would do the
+following:</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">SI_fpd</span><span class="op">(</span>id<span class="op">=</span><span class="va">id</span>, state<span class="op">=</span><span class="st">"Ac"</span><span class="op">)</span></span></code></pre></div>
@@ -371,6 +372,7 @@ fixing the <code>SUBTYPE_ID</code> at 0, and sampling the
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span>
+<span><span class="fu">rxode2</span><span class="fu">::</span><span class="fu"><a href="https://nlmixr2.github.io/rxode2random/reference/rxSetSeed.html" class="external-link">rxSetSeed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span>
 <span><span class="va">subs</span> <span class="op">=</span> <span class="fu"><a href="../reference/mk_subjects.html">mk_subjects</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">object</span>,</span>
 <span>                   nsub   <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>                   covs   <span class="op">=</span> <span class="va">covs</span><span class="op">)</span></span></code></pre></div>
@@ -381,27 +383,27 @@ fixing the <code>SUBTYPE_ID</code> at 0, and sampling the
 <span><span class="co">## 4  4 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">## 5  5 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">## 6  6 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
-<span><span class="co">##   TV_kdeg_BM TV_Emax TV_EC50 prop_err add_err       ETAka       ETACL</span></span>
-<span><span class="co">## 1        0.1     100     300      0.1     0.1 -0.06516206  0.44150995</span></span>
-<span><span class="co">## 2        0.1     100     300      0.1     0.1  0.06975156 -0.27701156</span></span>
-<span><span class="co">## 3        0.1     100     300      0.1     0.1 -1.05285006 -0.08714004</span></span>
-<span><span class="co">## 4        0.1     100     300      0.1     0.1  0.58505919  0.21469176</span></span>
-<span><span class="co">## 5        0.1     100     300      0.1     0.1  0.08403284  0.26002384</span></span>
-<span><span class="co">## 6        0.1     100     300      0.1     0.1 -0.89224893 -0.43987901</span></span>
+<span><span class="co">##   TV_kdeg_BM TV_Emax TV_EC50 prop_err add_err        ETAka       ETACL</span></span>
+<span><span class="co">## 1        0.1     100     300      0.1     0.1 -0.872135078  0.11560845</span></span>
+<span><span class="co">## 2        0.1     100     300      0.1     0.1  0.007667016 -0.07669547</span></span>
+<span><span class="co">## 3        0.1     100     300      0.1     0.1  0.696849400 -0.18563718</span></span>
+<span><span class="co">## 4        0.1     100     300      0.1     0.1  0.696562203  0.23732548</span></span>
+<span><span class="co">## 5        0.1     100     300      0.1     0.1 -0.471652656 -0.17064071</span></span>
+<span><span class="co">## 6        0.1     100     300      0.1     0.1  1.004682316 -0.10986647</span></span>
 <span><span class="co">##        ETAVc       ETAVp       ETAQ    ETABM_IC     ETAEmax SEX_ID SUBTYPE_ID</span></span>
-<span><span class="co">## 1  0.5539399  0.22668171 -0.4984314  0.29947711 -0.29129566      0          0</span></span>
-<span><span class="co">## 2 -0.3052820 -0.04507793  0.1818111 -0.23587638  0.30219526      1          0</span></span>
-<span><span class="co">## 3  0.4018206 -0.31475925  1.3624031  0.09691863 -0.29971872      0          0</span></span>
-<span><span class="co">## 4  0.1887969  0.44767313 -0.3743539 -0.01520682 -0.30456250      0          0</span></span>
-<span><span class="co">## 5  0.4006891 -0.24226676  1.0507828 -0.46681167 -0.11024907      1          0</span></span>
-<span><span class="co">## 6 -0.3539991 -0.09016706  0.4441605 -0.42333878  0.05753739      1          0</span></span>
+<span><span class="co">## 1  0.1647854 -0.41897516 -0.6276905 -0.34626498 -0.33684332      0          0</span></span>
+<span><span class="co">## 2 -0.3576425  0.13250059  1.7647141 -0.04885735 -0.06302747      0          0</span></span>
+<span><span class="co">## 3 -0.2695274  0.06366498 -1.0583826 -0.15006348 -0.06523988      0          0</span></span>
+<span><span class="co">## 4  0.3190155  0.09855113  0.2145376  0.15259905  0.28327288      1          0</span></span>
+<span><span class="co">## 5 -0.1285496 -0.58195542 -0.5387188  0.23500248  0.03668746      0          0</span></span>
+<span><span class="co">## 6  0.2320782 -0.66786756 -0.7449611 -0.30297562  0.23614063      0          0</span></span>
 <span><span class="co">##         WT</span></span>
-<span><span class="co">## 1 83.03389</span></span>
-<span><span class="co">## 2 91.88860</span></span>
-<span><span class="co">## 3 75.33157</span></span>
-<span><span class="co">## 4 68.76274</span></span>
-<span><span class="co">## 5 59.83840</span></span>
-<span><span class="co">## 6 74.63642</span></span></code></pre>
+<span><span class="co">## 1 82.99459</span></span>
+<span><span class="co">## 2 68.62132</span></span>
+<span><span class="co">## 3 82.46111</span></span>
+<span><span class="co">## 4 62.77385</span></span>
+<span><span class="co">## 5 86.11087</span></span>
+<span><span class="co">## 6 59.28286</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="creating-rules">Creating rules<a class="anchor" aria-label="anchor" href="#creating-rules"></a>
@@ -470,8 +472,7 @@ together:</p>
 <p>Lastly all of these can be passed to
 <code><a href="../reference/simulate_rules.html">simulate_rules()</a></code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span>
-<span><span class="va">simres</span> <span class="op">=</span> </span>
+<code class="sourceCode R"><span><span class="va">simres</span> <span class="op">=</span> </span>
 <span><span class="fu"><a href="../reference/simulate_rules.html">simulate_rules</a></span><span class="op">(</span>object        <span class="op">=</span> <span class="va">object</span>,</span>
 <span>               subjects      <span class="op">=</span> <span class="va">subs</span><span class="op">[[</span><span class="st">"subjects"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>               eval_times    <span class="op">=</span> <span class="va">eval_times</span>,</span>
@@ -511,7 +512,6 @@ factor of 5.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span>
 <span><span class="va">simres</span> <span class="op">=</span> </span>
 <span><span class="fu"><a href="../reference/simulate_rules.html">simulate_rules</a></span><span class="op">(</span>object        <span class="op">=</span> <span class="va">object</span>,</span>
 <span>               subjects      <span class="op">=</span> <span class="va">subs</span><span class="op">[[</span><span class="st">"subjects"</span><span class="op">]</span><span class="op">]</span>,</span>
@@ -551,7 +551,6 @@ are simply setting a state for the current subject id to a value.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span>
 <span><span class="va">simres</span> <span class="op">=</span> </span>
 <span><span class="fu"><a href="../reference/simulate_rules.html">simulate_rules</a></span><span class="op">(</span>object        <span class="op">=</span> <span class="va">object</span>,</span>
 <span>               subjects      <span class="op">=</span> <span class="va">subs</span><span class="op">[[</span><span class="st">"subjects"</span><span class="op">]</span><span class="op">]</span>,</span>
@@ -566,12 +565,13 @@ are simply setting a state for the current subject id to a value.</p>
 </h2>
 <p>The examples before this demonstrate the mechanics of how to perform
 rule-based simualtions. This example should provide a more concrete
-example. Here we want to titrate dosing until a biomarker is within a
-range. Once in that range we want to maintain that dose. The first rule
-is only active at time 0 and it will initialize dosing at 0.1 mg. The
-remaining rules will only be active after the first dose at time 0 if
-the biomarker is below the range (<code>ss_dose_increase</code> ), above
-the range (<code>ss_dose_decrease</code>), or in the range
+demonstration of how to use these elements together. Here we want to
+titrate dosing until a biomarker is within a range. Once in that range
+we want to maintain that dose. The first rule is only active at time 0
+and it will initialize dosing at 0.1 mg. The remaining rules will only
+be active after the first dose at time 0 if the biomarker is below the
+range (<code>ss_dose_increase</code> ), above the range
+(<code>ss_dose_decrease</code>), or in the range
 (<code>ss_dose_keep</code>). These each use the simulation internal
 function <code>SI_fpd</code> to fetch the previous dose and select the
 new dose as a fraction of the previous. If you need to you can create
@@ -626,7 +626,6 @@ a character string with the function definitions and pass those as the
 <span>   <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span>
 <span><span class="va">simres</span> <span class="op">=</span> </span>
 <span><span class="fu"><a href="../reference/simulate_rules.html">simulate_rules</a></span><span class="op">(</span>object        <span class="op">=</span> <span class="va">object</span>,</span>
 <span>               subjects      <span class="op">=</span> <span class="va">subs</span><span class="op">[[</span><span class="st">"subjects"</span><span class="op">]</span><span class="op">]</span>,</span>

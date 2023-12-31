@@ -9,9 +9,11 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, eval=TRUE, warning = FALSE)
-require(ggplot2)
-library(devtools)
-devtools::load_all()
+library(ggplot2)
+library(formods)
+library(ruminate)
+#library(devtools)
+#devtools::load_all()
 
 # Determining if ubiquity is installed
 if(is_installed("rxode2")){
@@ -96,6 +98,7 @@ covs = list(
 
 ```{r echo=TRUE,  results=FALSE, eval=FALSE}
 set.seed(8675309)
+rxode2::rxSetSeed(8675309)
 subs = mk_subjects(object = object,
                    nsub   = 6,
                    covs   = covs)
@@ -170,7 +173,6 @@ rx_options = list(
 Lastly all of these can be passed to `simulate_rules()`:
 
 ```{r echo=TRUE, results=TRUE, eval=FALSE}
-set.seed(8675309)
 simres = 
 simulate_rules(object        = object,
                subjects      = subs[["subjects"]],
@@ -181,7 +183,6 @@ simulate_rules(object        = object,
 ```
 ```{r echo=FALSE, results=TRUE}
 if(rxode2_found){
-set.seed(8675309)
 simres = 
 simulate_rules(object        = object,
                subjects      = subs[["subjects"]],
@@ -241,7 +242,6 @@ rules = list(
   )
 )
 
-set.seed(8675309)
 simres = 
 simulate_rules(object        = object,
                subjects      = subs[["subjects"]],
@@ -274,7 +274,6 @@ rules = list(
   )
 )
 
-set.seed(8675309)
 simres = 
 simulate_rules(object        = object,
                subjects      = subs[["subjects"]],
@@ -331,7 +330,6 @@ rules = list(
   )
 )
 
-set.seed(8675309)
 simres = 
 simulate_rules(object        = object,
                subjects      = subs[["subjects"]],
@@ -362,7 +360,6 @@ rules = list(
   )
 )
 
-set.seed(8675309)
 simres = 
 simulate_rules(object        = object,
                subjects      = subs[["subjects"]],
@@ -394,7 +391,7 @@ print(p)
 
 # Example: Titrated dosing of a biomarker
 
-The examples before this demonstrate the mechanics of how to perform rule-based simualtions. This example should provide a more concrete example. Here we want to titrate dosing until a biomarker is within a range. Once in that range we want to maintain that dose. The first rule is only active at time 0 and it will initialize dosing at 0.1 mg. The remaining rules will only be active after the first dose at time 0 if the biomarker is below the range (`ss_dose_increase` ), above the range (`ss_dose_decrease`), or in the range (`ss_dose_keep`). These each use the simulation internal function `SI_fpd` to fetch the previous dose and select the new dose as a fraction of the previous. If you need to you can create your own functions to use in the action fields. You just need to create a character string with the function definitions and pass those as the `preamble` input to `simulate_rules()`. 
+The examples before this demonstrate the mechanics of how to perform rule-based simualtions. This example should provide a more concrete demonstration of how to use these elements together. Here we want to titrate dosing until a biomarker is within a range. Once in that range we want to maintain that dose. The first rule is only active at time 0 and it will initialize dosing at 0.1 mg. The remaining rules will only be active after the first dose at time 0 if the biomarker is below the range (`ss_dose_increase` ), above the range (`ss_dose_decrease`), or in the range (`ss_dose_keep`). These each use the simulation internal function `SI_fpd` to fetch the previous dose and select the new dose as a fraction of the previous. If you need to you can create your own functions to use in the action fields. You just need to create a character string with the function definitions and pass those as the `preamble` input to `simulate_rules()`. 
 
 
 ```{r echo=TRUE, results=TRUE, eval=FALSE}
@@ -445,7 +442,6 @@ rules = list(
    )
 )
 
-set.seed(8675309)
 simres = 
 simulate_rules(object        = object,
                subjects      = subs[["subjects"]],
@@ -455,7 +451,6 @@ simulate_rules(object        = object,
                rx_options    = rx_options)
 ```
 ```{r echo=FALSE, results=TRUE}
-load_all()
 if(rxode2_found){
 rules = list(
  first_cycle = list(
@@ -504,7 +499,6 @@ rules = list(
    )
 )
 
-set.seed(8675309)
 simres = 
 simulate_rules(object        = object,
                subjects      = subs[["subjects"]],
@@ -526,6 +520,7 @@ ggplot(data=presim[["exbmbound"]][["simall"]]) +
   geom_hline(yintercept=7e4)+
   scale_y_continuous(trans="log10", limits=c(1e3, 1e6))+
   theme_linedraw()+
+  ggtitle("PK - blue; Biomarker - orange; desired range - Between solid black lines") +
   xlab("Time (days)") + ylab("Concentration (ng/ml)") +
   facet_wrap(.~id)
 

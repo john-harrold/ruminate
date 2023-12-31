@@ -58,7 +58,7 @@ The \code{covs} input is a list with the following structure:
 \itemize{
 \item type: Can be either “fixed”, “discrete”, or “continuous”.
 \item sampling: This field is only needed for a “continuous” covariate ’
-type and can be either “random”, “normal” or “continuous”.
+type and can be either “random”, “normal” or “log-normal”.
 \item values: This field depends on the type and optional sampling above.
 \itemize{
 \item fixed: A single value.
@@ -178,9 +178,9 @@ the “manual”action type.
 }
 \subsection{The following functions will be available:}{
 \itemize{
-\item \code{SI_fpd}: This function will fetch the previous (fpd) for the given id
-and state. For example for the current \code{id} and the state \code{Ac} you
-would do the following:
+\item \code{SI_fpd}: This function will fetch the previous dose (fpd) for the
+given id and state. For example for the current \code{id} and the state
+\code{Ac} you would do the following:
 }
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{SI_fpd(id=id, state="Ac")
@@ -195,6 +195,10 @@ would do the following:
 library(formods)
 library(rxode2)
 library(ggplot2)
+
+# For more information see the Clinical Trial Simulation vignette:
+# https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html
+
 # None of this will work if rxode2 isn't installed:
 if(is_installed("rxode2")){
 set.seed(8675309)
@@ -249,25 +253,25 @@ rules = list(
       values    = "c(3,  3,  3,  3)*1e6/MW",
       times     = "c(0, 14, 28, 42)",
       durations = "c(0,  0,  0,  0)")
-    ) #,
-#reset_Ac    = list(
-#  condition = "time == 45",
-#  true_flag  = "Ac/2",
-#  false_flag = "",
-#  action    = list(
-#    type     = "set state",
-#    state    = "Ac",
-#    value    = "Ac/2")
-#  ),
-#reset_Cp    = list(
-#  condition = "time == 45",
-#  true_flag  = "Cp/2",
-#  false_flag = "",
-#  action    = list(
-#    type     = "set state",
-#    state    = "Cp",
-#    value    = "Cp/2")
-#)
+    ),
+  reset_Ac    = list(
+    condition = "time == 45",
+    true_flag  = "Ac/2",
+    false_flag = "",
+    action    = list(
+      type     = "set state",
+      state    = "Ac",
+      value    = "Ac/2")
+    ),
+  reset_Cp    = list(
+    condition = "time == 45",
+    true_flag  = "Cp/2",
+    false_flag = "",
+    action    = list(
+      type     = "set state",
+      state    = "Cp",
+      value    = "Cp/2")
+  )
 )
 
 

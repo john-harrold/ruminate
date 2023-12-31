@@ -87,6 +87,9 @@ ui <- dashboardPage(
 
 # Main app server
 server <- function(input, output, session) {
+
+  MB_test_mksession(session, full_session=TRUE)
+
   # Empty reactive object to track and react to
   # changes in the module state outside of the module
   react_FM = reactiveValues()

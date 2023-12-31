@@ -176,7 +176,7 @@ on user specifications.</p><div class="section">
 
 <p>The <code>covs</code> input is a list with the following structure:</p><ul><li><p>type: Can be either “fixed”, “discrete”, or “continuous”.</p></li>
 <li><p>sampling: This field is only needed for a “continuous” covariate ’
-type and can be either “random”, “normal” or “continuous”.</p></li>
+type and can be either “random”, “normal” or “log-normal”.</p></li>
 <li><p>values: This field depends on the type and optional sampling above.</p><ul><li><p>fixed: A single value.</p></li>
 <li><p>discrete: A vector of possible discrete elements.</p></li>
 <li><p>continuous, random: Two values the first is the lower bound and the
@@ -270,9 +270,9 @@ the “manual”action type.</p></li>
 </ul><div class="section">
 <h5 id="the-following-functions-will-be-available-">The following functions will be available:<a class="anchor" aria-label="anchor" href="#the-following-functions-will-be-available-"></a></h5>
 
-<ul><li><p><code>SI_fpd</code>: This function will fetch the previous (fpd) for the given id
-and state. For example for the current <code>id</code> and the state <code>Ac</code> you
-would do the following:</p></li>
+<ul><li><p><code>SI_fpd</code>: This function will fetch the previous dose (fpd) for the
+given id and state. For example for the current <code>id</code> and the state
+<code>Ac</code> you would do the following:</p></li>
 </ul><p></p><div class="sourceCode r"><pre><code><span><span class="fu">SI_fpd</span><span class="op">(</span>id<span class="op">=</span><span class="va">id</span>, state<span class="op">=</span><span class="st">"Ac"</span><span class="op">)</span></span></code></pre><p></p></div>
 </div>
 
@@ -289,6 +289,10 @@ would do the following:</p></li>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://formods.ubiquity.tools/" class="external-link">formods</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nlmixr2.github.io/rxode2/" class="external-link">rxode2</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># For more information see the Clinical Trial Simulation vignette:</span></span></span>
+<span class="r-in"><span><span class="co"># https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># None of this will work if rxode2 isn't installed:</span></span></span>
 <span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://formods.ubiquity.tools/reference/is_installed.html" class="external-link">is_installed</a></span><span class="op">(</span><span class="st">"rxode2"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span></span>
@@ -343,25 +347,25 @@ would do the following:</p></li>
 <span class="r-in"><span>      values    <span class="op">=</span> <span class="st">"c(3,  3,  3,  3)*1e6/MW"</span>,</span></span>
 <span class="r-in"><span>      times     <span class="op">=</span> <span class="st">"c(0, 14, 28, 42)"</span>,</span></span>
 <span class="r-in"><span>      durations <span class="op">=</span> <span class="st">"c(0,  0,  0,  0)"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span> <span class="co">#,</span></span></span>
-<span class="r-in"><span><span class="co">#reset_Ac    = list(</span></span></span>
-<span class="r-in"><span><span class="co">#  condition = "time == 45",</span></span></span>
-<span class="r-in"><span><span class="co">#  true_flag  = "Ac/2",</span></span></span>
-<span class="r-in"><span><span class="co">#  false_flag = "",</span></span></span>
-<span class="r-in"><span><span class="co">#  action    = list(</span></span></span>
-<span class="r-in"><span><span class="co">#    type     = "set state",</span></span></span>
-<span class="r-in"><span><span class="co">#    state    = "Ac",</span></span></span>
-<span class="r-in"><span><span class="co">#    value    = "Ac/2")</span></span></span>
-<span class="r-in"><span><span class="co">#  ),</span></span></span>
-<span class="r-in"><span><span class="co">#reset_Cp    = list(</span></span></span>
-<span class="r-in"><span><span class="co">#  condition = "time == 45",</span></span></span>
-<span class="r-in"><span><span class="co">#  true_flag  = "Cp/2",</span></span></span>
-<span class="r-in"><span><span class="co">#  false_flag = "",</span></span></span>
-<span class="r-in"><span><span class="co">#  action    = list(</span></span></span>
-<span class="r-in"><span><span class="co">#    type     = "set state",</span></span></span>
-<span class="r-in"><span><span class="co">#    state    = "Cp",</span></span></span>
-<span class="r-in"><span><span class="co">#    value    = "Cp/2")</span></span></span>
-<span class="r-in"><span><span class="co">#)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  reset_Ac    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    condition <span class="op">=</span> <span class="st">"time == 45"</span>,</span></span>
+<span class="r-in"><span>    true_flag  <span class="op">=</span> <span class="st">"Ac/2"</span>,</span></span>
+<span class="r-in"><span>    false_flag <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>    action    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      type     <span class="op">=</span> <span class="st">"set state"</span>,</span></span>
+<span class="r-in"><span>      state    <span class="op">=</span> <span class="st">"Ac"</span>,</span></span>
+<span class="r-in"><span>      value    <span class="op">=</span> <span class="st">"Ac/2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  reset_Cp    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    condition <span class="op">=</span> <span class="st">"time == 45"</span>,</span></span>
+<span class="r-in"><span>    true_flag  <span class="op">=</span> <span class="st">"Cp/2"</span>,</span></span>
+<span class="r-in"><span>    false_flag <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>    action    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      type     <span class="op">=</span> <span class="st">"set state"</span>,</span></span>
+<span class="r-in"><span>      state    <span class="op">=</span> <span class="st">"Cp"</span>,</span></span>
+<span class="r-in"><span>      value    <span class="op">=</span> <span class="st">"Cp/2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>

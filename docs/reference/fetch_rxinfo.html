@@ -106,7 +106,6 @@ etc from an rxode2 object.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://formods.ubiquity.tools/" class="external-link">formods</a></span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘formods’ was built under R version 4.2.3</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nlmixr2.github.io/rxode2/" class="external-link">rxode2</a></span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘rxode2’ was built under R version 4.2.3</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> rxode2 2.1.1 using 1 threads (see ?getRxThreads)</span>
@@ -116,6 +115,10 @@ etc from an rxode2 object.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> This is a Mac. Please read https://mac.r-project.org/openmp/</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ========================================</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># For more information see the Clinical Trial Simulation vignette:</span></span></span>
+<span class="r-in"><span><span class="co"># https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># None of this will work if rxode2 isn't installed:</span></span></span>
 <span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://formods.ubiquity.tools/reference/is_installed.html" class="external-link">is_installed</a></span><span class="op">(</span><span class="st">"rxode2"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span></span>
@@ -170,25 +173,25 @@ etc from an rxode2 object.</p>
 <span class="r-in"><span>      values    <span class="op">=</span> <span class="st">"c(3,  3,  3,  3)*1e6/MW"</span>,</span></span>
 <span class="r-in"><span>      times     <span class="op">=</span> <span class="st">"c(0, 14, 28, 42)"</span>,</span></span>
 <span class="r-in"><span>      durations <span class="op">=</span> <span class="st">"c(0,  0,  0,  0)"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span> <span class="co">#,</span></span></span>
-<span class="r-in"><span><span class="co">#reset_Ac    = list(</span></span></span>
-<span class="r-in"><span><span class="co">#  condition = "time == 45",</span></span></span>
-<span class="r-in"><span><span class="co">#  true_flag  = "Ac/2",</span></span></span>
-<span class="r-in"><span><span class="co">#  false_flag = "",</span></span></span>
-<span class="r-in"><span><span class="co">#  action    = list(</span></span></span>
-<span class="r-in"><span><span class="co">#    type     = "set state",</span></span></span>
-<span class="r-in"><span><span class="co">#    state    = "Ac",</span></span></span>
-<span class="r-in"><span><span class="co">#    value    = "Ac/2")</span></span></span>
-<span class="r-in"><span><span class="co">#  ),</span></span></span>
-<span class="r-in"><span><span class="co">#reset_Cp    = list(</span></span></span>
-<span class="r-in"><span><span class="co">#  condition = "time == 45",</span></span></span>
-<span class="r-in"><span><span class="co">#  true_flag  = "Cp/2",</span></span></span>
-<span class="r-in"><span><span class="co">#  false_flag = "",</span></span></span>
-<span class="r-in"><span><span class="co">#  action    = list(</span></span></span>
-<span class="r-in"><span><span class="co">#    type     = "set state",</span></span></span>
-<span class="r-in"><span><span class="co">#    state    = "Cp",</span></span></span>
-<span class="r-in"><span><span class="co">#    value    = "Cp/2")</span></span></span>
-<span class="r-in"><span><span class="co">#)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  reset_Ac    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    condition <span class="op">=</span> <span class="st">"time == 45"</span>,</span></span>
+<span class="r-in"><span>    true_flag  <span class="op">=</span> <span class="st">"Ac/2"</span>,</span></span>
+<span class="r-in"><span>    false_flag <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>    action    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      type     <span class="op">=</span> <span class="st">"set state"</span>,</span></span>
+<span class="r-in"><span>      state    <span class="op">=</span> <span class="st">"Ac"</span>,</span></span>
+<span class="r-in"><span>      value    <span class="op">=</span> <span class="st">"Ac/2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  reset_Cp    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    condition <span class="op">=</span> <span class="st">"time == 45"</span>,</span></span>
+<span class="r-in"><span>    true_flag  <span class="op">=</span> <span class="st">"Cp/2"</span>,</span></span>
+<span class="r-in"><span>    false_flag <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>    action    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      type     <span class="op">=</span> <span class="st">"set state"</span>,</span></span>
+<span class="r-in"><span>      state    <span class="op">=</span> <span class="st">"Cp"</span>,</span></span>
+<span class="r-in"><span>      value    <span class="op">=</span> <span class="st">"Cp/2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>

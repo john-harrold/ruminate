@@ -34,6 +34,51 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/reference/CTS_Server.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_append_report.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_del_current_element.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_fetch_code.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_fetch_current_element.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_fetch_ds.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_fetch_mdl.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_fetch_sc_meta.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_fetch_state.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_init_state.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_new_element.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_set_current_element.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_test_mksession.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_update_checksum.html</loc>
+  </url>
+  <url>
+    <loc>/reference/FM_fetch_mdl.html</loc>
+  </url>
+  <url>
     <loc>/reference/MB_Server.html</loc>
   </url>
   <url>

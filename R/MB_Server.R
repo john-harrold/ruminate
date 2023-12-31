@@ -13,6 +13,7 @@
 #'@param deployed Boolean variable indicating whether the app is deployed or not.
 #'@param react_state Variable passed to server to allow reaction outside of module (\code{NULL})
 #'@return MB Server object
+# JMH Add example
 MB_Server <- function(id,
                id_ASM        = "ASM",
                FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml"),
@@ -1523,17 +1524,17 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
   input  = list()
   state  = list()
 
-    # Configuration files
-    FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
-    MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
-    
-    # Creating an empty state object
-    state = MB_fetch_state(id              = "MB",
-                           input           = input,
-                           session         = session,
-                           FM_yaml_file    = FM_yaml_file,
-                           MOD_yaml_file   = MOD_yaml_file,
-                           react_state     = NULL)
+  # Configuration files
+  FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
+  MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
+  
+  # Creating an empty state object
+  state = MB_fetch_state(id              = "MB",
+                         input           = input,
+                         session         = session,
+                         FM_yaml_file    = FM_yaml_file,
+                         MOD_yaml_file   = MOD_yaml_file,
+                         react_state     = NULL)
 
   if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
     # This will provide a list of the available models
@@ -1541,7 +1542,7 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
     
     #-------------------------------------------------------
     # Simplest model:
-    ridx = which(models[["summary"]][["Name"]] == "PK_1cmt")
+    ridx = which(models[["summary"]][["Name"]] == "PK_1cmt_des")
     model_row  = models[["summary"]][ridx, ]
     
     mk_rx_res = mk_rx_obj(
