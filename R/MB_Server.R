@@ -1366,14 +1366,29 @@ state}
 #' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
 #' state = sess_res$state
 #'
-#' code = MB_fetch_code(state)
+#' code_str = MB_fetch_code(state)
 #'
-#' cat(code)
+#' cat(code_str)
 MB_fetch_code = function(state){
 
-  code = NULL
+  cmds = c()
 
-code}
+  enames = names(state[["MB"]][["elements"]])
+  if(length(enames) > 0){
+    for(ename in enames){
+      current_element = state[["MB"]][["elements"]][[ename]]
+      component       = MB_fetch_component(state, current_element)
+      cmds            = c(cmds, paste0("# Base model: ", current_element[["base_model_name"]]))
+      cmds            = c(cmds, component$model_code)
+      cmds            = c(cmds, "\n\n")
+    }
+  } else {
+    cmds = "# No model building modules"
+  }
+
+  code_str = paste0(cmds, collapse="\n")
+
+code_str}
 
 #'@export
 #'@title Append Report Elements
@@ -1632,8 +1647,6 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
   } else {
     isgood = FALSE
   }
-
-  message("bottom")
 
   res = list(
     isgood  = isgood,
