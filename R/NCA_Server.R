@@ -2544,6 +2544,7 @@ NCA_Server <- function(id,
 
               # Adding tooltip if necessary
               if(ADD_TOOL_TIP){
+                # JMH convert to use FM_add_ui_tooltip
                 tmp_tI = prompter::add_prompt(
                   tmp_tI,
                   position = "right",
@@ -2570,6 +2571,7 @@ NCA_Server <- function(id,
 
               # Adding tooltip if necessary
               if(ADD_TOOL_TIP){
+                # JMH convert to use FM_add_ui_tooltip
                 tmp_sI = prompter::add_prompt(
                   tmp_sI,
                   position = "right",

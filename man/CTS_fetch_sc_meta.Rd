@@ -14,16 +14,9 @@ CTS_fetch_sc_meta(
 \value{
 List with the following elements:
 \itemize{
-\item{choices:} List parameter choices grouped by values specified in the module configuration file.
-\item{summary:} Data frame with meta data about the NCA parameters with
-the following columns:
-\itemize{
-\item{parameter:}   Name of parameter in PKNCA.
-\item{text:}        Name of parameter in plain text.
-\item{md:}          Parameter name formatted in Markdown.
-\item{latex:}       Parameter name formatted using LaTeX.
-\item{description:} Verbose description in plain text for the parameter.
-}
+\item{config} List from the YAML->MC->sim_config.
+\item{summary:} Dataframe with elements of config in tabular format.
+\item{ui_config} Vector of  all the ui_ids for configuration options.
 }
 }
 \description{

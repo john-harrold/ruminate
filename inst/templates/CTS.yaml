@@ -74,7 +74,17 @@ MC:
       block: TRUE
       tooltip: "Create a new cohort."
       tooltip_position: "right"
-      width: 100
+    button_clk_add_rule:
+      size: "sm"
+      block: FALSE
+      tooltip: "Add a new rule."
+      tooltip_position: "right"
+    button_clk_add_cov:
+      width:  "456px"
+      size: "sm"
+      block: TRUE  
+      tooltip: "Define covariate."
+      tooltip_position: "right"
     rule_condition:
       width:  300
       height: 100
@@ -129,6 +139,39 @@ MC:
           choice:      "Manual"
           subtext:     "Alter the event table directly."
           value:       "manual"    
+    config_text:
+      width: 150
+    config_select:
+      width: 150
+    config_textarea:
+      width:    456
+      height:   150
+    hot_current_rules:    
+      width:  800 
+      height: 400
+      no_rules: "No Rules Defined"
+    hot_current_covariates:
+      width:  800 
+      height: 400
+      no_covariates: "Covariate not yet defined"
+    nsub: 
+      value:  10
+      width:  50  
+      placeholder: 10
+      tooltip: "Number of sujbects in the current cohort."
+      tooltip_position: "bottom"
+    visit_times:
+      value:  0   
+      width:  150 
+      placeholder: "c(0, 7, 14, 21)"
+      tooltip: "Study visit times."
+      tooltip_position: "bottom"
+    covariates:
+      none_found: "There were no coviaraites found in this model"
+    selected_covariate:
+      width:  150 
+      tooltip: "Pick covariate to define."
+      tooltip_position: "right"
   labels:
     current_element:     NULL # "Select cohort"
     element_name :       NULL # "cohort name"
@@ -136,6 +179,8 @@ MC:
     clip_btn:            "Code" 
     copy_btn:            "Copy"
     del_btn:             "Delete"
+    add_rule_btn:        "Add Rule"
+    add_cov_btn:         "Add Covariate Details"
     new_btn:             "New"
     source_model:        "Select Model"
     rule_type:           "Type of rule"
@@ -147,6 +192,11 @@ MC:
     action_dosing_durations: "Durations"
     action_set_state_state:  "State/compartment to reset"
     action_set_state_value:  "New value for state/compartment"
+    nsub:                    "N Subs"
+    visit_times:             "Visit Times"
+    selected_covariate:      "Covariate"
+    covariate_type:          "Type/Distribution"
+    covariate_value:         "Values"
   errors:
     bad_input: "Input error message"
   tooltips:
@@ -170,8 +220,7 @@ MC:
                     you can use. For details on this see the ", 
                     tags$a(href=state[["MC"]][["tooltips"]][["url_rule_env"]],
                      "Clinical Trial Simulation"), " vignette.")
-    uiele = tagList(uiele, tags$br())
-    uiele = tagList(uiele, "For the current system the following are available", tags$br())
+    uiele = tagList(uiele, "For the current system the following are available:", tags$br())
     uiele = tagList(uiele, tags$br())
     uiele = tagList(uiele, rx_details[["ht_info"]])
   # For details on the simulation options see the help rxode2::rxSolve
@@ -184,6 +233,7 @@ MC:
   # label        - Short textual description
   # tooltip      - More detailed description of the option and what goes into it.
   #                Set to NULL to not display a tool tip.
+  # uitype       - Type of ui to generate can be either text, select, or textarea
   # type         - List of possible types. For example if you have "numeric" then
   #                "character" the value will be evaluated as numeric, if this is
   #                NA then it will be evaluated as character. Allowed types:
@@ -191,9 +241,10 @@ MC:
   #                  - character
   #                  - mixed (numeric and character)
   #                  - logical (TRUE or FALSE)
-  # value        - Default value in the UI
-  # options      - If set to NULL a text input box will be created for this option,
-  #                if there are options then a selection box will be created.
+  # value        - Default value in the UI if it is NULL you need to set it as
+  #                "NULL" with quotes. If you want it to be empty set it as
+  #                NULL without quotes. 
+  # options      - These are the options if uitype is set to select
   # use          - This idicates where the configuration is being used. Allowed types:
   #                  - rxSolve
   sim_config:
@@ -201,30 +252,110 @@ MC:
       group:         "ODE Solver"
       label:         "Absolute tolerance"
       tooltip:       "Absolute tolerance used by the ODE solver to determine if a good solution has been achieved; This is also used in the solved linear model to check if prior doses do not add anything to the solution."
+      uitype:        "text"
       type:          "numeric"
       value:         1e-8
       options:       NULL
       use:           "rxSolve"
+      placeholder:   "1e-8"
     rtol:    
       group:         "ODE Solver"
-      label:         "Absolute tolerance"
+      label:         "Relative tolerance"
       tooltip:       "Relative tolerance used by the ODE solver to determine if a good solution has been achieved. This is also used in the solved linear model to check if prior doses do not add anything to the solution."
+      uitype:        "text"
       type:          "numeric"
       value:         1e-6
       options:       NULL
       use:           "rxSolve"
+      placeholder:   "1e-6"
     sigdig:  
       group:         "ODE Solver"
-      label:         "Absolute tolerance"
+      label:         "Significant digits"
       tooltip:       'Specifies the "significant digits" that the ode solving requests. When specified this controls the relative and absolute tolerances of the ODE solvers. By default the tolerance is 0.5*10^(-sigdig-2) for regular ODEs. For the sensitivity equations the default is ⁠0.5*10\^(-sigdig-1.5)⁠ (sensitivity changes only applicable for liblsoda). This also controls the atol/rtol of the steady state solutions. The ssAtol/ssRtol is ⁠0.5*10\^(-sigdig)⁠ and for the sensitivities ⁠0.5*10\^(-sigdig+0.625)⁠. By default this is unspecified (NULL) and uses the standard atol/rtol.'
+      uitype:        "text"
       type:          "numeric"
-      value:         NULL
+      value:         "NULL"
       options:       NULL
       use:           "rxSolve"
+      placeholder:   "NULL"
+#   method:  
+#     group:         "ODE Solver"
+#     label:         "Solver method"      
+#     tooltip:       |-
+#       The method for solving ODEs currently supports:
+#       "liblsoda"- thread safe lsoda. This supports parallel thread-based solving, and ignores user Jacobian specification. 
+#       "lsoda"  - LSODA solver. Does not support parallel thread-based solving, but allows user Jacobian specification.
+#       "dop853" -  DOP853 solver. Does not support parallel thread-based solving nor user Jacobian specification
+#       "indLin" -  Solving through inductive linearization. The rxode2 dll must be setup specially to use this solving routine.
+#     uitype:        "select"
+#     type:          "character"
+#     value:         "liblsoda"
+#     choices:       ["liblsoda", "lsoda", "dop853", "indLin"]
+#     use:           "rxSolve"
+#     placeholder:   NULL
+    seed:    
+      group:         "Misc"
+      label:         "Random Seed"
+      tooltip:       'Integer value to set the seed for the random number generator'
+      uitype:        "text"
+      type:          "numeric"
+      value:         "86753090"
+      options:       NULL
+      use:           "Misc"
+      placeholder:   "8675309"
+    preamble:
+      group:         "Rule Environment Preamble"
+      label:         NULL
+      tooltip:       'Optional user-defined code to be created in the rule-evaluation environment.'
+      uitype:        "textarea"
+      type:          "character"
+      value:         NULL
+      options:       NULL
+      use:           "rules"
+      placeholder: |-
+        my_func = function(id=NULL){
+
+        }
+  covariate_generation:
+    tooltip_position: "right"
+    width:             150
+    # These are the types of covariates that can be constructed. You should
+    # only change the placeholder, choice, and tool_tip options. The rest are used
+    # internally and should not be changed.
+    types:
+      discrete:
+        choice:      "Select from discrete values"
+        type:        "discrete"
+        placeholder: "0, 1, 2"
+        tool_tip:    "Provide a list of possible discrete values and these will be randomly selected when genreating subjects."
+      fixed:
+        choice:      "Fix at value"
+        type:        "fixed"
+        placeholder: "1"
+        tool_tip:    "Fix the covariate at a specific value."
+      cont_random: 
+        choice:      "Continuous/random in range"
+        type:        "continuous"
+        sampling:    "random"
+        placeholder: "0,1"
+        tool_tip:    "Sample randomly from within the specified range."
+      cont_normal: 
+        choice:      "Sample normally"
+        type:        "continuous"
+        sampling:    "normal"
+        placeholder: "mean, variance"
+        tool_tip:    "Sample from normal distribution provided a mean and variance"
+      cont_lognormal: 
+        choice:      "Sample log-normally"
+        type:        "continuous"
+        sampling:    "log-normal"
+        placeholder: "mean, variance"
+        tool_tip:    "Sample from log-normal distribution provided a mean and variance"
 #   method:  
 #     group:         "ODE Solver"
 #     label:         "Solver method"
 #     tooltip:       "Relative tolerance used by the ODE solver to determine if a good solution has been achieved. This is also used in the solved linear model to check if prior doses do not add anything to the solution."
+#     uitype:        "select"
 #     type:          "numeric"
 #     value:         1e-6
 #     options:       ["liblsoda", "lsoda", "dop853", "indLin"]

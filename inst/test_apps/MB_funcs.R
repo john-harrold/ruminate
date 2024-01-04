@@ -80,4 +80,4 @@ message(paste0(gen_code$model_code, collapse="\n"))
 message(paste0(gen_code$model_code_sa, collapse="\n"))
 
 # This will fetch the code to regenerate all of the components of this module
-code_str = MB_fetch_code(state)
+message(MB_fetch_code(state))

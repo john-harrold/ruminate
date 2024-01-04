@@ -1,5 +1,6 @@
 #library(formods)
 library(shinydashboard)
+library(rhandsontable)  
 
 #https://fontawesome.com/icons?from=io
 
@@ -55,6 +56,38 @@ ui <- dashboardPage(
            width=6)
          ),
        fluidRow(
+         box(title="Trial Options",
+           div(style="display:inline-block",
+             "CTS_ui_nsub",           
+             htmlOutput(NS("CTS", "CTS_ui_nsub"))), 
+           div(style="display:inline-block",
+             "CTS_ui_visit_times",           
+             htmlOutput(NS("CTS", "CTS_ui_visit_times"))), 
+           width=12)
+         ),
+       fluidRow(
+         box(title="Covariates",
+           div(style="display:inline-block",
+             "CTS_ui_covariates_none",           
+             htmlOutput(NS("CTS", "CTS_ui_covariates_none"))), tags$br(),
+           div(style="display:inline-block",
+             "CTS_ui_covariates_selection",           
+             htmlOutput(NS("CTS", "CTS_ui_covariates_selection"))), 
+           div(style="display:inline-block",
+             "CTS_ui_covariates_type",           
+             htmlOutput(NS("CTS", "CTS_ui_covariates_type"))), 
+           div(style="display:inline-block",
+             "CTS_ui_covariates_value",           
+             htmlOutput(NS("CTS", "CTS_ui_covariates_value"))), 
+           div(style="display:inline-block",
+             "CTS_ui_covariates_button",           
+             htmlOutput(NS("CTS", "CTS_ui_covariates_button"))), 
+           div(style="display:inline-block",
+             "CTS_ui_covariates_table",           
+             htmlOutput(NS("CTS", "CTS_ui_covariates_table"))), 
+           width=12)
+         ),
+       fluidRow(
          box(title="Simulation Environment",
            "CTS_ui_sim_env",           
            htmlOutput(NS("CTS", "CTS_ui_sim_env")), 
@@ -64,6 +97,8 @@ ui <- dashboardPage(
          box(title="Rules",
            "CTS_ui_select_rule_type",
            htmlOutput(NS("CTS", "CTS_ui_select_rule_type")), 
+           "CTS_ui_add_rule_btn",
+           htmlOutput(NS("CTS", "CTS_ui_add_rule_btn")), 
            "CTS_ui_rule_condition",
            htmlOutput(NS("CTS", "CTS_ui_rule_condition")), 
            width=12)
@@ -90,6 +125,10 @@ ui <- dashboardPage(
            htmlOutput(NS("CTS", "CTS_ui_action_manual_code")), 
            width=4)
          ),
+       fluidRow(
+         box(title="Current Rules",
+             "hot_current_rules",
+             rhandsontable::rHandsontableOutput(NS("CTS", "hot_current_rules")), width=12)),
        fluidRow(
          box(title="Configuration",
            "CTS_ui_sim_cfg",      

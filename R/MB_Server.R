@@ -1294,6 +1294,7 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
   state = FM_init_state(
     FM_yaml_file    = FM_yaml_file,
     MOD_yaml_file   = MOD_yaml_file,
+    dep_mod_ids     = c(),
     id              = id,
     MT              = "MB",
     button_counters = button_counters,
@@ -1361,14 +1362,7 @@ state}
 #'@description Fetches the code to generate results seen in the app
 #'@param state MB state from \code{MB_fetch_state()}
 #'@return Character object vector with the lines of code
-#'@examples
-#' # We need a module state:
-#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
-#' state = sess_res$state
-#'
-#' code_str = MB_fetch_code(state)
-#'
-#' cat(code_str)
+#'@example inst/test_apps/MB_funcs.R
 MB_fetch_code = function(state){
 
   cmds = c()
@@ -1380,7 +1374,7 @@ MB_fetch_code = function(state){
       component       = MB_fetch_component(state, current_element)
       cmds            = c(cmds, paste0("# Base model: ", current_element[["base_model_name"]]))
       cmds            = c(cmds, component$model_code)
-      cmds            = c(cmds, "\n\n")
+      cmds            = c(cmds, "\n")
     }
   } else {
     cmds = "# No model building modules"

@@ -98,14 +98,9 @@ includes option names, text descriptions, ui_names used, etc.</p>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>List with the following elements:</p><ul><li><p>choices: List parameter choices grouped by values specified in the module configuration file.</p></li>
-<li><p>summary: Data frame with meta data about the NCA parameters with
-the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p></li>
-<li><p>text:        Name of parameter in plain text.</p></li>
-<li><p>md:          Parameter name formatted in Markdown.</p></li>
-<li><p>latex:       Parameter name formatted using LaTeX.</p></li>
-<li><p>description: Verbose description in plain text for the parameter.</p></li>
-</ul></li>
+<p>List with the following elements:</p><ul><li><p>config List from the YAML-&gt;MC-&gt;sim_config.</p></li>
+<li><p>summary: Dataframe with elements of config in tabular format.</p></li>
+<li><p>ui_config Vector of  all the ui_ids for configuration options.</p></li>
 </ul></div>
 
     <div class="section level2">
@@ -122,6 +117,9 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$atol$tooltip</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Absolute tolerance used by the ODE solver to determine if a good solution has been achieved; This is also used in the solved linear model to check if prior doses do not add anything to the solution."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$atol$uitype</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "text"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$atol$type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "numeric"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -134,6 +132,9 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$atol$use</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxSolve"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$atol$placeholder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1e-8"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$atol$ui</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cts_config_atol"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -143,10 +144,13 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ODE Solver"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$rtol$label</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Absolute tolerance"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Relative tolerance"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$rtol$tooltip</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Relative tolerance used by the ODE solver to determine if a good solution has been achieved. This is also used in the solved linear model to check if prior doses do not add anything to the solution."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$rtol$uitype</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "text"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$rtol$type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "numeric"</span>
@@ -160,6 +164,9 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$rtol$use</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxSolve"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$rtol$placeholder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1e-6"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$rtol$ui</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cts_config_rtol"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -169,16 +176,19 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ODE Solver"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$sigdig$label</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Absolute tolerance"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Significant digits"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$sigdig$tooltip</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Specifies the \"significant digits\" that the ode solving requests. When specified this controls the relative and absolute tolerances of the ODE solvers. By default the tolerance is 0.5*10^(-sigdig-2) for regular ODEs. For the sensitivity equations the default is ⁠0.5*10\\^(-sigdig-1.5)⁠ (sensitivity changes only applicable for liblsoda). This also controls the atol/rtol of the steady state solutions. The ssAtol/ssRtol is ⁠0.5*10\\^(-sigdig)⁠ and for the sensitivities ⁠0.5*10\\^(-sigdig+0.625)⁠. By default this is unspecified (NULL) and uses the standard atol/rtol."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$sigdig$uitype</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "text"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$sigdig$type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "numeric"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$sigdig$value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NULL"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$sigdig$options</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
@@ -186,13 +196,89 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$sigdig$use</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rxSolve"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$sigdig$placeholder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NULL"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $config$sigdig$ui</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cts_config_sigdig"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$seed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$seed$group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Misc"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$seed$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Random Seed"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$seed$tooltip</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Integer value to set the seed for the random number generator"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$seed$uitype</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "text"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$seed$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "numeric"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$seed$value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "86753090"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$seed$options</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$seed$use</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Misc"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$seed$placeholder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "8675309"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$seed$ui</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cts_config_seed"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$preamble</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$preamble$group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Rule Environment Preamble"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$preamble$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$preamble$tooltip</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Optional user-defined code to be created in the rule-evaluation environment."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$preamble$uitype</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "textarea"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$preamble$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "character"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$preamble$value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$preamble$options</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$preamble$use</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rules"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$preamble$placeholder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "my_func = function(id=NULL){\n\n}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $config$preamble$ui</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cts_config_preamble"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $cfg_summary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       name                  ui     use      type                     group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     atol     cts_config_atol rxSolve   numeric                ODE Solver</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     rtol     cts_config_rtol rxSolve   numeric                ODE Solver</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   sigdig   cts_config_sigdig rxSolve   numeric                ODE Solver</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     seed     cts_config_seed    Misc   numeric                      Misc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 preamble cts_config_preamble   rules character Rule Environment Preamble</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ui_config</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cts_config_atol"   "cts_config_rtol"   "cts_config_sigdig"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cts_config_atol"     "cts_config_rtol"     "cts_config_sigdig"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "cts_config_seed"     "cts_config_preamble"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

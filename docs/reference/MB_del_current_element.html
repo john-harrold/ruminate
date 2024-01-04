@@ -125,15 +125,14 @@ If that is the last element, then a new default will be added.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 4c1cee671a16d68ac228a0860a4346de</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:e2ee66142df9cd7724aa9ac416a0399f</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: dce23fe5044e37329bfe5e79dac420fc</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:550c4c7bd721e48f3aee12b1e4fdaa1d</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 5e6fc90200958cc3f4f1d979475b1e86</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:bba5b8caae381920a547eb80c192bac6</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> bottom</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 7d7559d9e179c3c0aeb1dc7eabc8410c</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:61d3059068f598e1bd8fa67c6c0d9d4c</span>
 <span class="r-in"><span><span class="co"># This is just for CRAN</span></span></span>
 <span class="r-in"><span><span class="co">#sess_res = MB_test_mksession(session=list())</span></span></span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
@@ -279,8 +278,8 @@ If that is the last element, then a new default will be added.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can now place element back in the state</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="MB_set_current_element.html">MB_set_current_element</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">element</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: e4e3838fbd624332afab8827289c586c</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:8e965cdf9e47e0daef444cc92353a5ad</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: ee424c7bcd22572ef858b664d188268e</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:a1a99782f642f5fa66576f4537d590be</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will fetch the current component</span></span></span>
 <span class="r-in"><span><span class="va">component</span> <span class="op">=</span> <span class="fu"><a href="MB_fetch_component.html">MB_fetch_component</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">element</span><span class="op">)</span></span></span>
@@ -293,61 +292,131 @@ If that is the last element, then a new default will be added.</p>
 <span class="r-in"><span>              rx_obj_name  <span class="op">=</span> <span class="st">"my_obj_name"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Model code to be included in a larger script</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">gen_code</span><span class="op">$</span><span class="va">model_code</span>, collapse<span class="op">=</span><span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> my_fcn_obj = function () </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     description &lt;- "One compartment PK model with linear clearance"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ini({</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         lka &lt;- 0.45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         label("Absorption rate (Ka)")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         lcl &lt;- 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         label("Clearance (CL)")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         lvc &lt;- 3.45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         label("Central volume of distribution (V)")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         propSd &lt;- c(0, 0.5)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         label("Proportional residual error (fraction)")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     model({</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         ka &lt;- exp(lka)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         cl &lt;- exp(lcl)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         vc &lt;- exp(lvc)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         Cc &lt;- linCmt()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         Cc ~ prop(propSd)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> my_obj_name =  rxode2::rxode2(my_fcn_obj)</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">gen_code</span><span class="op">$</span><span class="va">model_code</span>, collapse<span class="op">=</span><span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> my_fcn_obj = function () </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     description &lt;- "One compartment PK model with linear clearance"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     ini({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lka &lt;- 0.45</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Absorption rate (Ka)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lcl &lt;- 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Clearance (CL)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lvc &lt;- 3.45</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Central volume of distribution (V)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         propSd &lt;- c(0, 0.5)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Proportional residual error (fraction)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     model({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         ka &lt;- exp(lka)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         cl &lt;- exp(lcl)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         vc &lt;- exp(lvc)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc &lt;- linCmt()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc ~ prop(propSd)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> my_obj_name =  rxode2::rxode2(my_fcn_obj)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Stand-alone model code</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">gen_code</span><span class="op">$</span><span class="va">model_code_sa</span>, collapse<span class="op">=</span><span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> library("nlmixr2lib")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> library("nonmem2rx")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> library("rxode2")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> my_fcn_obj = function () </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     description &lt;- "One compartment PK model with linear clearance"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ini({</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         lka &lt;- 0.45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         label("Absorption rate (Ka)")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         lcl &lt;- 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         label("Clearance (CL)")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         lvc &lt;- 3.45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         label("Central volume of distribution (V)")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         propSd &lt;- c(0, 0.5)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         label("Proportional residual error (fraction)")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     model({</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         ka &lt;- exp(lka)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         cl &lt;- exp(lcl)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         vc &lt;- exp(lvc)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         Cc &lt;- linCmt()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         Cc ~ prop(propSd)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> my_obj_name =  rxode2::rxode2(my_fcn_obj)</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">gen_code</span><span class="op">$</span><span class="va">model_code_sa</span>, collapse<span class="op">=</span><span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> library("nlmixr2lib")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> library("nonmem2rx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> library("rxode2")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> my_fcn_obj = function () </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     description &lt;- "One compartment PK model with linear clearance"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     ini({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lka &lt;- 0.45</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Absorption rate (Ka)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lcl &lt;- 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Clearance (CL)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lvc &lt;- 3.45</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Central volume of distribution (V)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         propSd &lt;- c(0, 0.5)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Proportional residual error (fraction)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     model({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         ka &lt;- exp(lka)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         cl &lt;- exp(lcl)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         vc &lt;- exp(lvc)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc &lt;- linCmt()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc ~ prop(propSd)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> my_obj_name =  rxode2::rxode2(my_fcn_obj)</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># JMH to add:</span></span></span>
-<span class="r-in"><span><span class="co"># MB_fetch_code</span></span></span>
+<span class="r-in"><span><span class="co"># This will fetch the code to regenerate all of the components of this module</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="MB_fetch_code.html">MB_fetch_code</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # Base model: PK_1cmt_des</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MB_obj_1_fcn = function () </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     description &lt;- "One compartment PK model with linear clearance"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     ini({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lka &lt;- 0.45</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Absorption rate (Ka)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lcl &lt;- 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Clearance (CL)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lvc &lt;- 3.45</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Central volume of distribution (V)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         propSd &lt;- c(0, 0.5)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Proportional residual error (fraction)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     model({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         ka &lt;- exp(lka)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         cl &lt;- exp(lcl)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         vc &lt;- exp(lvc)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc &lt;- linCmt()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc ~ prop(propSd)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # Base model: PK_2cmt_mAb_Davda_2014</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MB_obj_2_fcn = function () </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     description &lt;- "Two compartment PK model with linear clearance for average monoclonal antibodies (Davda 2014)"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     reference &lt;- "Davda JP, Dodds MG, Gibbs MA, Wisdom W, Gibbs JP. A model-based meta-analysis of monoclonal antibody pharmacokinetics to guide optimal first-in-human study design. MAbs. 2014;6(4):1094-1102. doi:10.4161/mabs.29095"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     ini({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lfdepot &lt;- -0.295714244149045</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Subcutaneous bioavailability (fraction)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lka &lt;- -1.26584820804402</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Absorption rate (Ka, 1/day)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lcl &lt;- -1.6094379124341</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Clearance (CL, L/day)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lv &lt;- 1.28370777234479</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Central volume of distribution (V, L)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lvp &lt;- 1.01160091167848</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Peripheral volume of distribution (Vp, L)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lq &lt;- -0.29169009384932</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Intercompartmental clearance (Q, L/day)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         allocl &lt;- 0.865</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Allometric exponent on clearance and intercompartmental clearance (unitless)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         allov &lt;- 0.957</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Allometric exponent on volumes of distribution (unitless)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         prop.err &lt;- c(0, 0.144)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Proportional residual error (fraction)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         etafdepot ~ 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         etaka ~ 0.416</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         etacl + etav + etavp ~ c(0.0987, 0.0786, 0.116, 0.0377, </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>             0.0619, 0.0789)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         etaq ~ 0.699</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     model({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         fdepot &lt;- exp(lfdepot + etafdepot)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         ka &lt;- exp(lka + etaka)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         wtnorm &lt;- log(WT/70)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         cl &lt;- exp(lcl + allocl * wtnorm + etacl)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         q &lt;- exp(lq + allocl * wtnorm + etaq)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         v &lt;- exp(lv + allov * wtnorm + etav)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         vp &lt;- exp(lvp + allov * wtnorm + etavp)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc &lt;- linCmt()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         f(depot) &lt;- fdepot</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc ~ prop(prop.err)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> MB_obj_2_rx =  rxode2::rxode2(MB_obj_2_fcn)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

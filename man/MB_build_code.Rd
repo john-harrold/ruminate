@@ -109,11 +109,11 @@ gen_code =
               rx_obj_name  = "my_obj_name")
 
 # Model code to be included in a larger script
-cat(paste0(gen_code$model_code, collapse="\n"))
+message(paste0(gen_code$model_code, collapse="\n"))
 
 # Stand-alone model code
-cat(paste0(gen_code$model_code_sa, collapse="\n"))
+message(paste0(gen_code$model_code_sa, collapse="\n"))
 
-# JMH to add:
-# MB_fetch_code
+# This will fetch the code to regenerate all of the components of this module
+message(MB_fetch_code(state))
 }
