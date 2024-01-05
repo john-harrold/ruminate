@@ -40,7 +40,6 @@ MB_Server <- function(id,
 
         # Extracting the model catalog:
         model_catalog = state[["MB"]][["model_catalog"]]
-
         current_ele = MB_fetch_current_element(state)
 
         if( model_catalog[["isgood"]]){
@@ -647,6 +646,34 @@ MB_Server <- function(id,
         react_state[[id]][["MB"]][["checksum"]] = state[["MB"]][["checksum"]]
       }, priority=99)
     }
+    #------------------------------------
+    # Copying element code to the clipboard
+    observeEvent(input$button_clk_clip, {
+      state = MB_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      # This is all conditional on the whether clipr is installed $
+      # and if the app isn't deployed
+      if((system.file(package="clipr") != "") &
+         !deployed){
+
+          # Pulling out the current element
+          current_element = MB_fetch_current_element(state)
+          component       = MB_fetch_component(state, current_element)
+          if(component[["isgood"]]){
+            uiele = component[["model_code_sa"]]
+          } else {
+            uiele = paste0("# ", state[["MC"]][["errors"]][["no_model_found"]])
+          }
+
+          clipr::write_clip(uiele)
+        }
+    })
 
     #------------------------------------
     # This can be used to trigger notifications
@@ -1490,6 +1517,7 @@ MB_fetch_mdl = function(state){
                MOD_TYPE    = "MB",
                id          = state[["id"]],
                rx_obj      = cc[["rx_obj"]],
+               rx_obj_name = ce[["rx_obj_name"]],
                fcn_def     = cc[["fcn_def"]],
                MDLMETA     = cc[["note"]],
                code        = cc[["model_code"]],

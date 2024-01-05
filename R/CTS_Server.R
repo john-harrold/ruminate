@@ -648,9 +648,9 @@ CTS_Server <- function(id,
           sampling = current_ele[["covariates"]][[tmp_cov]][["sampling"]]
           values   = current_ele[["covariates"]][[tmp_cov]][["values"]]
           if(is.null(sampling)){
-            tmp_details = paste0(type, ": ", values)
+            tmp_details = paste0(type, ": ", paste0(values, collapse=", "))
           } else {
-            tmp_details = paste0(type, ", ", sampling, ": ", values)
+            tmp_details = paste0(type, ", ", sampling, ": ", paste0(values, collapse=", "))
           }
         }
 
@@ -868,20 +868,20 @@ CTS_Server <- function(id,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
-    current_ele = CTS_fetch_current_element(state)
-
-
-    uiele = NULL
-    if(length(current_ele[["rx_details"]][["elements"]][["covariates"]]) > 0){
-     uiele = shinyWidgets::actionBttn(
-       inputId = NS(id, "button_clk_add_cov"),
-       label   = state[["MC"]][["labels"]][["add_cov_btn"]],
-       style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
-       size    = state[["MC"]][["formatting"]][["button_clk_add_cov"]][["size"]],
-       block   = state[["MC"]][["formatting"]][["button_clk_add_cov"]][["block"]],
-       color   = "success",
-       icon    = icon("plus-sign", lib="glyphicon"))
-    }
+      current_ele = CTS_fetch_current_element(state)
+      
+      
+      uiele = NULL
+      if(length(current_ele[["rx_details"]][["elements"]][["covariates"]]) > 0){
+       uiele = shinyWidgets::actionBttn(
+         inputId = NS(id, "button_clk_add_cov"),
+         label   = state[["MC"]][["labels"]][["add_cov_btn"]],
+         style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+         size    = state[["MC"]][["formatting"]][["button_clk_add_cov"]][["size"]],
+         block   = state[["MC"]][["formatting"]][["button_clk_add_cov"]][["block"]],
+         color   = "success",
+         icon    = icon("plus-sign", lib="glyphicon"))
+      }
     uiele })
     #------------------------------------
     # Covariate table
@@ -898,16 +898,16 @@ CTS_Server <- function(id,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
-    current_ele = CTS_fetch_current_element(state)
-
-
-    uiele = NULL
-    if(length(current_ele[["rx_details"]][["elements"]][["covariates"]]) > 0){
-      uiele = 
-        rhandsontable::rHandsontableOutput(NS(id, "hot_current_covariates"),
-           width  = state[["MC"]][["formatting"]][["hot_current_covariates"]][["width"]],
-           height = state[["MC"]][["formatting"]][["hot_current_covariates"]][["height"]])
-    }
+      current_ele = CTS_fetch_current_element(state)
+      
+      
+      uiele = NULL
+      if(length(current_ele[["rx_details"]][["elements"]][["covariates"]]) > 0){
+        uiele = 
+          rhandsontable::rHandsontableOutput(NS(id, "hot_current_covariates"),
+             width  = state[["MC"]][["formatting"]][["hot_current_covariates"]][["width"]],
+             height = state[["MC"]][["formatting"]][["hot_current_covariates"]][["height"]])
+      }
     uiele })
     #------------------------------------
     # ui bottom
@@ -962,6 +962,20 @@ CTS_Server <- function(id,
     #------------------------------------
     # Generated data reading code
     observe({
+      input$element_selection
+      input$rule_condition
+      input$action_dosing_state
+      input$action_dosing_values
+      input$action_dosing_times
+      input$action_dosing_durations
+      input$action_set_state_state
+      input$action_set_state_value
+      input$action_manual_code
+      input$button_clk_add_rule
+      input$hot_current_rules
+      input$nsub
+      input$visit_times
+      input$button_clk_add_cov
       # Reacting to file changes
       state = CTS_fetch_state(id              = id,
                              id_ASM          = id_ASM,
@@ -972,10 +986,11 @@ CTS_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
 
-      if(is.null(state[["CTS"]][["code"]])){
+      current_ele = CTS_fetch_current_element(state)
+      if(is.null(current_ele[["code"]])){
         uiele = "# No code to generate"
       } else {
-        uiele = state[["CTS"]][["code"]]
+        uiele = current_ele[["code"]]
       }
 
 
@@ -989,6 +1004,30 @@ CTS_Server <- function(id,
         value           = uiele)
 
     })
+    # Generated data wrangling code
+    observeEvent(input$button_clk_clip, {
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      # This is all conditional on the whether clipr is installed $
+      # and if the app isn't deployed
+      if((system.file(package="clipr") != "") &
+         !deployed){
+
+          # Pulling out the current element
+          current_ele = CTS_fetch_current_element(state)
+          uiele = current_ele[["code"]]
+
+          clipr::write_clip(uiele)
+        }
+    })
+    
     #------------------------------------
     # Side buttons:
     # new
@@ -1634,7 +1673,7 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
 
         # Adding the covariate:
         cov_list = list(
-            values   = covariate_value,
+            values   = tcres[["capture"]][["cvval"]],
             sampling = state[["MC"]][["covariate_generation"]][["types"]][[covariate_type]][["sampling"]],
             type     = state[["MC"]][["covariate_generation"]][["types"]][[covariate_type]][["type"]])
 
@@ -2312,6 +2351,7 @@ CTS_new_element = function(state){
          id                     = element_id,
          idx                    = state[["CTS"]][["element_cntr"]],
          element_object_name    = element_object_name,
+         cov_object_name        = paste0(element_object_name, "_cov"),
          code_previous          = NULL,
          # This is information about the source model from fetch_rxinfo()
          rx_details             = rx_details,
@@ -2457,6 +2497,69 @@ current_element}
 CTS_set_current_element    = function(state, element){
 
   element_id = state[["CTS"]][["current_element"]]
+
+
+  ELE_ISGOOD    = TRUE
+  msgs          = c()
+  code_model    = c()
+  code_cov      = c()
+  code_mksubs   = c()
+  code_simrules = c()
+  code_packages =  paste0("library(", state[["MC"]][["code"]][["packages"]],")")
+  model_object  = "not_found"
+
+  # updating the code elements
+  source_model = element[["ui"]][["source_model"]]
+  if(source_model %in% names(state[["CTS"]][["MDL"]][["mdl"]])){
+    code_model   = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["code"]]
+    model_object = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["rx_obj_name"]]
+  } else {
+    ELE_ISGOOD = FALSE
+    msgs = c(msgs, "Source model not found")
+  }
+
+  # Code to define covariates
+  if(length(element[["rx_details"]][["elements"]][["covariates"]]) > 0){
+    code_cov = c("",
+                 "# Defining covariates", 
+                 paste0(element[["cov_object_name"]], " = list()"))
+    for(cname in element[["rx_details"]][["elements"]][["covariates"]]){
+      if(cname %in% names(element[["covariates"]])){
+        code_cov = c(code_cov, paste0(element[["cov_object_name"]],'[["', cname, '"]] = ', deparse(element[["covariates"]][[cname]])))
+      } else {
+        ELE_ISGOOD = FALSE
+        msgs = c(msgs, paste0("Covariate not defined:",cname))
+      }
+    }
+  }
+
+  # Code to make subjects
+  # JMH
+
+  # Code to run the simulation
+  # JMH
+
+  # Stand alone code to make the element
+  element[["code"]]          = paste0(c(code_packages, 
+                                        "",
+                                        "# Defining the model",
+                                        code_model,
+                                        code_cov,
+                                        code_mksubs,
+                                        code_simrules
+                                        ), collapse="\n")
+
+  # Code to make the element only assuming all the goodies it needs are
+  # already defined
+  element[["code_ele_only"]] = paste0(c(code_cov,
+                                        code_mksubs,
+                                        code_simrules
+                                        ), 
+                                        collapse="\n")
+
+  # Saving the element status
+  element[["isgood"]]        = ELE_ISGOOD
+  element[["msgs"]]          = msgs
 
   # updating the checksum for the current element
   tmp_ele = element

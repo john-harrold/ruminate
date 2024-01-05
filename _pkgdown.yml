@@ -19,10 +19,6 @@ reference:
    - title: "Running ruminate"
    - contents:
      - ruminate
-   - title: "MB Module functions"
-   - contents:
-     - starts_with("MB_")
-     - mk_rx_obj
    - title: "CTS Module functions"
    - contents:
      - starts_with("CTS_")
@@ -30,6 +26,10 @@ reference:
      - fetch_rxtc
      - mk_subjects
      - simulate_rules
+   - title: "MB Module functions"
+   - contents:
+     - starts_with("MB_")
+     - mk_rx_obj
    - title: "NCA Module functions"
    - contents:
      - apply_route_map
