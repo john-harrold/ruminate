@@ -37,7 +37,16 @@
     <loc>/reference/CTS_Server.html</loc>
   </url>
   <url>
+    <loc>/reference/CTS_add_covariate.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_add_rule.html</loc>
+  </url>
+  <url>
     <loc>/reference/CTS_append_report.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_change_source_model.html</loc>
   </url>
   <url>
     <loc>/reference/CTS_del_current_element.html</loc>
@@ -68,6 +77,9 @@
   </url>
   <url>
     <loc>/reference/CTS_set_current_element.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CTS_simulate_element.html</loc>
   </url>
   <url>
     <loc>/reference/CTS_test_mksession.html</loc>
@@ -236,6 +248,9 @@
   </url>
   <url>
     <loc>/reference/nca_builder.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_sr_tc.html</loc>
   </url>
   <url>
     <loc>/reference/ruminate.html</loc>

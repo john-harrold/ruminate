@@ -29,5 +29,5 @@ list with the following elements
 Populates the supplied session variable for testing.
 }
 \examples{
-sess_res = CTS_test_mksession(session=list())
+sess_res = CTS_test_mksession(session=list(), full_session=FALSE)
 }

@@ -32,7 +32,7 @@
 #'@details
 #' For a detailed examples see \code{vignette("clinical_trial_simulation", package = "ruminate")}
 #'@includeRmd  vignettes/rmdhunks/simulate_rules.Rmd
-#'@example inst/test_apps/CTS_funcs.R
+#'@example inst/test_apps/simulate_rules_funcs.R
 simulate_rules <- function(object,
                            subjects,
                            eval_times,
@@ -135,7 +135,7 @@ simulate_rules <- function(object,
       # they exist
       if(!("condition" %in% names(rules[[rule_id]]))){
         isgood = FALSE
-        msgs = c(msgs, paste0("No condition has been defined for rule: ", rule_id,))
+        msgs = c(msgs, paste0("No condition has been defined for rule: ", rule_id))
       }
 
       if(("action" %in% names(rules[[rule_id]]))){
@@ -162,11 +162,11 @@ simulate_rules <- function(object,
           }
         } else {
           isgood = FALSE
-          msgs = c(msgs, paste0("No action type has been defined for rule: ", rule_id,))
+          msgs = c(msgs, paste0("No action type has been defined for rule: ", rule_id))
         }
       } else {
         isgood = FALSE
-        msgs = c(msgs, paste0("No action has been defined for rule: ", rule_id,))
+        msgs = c(msgs, paste0("No action has been defined for rule: ", rule_id))
       }
 
     }
@@ -244,7 +244,9 @@ simulate_rules <- function(object,
     # Simulating before the fist eval_time to get
     # a snapshot of the simulation:
     tmp_ot  = sort(unique(c(ot_sim[ot_sim < min(eval_times)], min(eval_times))))
-    init_ev  = rxode2et::et(time=tmp_ot, id=sub_ids)
+    init_ev  = rxode2et::et(time=tmp_ot, id=sub_ids, cmt=rx_details[["elements"]][["outputs"]][1])
+
+    #rxdetails[["elements"]][["outputs"]][1]
     sim_cmd = paste0(c(preamble,
                      paste0("sim = rxode2::rxSolve(object, params=subjects, events=ev", rx_options_str, ")")),
                      collapse="\n")
@@ -401,6 +403,7 @@ simulate_rules <- function(object,
                                  capture = capture,
                                  cmd     = cmd)
 
+                          #browser()
                         if(tcres[["isgood"]]){
                           # Now we're going to process the dosing
                           dvals  = as.numeric(tcres[["capture"]][["SI_values"]])
@@ -451,7 +454,7 @@ simulate_rules <- function(object,
                           if(is.null(errors_found[[error_flag]])){
                             isgood = FALSE
                             msgs = c(msgs, error_flag)
-                            msgs = c(msgs, paste0("Subject: ", sub_id,", Rule id: ", rule_id, ", Evaluation time: ", eval_times[et_idx], " failed to evaluate dose:  ", ))
+                            msgs = c(msgs, paste0("Subject: ", sub_id,", Rule id: ", rule_id, ", Evaluation time: ", eval_times[et_idx], " failed to evaluate dose:  "))
                             msgs = c(msgs, tcres[["msgs"]])
                             errors_found[[error_flag]] = "found"
                           }
@@ -552,84 +555,88 @@ simulate_rules <- function(object,
             }
 
 
-            # Setting the initial conditions
-            for(state in rx_details[["elements"]][["states"]]){
-              # If the state is has been selected for reset we use that value:
-              if(state %in% names(sub_state_reset)){
-               new_state_amt  = sub_state_reset[[state]]
-              } else {
-               new_state_amt  = sub_state[[state]]
+            # We only update the initial conditions if everything worked out
+            # above:
+            if(isgood){
+              # Setting the initial conditions
+              for(state in rx_details[["elements"]][["states"]]){
+                # If the state is has been selected for reset we use that value:
+                if(state %in% names(sub_state_reset)){
+                 new_state_amt  = sub_state_reset[[state]]
+                } else {
+                 new_state_amt  = sub_state[[state]]
+                }
+                interval_ev = rxode2et::etRbind(interval_ev,
+                                 rxode2et::et(
+                                    cmt  = state,
+                                    id   = sub_id,
+                                    amt  = new_state_amt,
+                                    evid = 4,
+                                    time = eval_times[et_idx]))
               }
-              interval_ev = rxode2et::etRbind(interval_ev,
-                               rxode2et::et(
-                                  cmt  = state,
-                                  id   = sub_id,
-                                  amt  = new_state_amt,
-                                  evid = 4,
-                                  time = eval_times[et_idx]))
-            }
+              
+              # Combining the subject specific sampling with
+              # the interval samples:
+              sub_ot       = sort(unique(c(sub_ot, tmp_ot)))
+              interval_ev  = rxode2et::etRbind(interval_ev,
+                             rxode2et::et(time=sub_ot, id=sub_id,
+                             cmt=rx_details[["elements"]][["outputs"]][1]))
 
-            # Combining the subject specific sampling with
-            # the interval samples:
-            sub_ot       = sort(unique(c(sub_ot, tmp_ot)))
-            interval_ev  = rxode2et::etRbind(interval_ev,
-                           rxode2et::et(time=sub_ot, id=sub_id))
-
-
-          }
-
-          # Running the simulation for the chunk of time between the current
-          # eval_time and either the next or the end of the simulation
-          sim_cmd = paste0(c(
-                    cmd_init,
-                    preamble,
-                    paste0("sim = rxode2::rxSolve(object, params=subjects, events=ev", rx_options_str, ")")),
-                    collapse = "\n")
-          tcres = FM_tc(
-            cmd     = sim_cmd,
-            capture = c("sim"),
-            tc_env  = list(object   = object,
-                           subjects = subjects,
-                           ev       = interval_ev))
-
-          # Storing all of the events in a single table to return to the user
-          ev_history  = rxode2et::etRbind(ev_history , interval_ev)
-
-          if(tcres[["isgood"]]){
-
-            # This contains the current chunk of the simulation:
-            #tmp_sim = as.data.frame(tcres[["capture"]][["sim"]])
-            tmp_sim =
-            fetch_rxtc(rx_details = rx_details,
-                       sim        = tcres[["capture"]][["sim"]])
-
-            # Setting the rule flag for the presimulation
-            for(rule_id in names(rules)){
-              tmp_sim[[rule_id]] = sub_rule_flags[[rule_id]]
-            }
-
-            # We need to glue the simulations together. So first we remove the
-            # last time point off of the simall data frame. The last time
-            # point of that data frame should be the first of this new
-            # simulation:
-            simall = simall[simall[["time"]] != eval_times[et_idx], ]
-
-            # Now we stack the old simulations on top of the new one:
-            simall = rbind(simall, tmp_sim)
-
-          } else {
-            error_flag = "Warning: dosing beyond time interval"
-            if(is.null(errors_found[[error_flag]])){
-              isgood = FALSE
-              msgs = c(msgs, error_flag)
-              msgs = c(msgs, paste0("Subject: ", sub_id,", Rule id: ", rule_id, ", Evaluation time: ", eval_times[et_idx], " interval simulation failed. ", ))
-              msgs = c(msgs, tcres[["msgs"]])
-              errors_found[[error_flag]] = "found"
             }
           }
 
-
-
+          # If an error has been encountered we just stop executing things
+          if(isgood){
+            # Running the simulation for the chunk of time between the current
+            # eval_time and either the next or the end of the simulation
+            sim_cmd = paste0(c(
+                      cmd_init,
+                      preamble,
+                      paste0("sim = rxode2::rxSolve(object, params=subjects, events=ev", rx_options_str, ")")),
+                      collapse = "\n")
+            tcres = FM_tc(
+              cmd     = sim_cmd,
+              capture = c("sim"),
+              tc_env  = list(object   = object,
+                             subjects = subjects,
+                             ev       = interval_ev))
+            
+            # Storing all of the events in a single table to return to the user
+            ev_history  = rxode2et::etRbind(ev_history , interval_ev)
+            
+            if(tcres[["isgood"]]){
+            
+              # This contains the current chunk of the simulation:
+              #tmp_sim = as.data.frame(tcres[["capture"]][["sim"]])
+              tmp_sim =
+              fetch_rxtc(rx_details = rx_details,
+                         sim        = tcres[["capture"]][["sim"]])
+            
+              # Setting the rule flag for the presimulation
+              for(rule_id in names(rules)){
+                tmp_sim[[rule_id]] = sub_rule_flags[[rule_id]]
+              }
+            
+              # We need to glue the simulations together. So first we remove the
+              # last time point off of the simall data frame. The last time
+              # point of that data frame should be the first of this new
+              # simulation:
+              simall = simall[simall[["time"]] != eval_times[et_idx], ]
+            
+              # Now we stack the old simulations on top of the new one:
+              simall = rbind(simall, tmp_sim)
+            
+            } else {
+              error_flag = "Warning: dosing beyond time interval"
+              if(is.null(errors_found[[error_flag]])){
+                isgood = FALSE
+                msgs = c(msgs, error_flag)
+                msgs = c(msgs, paste0("Subject: ", sub_id,", Rule id: ", rule_id, ", Evaluation time: ", eval_times[et_idx], " interval simulation failed. ", ))
+                msgs = c(msgs, tcres[["msgs"]])
+                errors_found[[error_flag]] = "found"
+              }
+            }
+          }
         }
       }
     }
@@ -661,6 +668,52 @@ simulate_rules <- function(object,
   )
 res}
 
+#'@export
+#'@title Plots Timecourse of Rules Simulations
+#'@description Plots the timecourse of `simulate_rules()` output.
+#'@param sro    Output of 'simulate_rules()'.
+#'@param dvcols Character vector of dependent variables.
+#'@param fcol   Character vector of column to facet by.
+#'@param fncol  Number of columns in faceted output.
+#'@param fnrow  Number of rows in faceted output.
+#'@return List with the following elements:
+#' \itemize{
+#'  \item{isgood:}     Return status of the function.
+#'  \item{msgs:}       Error or warning messages if any issues were encountered.
+#'  \item{figs:}   
+#'}
+#'@details
+#' For a detailed examples see \code{vignette("clinical_trial_simulation", package = "ruminate")}.
+#'@example inst/test_apps/simulate_rules_funcs.R
+plot_sr_tc <- function(
+  sro    = NULL,
+  dvcols = NULL,
+  fcol   = NULL,
+  fncol   = 4,
+  fnrow   = 2 ){
+
+  isgood = TRUE
+  msgs   = c()
+  figs   = list()
+
+  if(is.logical(sro[["isgood"]])){
+    if(sro[["isgood"]]){
+      ggplot()
+    } else {
+      msgs = c(msgs, "The simulation failed.", sro[["msgs"]])
+      isgood = FALSE
+    }
+  } else {
+    isgood = FALSE
+    msgs = c(msgs, "The simulation_rules() output does not appear to be valid")
+  }
+
+  res = list(
+    isgood = isgood,
+    msgs = msgs,
+    figs = figs
+  )
+res}
 
 
 #'@export
@@ -678,7 +731,7 @@ res}
 #'   \item{states:} Names of the states/compartments in the system.
 #'   }
 #' }
-#'@example inst/test_apps/CTS_funcs.R
+#'@example inst/test_apps/simulate_rules_funcs.R
 fetch_rxinfo <- function(object){
 
   isgood    = TRUE
@@ -688,15 +741,23 @@ fetch_rxinfo <- function(object){
 
   if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
     # use str(object) to get the names of the list elements
-    covariates = object$allCovs
-    parameters = names(object$theta)
-    states     = object$state
-    iiv        = unique(names(object$etaLhs))
+    covariates      = object$allCovs
+    population      = object$params$pop
+    residual_error  = object$params$resid
+    parameters      = object$params$output$primary
+    secondary       = object$params$output$secondary
+    outputs         = object$params$output$endpoint
+    states          = object$params$cmt
+    iiv             = object$params$group$id
     elements = list(
-      covariates = covariates,
-      parameters = parameters,
-      iiv        = iiv,
-      states     = states)
+      covariates     = covariates,
+      population     = population,
+      parameters     = parameters,
+      secondary      = secondary,
+      residual_error = residual_error,     
+      iiv            = iiv,
+      outputs        = outputs,    
+      states         = states)
 
     # State details
     txt_info = c(txt_info, "States/Compartments\n")
@@ -705,7 +766,7 @@ fetch_rxinfo <- function(object){
       txt_info = c(txt_info, paste0(states, collapse=", "), "\n\n")
       ht_info  = tagList(ht_info, paste0(states, collapse=", "), tags$br(), tags$br())
     } else{
-      txt_info = c(txt_info, "None found\n")
+      txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
       isgood   = FALSE
       msgs = c(msgs, "No state/compartment information found.")
@@ -717,27 +778,57 @@ fetch_rxinfo <- function(object){
       txt_info = c(txt_info, paste0(covariates, collapse=", "), "\n\n")
       ht_info  = tagList(ht_info, paste0(covariates, collapse=", "), tags$br(), tags$br())
     } else{
-      txt_info = c(txt_info, "None found\n")
+      txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
     }
-    # Parameters details
-    txt_info = c(txt_info, "Parameters\n")
-    ht_info  = tagList(ht_info, tags$b("Parameters"), tags$br())
+    # Population parameters 
+    txt_info = c(txt_info, "Population Parameters\n")
+    ht_info  = tagList(ht_info, tags$b("Population Parameters"), tags$br())
+    if(length(population) > 0){
+      txt_info = c(txt_info, paste0(population, collapse=", "), "\n\n")
+      ht_info  = tagList(ht_info, paste0(population, collapse=", "), tags$br(), tags$br())
+    } else{
+      txt_info = c(txt_info, "None found\n\n")
+      ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+    }
+    # Individual parameters details
+    txt_info = c(txt_info, "Individual Parameters\n")
+    ht_info  = tagList(ht_info, tags$b("Individual Parameters"), tags$br())
     if(length(parameters) > 0){
       txt_info = c(txt_info, paste0(parameters, collapse=", "), "\n\n")
       ht_info  = tagList(ht_info, paste0(parameters, collapse=", "), tags$br(), tags$br())
     } else{
-      txt_info = c(txt_info, "None found\n")
+      txt_info = c(txt_info, "None found\n\n")
+      ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+    }
+    # Secondary parameters details
+    txt_info = c(txt_info, "Secondary Parameters\n")
+    ht_info  = tagList(ht_info, tags$b("Secondary Parameters"), tags$br())
+    if(length(secondary) > 0){
+      txt_info = c(txt_info, paste0(secondary, collapse=", "), "\n\n")
+      ht_info  = tagList(ht_info, paste0(secondary, collapse=", "), tags$br(), tags$br())
+    } else{
+      txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
     }
     # IIV details
-    txt_info = c(txt_info, "Between-subject variability\n")
-    ht_info  = tagList(ht_info, tags$b("Between-subject variability"), tags$br(),)
+    txt_info = c(txt_info, "Between-Subject Variability\n")
+    ht_info  = tagList(ht_info, tags$b("Between-Subject Variability"), tags$br())
     if(length(iiv) > 0){
       txt_info = c(txt_info, paste0(iiv, collapse=", "), "\n\n")
       ht_info  = tagList(ht_info, paste0(iiv, collapse=", "), tags$br(), tags$br())
     } else{
-      txt_info = c(txt_info, "None found\n")
+      txt_info = c(txt_info, "None found\n\n")
+      ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+    }
+    # Error parameter details
+    txt_info = c(txt_info, "Residual Error Parameters\n")
+    ht_info  = tagList(ht_info, tags$b("Residual Error Parameters"), tags$br())
+    if(length(residual_error) > 0){
+      txt_info = c(txt_info, paste0(residual_error, collapse=", "), "\n\n")
+      ht_info  = tagList(ht_info, paste0(residual_error, collapse=", "), tags$br(), tags$br())
+    } else{
+      txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
     }
 
@@ -779,7 +870,7 @@ res}
 #' }
 #'@details See below.
 #'@includeRmd  vignettes/rmdhunks/simulate_rules.Rmd
-#'@example inst/test_apps/CTS_funcs.R
+#'@example inst/test_apps/simulate_rules_funcs.R
 #'@seealso \code{vignette("clinical_trial_simulation", package = "ruminate")}
 mk_subjects <- function(object, nsub = 10, covs=NULL){
 
@@ -856,14 +947,17 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
 
       #-----------------------------------------------------------------
       # JMH figure out a better way to do this using low level functions
-      ev <-rxode2et::et(amt=0, cmt=1, id=c(1:nsub)) |>
-           add.sampling(c(0,1))
+      tmp_cmt = rx_details[["elements"]][["states"]][1]
+      ev <-rxode2et::et(amt=0, cmt=force(tmp_cmt), id=c(1:nsub)) 
+
+     #ev <-rxode2et::et(amt=0, cmt=1, id=c(1:nsub)) |>
+     #     add.sampling(c(0,1))
       sim  <- rxode2::rxSolve(object, ev, nSub=nsub, iCov = iCov)
       params = as.data.frame(sim$params)
 
       # Just extracting the parameters we need for running simulations:
       col_keep = c("id",
-                   rx_details[["elements"]][["parameters"]],
+                   rx_details[["elements"]][["population"]],
                    rx_details[["elements"]][["iiv"]])
 
       # If only one subject is selected no id column is created. This creates

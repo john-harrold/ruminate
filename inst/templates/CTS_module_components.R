@@ -63,6 +63,9 @@ ui <- dashboardPage(
            div(style="display:inline-block",
              "CTS_ui_visit_times",           
              htmlOutput(NS("CTS", "CTS_ui_visit_times"))), 
+           div(style="display:inline-block",
+             "CTS_ui_trial_end",           
+             htmlOutput(NS("CTS", "CTS_ui_trial_end"))), 
            width=12)
          ),
        fluidRow(
@@ -97,6 +100,8 @@ ui <- dashboardPage(
          box(title="Rules",
            "CTS_ui_select_rule_type",
            htmlOutput(NS("CTS", "CTS_ui_select_rule_type")), 
+           "CTS_ui_rule_name",
+           htmlOutput(NS("CTS", "CTS_ui_rule_name")), 
            "CTS_ui_add_rule_btn",
            htmlOutput(NS("CTS", "CTS_ui_add_rule_btn")), 
            "CTS_ui_rule_condition",

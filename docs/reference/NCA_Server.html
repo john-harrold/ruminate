@@ -168,8 +168,12 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span><span class="va">UD.yaml</span>       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"formods"</span>,  <span class="st">"templates"</span>,  <span class="st">"UD.yaml"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">DW.yaml</span>       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"formods"</span>,  <span class="st">"templates"</span>,  <span class="st">"DW.yaml"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">FG.yaml</span>       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"formods"</span>,  <span class="st">"templates"</span>,  <span class="st">"FG.yaml"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">MB.yaml</span>       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"ruminate"</span>, <span class="st">"templates"</span>,  <span class="st">"MB.yaml"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">NCA.yaml</span>      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"ruminate"</span>, <span class="st">"templates"</span>,  <span class="st">"NCA.yaml"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Name of  file to indicate we need to load testing data</span></span></span>
+<span class="r-in"><span><span class="va">ftmptest</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"ruminate.test"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Making sure that the deployed object is created</span></span></span>
 <span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html" class="external-link">exists</a></span><span class="op">(</span><span class="st">"deployed"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
@@ -235,16 +239,6 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span>        <span class="va">tags</span><span class="op">$</span><span class="fu">a</span><span class="op">(</span><span class="st">"issues"</span>, href<span class="op">=</span><span class="va">issue_url</span><span class="op">)</span>,<span class="st">" page"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ftmptest</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"ruminate.test"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># If the ftmptest file is present we load the development modules</span></span></span>
-<span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="va">run_dev</span><span class="op">)</span><span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">dev_modules</span> <span class="op">=</span> <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/sidebarMenu.html" class="external-link">menuItem</a></span><span class="op">(</span><span class="st">"Models"</span>,          </span></span>
-<span class="r-in"><span>                                         tabName <span class="op">=</span> <span class="st">"model"</span>,       </span></span>
-<span class="r-in"><span>                                         icon    <span class="op">=</span> <span class="fu">icon</span><span class="op">(</span><span class="st">"trowel-bricks"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span><span class="kw">else</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">dev_modules</span> <span class="op">=</span> <span class="cn">NULL</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/dashboardPage.html" class="external-link">dashboardPage</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  skin<span class="op">=</span><span class="st">"black"</span>,</span></span>
@@ -257,8 +251,6 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span>       <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/sidebarMenu.html" class="external-link">menuItem</a></span><span class="op">(</span><span class="st">"Transform Data"</span>, tabName<span class="op">=</span><span class="st">"wrangle"</span>, icon<span class="op">=</span><span class="fu">icon</span><span class="op">(</span><span class="st">"shuffle"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>       <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/sidebarMenu.html" class="external-link">menuItem</a></span><span class="op">(</span><span class="st">"Visualize"</span>,      tabName<span class="op">=</span><span class="st">"plot"</span>,    icon<span class="op">=</span><span class="fu">icon</span><span class="op">(</span><span class="st">"chart-line"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>       <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/sidebarMenu.html" class="external-link">menuItem</a></span><span class="op">(</span><span class="st">"NCA"</span>,            tabName<span class="op">=</span><span class="st">"nca"</span>,     icon<span class="op">=</span><span class="fu">icon</span><span class="op">(</span><span class="st">"chart-area"</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>       <span class="va">dev_modules</span>,</span></span>
-<span class="r-in"><span>      <span class="co">#shinydashboard::menuItem("Models",         tabName="model",   icon=icon("trowel-bricks")),</span></span></span>
 <span class="r-in"><span>       <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/sidebarMenu.html" class="external-link">menuItem</a></span><span class="op">(</span><span class="st">"App Info"</span>,       tabName<span class="op">=</span><span class="st">"sysinfo"</span>, icon<span class="op">=</span><span class="fu">icon</span><span class="op">(</span><span class="st">"book-medical"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>     <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span>,</span></span>
@@ -272,12 +264,6 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span>               <span class="fu">fluidRow</span><span class="op">(</span> <span class="fu">prompter</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/prompter/man/use_prompt.html" class="external-link">use_prompt</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               <span class="fu">column</span><span class="op">(</span>width<span class="op">=</span><span class="fl">12</span>,</span></span>
 <span class="r-in"><span>               <span class="fu">htmlOutput</span><span class="op">(</span><span class="fu">NS</span><span class="op">(</span><span class="st">"NCA"</span>,  <span class="st">"NCA_ui_compact"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>               <span class="op">)</span>,</span></span>
-<span class="r-in"><span>       <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/tabItem.html" class="external-link">tabItem</a></span><span class="op">(</span>tabName<span class="op">=</span><span class="st">"model"</span>,</span></span>
-<span class="r-in"><span>               <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/box.html" class="external-link">box</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Build PK/PD Models"</span>, width<span class="op">=</span><span class="fl">12</span>,</span></span>
-<span class="r-in"><span>               <span class="fu">fluidRow</span><span class="op">(</span> </span></span>
-<span class="r-in"><span>               <span class="fu">column</span><span class="op">(</span>width<span class="op">=</span><span class="fl">12</span>,</span></span>
-<span class="r-in"><span>               <span class="fu">htmlOutput</span><span class="op">(</span><span class="fu">NS</span><span class="op">(</span><span class="st">"MB"</span>,  <span class="st">"MB_ui_compact"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>               <span class="op">)</span>,</span></span>
 <span class="r-in"><span>       <span class="fu">shinydashboard</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/tabItem.html" class="external-link">tabItem</a></span><span class="op">(</span>tabName<span class="op">=</span><span class="st">"loadsave"</span>,</span></span>
 <span class="r-in"><span>         <span class="co">#     shinydashboard::box(title=NULL, width=12,</span></span></span>
@@ -382,10 +368,6 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span>      id_DW  <span class="op">=</span> <span class="st">"DW"</span>,</span></span>
 <span class="r-in"><span>      id_ASM <span class="op">=</span> <span class="st">"ASM"</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="MB_test_mksession.html">MB_test_mksession</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="va">session</span>,</span></span>
-<span class="r-in"><span>      full_session<span class="op">=</span><span class="cn">TRUE</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># Module servers</span></span></span>
@@ -418,12 +400,6 @@ used to detect changes in the state.</p></li>
 <span class="r-in"><span>                       react_state      <span class="op">=</span> <span class="va">react_FM</span>,</span></span>
 <span class="r-in"><span>                       MOD_yaml_file    <span class="op">=</span> <span class="va">NCA.yaml</span>,</span></span>
 <span class="r-in"><span>                       FM_yaml_file     <span class="op">=</span> <span class="va">formods.yaml</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="fu">ruminate</span><span class="fu">::</span><span class="fu"><a href="MB_Server.html">MB_Server</a></span><span class="op">(</span>id<span class="op">=</span><span class="st">"MB"</span>, id_ASM <span class="op">=</span> <span class="st">"ASM"</span>, </span></span>
-<span class="r-in"><span>                      deployed         <span class="op">=</span> <span class="va">deployed</span>,</span></span>
-<span class="r-in"><span>                      react_state      <span class="op">=</span> <span class="va">react_FM</span>,</span></span>
-<span class="r-in"><span>                      MOD_yaml_file    <span class="op">=</span> <span class="va">MB.yaml</span>,</span></span>
-<span class="r-in"><span>                      FM_yaml_file     <span class="op">=</span> <span class="va">formods.yaml</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>

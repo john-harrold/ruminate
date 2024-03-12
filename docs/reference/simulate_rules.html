@@ -287,7 +287,6 @@ given id and state. For example for the current <code>id</code> and the state
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://formods.ubiquity.tools/" class="external-link">formods</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nlmixr2.github.io/rxode2/" class="external-link">rxode2</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For more information see the Clinical Trial Simulation vignette:</span></span></span>
@@ -295,18 +294,35 @@ given id and state. For example for the current <code>id</code> and the state
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># None of this will work if rxode2 isn't installed:</span></span></span>
 <span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://formods.ubiquity.tools/reference/is_installed.html" class="external-link">is_installed</a></span><span class="op">(</span><span class="st">"rxode2"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nlmixr2.github.io/rxode2/" class="external-link">rxode2</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># This creates the object my_model which contains the </span></span></span>
-<span class="r-in"><span><span class="co"># function definition for the rxode2 model shown just below</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"ruminate"</span>, </span></span>
-<span class="r-in"><span>                   <span class="st">"test_apps"</span>, </span></span>
-<span class="r-in"><span>                   <span class="st">"test_rxode2_system.R"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://nlmixr2.github.io/rxode2random/reference/rxSetSeed.html" class="external-link">rxSetSeed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"ruminate"</span>, </span></span>
-<span class="r-in"><span>              <span class="st">"test_apps"</span>, </span></span>
-<span class="r-in"><span>              <span class="st">"test_rxode2_system.R"</span><span class="op">)</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>  collapse<span class="op">=</span><span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">my_model</span> <span class="op">=</span> <span class="kw">function</span> <span class="op">(</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">description</span> <span class="op">&lt;-</span> <span class="st">"One compartment PK model with linear clearance using differential equations"</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://nlmixr2.github.io/rxode2/reference/ini.html" class="external-link">ini</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>        <span class="va">lka</span> <span class="op">&lt;-</span> <span class="fl">0.45</span></span></span>
+<span class="r-in"><span>        <span class="fu">label</span><span class="op">(</span><span class="st">"Absorption rate (Ka)"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">lcl</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>        <span class="fu">label</span><span class="op">(</span><span class="st">"Clearance (CL)"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">lvc</span> <span class="op">&lt;-</span> <span class="fl">3.45</span></span></span>
+<span class="r-in"><span>        <span class="fu">label</span><span class="op">(</span><span class="st">"Central volume of distribution (V)"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">propSd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="fu">label</span><span class="op">(</span><span class="st">"Proportional residual error (fraction)"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">etalcl</span> <span class="op">~</span> <span class="fl">0.1</span></span></span>
+<span class="r-in"><span>    <span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://nlmixr2.github.io/rxode2/reference/model.html" class="external-link">model</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>        <span class="va">ka</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">lka</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">lcl</span> <span class="op">+</span> <span class="va">etalcl</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">vc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">lvc</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">kel</span> <span class="op">&lt;-</span> <span class="va">cl</span><span class="op">/</span><span class="va">vc</span></span></span>
+<span class="r-in"><span>        <span class="va">d</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html" class="external-link">dt</a></span><span class="op">(</span><span class="va">depot</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="va">ka</span> <span class="op">*</span> <span class="va">depot</span></span></span>
+<span class="r-in"><span>        <span class="va">d</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html" class="external-link">dt</a></span><span class="op">(</span><span class="va">central</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">ka</span> <span class="op">*</span> <span class="va">depot</span> <span class="op">-</span> <span class="va">kel</span> <span class="op">*</span> <span class="va">central</span></span></span>
+<span class="r-in"><span>        <span class="va">Cc</span> <span class="op">&lt;-</span> <span class="va">central</span><span class="op">/</span><span class="va">vc</span></span></span>
+<span class="r-in"><span>        <span class="va">Cc</span> <span class="op">~</span> <span class="fu">prop</span><span class="op">(</span><span class="va">propSd</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This creates an rxode2 object</span></span></span>
 <span class="r-in"><span><span class="va">object</span>  <span class="op">=</span> <span class="fu"><a href="https://nlmixr2.github.io/rxode2/reference/rxode2.html" class="external-link">rxode</a></span><span class="op">(</span><span class="va">my_model</span><span class="op">)</span></span></span>
@@ -319,12 +335,8 @@ given id and state. For example for the current <code>id</code> and the state
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Next we will create subjects. To do that we need to </span></span></span>
 <span class="r-in"><span><span class="co"># specify information about covariates:</span></span></span>
-<span class="r-in"><span><span class="va">nsub</span> <span class="op">=</span> <span class="fl">5</span></span></span>
+<span class="r-in"><span><span class="va">nsub</span> <span class="op">=</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span><span class="va">covs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  SEX_ID     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type     <span class="op">=</span> <span class="st">"discrete"</span>, </span></span>
-<span class="r-in"><span>                    values   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  SUBTYPE_ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type     <span class="op">=</span> <span class="st">"fixed"</span>,</span></span>
-<span class="r-in"><span>                    values   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  WT         <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type     <span class="op">=</span> <span class="st">"continuous"</span>,</span></span>
 <span class="r-in"><span>                    sampling <span class="op">=</span> <span class="st">"log-normal"</span>,</span></span>
 <span class="r-in"><span>                    values   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">70</span>, <span class="fl">.15</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -337,59 +349,30 @@ given id and state. For example for the current <code>id</code> and the state
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">subs</span><span class="op">$</span><span class="va">subjects</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  low_dose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    condition <span class="op">=</span> <span class="st">"time != 45"</span>,</span></span>
-<span class="r-in"><span>    true_flag  <span class="op">=</span> <span class="fl">3e6</span>,</span></span>
-<span class="r-in"><span>    false_flag <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>  dose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    condition <span class="op">=</span> <span class="st">"TRUE"</span>,</span></span>
 <span class="r-in"><span>    action    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>      type  <span class="op">=</span> <span class="st">"dose"</span>,</span></span>
-<span class="r-in"><span>      state     <span class="op">=</span> <span class="st">"Ac"</span>, </span></span>
-<span class="r-in"><span>      values    <span class="op">=</span> <span class="st">"c(3,  3,  3,  3)*1e6/MW"</span>,</span></span>
-<span class="r-in"><span>      times     <span class="op">=</span> <span class="st">"c(0, 14, 28, 42)"</span>,</span></span>
-<span class="r-in"><span>      durations <span class="op">=</span> <span class="st">"c(0,  0,  0,  0)"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span>,</span></span>
-<span class="r-in"><span>  reset_Ac    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    condition <span class="op">=</span> <span class="st">"time == 45"</span>,</span></span>
-<span class="r-in"><span>    true_flag  <span class="op">=</span> <span class="st">"Ac/2"</span>,</span></span>
-<span class="r-in"><span>    false_flag <span class="op">=</span> <span class="st">""</span>,</span></span>
-<span class="r-in"><span>    action    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      type     <span class="op">=</span> <span class="st">"set state"</span>,</span></span>
-<span class="r-in"><span>      state    <span class="op">=</span> <span class="st">"Ac"</span>,</span></span>
-<span class="r-in"><span>      value    <span class="op">=</span> <span class="st">"Ac/2"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span>,</span></span>
-<span class="r-in"><span>  reset_Cp    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    condition <span class="op">=</span> <span class="st">"time == 45"</span>,</span></span>
-<span class="r-in"><span>    true_flag  <span class="op">=</span> <span class="st">"Cp/2"</span>,</span></span>
-<span class="r-in"><span>    false_flag <span class="op">=</span> <span class="st">""</span>,</span></span>
-<span class="r-in"><span>    action    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      type     <span class="op">=</span> <span class="st">"set state"</span>,</span></span>
-<span class="r-in"><span>      state    <span class="op">=</span> <span class="st">"Cp"</span>,</span></span>
-<span class="r-in"><span>      value    <span class="op">=</span> <span class="st">"Cp/2"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span>      state     <span class="op">=</span> <span class="st">"central"</span>, </span></span>
+<span class="r-in"><span>      values    <span class="op">=</span> <span class="st">"c(1)"</span>,</span></span>
+<span class="r-in"><span>      times     <span class="op">=</span> <span class="st">"c(0)"</span>,</span></span>
+<span class="r-in"><span>      durations <span class="op">=</span> <span class="st">"c(0)"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># We evaulate the rules for dosing at time 0</span></span></span>
 <span class="r-in"><span><span class="va">eval_times</span> <span class="op">=</span>  <span class="fl">0</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># We also do a state reset at 45 days.</span></span></span>
-<span class="r-in"><span><span class="va">eval_times</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">45</span>, <span class="va">eval_times</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Stop 2 months after the last dose</span></span></span>
 <span class="r-in"><span><span class="va">output_times</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">56</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">rx_options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>   covsInterpolation <span class="op">=</span> <span class="st">"locf"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># This runs the rule-based simulations</span></span></span>
 <span class="r-in"><span><span class="va">simres</span> <span class="op">=</span> </span></span>
 <span class="r-in"><span><span class="fu">simulate_rules</span><span class="op">(</span>object   <span class="op">=</span> <span class="va">object</span>,</span></span>
 <span class="r-in"><span>               subjects      <span class="op">=</span> <span class="va">subs</span><span class="op">[[</span><span class="st">"subjects"</span><span class="op">]</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>               eval_times    <span class="op">=</span> <span class="va">eval_times</span>,</span></span>
 <span class="r-in"><span>               output_times  <span class="op">=</span> <span class="va">output_times</span>, </span></span>
-<span class="r-in"><span>               rules         <span class="op">=</span> <span class="va">rules</span>,</span></span>
-<span class="r-in"><span>               rx_options    <span class="op">=</span> <span class="va">rx_options</span><span class="op">)</span></span></span>
+<span class="r-in"><span>               rules         <span class="op">=</span> <span class="va">rules</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># First subject data:</span></span></span>
 <span class="r-in"><span><span class="va">sub_1</span> <span class="op">=</span> <span class="va">simres</span><span class="op">$</span><span class="va">simall</span><span class="op">[</span><span class="va">simres</span><span class="op">$</span><span class="va">simall</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="fl">1</span>, <span class="op">]</span></span></span>
@@ -402,88 +385,14 @@ given id and state. For example for the current <code>id</code> and the state
 <span class="r-in"><span><span class="va">simall</span><span class="op">$</span><span class="va">id</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">simall</span><span class="op">$</span><span class="va">id</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">p</span> <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">simall</span><span class="op">)</span><span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">time</span>, y<span class="op">=</span><span class="va">Ac</span>, group<span class="op">=</span><span class="va">id</span>, color<span class="op">=</span><span class="va">id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">time</span>, y<span class="op">=</span><span class="va">Cc</span>, group<span class="op">=</span><span class="va">id</span>, color<span class="op">=</span><span class="va">id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_linedraw</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">id</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # Dosing into Ac and At is in nmoles. So to dose 3 mg you would use 3e6/MW</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> my_model &lt;- function() {</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ini({</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    # Typical Value of System Parameters </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    TV_F1           = fixed(c(.Machine$double.eps, 0.744, .Machine$double.xmax))</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    TV_ka           =       c(.Machine$double.eps, 0.282, .Machine$double.xmax)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    TV_CL           =   log(c(.Machine$double.eps, 0.200, .Machine$double.xmax))</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    TV_Vc           =   log(c(.Machine$double.eps, 3.61, .Machine$double.xmax))</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    TV_Vp           =   log(c(.Machine$double.eps, 2.75, .Machine$double.xmax))</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    TV_Q            =   log(c(.Machine$double.eps, 0.747, .Machine$double.xmax))</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    TV_MW           = fixed(c(.Machine$double.eps, 140, .Machine$double.xmax))</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    TV_BM_IC        =       c(.Machine$double.eps, 1000, .Machine$double.xmax)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    TV_kdeg_BM      = fixed(c(.Machine$double.eps, 0.1, .Machine$double.xmax))</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    TV_Emax         =       c(.Machine$double.eps, 100.0, .Machine$double.xmax)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    TV_EC50         = fixed(c(.Machine$double.eps, 300, .Machine$double.xmax))</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    # Between-subject variability:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>      ETAka +     ETACL +     ETAVc +     ETAVp +     ETAQ +      ETABM_IC +  ETAEmax ~</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    c(0.416,                                                                         </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>      0,          0.09875,                                                            </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>      0,          0.0786,     0.116,                                                 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>      0,          0.0619,     0.0377,     0.0789,                                    </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>      0,          0,          0,          0,          0.699,                         </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>      0,          0,          0,          0,          0,          0.05,              </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>      0,          0,          0,          0,          0,          0,          0.10)  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    # Error model parameters</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    prop_err     =  c(.Machine$double.eps, 0.1, .Machine$double.xmax)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    add_err      =  c(.Machine$double.eps, 0.1, .Machine$double.xmax)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> })</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> model({ </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    # System Parameters </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    F1          = TV_F1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    ka          = TV_ka*exp(ETAka)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    CL          = exp(TV_CL)*exp(ETACL)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Vc          = exp(TV_Vc)*exp(ETAVc)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    # AMTIFY:Cc</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Cc          = Ac/(Vc)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Vp          = exp(TV_Vp)*exp(ETAVp)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Q           = exp(TV_Q)*exp(ETAQ)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    MW          = TV_MW</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    BM_IC       = TV_BM_IC*exp(ETABM_IC)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    kdeg_BM     = TV_kdeg_BM</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Emax        = TV_Emax*exp(ETAEmax)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    EC50        = TV_EC50</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    Dinf        = 0.0</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    # Static Secondary Parameters </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    WTTV        = 70 </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    CL_IND      = CL*(1.0+SEX_ID*.1)*(1.0+SUBTYPE_ID*.1) </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    kel         = CL_IND/Vc*((WT/WTTV))^(-0.35) </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    kcp         = Q/Vc*((WT/WTTV))^(-0.35) </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    kpc         = Q/Vp*((WT/WTTV))^(-0.35) </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    ksyn_BM     = kdeg_BM*BM_IC </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    # Dynamic Secondary Parameters </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    STIM        = 1.0+ Emax*Cc/(EC50+Cc) </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    # Defining ODEs</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    d/dt(At)    = (-ka*At)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    d/dt(Ac)    = ((ka*At*F1/Vc  -kel*Cc - kcp*Cc  + kpc*Cp*Vp/Vc + Dinf/Vc))*Vc</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    d/dt(Cp)    = (kcp*Cc*Vc/Vp - kpc*Cp)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    d/dt(BM)    = ksyn_BM*STIM-(kdeg_BM*BM)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    # Outputs and error models</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    C_ng_ml     = Cc*MW</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>    C_ng_ml ~ add(add_err) + prop(prop_err)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> })</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> }</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
@@ -492,10 +401,6 @@ given id and state. For example for the current <code>id</code> and the state
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 5 4 3 2 1</span>
 <span class="r-plt img"><img src="simulate_rules-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>

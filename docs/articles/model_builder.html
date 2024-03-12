@@ -169,15 +169,15 @@ MC:
   # the type is set to nlmixr2lib it will insert the models from nlmixr2lib.
   # User defined models can be used as well. See the examples below for
   # rxode2 and NONMEM models.
-  # 
+  #
   # - group: This is how models will be grouped in the selection pulldown.
   # - name: Short name for the model: **NOTE that names need to be unique**.
   # - description: Verbose description of the model.
   # - type: Supported model types are "nlmixr2lib", "rxode2" or "NONMEM".
-  # - obj: For the rxode2 type you need to also specify the name of the object 
+  # - obj: For the rxode2 type you need to also specify the name of the object
   #   that is created. This option is only used for the rxode2 type.
-  # - file: For both rxode2 and nlmixr2 you need to specify a character string 
-  #   with a file path. This will be evaluated as an R command, so keep that 
+  # - file: For both rxode2 and nlmixr2 you need to specify a character string
+  #   with a file path. This will be evaluated as an R command, so keep that
   #   in mind. If the file is not found it will be skipped when the app loads.
   sources:
   - source:
@@ -197,13 +197,13 @@ MC:
       group:       "Model Library"
       type:        "nlmixr2lib"
       name:        "nlmixr2 Model Library"
-# The include section is optional. You can use this section to copy files 
+# The include section is optional. You can use this section to copy files
 # from the directory where you are running the app to the user directory to be
 # used in the app and when saved. The source and dest options can be a path
 # command like below or a double
 # quoted string: '"/path/to/file"'
 # The dest should be relative to user directory (think the root of the zip
-# file that is exported). See formods.yaml for examples. 
+# file that is exported). See formods.yaml for examples.
 #
 # include:
 #   files:
@@ -216,13 +216,13 @@ MC:
     mode:     r
   # Controls what is shown in the compact ui mode:
   compact:
-    code:    TRUE 
-    clip:    TRUE 
+    code:    TRUE
+    clip:    TRUE
   # This is where you put reporting options. The expected options are shown
   # here, but module-specific options can also be added if needed:
   reporting:
     enabled: FALSE
-    # Priority of reporting relative to other modules 
+    # Priority of reporting relative to other modules
     # (higher numbers are reported first)
     priority: 1
   # put different formatting options (widths, heights,
@@ -275,7 +275,7 @@ MC:
       width:   "200px"
       truncate: 65
       tooltip:  "Select base model from the catalog."
-      tooltip_position: "top"    
+      tooltip_position: "top"
     model_type_selection:
       width: "200px"
       tooltip: "Select the type of the model being uploaded."
@@ -284,9 +284,9 @@ MC:
         rxode2: "rxode2 function"
         NONMEM: "NONMEM (XML, lst, or ctl)"
       default:   "rxode2"
-    upload_model_file:   
+    upload_model_file:
       width: "400px"
-    base_from:            
+    base_from:
       size:    "normal"
       status:  "primary"
       tooltip: "You can select the base model from a catalog or upload your own"
@@ -302,16 +302,15 @@ MC:
     # Generally you dont want to  change what is already here in terms of
     # these short name used. You can remove timescales you don't want to use
     # or add timescales that you need but are not present.
-    #   -verb  You can change the verb field (what the user sees). 
-    #   The order of
-    # Appearance is the same order seen here. The default is the selected
-    # short name for the specified timescale
+    #   -verb  You can change the verb field (what the user sees).
+    # The order of Appearance is the same order seen here. The default
+    # is the selected short name for the specified timescale
     time_scales:
       width: "200px"
       default: "weeks"
       tooltip: "Choose the timescale of the model."
       tooltip_position: "top"
-      choices: 
+      choices:
         months:
           conv: "60*60*24*4"
           verb: "Months"
@@ -323,8 +322,8 @@ MC:
           verb: "Days"
         hours:
           conv: "60*60"
-          verb: "Hours"  
-        min:  
+          verb: "Hours"
+        min:
           conv: "60"
           verb: "Minutes"
         sec:
@@ -340,7 +339,7 @@ MC:
     time_scale:           NULL
     catalog_empty:        "No models were found, the catalog is empty"
     save_btn:             "Save"
-    clip_btn:             "Code" 
+    clip_btn:             "Code"
     copy_btn:             "Copy"
     del_btn:              "Delete"
     new_btn:              "New"
@@ -354,8 +353,8 @@ MC:
   errors:
     no_model_found:             "No model was found."
     base_model_build_failed:    "The base model build failed."
-    manual_model_update_failed: "Manual model update failed."     
-    user_file_upload_failed:    "User-defined model failed."     
+    manual_model_update_failed: "Manual model update failed."
+    user_file_upload_failed:    "User-defined model failed."
     nlmixr2lib_not_found:       "The nlmixr2lib package was not found. This library will not be available."
     selected_id_bad_list:       "Unable to find a list for the selected component."
     selected_id_bad_row:        "Selected component should have 1 row."
@@ -363,8 +362,8 @@ MC:
     # Set to FALSE to disable tool tips for this module
     include: TRUE
     elements: "Show model components"
-    show_code: "Show model code" 
-    url_rxode: "https://nlmixr2.github.io/rxode2/articles/rxode2-syntax.html" 
+    show_code: "Show model code"
+    url_rxode: "https://nlmixr2.github.io/rxode2/articles/rxode2-syntax.html"
     url_model_types: "https://ruminate.ubiquity.tools/articles/model_builder.html#model-catalog"
     components:
       input_tip: "My tool tip"</code></pre>

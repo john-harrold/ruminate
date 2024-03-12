@@ -166,12 +166,23 @@ MC:
       placeholder: "c(0, 7, 14, 21)"
       tooltip: "Study visit times."
       tooltip_position: "bottom"
+    trial_end:   
+      value:  100   
+      width:  150 
+      placeholder: "c(0, 7, 14, 21)"
+      tooltip: "Study visit times."
+      tooltip_position: "bottom"
     covariates:
       none_found: "There were no coviaraites found in this model"
     selected_covariate:
       width:  150 
       tooltip: "Pick covariate to define."
       tooltip_position: "right"
+    rule_name:  
+      width:  150 
+      placeholder: "first_dose"
+      tooltip: "This is a unique identifier for the current rule. It should start witha letter and can contain letters, numbers and underscores."
+      tooltip_position: "bottom"
   labels:
     current_element:     NULL # "Select cohort"
     element_name :       NULL # "cohort name"
@@ -194,6 +205,7 @@ MC:
     action_set_state_value:  "New value for state/compartment"
     nsub:                    "N Subs"
     visit_times:             "Visit Times"
+    trial_end:               "End of Trial"
     selected_covariate:      "Covariate"
     covariate_type:          "Type/Distribution"
     covariate_value:         "Values"
@@ -239,7 +251,6 @@ MC:
   #                NA then it will be evaluated as character. Allowed types:
   #                  - numeric
   #                  - character
-  #                  - mixed (numeric and character)
   #                  - logical (TRUE or FALSE)
   # value        - Default value in the UI if it is NULL you need to set it as
   #                "NULL" with quotes. If you want it to be empty set it as
@@ -303,6 +314,16 @@ MC:
       options:       NULL
       use:           "Misc"
       placeholder:   "8675309"
+    nsteps:    
+      group:         "Misc"
+      label:         "Time Steps"
+      tooltip:       'Integer value representing the number of time steps to add between zero and the end of trial. A larger value will give smoother curves but it will also take more time to simulate.'
+      uitype:        "text"
+      type:          "numeric"
+      value:         "200"
+      options:       NULL
+      use:           "Misc"
+      placeholder:   "200"
     preamble:
       group:         "Rule Environment Preamble"
       label:         NULL
@@ -320,37 +341,37 @@ MC:
     tooltip_position: "right"
     width:             150
     # These are the types of covariates that can be constructed. You should
-    # only change the placeholder, choice, and tool_tip options. The rest are used
+    # only change the placeholder, choice, and tooltip options. The rest are used
     # internally and should not be changed.
     types:
       discrete:
         choice:      "Select from discrete values"
         type:        "discrete"
         placeholder: "0, 1, 2"
-        tool_tip:    "Provide a list of possible discrete values and these will be randomly selected when genreating subjects."
+        tooltip:    "Provide a list of possible discrete values and these will be randomly selected when genreating subjects."
       fixed:
         choice:      "Fix at value"
         type:        "fixed"
         placeholder: "1"
-        tool_tip:    "Fix the covariate at a specific value."
+        tooltip:    "Fix the covariate at a specific value."
       cont_random: 
         choice:      "Continuous/random in range"
         type:        "continuous"
         sampling:    "random"
         placeholder: "0,1"
-        tool_tip:    "Sample randomly from within the specified range."
+        tooltip:    "Sample randomly from within the specified range."
       cont_normal: 
         choice:      "Sample normally"
         type:        "continuous"
         sampling:    "normal"
         placeholder: "mean, variance"
-        tool_tip:    "Sample from normal distribution provided a mean and variance"
+        tooltip:    "Sample from normal distribution provided a mean and variance"
       cont_lognormal: 
         choice:      "Sample log-normally"
         type:        "continuous"
         sampling:    "log-normal"
         placeholder: "mean, variance"
-        tool_tip:    "Sample from log-normal distribution provided a mean and variance"
+        tooltip:    "Sample from log-normal distribution provided a mean and variance"
 #   method:  
 #     group:         "ODE Solver"
 #     label:         "Solver method"

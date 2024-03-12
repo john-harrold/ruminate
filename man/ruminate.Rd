@@ -2,14 +2,13 @@
 % Please edit documentation in R/ruminate.R
 \docType{package}
 \name{ruminate}
-\alias{ruminate}
 \alias{ruminate-package}
+\alias{ruminate}
 \title{ruminate: Shiny app and module to facilitate pharamacometrics analysis}
 \usage{
 ruminate(
   host = "127.0.0.1",
   port = 3838,
-  development = FALSE,
   server_opts = list(shiny.maxRequestSize = 30 * 1024^2),
   mksession = FALSE
 )
@@ -19,13 +18,11 @@ ruminate(
 
 \item{port}{Port number for the app (3838)}
 
-\item{development}{Boolean variable indicating}
-
 \item{server_opts}{List of options (names) and their vlues (value) e.g.
 \code{list(shiny.maxRequestSize = 30 * 1024^2)}.}
 
 \item{mksession}{Boolean value, when TRUE will load test session data
-for app testing and will also load development modules (\code{FALSE}).}
+for app testing}
 }
 \value{
 Nothing is returned, this function just runs the built-in ruminate

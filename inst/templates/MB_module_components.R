@@ -8,8 +8,7 @@ ui <- dashboardPage(
   dashboardHeader(title="MB Module Template"),
   dashboardSidebar(
      sidebarMenu(
-       menuItem("Module UI Components",    tabName="appstate",  icon=icon("archive")),
-       menuItem("Compact View",  tabName="compact", icon=icon("archive"))
+       menuItem("Module UI Components",    tabName="appstate",  icon=icon("archive"))
      )
   ),
   dashboardBody(
@@ -77,10 +76,7 @@ ui <- dashboardPage(
        fluidRow(
          box(title="Current Module State",
            verbatimTextOutput("ui_state"),width=12))
-       ),
-       tabItem(tabName="compact",
-          "MB_ui_compact",
-          htmlOutput(NS("MB", "MB_ui_compact")))
+       )
       )
     )
   )
@@ -88,7 +84,7 @@ ui <- dashboardPage(
 # Main app server
 server <- function(input, output, session) {
 
-  MB_test_mksession(session, full_session=TRUE)
+   MB_test_mksession(session, full_session=TRUE)
 
   # Empty reactive object to track and react to
   # changes in the module state outside of the module

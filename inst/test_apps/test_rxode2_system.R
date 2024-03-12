@@ -25,8 +25,9 @@ ini({
      0,          0,          0,          0,          0,          0,          0.10)  
 
    # Error model parameters
-   prop_err     =  c(.Machine$double.eps, 0.1, .Machine$double.xmax)
-   add_err      =  c(.Machine$double.eps, 0.1, .Machine$double.xmax)
+   prop_err_PK  =  c(.Machine$double.eps, 0.1, .Machine$double.xmax)
+   add_err_PK   =  c(.Machine$double.eps, 0.1, .Machine$double.xmax)
+   add_err_BM   =  c(.Machine$double.eps, 0.1, .Machine$double.xmax)
 
 })
 model({ 
@@ -66,7 +67,10 @@ model({
 
    # Outputs and error models
    C_ng_ml     = Cc*MW
-   C_ng_ml ~ add(add_err) + prop(prop_err)
+   C_ng_ml ~ add(add_err_PK) + prop(prop_err_PK)
+
+   BM_obs      = BM
+   BM_obs  ~ add(add_err_BM)
 
 })
 }

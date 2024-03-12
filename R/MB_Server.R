@@ -180,10 +180,15 @@ MB_Server <- function(id,
           cname
       }
 
+      # JMH base_from should probably be stored in the current_element and
+      # initialized that way
+      current_ele = MB_fetch_current_element(state)
+
       uiele =
       shinyWidgets::radioGroupButtons(
         inputId    = NS(id, "base_from"),
-        selected   = state[["MB"]][["base_from"]],
+       #selected   = state[["MB"]][["base_from"]],
+        selected   = current_ele[["ui"]][["base_from"]],
         label      = state[["MC"]][["labels"]][["base_from"]],
         choices    = choices,
         status     = state[["MC"]][["formatting"]][["base_from"]][["status"]],
@@ -261,7 +266,7 @@ MB_Server <- function(id,
     # Generated model
     observe({
       req(input[["element_selection"]])
-      req(input[["catalog_selection"]])
+      input[["catalog_selection"]]
       input[["button_clk_save"]]
       input[["button_clk_del"]]
       input[["uploaded_model"]]
@@ -308,7 +313,7 @@ MB_Server <- function(id,
     # Generated model building code
     observe({
       req(input[["element_selection"]])
-      req(input[["catalog_selection"]])
+      input[["catalog_selection"]]
       input[["button_clk_save"]]
       input$uploaded_model
 
@@ -508,7 +513,7 @@ MB_Server <- function(id,
             NS(id, "ui_mb_code"),
             height  = state[["MC"]][["formatting"]][["code"]][["height"]]
             ))
-        
+
           uiele_code_button = tagList(
            shinyWidgets::dropdownButton(
              uiele_code,
@@ -521,9 +526,9 @@ MB_Server <- function(id,
              icon    = icon("code", lib="font-awesome"),
              tooltip = shinyWidgets::tooltipOptions(title = state[["MC"]][["tooltips"]][["show_code"]]))
           )
-        
+
         }
-        
+
         # Button with MB elements table
         uiele_mb_elements_button = NULL
      ### Uncomment this if your model has a components table
@@ -539,7 +544,7 @@ MB_Server <- function(id,
      ###   icon    = icon("layer-group", lib="font-awesome"),
      ###   tooltip = tooltipOptions(title = state[["MC"]][["tooltips"]][["elements"]]))
      ###)
-        
+
         uiele = tagList(
           div(style="display:inline-block", htmlOutput(NS(id, "ui_select_element"))),
           div(style="display:inline-block", htmlOutput(NS(id, "ui_text_element_name"))),
@@ -549,13 +554,13 @@ MB_Server <- function(id,
           div(style="display:inline-block", verbatimTextOutput(NS(id, "ui_mb_msg"))),
           tags$br()
         )
-        
+
         # We only show the clip button if it's enabled
         uiele_clip_button = NULL
         if(state[["MC"]][["compact"]][["clip"]]){
           uiele_clip_button = htmlOutput(NS(id, "ui_mb_clip_code"))
         }
-        
+
         uiele_buttons_right = tagList(
                  tags$style(".btn-custom-mb {width: 100px;}"),
                  div(style="display:inline-block;vertical-align:top;height:100px",
@@ -567,7 +572,7 @@ MB_Server <- function(id,
                  htmlOutput(NS(id, "ui_mb_del_btn")),
                  htmlOutput(NS(id, "ui_mb_new_btn"))
                  ))
-        
+
         # Appending the preview
         div_style = paste0("display:inline-block;vertical-align:top;",
           "width:",   state[["MC"]][["formatting"]][["preview"]][["width"]],  ";",
@@ -583,8 +588,8 @@ MB_Server <- function(id,
           uiele_buttons_right,
           tags$br()
         )
-        
-        
+
+
         uiele = tagList( uiele,
           tags$br(),
           column(7,
@@ -1339,8 +1344,6 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
   state[["MB"]][["element_cntr"]]         = 0
   state[["MB"]][["model_type_selection"]] =
     state[["MC"]][["formatting"]][["model_type_selection"]][["default"]]
-  state[["MB"]][["base_from"]] =
-    state[["MC"]][["formatting"]][["base_from"]][["default"]]
 
 
 
@@ -1416,8 +1419,8 @@ code_str}
 #'@description Appends report elements to a formods report.
 #'@param state MB state from \code{MB_fetch_state()}
 #'@param rpt Report with the current content of the report which will be appended to in
-#'this function. For details on the structure see the documentation for 
-#' \code{\link[formods]{FM_generate_report}} 
+#'this function. For details on the structure see the documentation for
+#' \code{\link[formods]{FM_generate_report}}
 #'@param rpttype Type of report to generate (supported "xlsx", "pptx", "docx").
 #'@param gen_code_only Boolean value indicating that only code should be
 #'generated (\code{FALSE}).
@@ -1429,7 +1432,7 @@ code_str}
 #'  \item{msgs:}      Messages to be passed back to the user.
 #'  \item{rpt:}       Report with any additions passed back to the user.
 #'}
-#'@seealso \code{\link[formods]{FM_generate_report}} 
+#'@seealso \code{\link[formods]{FM_generate_report}}
 MB_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 
   isgood    = TRUE
@@ -1555,7 +1558,7 @@ res}
 #' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
 MB_test_mksession = function(session, id = "MB", full_session=TRUE){
 
-  
+
   isgood = TRUE
   rsc    = list()
   input  = list()
@@ -1564,7 +1567,7 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
   # Configuration files
   FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
   MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
-  
+
   # Creating an empty state object
   state = MB_fetch_state(id              = "MB",
                          input           = input,
@@ -1576,17 +1579,47 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
   if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
     # This will provide a list of the available models
     models = MB_fetch_catalog(state)
-    
+
     #-------------------------------------------------------
     # Simplest model:
-    ridx = which(models[["summary"]][["Name"]] == "PK_1cmt_des")
-    model_row  = models[["summary"]][ridx, ]
-    
+   #ridx = which(models[["summary"]][["Name"]] == "PK_1cmt_des")
+   #model_row  = models[["summary"]][ridx, ]
+
+
+    tmp_Object          = "my_model"
+    tmp_base_model      = "manual"
+    tmp_base_model_name = "manual"
+    tmp_Model =  ' my_model = function () 
+     {
+         description <- "One compartment PK model with linear clearance using differential equations"
+         ini({
+             lka <- 0.45
+             label("Absorption rate (Ka)")
+             lcl <- 1
+             label("Clearance (CL)")
+             lvc <- 3.45
+             label("Central volume of distribution (V)")
+             propSd <- c(0, 0.5)
+             label("Proportional residual error (fraction)")
+             etalcl ~ 0.1
+         })
+         model({
+             ka <- exp(lka)
+             cl <- exp(lcl + etalcl)
+             vc <- exp(lvc)
+             kel <- cl/vc
+             d/dt(depot) <- -ka * depot
+             d/dt(central) <- ka * depot - kel * central
+             Cc <- central/vc
+             Cc ~ prop(propSd)
+         })
+     }'
+
     mk_rx_res = mk_rx_obj(
       type="rxode2",
-      model = list(fcn_def = model_row[["Model"]][1],
-                   fcn_obj = model_row[["Object"]][1]))
-    
+      model = list(fcn_def = tmp_Model,       # model_row[["Model"]][1],
+                   fcn_obj = tmp_Object))     # model_row[["Object"]][1]))
+
     current_ele = MB_fetch_current_element(state)
     current_ele = MB_update_model(
       state       = state,
@@ -1595,39 +1628,42 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
       rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
       note        = "base model",
       reset       = TRUE)
-    
+
     current_ele[["ui"]][["element_name"]] = "One compartment model"
-    
-    current_ele[["base_model"]]      =  model_row[["mod_id"]][1]
-    current_ele[["base_model_name"]] =  model_row[["Name"]][1]
-    
-    # Synching the catlog selection with the base model 
-    current_ele[["ui"]][["catalog_selection"]] = model_row[["mod_id"]][1]
-    
+    current_ele[["ui"]][["base_from"]]    = "user"
+
+    current_ele[["base_model"]]      =  tmp_base_model      # model_row[["mod_id"]][1]
+    current_ele[["base_model_name"]] =  tmp_base_model_name # model_row[["Name"]][1]
+
+    # Synching the catlog selection with the base model
+    current_ele[["ui"]][["catalog_selection"]] = tmp_base_model # model_row[["mod_id"]][1]
+
     current_ele[["ui"]][["time_scale"]] = "hours"
-    
+
     # Timescales are found here:
     # state[["MC"]][["formatting"]][["time_scales"]][["choices"]]
-    
+
     state = MB_set_current_element(
       state   = state,
       element = current_ele)
-    
-    
-    
+
     #-------------------------------------------------------
     if(full_session){
       # New element
       state = MB_new_element(state)
-    
-      ridx = which(models[["summary"]][["Name"]] == "PK_2cmt_mAb_Davda_2014" )
-      model_row  = models[["summary"]][ridx, ]
-    
+
+      # Building the element around the PK/biomarker test system in the
+      # package
+      example_file =  system.file(package="ruminate", "test_apps", "test_rxode2_system.R")
+
+      fcn_def = readChar(example_file, file.info(example_file)$size)
+      fcn_obj = "my_model"
+
       mk_rx_res = mk_rx_obj(
         type="rxode2",
-        model = list(fcn_def = model_row[["Model"]][1],
-                     fcn_obj = model_row[["Object"]][1]))
-    
+        model = list(fcn_def = fcn_def,
+                     fcn_obj = fcn_obj))
+
       current_ele = MB_fetch_current_element(state)
       current_ele = MB_update_model(
         state       = state,
@@ -1636,26 +1672,25 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
         rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
         note        = "base model",
         reset       = TRUE)
-    
-      current_ele[["base_model"]]           =  model_row[["mod_id"]][1]
-      current_ele[["base_model_name"]]      =  model_row[["Name"]][1]
-      current_ele[["ui"]][["element_name"]] = "mAb Model (Davda 2014)"
-    
-      # Synching the catlog selection with the base model 
-      current_ele[["ui"]][["catalog_selection"]] = model_row[["mod_id"]][1]
-    
-      current_ele[["ui"]][["time_scale"]] = 'days' 
-    
+
+      current_ele[["base_model"]]           =  "user" #model_row[["mod_id"]][1]
+      current_ele[["base_model_name"]]      =  "user" # model_row[["Name"]][1]
+      current_ele[["ui"]][["element_name"]] = "PK Biomarker"
+      current_ele[["ui"]][["base_from"]]    = "user"
+
+      # Synching the catlog selection with the base model
+      current_ele[["ui"]][["catalog_selection"]] =  "mod_1" # model_row[["mod_id"]][1]
+
+      current_ele[["ui"]][["time_scale"]] = 'days'
+
       state = MB_set_current_element(
         state   = state,
         element = current_ele)
-    
     }
-    
+
     # JMH when loading ruminate with the session populated it the Model code
     # isn't switching correctly between the elements
-#    browser()
-    
+
     # This functions works both in a shiny app and outside of one
     # if we're in a shiny app then the 'session' then the class of
     # session will be a ShinySession. Otherwise it'll be a list if
@@ -1714,7 +1749,8 @@ MB_new_element = function(state){
                 ui_mb_model          = "",
                 time_scale           = state[["MC"]][["formatting"]][["time_scales"]][["default"]],
                 element_name         = paste0("Model ", state[["MB"]][["element_cntr"]]),
-                catalog_selection    = model_catalog[["summary"]][1, "mod_id"]
+                catalog_selection    = model_catalog[["summary"]][1, "mod_id"],
+                base_from            = state[["MC"]][["formatting"]][["base_from"]][["default"]]
                 ),
          id                     = element_id,
          idx                    = state[["MB"]][["element_cntr"]],
@@ -1785,7 +1821,7 @@ MB_update_checksum     = function(state){
   new_chk = digest::digest(chk_str, algo=c("md5"))
 
   if(has_updated(old_chk, new_chk)){
-    state[["MB"]][["checksum"]] = new_chk 
+    state[["MB"]][["checksum"]] = new_chk
     FM_le(state, paste0("module checksum updated:", state[["MB"]][["checksum"]]))
   }
 
@@ -1897,25 +1933,25 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
       if(reset){
         current_ele[["components_table"]] = data.frame()
       }
-    
+
       # String for creating model function in R
       fcn_def    = paste0(deparse(as.function(rx_obj$fun)), collapse="\n")
-    
+
       if(nrow(current_ele[["components_table"]]) == 0){
         component_id = 1
       }else{
         component_id = max(current_ele[["components_table"]][["id"]]) + 1
       }
-    
+
       component_id_str = paste0("component_", component_id)
-    
+
       bcres =
         MB_build_code(state        = state,
                       session      = session,
                       fcn_def      = fcn_def,
                       fcn_obj_name = current_ele[["fcn_obj_name"]],
                       rx_obj_name  = current_ele[["rx_obj_name"]])
-    
+
       tmpdf =
       data.frame(id            = component_id,
                  id_str        = component_id_str,
@@ -1923,8 +1959,8 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
                  model_code    = paste0(bcres[["model_code"]],    collapse="\n"),
                  model_code_sa = paste0(bcres[["model_code_sa"]], collapse="\n"),
                  fcn_def       = fcn_def)
-    
-    
+
+
       if(is.null(current_ele[["components_table"]])){
         current_ele[["components_table"]] = tmpdf
       }else{
@@ -1932,11 +1968,11 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
           current_ele[["components_table"]],
           tmpdf)
       }
-    
+
       # Saving the rxode2 object. The component ID is saved as a string
       # "component_N":
       current_ele[["components_list"]][[component_id_str]][["rx_obj"]] = rx_obj
-    
+
       # Setting the added component as the selected id:
       current_ele[["selected_component_id"]]  = component_id
     }
@@ -2343,7 +2379,7 @@ mk_rx_obj   = function(type, model){
           paste0("fcn_obj = ", model[["fcn_obj"]]),
           paste0("rx_obj  = rxode2::rxode2(fcn_obj)")
         )
-   
+
         tcres = FM_tc(
           cmd     = paste0(mc, collapse="\n"),
           tc_env  = NULL,
@@ -2353,7 +2389,7 @@ mk_rx_obj   = function(type, model){
         cmds = c(
           'rx_obj = nonmem2rx::nonmem2rx(model_file, save=FALSE, determineError=FALSE)',
           'fun_obj = rx_obj$fun')
-   
+
         tcres =
           FM_tc(cmd = paste0(cmds, collapse="\n"),
                 tc_env = list(model_file = model[["model_file"]]),
@@ -2415,15 +2451,15 @@ MB_test_catalog   = function(state, as_cran=FALSE, verbose=TRUE){
           model_summary = model_summary[1, ]
         }
       }
-    
+
       # Now we walk through each model and attempt to build it:
       for(ridx in 1:nrow(model_summary)){
         model = list(
           fcn_def=model_summary[ridx, ]$Model,
           fcn_obj=model_summary[ridx, ]$Object)
-    
+
         mod_type = model_summary[ridx, ]$Type
-    
+
         rx_res   = mk_rx_obj(mod_type, model)
         if(rx_res[["isgood"]]){
           if(verbose){
@@ -2436,7 +2472,7 @@ MB_test_catalog   = function(state, as_cran=FALSE, verbose=TRUE){
           }
         }
       }
-    
+
     } else {
       isgood = FALSE
       msgs = c(msgs, "Unable to fetch the model catalog.")

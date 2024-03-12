@@ -27,7 +27,6 @@ etc from an rxode2 object.
 }
 \examples{
 library(formods)
-library(rxode2)
 library(ggplot2)
 
 # For more information see the Clinical Trial Simulation vignette:
@@ -35,18 +34,35 @@ library(ggplot2)
 
 # None of this will work if rxode2 isn't installed:
 if(is_installed("rxode2")){
+library(rxode2)
 set.seed(8675309)
-# This creates the object my_model which contains the 
-# function definition for the rxode2 model shown just below
-source(system.file(package="ruminate", 
-                   "test_apps", 
-                   "test_rxode2_system.R"))
+rxSetSeed(8675309)
 
-message(paste0(readLines(
-  system.file(package="ruminate", 
-              "test_apps", 
-              "test_rxode2_system.R")), 
-  collapse="\n"))
+my_model = function () 
+{
+    description <- "One compartment PK model with linear clearance using differential equations"
+    ini({
+        lka <- 0.45
+        label("Absorption rate (Ka)")
+        lcl <- 1
+        label("Clearance (CL)")
+        lvc <- 3.45
+        label("Central volume of distribution (V)")
+        propSd <- c(0, 0.5)
+        label("Proportional residual error (fraction)")
+        etalcl ~ 0.1
+    })
+    model({
+        ka <- exp(lka)
+        cl <- exp(lcl + etalcl)
+        vc <- exp(lvc)
+        kel <- cl/vc
+        d/dt(depot) <- -ka * depot
+        d/dt(central) <- ka * depot - kel * central
+        Cc <- central/vc
+        Cc ~ prop(propSd)
+    })
+}
 
 # This creates an rxode2 object
 object  = rxode(my_model)
@@ -59,12 +75,8 @@ rxdetails$elements
 
 # Next we will create subjects. To do that we need to 
 # specify information about covariates:
-nsub = 5
+nsub = 2
 covs = list(
-  SEX_ID     = list(type     = "discrete", 
-                    values   = c(0,1)),
-  SUBTYPE_ID = list(type     = "fixed",
-                    values   = c(0)),
   WT         = list(type     = "continuous",
                     sampling = "log-normal",
                     values   = c(70, .15))
@@ -77,59 +89,30 @@ subs = mk_subjects(object = object,
 head(subs$subjects)
 
 rules = list(
-  low_dose = list(
-    condition = "time != 45",
-    true_flag  = 3e6,
-    false_flag = 0,
+  dose = list(
+    condition = "TRUE",
     action    = list(
       type  = "dose",
-      state     = "Ac", 
-      values    = "c(3,  3,  3,  3)*1e6/MW",
-      times     = "c(0, 14, 28, 42)",
-      durations = "c(0,  0,  0,  0)")
-    ),
-  reset_Ac    = list(
-    condition = "time == 45",
-    true_flag  = "Ac/2",
-    false_flag = "",
-    action    = list(
-      type     = "set state",
-      state    = "Ac",
-      value    = "Ac/2")
-    ),
-  reset_Cp    = list(
-    condition = "time == 45",
-    true_flag  = "Cp/2",
-    false_flag = "",
-    action    = list(
-      type     = "set state",
-      state    = "Cp",
-      value    = "Cp/2")
-  )
+      state     = "central", 
+      values    = "c(1)",
+      times     = "c(0)",
+      durations = "c(0)")
+    )
 )
-
-
 
 # We evaulate the rules for dosing at time 0
 eval_times =  0
 
-# We also do a state reset at 45 days.
-eval_times = sort(unique(c(45, eval_times)))
-
 # Stop 2 months after the last dose
 output_times = seq(0, 56, 1)
 
-rx_options = list(
-   covsInterpolation = "locf"
-)
-
+# This runs the rule-based simulations
 simres = 
 simulate_rules(object   = object,
                subjects      = subs[["subjects"]],
                eval_times    = eval_times,
                output_times  = output_times, 
-               rules         = rules,
-               rx_options    = rx_options)
+               rules         = rules)
 
 # First subject data:
 sub_1 = simres$simall[simres$simall$id == 1, ]
@@ -142,7 +125,7 @@ simall = simres$simall
 simall$id = as.factor(simall$id)
 
 p = ggplot(data=simall)+
-  geom_line(aes(x=time, y=Ac, group=id, color=id)) +
+  geom_line(aes(x=time, y=Cc, group=id, color=id)) +
   theme_linedraw()+
   facet_wrap(.~id)
 

@@ -553,7 +553,6 @@ CTS_Server <- function(id,
         uiele = tagList(uiele,tags$h3(gname), group_ele)
 
       }
-      #browser()
       # JMH create config ui here
 
 
@@ -670,7 +669,31 @@ CTS_Server <- function(id,
     } else{
       uiele = NULL
     }
-      
+
+    uiele })
+    #------------------------------------
+    output$CTS_ui_trial_end =  renderUI({
+      input$element_selection
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+    current_ele = CTS_fetch_current_element(state)
+    uiele =
+      textInput(
+        inputId     = NS(id, "trial_end"),
+        label       = state[["MC"]][["labels"]][["trial_end"]],
+        width       = state[["MC"]][["formatting"]][["trial_end"]][["width"]] ,
+        value       = current_ele[["ui"]][["trial_end"]],
+        placeholder = state[["MC"]][["formatting"]][["trial_end"]][["placeholder"]]
+      )
+    uiele = formods::FM_add_ui_tooltip(state, uiele,
+                                       tooltip     = state[["MC"]][["formatting"]][["trial_end"]][["tooltip"]],
+                                       position    = state[["MC"]][["formatting"]][["trial_end"]][["tooltip_position"]])
     uiele })
     #------------------------------------
     output$CTS_ui_visit_times =  renderUI({
@@ -761,14 +784,14 @@ CTS_Server <- function(id,
 
     uiele = NULL
     if(length(current_ele[["rx_details"]][["elements"]][["covariates"]]) > 0){
-      uiele = 
+      uiele =
       shinyWidgets::pickerInput(
         selected   = state[["CTS"]][["ui"]][["selected_covariate"]],
         inputId    = NS(id, "selected_covariate"),
         label      = state[["MC"]][["labels"]][["selected_covariate"]],
         choices    = current_ele[["rx_details"]][["elements"]][["covariates"]],
         width      = state[["MC"]][["formatting"]][["selected_covariate"]][["width"]])
- 
+
       uiele = formods::FM_add_ui_tooltip(state, uiele,
         tooltip     = state[["MC"]][["formatting"]][["selected_covariate"]][["tooltip"]],
         position    = state[["MC"]][["formatting"]][["selected_covariate"]][["tooltip_position"]])
@@ -798,17 +821,17 @@ CTS_Server <- function(id,
       } else {
         covariate_type = names(state[["MC"]][["covariate_generation"]][["types"]])[1]
       }
- 
+
       choices = list()
       for(tmp_cov_type in names(state[["MC"]][["covariate_generation"]][["types"]])){
         choices[[
                  state[["MC"]][["covariate_generation"]][["types"]][[tmp_cov_type]][["choice"]]
                  ]] = tmp_cov_type
       }
- 
-      uiele = 
+
+      uiele =
       shinyWidgets::pickerInput(
-        selected   = covariate_type, 
+        selected   = covariate_type,
         inputId    = NS(id, "covariate_type_selected"),
         label      = state[["MC"]][["labels"]][["covariate_type"]],
         choices    = choices,
@@ -842,15 +865,15 @@ CTS_Server <- function(id,
         covariate_type = names(state[["MC"]][["covariate_generation"]][["types"]])[1]
       }
 
-      uiele = 
+      uiele =
       textInput(
         inputId     = NS(id, "covariate_value"),
         label       = state[["MC"]][["labels"]][["covariate_value"]],
         placeholder = state[["MC"]][["covariate_generation"]][["types"]][[covariate_type]][["placeholder"]],
         width       = state[["MC"]][["covariate_generation"]][["width"]])
- 
+
       uiele = formods::FM_add_ui_tooltip(state, uiele,
-        tooltip     = state[["MC"]][["covariate_generation"]][["types"]][[covariate_type]][["tool_tip"]],
+        tooltip     = state[["MC"]][["covariate_generation"]][["types"]][[covariate_type]][["tooltip"]],
         position    = state[["MC"]][["covariate_generation"]][["tooltip_position"]])
     }
     uiele })
@@ -869,8 +892,8 @@ CTS_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
       current_ele = CTS_fetch_current_element(state)
-      
-      
+
+
       uiele = NULL
       if(length(current_ele[["rx_details"]][["elements"]][["covariates"]]) > 0){
        uiele = shinyWidgets::actionBttn(
@@ -899,16 +922,53 @@ CTS_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
       current_ele = CTS_fetch_current_element(state)
-      
-      
+
+
       uiele = NULL
       if(length(current_ele[["rx_details"]][["elements"]][["covariates"]]) > 0){
-        uiele = 
+        uiele =
           rhandsontable::rHandsontableOutput(NS(id, "hot_current_covariates"),
              width  = state[["MC"]][["formatting"]][["hot_current_covariates"]][["width"]],
              height = state[["MC"]][["formatting"]][["hot_current_covariates"]][["height"]])
       }
     uiele })
+    #------------------------------------
+    # Current rule name:
+    output$CTS_ui_rule_name = renderUI({
+      input$element_selection
+      input$button_clk_add_rule
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      current_ele = CTS_fetch_current_element(state)
+
+      rule_name = state[["CTS"]][["ui"]][["rule_name"]]
+      if(is.null(rule_name)){
+        rule_name = state[["MC"]][["formatting"]][["rule_name"]][["placeholder"]]
+      } else if (rule_name == ""){
+        rule_name = state[["MC"]][["formatting"]][["rule_name"]][["placeholder"]]
+      }
+
+      uiele =
+      textInput(
+        inputId     = NS(id, "rule_name"),
+        label       = state[["MC"]][["labels"]][["rule_name"]],
+        width       = state[["MC"]][["formatting"]][["rule_name"]][["width"]] ,
+        value       = rule_name,
+        placeholder = state[["MC"]][["formatting"]][["rule_name"]][["placeholder"]]
+      )
+
+      uiele = formods::FM_add_ui_tooltip(state, uiele,
+        tooltip     = state[["MC"]][["formatting"]][["rule_name"]][["tooltip"]],
+        position    = state[["MC"]][["formatting"]][["rule_name"]][["tooltip_position"]])
+
+      uiele})
     #------------------------------------
     # ui bottom
     #------------------------------------
@@ -1004,7 +1064,8 @@ CTS_Server <- function(id,
         value           = uiele)
 
     })
-    # Generated data wrangling code
+    #------------------------------------
+    # Copying element code to the clipboard
     observeEvent(input$button_clk_clip, {
       state = CTS_fetch_state(id              = id,
                              id_ASM          = id_ASM,
@@ -1027,7 +1088,6 @@ CTS_Server <- function(id,
           clipr::write_clip(uiele)
         }
     })
-    
     #------------------------------------
     # Side buttons:
     # new
@@ -1536,21 +1596,10 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
     current_ele[["ui"]][["element_name"]] =
       state[["CTS"]][["ui"]][["element_name"]]
 
-    tmp_source_model = state[["CTS"]][["ui"]][["source_model"]]
+    # Saving the changes to the source model
+    current_ele = CTS_change_source_model(state, current_ele)
 
-    # If the source model has actually changed we zero out the covariates as
-    # well. 
-    if(state[["CTS"]][["ui"]][["source_model"]] != current_ele[["ui"]][["source_model"]]){
-      FM_le(state, "source model change detected, covariates reset")
-      current_ele[["covariates"]] = list()
-    }
-
-    # Saving the source model
-    current_ele[["ui"]][["source_model"]] = tmp_source_model
-
-    # updating the rx_details
-    current_ele[["rx_details"]] = fetch_rxinfo(state[["CTS"]][["MDL"]][["mdl"]][[tmp_source_model]][["rx_obj"]])
-
+    # Saving the element:
     state = CTS_set_current_element(
       state   = state,
       element = current_ele)
@@ -1571,7 +1620,6 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
     # Now we create a new element and make it the current element
     state   = CTS_new_element(state)
     new_ele = CTS_fetch_current_element(state)
-
 
     # This is a list of UI elements to skip when copying:
     ui_copy_skip = c("element_name")
@@ -1647,61 +1695,31 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
     }
   }
   #---------------------------------------------
-  # add rule
+  # add covariate
   if("button_clk_add_cov" %in% changed_uis){
     FM_le(state, "adding covariate")
-    COV_GOOD = TRUE
-    covariate_value    = state[["CTS"]][["ui"]][["covariate_value"]]
-    covariate_type     = state[["CTS"]][["ui"]][["covariate_type_selected"]]
-    selected_covariate = state[["CTS"]][["ui"]][["selected_covariate"]]
-    if(covariate_value == ""){
-      tmp_msg = paste0("No value specified for covariate: ", selected_covariate, ".") 
-      FM_le(state, tmp_msg)
-      msgs = c(msgs, tmp_msg)
-      COV_GOOD = FALSE
-    }else{
-      covariate_value = paste0("c(", covariate_value, ")")
-      cmd = paste0("cvval = ", covariate_value)
-      tcres = 
-        FM_tc(cmd     = cmd,
-              tc_env  = list(),
-              capture = "cvval")
 
-      if(tcres[["isgood"]]){
-        #Pulling out the current element
-        current_ele = CTS_fetch_current_element(state)
+    #Pulling out the current element
+    current_ele = CTS_fetch_current_element(state)
+    # Adding the covariate
+    current_ele = CTS_add_covariate(state, current_ele)
 
-        # Adding the covariate:
-        cov_list = list(
-            values   = tcres[["capture"]][["cvval"]],
-            sampling = state[["MC"]][["covariate_generation"]][["types"]][[covariate_type]][["sampling"]],
-            type     = state[["MC"]][["covariate_generation"]][["types"]][[covariate_type]][["type"]])
+    # Appending any messages that were generated.
+    msgs = c(msgs, current_ele[["cares"]][["msgs"]])
 
-        current_ele[["covariates"]][[selected_covariate]] = cov_list
+    #browser()
 
-        # Putting the element back in the state
-        state = CTS_set_current_element(
-          state   = state,
-          element = current_ele)
-      } else {
-        tmp_msg = paste0("Unable to evaluate value for covariate: ", selected_covariate, ".") 
-        FM_le(state, tmp_msg)
-        msgs = c(msgs, tmp_msg)
-        msgs = c(msgs, paste0("  -> ", covariate_value))
-        msgs = c(msgs, tcres[["msgs"]])
-        COV_GOOD = FALSE
-      }
-    }
-
-    if(COV_GOOD){
+    if(current_ele[["cares"]][["COV_GOOD"]]){
       state = formods::FM_set_notification(state,
         notify_text = paste0("Covariate ", selected_covariate, " Added"),
         notify_id   = "COV_IS_GOOD",
         type        = "success")
+      # Putting the element back in the state if it's good
+      state = CTS_set_current_element( state   = state, element = current_ele)
     } else {
       state = formods::FM_set_notification(state,
         notify_text = paste0("Unable to Add Covariate: ", selected_covariate),
-        notify_id   = "RULE_IS_BAD",
+        notify_id   = "COV_IS_BAD",
         type        = "failure")
     }
   }
@@ -1709,124 +1727,28 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
   # add rule
   if("button_clk_add_rule" %in% changed_uis){
 
-    RULE_IS_GOOD = TRUE
-    rule_desc    = ""
-    rule_action  = list()
 
-    # Making sure the rule type is defined
-    if(!is.null(state[["CTS"]][["ui"]][["rule_type"]])){
-      ui_req = c("rule_condition")
-      if(state[["CTS"]][["ui"]][["rule_type"]] == "dose"){
-        rule_desc    = paste0("dose into ", state[["CTS"]][["ui"]][["action_dosing_state"]])
-        rule_action  = list(
-           condition        = state[["CTS"]][["ui"]][["rule_condition"]],
-           dosing_state     = state[["CTS"]][["ui"]][["action_dosing_state"]],
-           dosing_values    = state[["CTS"]][["ui"]][["action_dosing_values"]],
-           dosing_times     = state[["CTS"]][["ui"]][["action_dosing_times"]],
-           dosing_durations = state[["CTS"]][["ui"]][["action_dosing_durations"]])
+    #Pulling out the current element
+    current_ele = CTS_fetch_current_element(state)
 
-        ui_req = c(ui_req,
-          "action_dosing_state",
-          "action_dosing_values",
-          "action_dosing_times",
-          "action_dosing_durations")
+    # Adding the rule
+    current_ele = CTS_add_rule(state, current_ele)
 
-      } else if(state[["CTS"]][["ui"]][["rule_type"]] == "set state"){
-        rule_desc = paste0("set state ", state[["CTS"]][["ui"]][["action_set_state_state"]])
-        rule_action  = list(
-           condition       = state[["CTS"]][["ui"]][["rule_condition"]],
-           set_state_state = state[["CTS"]][["ui"]][["action_set_state_state"]],
-           set_state_value = state[["CTS"]][["ui"]][["action_set_state_values"]])
-        ui_req = c(ui_req,
-          "action_set_state_state",
-          "action_set_state_value")
-      } else if(state[["CTS"]][["ui"]][["rule_type"]] == "manual"){
-        rule_desc = paste0("manual code")
-        rule_action  = list(
-           condition       = state[["CTS"]][["ui"]][["rule_condition"]],
-           manual_code     = state[["CTS"]][["ui"]][["action_manual_code"]])
-        ui_req = c(ui_req,
-          "action_manual_code")
-      } else {
-        RULE_IS_GOOD = FALSE
-        msgs = c(msgs, paste0("Unknown rule_type: ", state[["CTS"]][["ui"]][["rule_type"]]))
-      }
+    # Putting the element back in the state
+    state = CTS_set_current_element(
+      state   = state,
+      element = current_ele)
+
+    # Appending any messages that were generated.
+    msgs = c(msgs, current_ele[["rares"]][["msgs"]])
+
+    # Setting the appropriate notification
+    state = formods::FM_set_notification(state,
+      notify_text = current_ele[["rares"]][["notify_text"]],
+      notify_id   = current_ele[["rares"]][["notify_id"]],
+      type        = current_ele[["rares"]][["notify_type"]])
 
 
-      # We have to check the rule components. This is a simple check to make
-      # sure something is there. Because the components can have arbitrary
-      # user defined code, we cannot really validate it here.
-      if(RULE_IS_GOOD){
-        for(tmp_ui in ui_req){
-          if(!is.null( state[["CTS"]][["ui"]][[tmp_ui]])){
-            if(state[["CTS"]][["ui"]][[tmp_ui]] == ""){
-              RULE_IS_GOOD = FALSE
-              msgs = c(msgs, paste0(tmp_ui, " is undefined."))
-            }
-          } else {
-            RULE_IS_GOOD = FALSE
-            msgs = c(msgs, paste0(tmp_ui, " is undefined."))
-          }
-        }
-      }
-
-    } else {
-      RULE_IS_GOOD = FALSE
-      msgs = c(msgs, "Unable to determine the rule_type")
-    }
-
-    if(RULE_IS_GOOD){
-      FM_le(state, "add rule success")
-
-      #Pulling out the current element
-      current_ele = CTS_fetch_current_element(state)
-
-      # By default there are no rules:
-      rule_id = 1
-
-      # Now we look at the table tracking rules to see if it exists and if it
-      # has at lest one rule
-      if(!is.null(current_ele[["components_table"]])){
-        if(nrow(current_ele[["components_table"]]) > 0){
-          rule_id = max(current_ele[["components_table"]][["rule_id"]]) + 1
-        }
-      }
-
-      rule_hash = digest::digest(rule_id, algo=c("md5"))
-      rule_row = data.frame(
-        rule_id   = rule_id,
-        Condition = state[["CTS"]][["ui"]][["rule_condition"]],
-        Action    = rule_desc,
-        Delete    = FALSE,
-        hash      = rule_hash
-      )
-
-      # Adding the rule row
-      current_ele[["components_table"]] = rbind(
-        current_ele[["components_table"]],
-        rule_row
-      )
-
-      # Adding rule details to list
-      current_ele[["components_list"]][[rule_hash]] = rule_action
-
-      # Putting the element back in the state
-      state = CTS_set_current_element(
-        state   = state,
-        element = current_ele)
-
-      state = formods::FM_set_notification(state,
-        notify_text = "Rule Added!",
-        notify_id   = "RULE_IS_GOOD",
-        type        = "success")
-    } else {
-      FM_le(state, "add rule fail")
-      state = formods::FM_set_notification(state,
-        notify_text = "Unable to add rule.",
-        notify_id   = "RULE_IS_BAD",
-        type        = "failure")
-
-    }
   }
   #---------------------------------------------
   # selected cohort changed
@@ -1843,6 +1765,12 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
     FM_le(state, "covariate type changed")
     state = set_hold(state)
   }
+
+  # Appending any messages in the current element (these are errors and
+  # whatnot that are generated on save) to the general messages returned
+  # to the user
+  current_ele = CTS_fetch_current_element(state)
+  msgs = c(msgs, current_ele[["msgs"]])
   #---------------------------------------------
   # Passing any messages back to the user
   # NOTE: this only occurs when ui changes have been detected you may need to
@@ -1904,6 +1832,7 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
   ui_ele          = c("element_name",
                       "nsub",
                       "visit_times",
+                      "trial_end",
                       "rule_condition",
                       "action_dosing_state",
                       "action_dosing_values",
@@ -1919,11 +1848,12 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
   ui_ids          = c(button_counters,
                       ui_ele,
                       "rule_type",
+                      "rule_name",
                       "source_model",
                       "hot_current_rules",
                       "covariate_type_selected",
-                      "covariate_value", 
-                      "selected_covariate", 
+                      "covariate_value",
+                      "selected_covariate",
                       "element_selection")
 
   # Making all the ui_ids holdable
@@ -1943,6 +1873,7 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
 
 
   # Getting the currently defined models
+  # JMH update this when reacting to id_MB
   MDL = FM_fetch_mdl(state, session, ids = id_MB)
 
   # Storing the ui_ids for the elements
@@ -1974,19 +1905,316 @@ state}
 #'@description Fetches the code to generate results seen in the app
 #'@param state CTS state from \code{CTS_fetch_state()}
 #'@return Character object vector with the lines of code
-#'@examples
-#' # We need a module state:
-#' sess_res = CTS_test_mksession(session=list())
-#' state = sess_res$state
-#'
-#' code = CTS_fetch_code(state)
-#'
-#' cat(code)
+#'@example inst/test_apps/CTS_funcs.R
 CTS_fetch_code = function(state){
 
   code = NULL
 
 code}
+
+#'@export
+#'@title Add Rule to Element
+#'@description Takes the ui elements in the state and element and attempts to add a rule.
+#'@param state CTS state from \code{CTS_fetch_state()}
+#'@param element Element list from \code{CTS_fetch_current_element()}
+#'@return Element with the results of adding the rule. The \code{rares} list
+#'element can be used to determine the exit status of the function.
+#'\itemize{
+#'  \item{RULE_IS_GOOD}  If true it indicates that the pieces of the rule from
+#'  the UI check out.
+#'  \item{RULE_UPDATED}  If RULE_IS_GOOD and RULE_UPDATED is true then a
+#'  previous rule definition was overwritten. If RULE_IS_GOOD is TRUE and
+#'  RULE_UPDATED is FALSE then a new rule was added.
+#' \item{notify_text}  Text for notify message
+#' \item{notify_id}    Notification ID
+#' \item{notify_type}  Notification type
+#' \item{msgs}         Vector of messages.
+#'}
+#'@details This depends on the following UI values in the state and element
+#'\itemize{
+#'  \item{}  state[["CTS"]][["ui"]][["rule_name"]]
+#'  \item{}  state[["CTS"]][["ui"]][["rule_condition"]]
+#'  \item{}  state[["CTS"]][["ui"]][["rule_type"]]
+#'    \itemize{
+#'      \item{}  For rule type "dose"
+#'      \itemize{
+#'         \item{}  state[["CTS"]][["ui"]][["action_dosing_state"]]
+#'         \item{}  state[["CTS"]][["ui"]][["action_dosing_values"]]
+#'         \item{}  state[["CTS"]][["ui"]][["action_dosing_times"]]
+#'         \item{}  state[["CTS"]][["ui"]][["action_dosing_durations"]]
+#'      }
+#'    }
+#'    \itemize{
+#'      \item{}  For rule type "set state"
+#'      \itemize{
+#'         \item{}  state[["CTS"]][["ui"]][["action_set_state_state"]]
+#'         \item{}  state[["CTS"]][["ui"]][["action_set_state_values"]]
+#'      }
+#'    }
+#'    \itemize{
+#'      \item{}  For rule type "manual code"
+#'      \itemize{
+#'         \item{}  state[["CTS"]][["ui"]][["action_manual_code"]]
+#'      }
+#'    }
+#'}
+#'@example inst/test_apps/CTS_funcs.R
+CTS_add_rule  = function(state, element){
+
+  RULE_IS_GOOD = TRUE
+  RULE_UPDATED = FALSE
+  rule_desc    = ""
+  rule_name    = state[["CTS"]][["ui"]][["rule_name"]]
+  rule_action  = list()
+  msgs         = c()
+
+  # Converting the name into a "good" name
+  if(!is.null(rule_name)){
+    if(rule_name == ""){
+      RULE_IS_GOOD = FALSE
+      msgs = c(msgs, paste0("Rule name undefined."))
+    } else {
+      if(!grepl("^[[:alpha:]]", rule_name, perl=TRUE)){
+        RULE_IS_GOOD = FALSE
+        msgs = c(msgs, paste0("Rule name must start with a letter."))
+
+      }
+      if(!grepl("^[A-Za-z\\d_]+$", rule_name, perl=TRUE)){
+        RULE_IS_GOOD = FALSE
+        msgs = c(msgs, paste0("Rule name can only contain letters, numbers and underscores (_)."))
+      }
+    }
+  } else {
+    RULE_IS_GOOD = FALSE
+    msgs = c(msgs, paste0("Rule name undefined."))
+  }
+
+  # Making sure the rule type is defined
+  if(!is.null(state[["CTS"]][["ui"]][["rule_type"]])){
+    ui_req = c("rule_condition")
+    if(state[["CTS"]][["ui"]][["rule_type"]] == "dose"){
+      rule_desc    = paste0("dose into ", state[["CTS"]][["ui"]][["action_dosing_state"]])
+      rule_action  = list(
+         condition        = state[["CTS"]][["ui"]][["rule_condition"]],
+         action = list(
+           type             = "dose",
+           state            = state[["CTS"]][["ui"]][["action_dosing_state"]],
+           values           = state[["CTS"]][["ui"]][["action_dosing_values"]],
+           times            = state[["CTS"]][["ui"]][["action_dosing_times"]],
+           durations        = state[["CTS"]][["ui"]][["action_dosing_durations"]]))
+
+      ui_req = c(ui_req,
+        "action_dosing_state",
+        "action_dosing_values",
+        "action_dosing_times",
+        "action_dosing_durations")
+
+    } else if(state[["CTS"]][["ui"]][["rule_type"]] == "set state"){
+      rule_desc = paste0("set state ", state[["CTS"]][["ui"]][["action_set_state_state"]])
+      rule_action  = list(
+         condition       = state[["CTS"]][["ui"]][["rule_condition"]],
+         action = list(
+           type   = "set state",
+           state  = state[["CTS"]][["ui"]][["action_set_state_state"]],
+           value  = state[["CTS"]][["ui"]][["action_set_state_values"]]))
+      ui_req = c(ui_req,
+        "action_set_state_state",
+        "action_set_state_value")
+    } else if(state[["CTS"]][["ui"]][["rule_type"]] == "manual"){
+      rule_desc = paste0("manual code")
+      rule_action  = list(
+         condition       = state[["CTS"]][["ui"]][["rule_condition"]],
+         action = list(
+           type     = "manual",
+           code     = state[["CTS"]][["ui"]][["action_manual_code"]]))
+      ui_req = c(ui_req,
+        "action_manual_code")
+    } else {
+      RULE_IS_GOOD = FALSE
+      msgs = c(msgs, paste0("Unknown rule_type: ", state[["CTS"]][["ui"]][["rule_type"]]))
+    }
+
+
+    # We have to check the rule components. This is a simple check to make
+    # sure something is there. Because the components can have arbitrary
+    # user defined code, we cannot really validate it here.
+    if(RULE_IS_GOOD){
+      for(tmp_ui in ui_req){
+        if(!is.null( state[["CTS"]][["ui"]][[tmp_ui]])){
+          if(state[["CTS"]][["ui"]][[tmp_ui]] == ""){
+            RULE_IS_GOOD = FALSE
+            msgs = c(msgs, paste0(tmp_ui, " is undefined."))
+          }
+        } else {
+          RULE_IS_GOOD = FALSE
+          msgs = c(msgs, paste0(tmp_ui, " is undefined."))
+        }
+      }
+    }
+  } else {
+    RULE_IS_GOOD = FALSE
+    msgs = c(msgs, "Unable to determine the rule_type")
+  }
+
+  if(RULE_IS_GOOD){
+    FM_le(state, "add rule success")
+
+    # Checking to see if the rule name has already been used. If so we just
+    # replace it and flag a message. So first we delete it from the
+    # components table and the rule list.
+    if(!is.null(element[["components_table"]][["Name"]])){
+      if(any(element[["components_table"]][["Name"]] == rule_name)){
+
+        # Removing the list element:
+        hash_del =
+          element[["components_table"]][
+            (element[["components_table"]][["Name"]] == rule_name), ][["hash"]]
+        element[["components_list"]][[hash_del]] = NULL
+
+        # Removing the row:
+        element[["components_table"]] =
+          element[["components_table"]][
+              !(element[["components_table"]][["Name"]] == rule_name), ]
+
+        msgs = c(msgs, paste0("Rule: ", rule_name, " has been updated."))
+        RULE_UPDATED = TRUE
+      }
+    }
+
+    # By default there are no rules:
+    rule_id = 1
+
+    # Now we look at the table tracking rules to see if it exists and if it
+    # has at lest one rule
+    if(!is.null(element[["components_table"]])){
+      if(nrow(element[["components_table"]]) > 0){
+        rule_id = max(element[["components_table"]][["rule_id"]]) + 1
+      }
+    }
+
+    rule_hash = digest::digest(rule_id, algo=c("md5"))
+    rule_row = data.frame(
+      rule_id   = rule_id,
+      Name      = rule_name,
+      Condition = state[["CTS"]][["ui"]][["rule_condition"]],
+      Action    = rule_desc,
+      Delete    = FALSE,
+      hash      = rule_hash
+    )
+
+    # Adding the rule row
+    element[["components_table"]] = rbind(
+      element[["components_table"]],
+      rule_row
+    )
+
+    # Adding rule details to list
+    element[["components_list"]][[rule_hash]][[rule_name]] = rule_action
+
+  }
+
+
+  if(RULE_IS_GOOD){
+    if(RULE_UPDATED){
+      FM_le(state, "rule updated")
+      notify_text = paste0("Rule ", rule_name, " updated.")
+      notify_id   = "RULE_UPDATED"
+      notify_type = "warning"
+    } else {
+      notify_text = paste0("Rule ", rule_name, " added.")
+      notify_id   = "RULE_IS_GOOD"
+      notify_type = "success"
+      FM_le(state, "rule added")
+    }
+  } else {
+    notify_text = "Unable to add rule."
+    notify_id   = "RULE_IS_BAD"
+    notify_type = "failure"
+  }
+
+  # Appending results
+  element[["rares"]] = list(
+    RULE_IS_GOOD = RULE_IS_GOOD,
+    RULE_UPDATED = RULE_UPDATED,
+    notify_text  = notify_text,
+    notify_id    = notify_id,
+    notify_type  = notify_type,
+    msgs         = msgs
+  )
+
+
+element}
+
+#'@export
+#'@title Add Covariate to Elemetnt
+#'@description Takes the ui elements in the module state and processes the covariate elements for addition.
+#'@param state CTS state from \code{CTS_fetch_state()}
+#'@param element Element list from \code{CTS_fetch_current_element()}
+#'@return Element with the results of adding the rule. The \code{cares} list
+#'element can be used to determine the exit status of the function.
+#'\itemize{
+#'  \item{RULE_IS_GOOD}  If true it indicates that the pieces of the rule from
+#'  the UI check out.
+#'  \item{RULE_UPDATED}  If RULE_IS_GOOD and RULE_UPDATED is true then a
+#'  previous rule definition was overwritten. If RULE_IS_GOOD is TRUE and
+#'  RULE_UPDATED is FALSE then a new rule was added.
+#' \item{notify_text}  Text for notify message
+#' \item{notify_id}    Notification ID
+#' \item{notify_type}  Notification type
+#' \item{msgs}         Vector of messages.
+#'}
+#'@details This depends on the following UI values in the state
+#'\itemize{
+#'  \item{}  state[["CTS"]][["ui"]][["covariate_value"]]
+#'  \item{}  state[["CTS"]][["ui"]][["covariate_type_selected"]]
+#'  \item{}  state[["CTS"]][["ui"]][["selected_covariate"]]
+#'}
+#'@example inst/test_apps/CTS_funcs.R
+CTS_add_covariate   = function(state, element){
+
+  msgs         = c()
+  COV_GOOD = TRUE
+
+  covariate_value    = state[["CTS"]][["ui"]][["covariate_value"]]
+  covariate_type     = state[["CTS"]][["ui"]][["covariate_type_selected"]]
+  selected_covariate = state[["CTS"]][["ui"]][["selected_covariate"]]
+  if(covariate_value == ""){
+    tmp_msg = paste0("No value specified for covariate: ", selected_covariate, ".")
+    FM_le(state, tmp_msg)
+    msgs = c(msgs, tmp_msg)
+    COV_GOOD = FALSE
+  }else{
+    covariate_value = paste0("c(", covariate_value, ")")
+    cmd = paste0("cvval = ", covariate_value)
+    tcres =
+      FM_tc(cmd     = cmd,
+            tc_env  = list(),
+            capture = "cvval")
+
+    if(tcres[["isgood"]]){
+      # Adding the covariate:
+      cov_list = list(
+          values   = tcres[["capture"]][["cvval"]],
+          sampling = state[["MC"]][["covariate_generation"]][["types"]][[covariate_type]][["sampling"]],
+          type     = state[["MC"]][["covariate_generation"]][["types"]][[covariate_type]][["type"]])
+
+      element[["covariates"]][[selected_covariate]] = cov_list
+    } else {
+      tmp_msg = paste0("Unable to evaluate value for covariate: ", selected_covariate, ".")
+      FM_le(state, tmp_msg)
+      msgs = c(msgs, tmp_msg)
+      msgs = c(msgs, paste0("  -> ", covariate_value))
+      msgs = c(msgs, tcres[["msgs"]])
+      COV_GOOD = FALSE
+    }
+  }
+
+  # Appending results
+  element[["cares"]] = list(
+    COV_GOOD     = COV_GOOD,
+    msgs         = msgs
+  )
+element}
 
 #'@export
 #'@title Append Report Elements
@@ -2181,17 +2409,7 @@ res}
 #'downstream updates
 #'@param state CTS state from \code{CTS_fetch_state()}
 #'@return CTS state object with the checksum updated
-#'@examples
-#' # Within shiny both session and input variables will exist,
-#' # this creates examples here for testing purposes:
-#' sess_res = CTS_test_mksession(session=list())
-#' session = sess_res$session
-#' input   = sess_res$input
-#'
-#' # We also need a state variable
-#' state = sess_res$state
-#'
-#' state = CTS_update_checksum(state)
+#'@example inst/test_apps/CTS_funcs.R
 CTS_update_checksum     = function(state){
 
   # checksum string
@@ -2235,7 +2453,7 @@ state}
 #'   \item{rsc:} The \code{react_state} components.
 #'}
 #'@examples
-#' sess_res = CTS_test_mksession(session=list())
+#'sess_res = CTS_test_mksession(session=list(), full_session=FALSE)
 CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TRUE){
 
   isgood = TRUE
@@ -2260,6 +2478,123 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
                          MOD_yaml_file   = MOD_yaml_file,
                          react_state     = NULL)
 
+
+  # Pulling the default first element
+  current_ele = CTS_fetch_current_element(state)
+
+  # Defining the source model
+  state[["CTS"]][["ui"]][["source_model"]] = "MB_obj_1_rx"
+  current_ele = CTS_change_source_model(state, current_ele)
+
+  # Single visit
+  current_ele[["ui"]][["visit_times"]]                 = "0"
+
+  # Creating a dosing rule
+  state[["CTS"]][["ui"]][["rule_condition"]]           = "time == 0"
+  state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
+  state[["CTS"]][["ui"]][["action_dosing_state"]]      = "central"
+  state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(1)"
+  state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0)"
+  state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0)"
+  state[["CTS"]][["ui"]][["rule_name"]]                = "Single_Dose"
+
+  # Adding the rule:
+  current_ele = CTS_add_rule(state, current_ele)
+
+  # Putting the element back in the state forcing code generation
+  state = CTS_set_current_element(
+    state   = state,
+    element = current_ele)
+
+  # Now we pull out the current element, simulate, and resave it:
+  current_ele = CTS_fetch_current_element(state)
+  current_ele = CTS_simulate_element(state, current_ele)
+  state = CTS_set_current_element( state   = state, element = current_ele)
+
+  #-------------------------------------------------------
+  if(full_session){
+    # Creating a new element, pulling it out, setting the source model,
+    # and defining the visit times:
+    state       = CTS_new_element(state)
+    current_ele = CTS_fetch_current_element(state)
+    state[["CTS"]][["ui"]][["source_model"]] = "MB_obj_2_rx"
+    current_ele = CTS_change_source_model(state, current_ele)
+    current_ele[["ui"]][["visit_times"]]  = "(0:6)*28*2"
+
+    # We must define covariates:
+    state[["CTS"]][["ui"]][["covariate_value"]]            = "70, .1"
+    state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "cont_lognormal"
+    state[["CTS"]][["ui"]][["selected_covariate"]]         = "WT"
+    current_ele = CTS_add_covariate(state, current_ele)
+
+    state[["CTS"]][["ui"]][["covariate_value"]]            = "0, 1"
+    state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "discrete"
+    state[["CTS"]][["ui"]][["selected_covariate"]]         = "SEX_ID"
+    current_ele = CTS_add_covariate(state, current_ele)
+
+    state[["CTS"]][["ui"]][["covariate_value"]]            = "1"
+    state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "fixed"    
+    state[["CTS"]][["ui"]][["selected_covariate"]]         = "SUBTYPE_ID"
+    current_ele = CTS_add_covariate(state, current_ele)
+
+    # Next we define the rules
+    # Initial dose:
+    state[["CTS"]][["ui"]][["rule_condition"]]           = "time == 0"
+    state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
+    state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
+    state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(0.1,  0.1,  0.1,  0.1)*1e6/MW"
+    state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
+    state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
+    state[["CTS"]][["ui"]][["rule_name"]]                = "first_dose"
+    current_ele = CTS_add_rule(state, current_ele)
+
+    # Maintain steady state if within rage:
+    state[["CTS"]][["ui"]][["rule_condition"]]           = "((BM <=  7e4) & (BM >=5e4)) & (time > 0)"
+    state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
+    state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
+    state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c( 1.0,  1.00,  1.00,  1.00)*SI_fpd(id=id, state='Ac')"
+    state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
+    state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
+    state[["CTS"]][["ui"]][["rule_name"]]                = "keep_dose"
+    current_ele = CTS_add_rule(state, current_ele)
+
+    # Decrease dose if over target
+    state[["CTS"]][["ui"]][["rule_condition"]]           = "(BM >  7e4) & (time > 0)"
+    state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
+    state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
+    state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c( .90,   .90,   .90,   .90)*SI_fpd(id=id, state='Ac')"
+    state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
+    state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
+    state[["CTS"]][["ui"]][["rule_name"]]                = "decrease_dose"
+    current_ele = CTS_add_rule(state, current_ele)
+
+    # Increase dose if below target
+    state[["CTS"]][["ui"]][["rule_condition"]]           = "(BM <  5e4) & (time > 0)"
+    state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
+    state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
+    state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(1.30,  1.30,  1.30,  1.30)*SI_fpd(id=id, state='Ac')"
+    state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
+    state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
+    state[["CTS"]][["ui"]][["rule_name"]]                = "increase dose"
+    current_ele = CTS_add_rule(state, current_ele)
+
+    # Putting the element back in the state forcing code generation
+    state = CTS_set_current_element( state   = state, element = current_ele)
+
+    # Now we pull out the current element, simulate, and resave it:
+    current_ele = CTS_fetch_current_element(state)
+    current_ele = CTS_simulate_element(state, current_ele)
+    state = CTS_set_current_element( state   = state, element = current_ele)
+    browser()
+  }
+
+  if(("ShinySession" %in% class(session))){
+    FM_set_mod_state(session, id, state)
+  } else {
+    session = FM_set_mod_state(session, id, state)
+  }
+
+
   res = list(
     isgood  = isgood,
     session = session,
@@ -2277,39 +2612,7 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
 #'@return CTS state object containing a new cohort and that
 #'cohort is set as the current active cohort. See the help for
 #'\code{CTS_fetch_state()} for ===ELEMENT== format.
-#'@examples
-#' sess_res = CTS_test_mksession(session=list())
-#' session = sess_res$session
-#' input   = sess_res$input
-#'
-#' # Configuration files
-#' FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
-#' MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml")
-#'
-#' # Creating an empty state object
-#' state = CTS_fetch_state(id              = "CTS",
-#'                         id_ASM          = "ASM",
-#'                         id_MB           = "MB",
-#'                         input           = input,
-#'                         session         = session,
-#'                         FM_yaml_file    = FM_yaml_file,
-#'                         MOD_yaml_file   = MOD_yaml_file,
-#'                         react_state     = NULL)
-#'
-#' # Creates a new empty element
-#' state = CTS_new_element(state)
-#'
-#' # Delete the current element
-#' state = CTS_del_current_element(state)
-#'
-#' # Fetch a list of the current element
-#' element = CTS_fetch_current_element(state)
-#'
-#' # You can modify the element
-#' element[["name"]] = "A more descriptive name"
-#'
-#' # You can now place element back in the state
-#' state = CTS_set_current_element(state, element)
+#'@example inst/test_apps/CTS_funcs.R
 CTS_new_element = function(state){
 
   # Incrementing the element counter
@@ -2346,12 +2649,18 @@ CTS_new_element = function(state){
            element_name  = paste0("cohort ", state[["CTS"]][["element_cntr"]]),
            nsub          =  state[["MC"]][["formatting"]][["nsub"]][["value"]],
            visit_times   =  state[["MC"]][["formatting"]][["visit_times"]][["value"]],
+           trial_end     =  state[["MC"]][["formatting"]][["trial_end"]][["value"]],
            source_model  = source_model
            ),
          id                     = element_id,
          idx                    = state[["CTS"]][["element_cntr"]],
          element_object_name    = element_object_name,
          cov_object_name        = paste0(element_object_name, "_cov"),
+         rules_object_name      = paste0(element_object_name, "_rules"),
+         subs_object_name       = paste0(element_object_name, "_subs"),
+         rxopts_object_name     = paste0(element_object_name, "_rxopts"),
+         simres_object_name     = paste0(element_object_name, "_simres"),
+         ot_object_name         = paste0(element_object_name, "_output_times"),
          code_previous          = NULL,
          # This is information about the source model from fetch_rxinfo()
          rx_details             = rx_details,
@@ -2361,7 +2670,7 @@ CTS_new_element = function(state){
          # ggplot commands (layers).
          components_table       = NULL,
          components_list        = list(),
-         # This will hold definitions for how covariates are to be determined 
+         # This will hold definitions for how covariates are to be determined
          # when subjects are created
          covariates             = list(),
          # Generated on save
@@ -2411,39 +2720,7 @@ state}
 #'@return List containing the details of the active data view. The structure
 #'of this list is the same as the structure of \code{state$CTS$elements} in the output of
 #'\code{CTS_fetch_state()}.
-#'@examples
-#' sess_res = CTS_test_mksession(session=list())
-#' session = sess_res$session
-#' input   = sess_res$input
-#'
-#' # Configuration files
-#' FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
-#' MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml")
-#'
-#' # Creating an empty state object
-#' state = CTS_fetch_state(id              = "CTS",
-#'                         id_ASM          = "ASM",
-#'                         id_MB           = "MB",
-#'                         input           = input,
-#'                         session         = session,
-#'                         FM_yaml_file    = FM_yaml_file,
-#'                         MOD_yaml_file   = MOD_yaml_file,
-#'                         react_state     = NULL)
-#'
-#' # Creates a new empty element
-#' state = CTS_new_element(state)
-#'
-#' # Delete the current element
-#' state = CTS_del_current_element(state)
-#'
-#' # Fetch a list of the current element
-#' element = CTS_fetch_current_element(state)
-#'
-#' # You can modify the element
-#' element[["name"]] = "A more descriptive name"
-#'
-#' # You can now place element back in the state
-#' state = CTS_set_current_element(state, element)
+#'@example inst/test_apps/CTS_funcs.R
 CTS_fetch_current_element    = function(state){
 
   element_id = state[["CTS"]][["current_element"]]
@@ -2451,6 +2728,88 @@ CTS_fetch_current_element    = function(state){
   current_element = state[["CTS"]][["elements"]][[element_id]]
 
 current_element}
+
+#'@export
+#'@title Simulates the specifid elemnt
+#'@description Takes a CTS state and element and simulates the current set of
+#'rules.
+#'@param state CTS state from \code{CTS_fetch_state()}
+#'@param element Element list from \code{CTS_fetch_current_element()}
+#'@return Simulation element with simulation results stored in the
+#'\code{"simres"} element.
+#'@example inst/test_apps/CTS_funcs.R
+CTS_simulate_element    = function(state, element){
+
+  ELE_ISGOOD = TRUE
+  capture    = NULL
+  msgs       = c()
+
+  source_model = element[["ui"]][["source_model"]]
+
+  # Here we can do some high-level checks before we run the simulation:
+
+  # This makes sure all the covariates have been defined: 
+  if(!all(element[["rx_details"]][["elements"]][["covariates"]] %in% names(element[["covariates"]]))){
+    missing_covars = element[["rx_details"]][["elements"]][["covariates"]][
+          !(element[["rx_details"]][["elements"]][["covariates"]] %in% names(element[["covariates"]])) ]
+
+    ELE_ISGOOD = FALSE
+    msgs = c("The following covariates have not been defined:",
+             paste0("  > ", paste0(missing_covars, collapse = ", ")))
+
+  }
+
+
+  if(ELE_ISGOOD){
+    if(source_model %in% names(state[["CTS"]][["MDL"]][["mdl"]])){
+      code_model        = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["code"]]
+      rx_obj_name       = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["rx_obj_name"]]
+      rx_obj            = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["rx_obj"]]
+
+      # These are all the objects to collect after the simulation
+      capture  = c(
+        element[["cov_object_name"]],
+        element[["subs_object_name"]],
+        element[["simres_object_name"]])
+
+
+      # THis is the current simulation object in use
+      tc_env  = list()
+      tc_env[[rx_obj_name]] = rx_obj
+
+      # This will run the simulation only:
+      cmd = element[["code_sim_only"]]
+
+      tcres =
+        FM_tc(cmd     = cmd,
+              tc_env  = tc_env,
+              capture = capture)
+
+      capture    = tcres[["capture"]]
+
+      # IF the try catch succeeded we need to insepct the simulation result otherwise
+      # we pass the failure back from FM_tc
+      if(tcres[["isgood"]]){
+        ELE_ISGOOD = tcres[["capture"]][[ element[["simres_object_name"]] ]][["isgood"]]
+        msgs = c(msgs, tcres[["capture"]][[ element[["simres_object_name"]] ]][["msgs"]])
+      } else {
+        ELE_ISGOOD = tcres[["isgood"]]
+        msgs       = c(msgs, tcres[["error"]])
+      }
+
+
+    } else {
+      ELE_ISGOOD = FALSE
+      msgs = c(msgs, "Source model not found")
+    }
+  }
+
+  element[["simres"]] = list(
+    capture = capture,
+    isgood  = ELE_ISGOOD,
+    msgs    = msgs)
+
+element}
 
 
 #'@export
@@ -2461,52 +2820,38 @@ current_element}
 #'@param element Element list from \code{CTS_fetch_current_element()}
 #'@return CTS state object with the current cohort set using the
 #'supplied value.
-#'@examples
-#' sess_res = CTS_test_mksession(session=list())
-#' session = sess_res$session
-#' input   = sess_res$input
-#'
-#' # Configuration files
-#' FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
-#' MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml")
-#'
-#' # Creating an empty state object
-#' state = CTS_fetch_state(id              = "CTS",
-#'                         id_ASM          = "ASM",
-#'                         id_MB           = "MB",
-#'                         input           = input,
-#'                         session         = session,
-#'                         FM_yaml_file    = FM_yaml_file,
-#'                         MOD_yaml_file   = MOD_yaml_file,
-#'                         react_state     = NULL)
-#'
-#' # Creates a new empty element
-#' state = CTS_new_element(state)
-#'
-#' # Delete the current element
-#' state = CTS_del_current_element(state)
-#'
-#' # Fetch a list of the current element
-#' element = CTS_fetch_current_element(state)
-#'
-#' # You can modify the element
-#' element[["name"]] = "A more descriptive name"
-#'
-#' # You can now place element back in the state
-#' state = CTS_set_current_element(state, element)
+#'@example inst/test_apps/CTS_funcs.R
 CTS_set_current_element    = function(state, element){
 
   element_id = state[["CTS"]][["current_element"]]
 
+  ELE_ISGOOD          = TRUE
+  msgs                = c()
 
-  ELE_ISGOOD    = TRUE
-  msgs          = c()
-  code_model    = c()
-  code_cov      = c()
-  code_mksubs   = c()
-  code_simrules = c()
-  code_packages =  paste0("library(", state[["MC"]][["code"]][["packages"]],")")
-  model_object  = "not_found"
+  # These are the objects names used in the code
+  model_object        = "not_found"
+  cov_object_name     = element[["cov_object_name"]]
+  subs_object_name    = element[["subs_object_name"]]
+  rxopts_object_name  = element[["rxopts_object_name"]]
+  simres_object_name  = element[["simres_object_name"]]
+  rules_object_name   = element[["rules_object_name"]]
+  ot_object_name      = element[["ot_object_name"]]
+
+  # These are the little code chunks that will be stacked to create the final
+  # pieces of code for the element
+  code_packages       =  paste0("library(", state[["MC"]][["code"]][["packages"]],")")
+  code_model          = c()
+  code_cov            = c("",
+                          "# Defining covariates",
+                          paste0(cov_object_name, " = list()"))
+  code_mksubs         = c()
+  code_rules          = c("",
+                          "# Creating rules",
+                          paste0(rules_object_name, " = list()"))
+  code_rxopts         = c()
+  code_ot             = c()
+  code_simrules       = c()
+
 
   # updating the code elements
   source_model = element[["ui"]][["source_model"]]
@@ -2520,12 +2865,9 @@ CTS_set_current_element    = function(state, element){
 
   # Code to define covariates
   if(length(element[["rx_details"]][["elements"]][["covariates"]]) > 0){
-    code_cov = c("",
-                 "# Defining covariates", 
-                 paste0(element[["cov_object_name"]], " = list()"))
     for(cname in element[["rx_details"]][["elements"]][["covariates"]]){
       if(cname %in% names(element[["covariates"]])){
-        code_cov = c(code_cov, paste0(element[["cov_object_name"]],'[["', cname, '"]] = ', deparse(element[["covariates"]][[cname]])))
+        code_cov = c(code_cov, paste0(cov_object_name,'[["', cname, '"]] = ', deparse(element[["covariates"]][[cname]])))
       } else {
         ELE_ISGOOD = FALSE
         msgs = c(msgs, paste0("Covariate not defined:",cname))
@@ -2534,27 +2876,175 @@ CTS_set_current_element    = function(state, element){
   }
 
   # Code to make subjects
-  # JMH
+  code_mksubs = c(
+    paste0(""),
+    paste0("# Generating the subjects"),
+    paste0(subs_object_name, " = mk_subjects(object = ", model_object,  ","),
+    paste0("  nsub   = ", element[["ui"]][["nsub"]],               ","),
+    paste0("  covs   = ", cov_object_name,                         ")"))
+
+  # Code to define rules
+  if(!is.null(names(element[["components_list"]]))){
+    for(tmp_hash in names(element[["components_list"]]) ){
+      tmp_rule_name = names(element[["components_list"]][[tmp_hash]])[1]
+      tmp_rule_value = deparse(element[["components_list"]][[tmp_hash]][[tmp_rule_name]])
+      code_rules = c(code_rules,
+        "",
+        paste0(rules_object_name, '[["',tmp_rule_name ,'"]] = ') ,
+        tmp_rule_value
+        )
+    }
+  }
+  code_rules = c(code_rules, "")
+
+  # Code to define rx_options
+
+  if("rxSolve" %in% state[["CTS"]][["sc_meta"]][["cfg_summary"]][["use"]]){
+    code_rxopts = c("# rxSolve options",
+                    paste0(rxopts_object_name, ' = list('))
+    opt_names = state[["CTS"]][["sc_meta"]][["cfg_summary"]][
+            "rxSolve" == state[["CTS"]][["sc_meta"]][["cfg_summary"]][["use"]], ][["name"]]
+
+    optidx = 1
+    for(opt_name in opt_names){
+      opt_type  = state[["CTS"]][["sc_meta"]][["config"]][[opt_name]][["type"]]
+      opt_ui    = state[["CTS"]][["sc_meta"]][["config"]][[opt_name]][["ui"]]
+      opt_value = element[["ui"]][[opt_ui]]
+
+      # This will contain the parameter definition for the list element
+      opt_str = "  "
+
+      if(opt_type == "numeric" |
+         opt_type == "logical"   ){
+        opt_str = paste0(opt_str, opt_name, " = ", opt_value )
+      } else if ( opt_type == "character"   ){
+        opt_str = paste0(opt_str, opt_name, ' = "', opt_value, '"')
+      } else {
+        FM_le(state, paste0("Unknown option type: ", opt_type, ", for option: ", opt_name), entry_type="danger")
+      }
+
+      if(optidx < length(opt_names)){
+        opt_str = paste0(opt_str, ",")
+      } else {
+        opt_str = paste0(opt_str, ")")
+      }
+
+      code_rxopts = c(code_rxopts, opt_str)
+
+      optidx = optidx + 1
+    }
+    code_rxopts = c(code_rxopts, "")
+
+  } else {
+    code_rxopts = paste0(rxopts_object_name, ' = list()'  )
+  }
+
+  # JMH todo
+  # Code to define output_times
+  # We check the trial_end input
+  tmp_trial_end = autocast(element[["ui"]][["trial_end"]])
+  TEND_ISGOOD = TRUE
+  if(is.numeric(tmp_trial_end)){
+    if(tmp_trial_end <=0){
+      TEND_ISGOOD = FALSE
+      ELE_ISGOOD = FALSE
+      msgs = c(msgs, "Trial end must be > 0.")
+    }
+  } else {
+    ELE_ISGOOD = FALSE
+    TEND_ISGOOD = FALSE
+    msgs = c(msgs, "Trial end is not numeric.")
+  }
+
+
+  # We check the nsteps input
+  tmp_nsteps    = autocast(element[["ui"]][["cts_config_nsteps"]])
+  NSTEPS_ISGOOD = TRUE
+  if(is.numeric(tmp_nsteps)){
+    if(tmp_nsteps <=1){
+      STEPS_ISGOOD = FALSE
+      msgs = c(msgs, "Number of steps must be > 1.")
+    }
+    if( (tmp_nsteps %% 1) != 0){
+      STEPS_ISGOOD = FALSE
+      msgs = c(msgs, "Number of steps must be an integer.")
+    }
+  } else {
+    NSTEPS_ISGOOD = FALSE
+    msgs = c(msgs, "Number of steps is not numeric.")
+  }
+
+
+  # This actually creates the output times code
+  if(NSTEPS_ISGOOD & TEND_ISGOOD){
+    code_ot   = "# Output times"
+    code_ot   = c(code_ot,
+                  paste0( ot_object_name, " = ubiquity::linspace(0,", tmp_trial_end, ",", tmp_nsteps, ')'),
+                  "")
+  } else {
+    ELE_ISGOOD = FALSE
+    code_ot = c("# Unable to create output times",
+                 paste0( ot_object_name, " = c()"),
+                 "")
+  }
+
+
+  # Code to define eval_times
+  if(is.null(element[["ui"]][["visit_times"]])){
+    ELE_ISGOOD = FALSE
+    msgs = c(msgs, "Visit times not specified")
+    visit_str = "NULL"
+  } else {
+    visit_str = paste0("c(", element[["ui"]][["visit_times"]], ")")
+
+  }
 
   # Code to run the simulation
-  # JMH
+  code_simrules =
+  c(
+    paste0('# Running simulation'),
+    paste0(simres_object_name, ' =                                 '  ),
+    paste0(' simulate_rules(object        = ', model_object,       ','),
+    paste0('                subjects      = ', subs_object_name,   '[["subjects"]],'),
+    paste0('                eval_times    = ', visit_str,          ','),
+    paste0('                output_times  = ', ot_object_name,     ','),
+    paste0('                rules         = ', rules_object_name,  ','),
+    paste0('                rx_options    = ', rxopts_object_name, ')')
+   )
 
   # Stand alone code to make the element
-  element[["code"]]          = paste0(c(code_packages, 
+  element[["code"]]          = paste0(c(code_packages,
                                         "",
-                                        "# Defining the model",
+                                        "# Creating the model",
                                         code_model,
                                         code_cov,
                                         code_mksubs,
+                                        code_rules,
+                                        code_rxopts,
+                                        code_ot,
                                         code_simrules
                                         ), collapse="\n")
+
+
+  # code to do everything upto the simulation
+  element[["code_sim_only"]] = paste0(c(code_cov,
+                                        code_mksubs,
+                                        code_rules,
+                                        code_rxopts,
+                                        code_ot,
+                                        code_simrules),
+                                        collapse="\n")
+
 
   # Code to make the element only assuming all the goodies it needs are
   # already defined
   element[["code_ele_only"]] = paste0(c(code_cov,
                                         code_mksubs,
+                                        code_rules,
+                                        code_rxopts,
+                                        code_ot,
                                         code_simrules
-                                        ), 
+                                        ),
                                         collapse="\n")
 
   # Saving the element status
@@ -2595,39 +3085,7 @@ state}
 #'If that is the last element, then a new default will be added.
 #'@param state CTS state from \code{CTS_fetch_state()}
 #'@return CTS state object with the current cohort deleted.
-#'@examples
-#' sess_res = CTS_test_mksession(session=list())
-#' session = sess_res$session
-#' input   = sess_res$input
-#'
-#' # Configuration files
-#' FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
-#' MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml")
-#'
-#' # Creating an empty state object
-#' state = CTS_fetch_state(id              = "CTS",
-#'                         id_ASM          = "ASM",
-#'                         id_MB           = "MB",
-#'                         input           = input,
-#'                         session         = session,
-#'                         FM_yaml_file    = FM_yaml_file,
-#'                         MOD_yaml_file   = MOD_yaml_file,
-#'                         react_state     = NULL)
-#'
-#' # Creates a new empty element
-#' state = CTS_new_element(state)
-#'
-#' # Delete the current element
-#' state = CTS_del_current_element(state)
-#'
-#' # Fetch a list of the current element
-#' element = CTS_fetch_current_element(state)
-#'
-#' # You can modify the element
-#' element[["name"]] = "A more descriptive name"
-#'
-#' # You can now place element back in the state
-#' state = CTS_set_current_element(state, element)
+#'@example inst/test_apps/CTS_funcs.R
 CTS_del_current_element    = function(state){
 
   # We need the current element and corresponding ID
@@ -2699,3 +3157,35 @@ CTS_fetch_sc_meta = function(
       ui_config   = ui_config
     )
 res}
+
+
+#'@export
+#'@title Change the Source Model
+#'@description Takes the ui elements in the state and element and processes any changes to the source model and updates the element accordingly.
+#'@param state CTS state from \code{CTS_fetch_state()}
+#'@param element Element list from \code{CTS_fetch_current_element()}
+#'@return Element with the necessary changes to the source model.
+#'@details This depends on the following UI values in the state.
+#'\itemize{
+#'  \item{}  state[["CTS"]][["ui"]][["source_model"]]
+#'}
+#'@example inst/test_apps/CTS_funcs.R
+CTS_change_source_model   = function(state, element){
+
+    tmp_source_model = state[["CTS"]][["ui"]][["source_model"]]
+
+    # If the source model has actually changed we zero out the covariates as
+    # well.
+    if(state[["CTS"]][["ui"]][["source_model"]] != element[["ui"]][["source_model"]]){
+      FM_le(state, "source model change detected")
+      FM_le(state, " > covariates reset")
+      element[["covariates"]] = list()
+    }
+
+    # Saving the source model
+    element[["ui"]][["source_model"]] = tmp_source_model
+
+    # updating the rx_details
+    element[["rx_details"]] = fetch_rxinfo(state[["CTS"]][["MDL"]][["mdl"]][[tmp_source_model]][["rx_obj"]])
+
+element}

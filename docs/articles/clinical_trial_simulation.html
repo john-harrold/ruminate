@@ -383,27 +383,20 @@ fixing the <code>SUBTYPE_ID</code> at 0, and sampling the
 <span><span class="co">## 4  4 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">## 5  5 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">## 6  6 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
-<span><span class="co">##   TV_kdeg_BM TV_Emax TV_EC50 prop_err add_err      ETAka       ETACL</span></span>
-<span><span class="co">## 1        0.1     100     300      0.1     0.1  1.1128845 -0.09589071</span></span>
-<span><span class="co">## 2        0.1     100     300      0.1     0.1  1.2270262  0.16101120</span></span>
-<span><span class="co">## 3        0.1     100     300      0.1     0.1  1.1202820 -0.02430223</span></span>
-<span><span class="co">## 4        0.1     100     300      0.1     0.1  1.6484115 -0.31518119</span></span>
-<span><span class="co">## 5        0.1     100     300      0.1     0.1  0.1592534  0.21709220</span></span>
-<span><span class="co">## 6        0.1     100     300      0.1     0.1 -0.5635044  0.07277260</span></span>
-<span><span class="co">##          ETAVc       ETAVp        ETAQ     ETABM_IC     ETAEmax SEX_ID</span></span>
-<span><span class="co">## 1  0.066107275  0.17119589  1.28584293 -0.273671213 -0.18192767      0</span></span>
-<span><span class="co">## 2  0.001672035  0.12968051 -0.59693432 -0.039153758 -0.39675696      1</span></span>
-<span><span class="co">## 3  0.338247812 -0.11374490  0.97559980 -0.004313229 -0.11768984      0</span></span>
-<span><span class="co">## 4 -0.347110316 -0.06543485  0.66819679 -0.113869695  0.17020601      1</span></span>
-<span><span class="co">## 5  0.118564637  0.07976123  0.03613306 -0.018690085  0.09450521      0</span></span>
-<span><span class="co">## 6  0.020970432  0.25420558  1.33906862  0.215774258 -0.08464910      1</span></span>
-<span><span class="co">##   SUBTYPE_ID       WT</span></span>
-<span><span class="co">## 1          0 77.04638</span></span>
-<span><span class="co">## 2          0 85.46524</span></span>
-<span><span class="co">## 3          0 70.00895</span></span>
-<span><span class="co">## 4          0 58.22300</span></span>
-<span><span class="co">## 5          0 69.27452</span></span>
-<span><span class="co">## 6          0 63.16118</span></span></code></pre>
+<span><span class="co">##   TV_kdeg_BM TV_Emax TV_EC50       ETAka        ETACL       ETAVc       ETAVp</span></span>
+<span><span class="co">## 1        0.1     100     300  0.15140975 -0.002727248 -0.51488017 -0.08859681</span></span>
+<span><span class="co">## 2        0.1     100     300 -0.01634759 -0.052561827 -0.11839007 -0.26728821</span></span>
+<span><span class="co">## 3        0.1     100     300 -0.23800343 -0.272105420 -0.29633956 -0.53791483</span></span>
+<span><span class="co">## 4        0.1     100     300 -0.85304800  0.058640573  0.67902009 -0.24625656</span></span>
+<span><span class="co">## 5        0.1     100     300 -0.37651538  0.152473329  0.04580632  0.21767879</span></span>
+<span><span class="co">## 6        0.1     100     300  0.45053064 -0.324534892 -0.32770096  0.05884388</span></span>
+<span><span class="co">##         ETAQ    ETABM_IC     ETAEmax SEX_ID SUBTYPE_ID       WT</span></span>
+<span><span class="co">## 1 -0.3993027 -0.01222013  0.19868336      0          0 54.97203</span></span>
+<span><span class="co">## 2 -1.7314927 -0.33008743  0.44766290      0          0 69.90039</span></span>
+<span><span class="co">## 3 -0.5419071 -0.27679222 -0.48326536      0          0 77.69374</span></span>
+<span><span class="co">## 4 -0.0978801 -0.33947273  0.20197570      1          0 68.29561</span></span>
+<span><span class="co">## 5 -0.5965747  0.12951096  0.01321768      1          0 81.13415</span></span>
+<span><span class="co">## 6 -0.5562915  0.38606225 -0.02943850      0          0 84.32747</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="creating-rules">Creating rules<a class="anchor" aria-label="anchor" href="#creating-rules"></a>
@@ -678,8 +671,9 @@ a character string with the function definitions and pass those as the
 <span>     <span class="fl">0</span>,          <span class="fl">0</span>,          <span class="fl">0</span>,          <span class="fl">0</span>,          <span class="fl">0</span>,          <span class="fl">0</span>,          <span class="fl">0.10</span><span class="op">)</span>  </span>
 <span></span>
 <span>   <span class="co"># Error model parameters</span></span>
-<span>   <span class="va">prop_err</span>     <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">.Machine</span><span class="op">$</span><span class="va">double.eps</span>, <span class="fl">0.1</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">double.xmax</span><span class="op">)</span></span>
-<span>   <span class="va">add_err</span>      <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">.Machine</span><span class="op">$</span><span class="va">double.eps</span>, <span class="fl">0.1</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">double.xmax</span><span class="op">)</span></span>
+<span>   <span class="va">prop_err_PK</span>  <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">.Machine</span><span class="op">$</span><span class="va">double.eps</span>, <span class="fl">0.1</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">double.xmax</span><span class="op">)</span></span>
+<span>   <span class="va">add_err_PK</span>   <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">.Machine</span><span class="op">$</span><span class="va">double.eps</span>, <span class="fl">0.1</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">double.xmax</span><span class="op">)</span></span>
+<span>   <span class="va">add_err_BM</span>   <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">.Machine</span><span class="op">$</span><span class="va">double.eps</span>, <span class="fl">0.1</span>, <span class="va">.Machine</span><span class="op">$</span><span class="va">double.xmax</span><span class="op">)</span></span>
 <span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://nlmixr2.github.io/rxode2/reference/model.html" class="external-link">model</a></span><span class="op">(</span><span class="op">{</span> </span>
@@ -719,7 +713,10 @@ a character string with the function definitions and pass those as the
 <span></span>
 <span>   <span class="co"># Outputs and error models</span></span>
 <span>   <span class="va">C_ng_ml</span>     <span class="op">=</span> <span class="va">Cc</span><span class="op">*</span><span class="va">MW</span></span>
-<span>   <span class="va">C_ng_ml</span> <span class="op">~</span> <span class="fu">add</span><span class="op">(</span><span class="va">add_err</span><span class="op">)</span> <span class="op">+</span> <span class="fu">prop</span><span class="op">(</span><span class="va">prop_err</span><span class="op">)</span></span>
+<span>   <span class="va">C_ng_ml</span> <span class="op">~</span> <span class="fu">add</span><span class="op">(</span><span class="va">add_err_PK</span><span class="op">)</span> <span class="op">+</span> <span class="fu">prop</span><span class="op">(</span><span class="va">prop_err_PK</span><span class="op">)</span></span>
+<span></span>
+<span>   <span class="va">BM_obs</span>      <span class="op">=</span> <span class="va">BM</span></span>
+<span>   <span class="va">BM_obs</span>  <span class="op">~</span> <span class="fu">add</span><span class="op">(</span><span class="va">add_err_BM</span><span class="op">)</span></span>
 <span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre>
