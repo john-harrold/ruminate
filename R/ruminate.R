@@ -20,8 +20,8 @@
   # Checking for rxpackages
   # If all the suggested packages are found this will be true:
   suggested_found = TRUE
-  mr = FM_message("Loading ruminate", entry_type="h1")
-  mr = FM_message("Checking for required nlmixr2 family of tools", entry_type="h2")
+  #mr = FM_message("Loading ruminate", entry_type="h1")
+  #mr = FM_message("Checking for required nlmixr2 family of tools", entry_type="h2")
 
   pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib", "rxode2et")
   for(pkg in pkgs){
@@ -29,17 +29,17 @@
     if(!requireNamespace(pkg, quietly=TRUE)){
       pkg_val = FALSE
       suggested_found = FALSE
-      mr = FM_message(paste0("missing ", pkg), entry_type="danger")
+      #mr = FM_message(paste0("missing ", pkg), entry_type="danger")
     } else {
       pkg_val = TRUE
-      mr = FM_message(paste0("found ", pkg), entry_type="success")
+      #mr = FM_message(paste0("found ", pkg), entry_type="success")
     }
    eval(parse( text= paste0("Sys.setenv(", pkg_var, "=", pkg_val,")") ))
   }
 
   Sys.setenv(ruminate_rxfamily_found = suggested_found)
 
-  mr = FM_message("Checking for other suggested packages", entry_type="h2")
+  #mr = FM_message("Checking for other suggested packages", entry_type="h2")
 
   other_pkgs = c(
     "clipr",       "gridExtra", "prompter",
@@ -47,9 +47,9 @@
     "ubiquity")
   for(pkg in other_pkgs){
     if(!requireNamespace(pkg, quietly=TRUE)){
-      mr = FM_message(paste0("missing ", pkg), entry_type="danger")
+      #mr = FM_message(paste0("missing ", pkg), entry_type="danger")
     } else {
-      mr = FM_message(paste0("found ", pkg), entry_type="success")
+      #mr = FM_message(paste0("found ", pkg), entry_type="success")
     }
   }
 }
