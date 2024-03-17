@@ -97,16 +97,10 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Element with the results of adding the rule. The <code>cares</code> list
-element can be used to determine the exit status of the function.</p><ul><li><p>RULE_IS_GOOD  If true it indicates that the pieces of the rule from
-the UI check out.</p></li>
-<li><p>RULE_UPDATED  If RULE_IS_GOOD and RULE_UPDATED is true then a
-previous rule definition was overwritten. If RULE_IS_GOOD is TRUE and
-RULE_UPDATED is FALSE then a new rule was added.</p></li>
-<li><p>notify_text  Text for notify message</p></li>
-<li><p>notify_id    Notification ID</p></li>
-<li><p>notify_type  Notification type</p></li>
-<li><p>msgs         Vector of messages.</p></li>
+<p>Element with the results of adding the covariate. The <code>cares</code> list
+element can be used to determine the exit status of the function.</p><ul><li><p>COV_GOOD  If TRUE if the covariate was good and added, and FALSE if
+there were any issues.</p></li>
+<li><p>msgs     Vector of messages.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

@@ -38,21 +38,70 @@
   }
 
   Sys.setenv(ruminate_rxfamily_found = suggested_found)
+}
 
-  #mr = FM_message("Checking for other suggested packages", entry_type="h2")
+#'@export
+#'@title Checks `ruminate` Dependencies
+#'@description  Looks at the suggested dependencies and checks to make sure
+#'they are installed.
+#'@param verbose Logical indicating if messages should be displayed
+#'@return List with the following elements:
+#' \itemize{
+#'   \item{all_found:}    Boolean indicating if all packages were found
+#'   \item{found_pkgs:}   Character vector of found packages
+#'   \item{missing_pkgs:} Character vector of missing packages
+#'}
+#'@examples
+#' fcres =ruminate_check()
+ruminate_check <- function(verbose=TRUE){
 
-  other_pkgs = c(
-    "clipr",       "gridExtra", "prompter",
-    "rmarkdown",   "readxl",    "shinydashboard",
-    "ubiquity")
-  for(pkg in other_pkgs){
+  #------------------------------------
+  # Checking for rxpackages
+  # If all the suggested packages are found this will be true:
+  suggested_found = TRUE
+  if(verbose){
+    mr = FM_message("Checking ruminate for suggested packages", entry_type="h1")
+  }
+
+  pkgs = c(
+   "clipr",
+   "gridExtra",
+   "knitr",
+   "nlmixr2lib",
+   "nonmem2rx",
+   "prompter",
+   "rmarkdown",
+   "readxl",
+   "rxode2et",
+   "shinydashboard",
+   "testthat",
+   "ubiquity")
+
+  pkg_found   = c()
+  pkg_missing =  c()
+  for(pkg in pkgs){
     if(!requireNamespace(pkg, quietly=TRUE)){
-      #mr = FM_message(paste0("missing ", pkg), entry_type="danger")
+      if(verbose){
+        mr = FM_message(paste0("missing ", pkg), entry_type="danger")
+      }
+      pkg_missing = c(pkg_missing, pkg)
+      suggested_found = FALSE
     } else {
-      #mr = FM_message(paste0("found ", pkg), entry_type="success")
+      if(verbose){
+        mr = FM_message(paste0("found ", pkg), entry_type="success")
+      }
+      pkg_found   = c(pkg_found  , pkg)
     }
   }
-}
+
+  res = list(
+    all_found     = suggested_found,
+    found_pkgs    = pkg_found,
+    missing_pkgs  = pkg_missing
+  )
+res}
+
+
 
 #'@export
 #'@title Run the {ruminate} Shiny App

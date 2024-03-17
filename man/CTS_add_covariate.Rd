@@ -12,18 +12,12 @@ CTS_add_covariate(state, element)
 \item{element}{Element list from \code{CTS_fetch_current_element()}}
 }
 \value{
-Element with the results of adding the rule. The \code{cares} list
+Element with the results of adding the covariate. The \code{cares} list
 element can be used to determine the exit status of the function.
 \itemize{
-\item{RULE_IS_GOOD}  If true it indicates that the pieces of the rule from
-the UI check out.
-\item{RULE_UPDATED}  If RULE_IS_GOOD and RULE_UPDATED is true then a
-previous rule definition was overwritten. If RULE_IS_GOOD is TRUE and
-RULE_UPDATED is FALSE then a new rule was added.
-\item{notify_text}  Text for notify message
-\item{notify_id}    Notification ID
-\item{notify_type}  Notification type
-\item{msgs}         Vector of messages.
+\item{COV_GOOD}  If TRUE if the covariate was good and added, and FALSE if
+there were any issues.
+\item{msgs}     Vector of messages.
 }
 }
 \description{
@@ -32,9 +26,9 @@ Takes the ui elements in the module state and processes the covariate elements f
 \details{
 This depends on the following UI values in the state
 \itemize{
-\item{}  state[\link{"CTS"}][\link{"ui"}][\link{"covariate_value"}]
-\item{}  state[\link{"CTS"}][\link{"ui"}][\link{"covariate_type_selected"}]
-\item{}  state[\link{"CTS"}][\link{"ui"}][\link{"selected_covariate"}]
+\item{} state[\link{"CTS"}][\link{"ui"}][\link{"covariate_value"}]
+\item{} state[\link{"CTS"}][\link{"ui"}][\link{"covariate_type_selected"}]
+\item{} state[\link{"CTS"}][\link{"ui"}][\link{"selected_covariate"}]
 }
 }
 \examples{

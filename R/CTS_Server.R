@@ -1709,7 +1709,7 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
 
     #browser()
 
-    if(current_ele[["cares"]][["COV_GOOD"]]){
+    if(current_ele[["cares"]][["COV_IS_GOOD"]]){
       state = formods::FM_set_notification(state,
         notify_text = paste0("Covariate ", selected_covariate, " Added"),
         notify_id   = "COV_IS_GOOD",
@@ -2150,30 +2150,24 @@ element}
 #'@description Takes the ui elements in the module state and processes the covariate elements for addition.
 #'@param state CTS state from \code{CTS_fetch_state()}
 #'@param element Element list from \code{CTS_fetch_current_element()}
-#'@return Element with the results of adding the rule. The \code{cares} list
+#'@return Element with the results of adding the covariate. The \code{cares} list
 #'element can be used to determine the exit status of the function.
 #'\itemize{
-#'  \item{RULE_IS_GOOD}  If true it indicates that the pieces of the rule from
-#'  the UI check out.
-#'  \item{RULE_UPDATED}  If RULE_IS_GOOD and RULE_UPDATED is true then a
-#'  previous rule definition was overwritten. If RULE_IS_GOOD is TRUE and
-#'  RULE_UPDATED is FALSE then a new rule was added.
-#' \item{notify_text}  Text for notify message
-#' \item{notify_id}    Notification ID
-#' \item{notify_type}  Notification type
-#' \item{msgs}         Vector of messages.
+#'  \item{COV_IS_GOOD}  If TRUE if the covariate was good and added, and FALSE if
+#'  there were any issues.
+#' \item{msgs}     Vector of messages.
 #'}
 #'@details This depends on the following UI values in the state
 #'\itemize{
-#'  \item{}  state[["CTS"]][["ui"]][["covariate_value"]]
-#'  \item{}  state[["CTS"]][["ui"]][["covariate_type_selected"]]
-#'  \item{}  state[["CTS"]][["ui"]][["selected_covariate"]]
+#'  \item{} state[["CTS"]][["ui"]][["covariate_value"]]
+#'  \item{} state[["CTS"]][["ui"]][["covariate_type_selected"]]
+#'  \item{} state[["CTS"]][["ui"]][["selected_covariate"]]
 #'}
 #'@example inst/test_apps/CTS_funcs.R
 CTS_add_covariate   = function(state, element){
 
   msgs         = c()
-  COV_GOOD = TRUE
+  COV_IS_GOOD = TRUE
 
   covariate_value    = state[["CTS"]][["ui"]][["covariate_value"]]
   covariate_type     = state[["CTS"]][["ui"]][["covariate_type_selected"]]
@@ -2182,7 +2176,7 @@ CTS_add_covariate   = function(state, element){
     tmp_msg = paste0("No value specified for covariate: ", selected_covariate, ".")
     FM_le(state, tmp_msg)
     msgs = c(msgs, tmp_msg)
-    COV_GOOD = FALSE
+    COV_IS_GOOD = FALSE
   }else{
     covariate_value = paste0("c(", covariate_value, ")")
     cmd = paste0("cvval = ", covariate_value)
@@ -2205,13 +2199,13 @@ CTS_add_covariate   = function(state, element){
       msgs = c(msgs, tmp_msg)
       msgs = c(msgs, paste0("  -> ", covariate_value))
       msgs = c(msgs, tcres[["msgs"]])
-      COV_GOOD = FALSE
+      COV_IS_GOOD = FALSE
     }
   }
 
   # Appending results
   element[["cares"]] = list(
-    COV_GOOD     = COV_GOOD,
+    COV_IS_GOOD  = COV_IS_GOOD,
     msgs         = msgs
   )
 element}
