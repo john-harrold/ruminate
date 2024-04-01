@@ -1,6 +1,10 @@
 # ruminate 0.2.2 (development version)
 
 - Added CTS (Clinical trial simulator) module (in development)
+
+# ruminate 0.2.2 
+
+- Fixed error in default ruminate app causing it to crash
 - Separated ruminate.R sample app into two separate (the default one and one for developent.)
 
 # ruminate 0.2.1 
