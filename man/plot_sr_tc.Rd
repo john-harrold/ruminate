@@ -2,31 +2,60 @@
 % Please edit documentation in R/simulate_rules.R
 \name{plot_sr_tc}
 \alias{plot_sr_tc}
-\title{Plots Timecourse of Rules Simulations}
+\title{Plots        Timecourse of Rules Simulations}
 \usage{
-plot_sr_tc(sro = NULL, dvcols = NULL, fcol = NULL, fncol = 4, fnrow = 2)
+plot_sr_tc(
+  sro = NULL,
+  dvcols = NULL,
+  fpage = 1,
+  fcol = "id",
+  error_msgs = NULL,
+  ylog = TRUE,
+  ylab_str = "Output",
+  xlab_str = "Time",
+  post_proc = "fig  = fig + ggplot2::theme_light()",
+  fncol = 4,
+  fnrow = 2
+)
 }
 \arguments{
 \item{sro}{Output of 'simulate_rules()'.}
 
 \item{dvcols}{Character vector of dependent variables.}
 
-\item{fcol}{Character vector of column to facet by.}
+\item{fpage}{If facets are selected and multiple pages are generated then
+this indcates       the page to return.}
+
+\item{fcol}{Name of column to facet by or \code{NULL} to disable faceting (\code{"id"}).}
+
+\item{error_msgs}{Named list with error messages to overwrite (\code{NULL}}
+
+\item{ylog}{Boolean to enable log10 scaling of the y-axis (\code{TRUE}}
+
+\item{ylab_str}{Label for the y-axis (\code{"Output"}}
+
+\item{xlab_str}{Label for the x-axis (\code{"Output"}}
+
+\item{post_proc}{Character object with post processing post-processing code for the figure object named \code{fig} internall  (\code{"fig = fig + theme_light()"})}
 
 \item{fncol}{Number of columns in faceted output.}
 
 \item{fnrow}{Number of rows in faceted output.}
 }
 \value{
-List with the following elements:
+List with the followin1g elements:
 \itemize{
-\item{isgood:}     Return status of the function.
-\item{msgs:}       Error or warning messages if any issues were encountered.
-\item{figs:}
+\item{isgood:}       Return status of the function.
+\item{msgs:}         Error or warning messages if any issues were encountered.
+\item{npages:}       Total number of pages using the current configuration.
+\item{error_msgs:}   List of error messages used.
+\item{dsp:}          Intermediate dataset generated from \code{sro} to plot in ggplot.
+\item{fig:}          Figure generated.
 }
 }
 \description{
-Plots the timecourse of \code{simulate_rules()} output.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   Plots the timecourse of `simulate_rules()` output.
+}\if{html}{\out{</div>}}
 }
 \details{
 For a detailed examples see \code{vignette("clinical_trial_simulation", package = "ruminate")}.
@@ -114,11 +143,12 @@ output_times = seq(0, 56, 1)
 
 # This runs the rule-based simulations
 simres = 
-simulate_rules(object   = object,
-               subjects      = subs[["subjects"]],
-               eval_times    = eval_times,
-               output_times  = output_times, 
-               rules         = rules)
+  simulate_rules(
+    object        = object,
+    subjects      = subs[["subjects"]],
+    eval_times    = eval_times,
+    output_times  = output_times, 
+    rules         = rules)
 
 # First subject data:
 sub_1 = simres$simall[simres$simall$id == 1, ]
@@ -127,14 +157,23 @@ sub_1 = simres$simall[simres$simall$id == 1, ]
 evall = as.data.frame(simres$evall)
 ev_sub_1 = evall[evall$id ==1, ]
 
+# All of the simulation data
 simall = simres$simall
 simall$id = as.factor(simall$id)
 
-p = ggplot(data=simall)+
-  geom_line(aes(x=time, y=Cc, group=id, color=id)) +
-  theme_linedraw()+
-  facet_wrap(.~id)
+# Timecourse
+psim = 
+  plot_sr_tc(
+    sro    = simres,
+    dvcols = "Cc")
+psim$fig
 
-print(p)
+# Events
+pev = 
+  plot_sr_ev(
+    sro    = simres,
+    ylog   = FALSE)
+pev$fig
+
 }
 }

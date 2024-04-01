@@ -2231,7 +2231,7 @@ MB_fetch_catalog   = function(state){
           }
         } else {
           FM_le(state, paste0("Unable to process: ", mod_src[["file"]]), entry_type="danger")
-          FM_le(state, tcres[["error"]], entry_type="danger")
+          FM_le(state, tcres[["msgs"]], entry_type="danger")
 
         }
       }
@@ -2274,7 +2274,7 @@ MB_fetch_catalog   = function(state){
           }
         } else {
           FM_le(state, paste0("Unable to process: ", mod_src[["file"]]), entry_type="danger")
-          FM_le(state, tcres[["error"]], entry_type="danger")
+          FM_le(state, tcres[["msgs"]], entry_type="danger")
         }
       }
       # NONMEM

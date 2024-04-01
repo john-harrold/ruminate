@@ -274,11 +274,12 @@ output_times = seq(0, 56, 1)
 
 # This runs the rule-based simulations
 simres = 
-simulate_rules(object   = object,
-               subjects      = subs[["subjects"]],
-               eval_times    = eval_times,
-               output_times  = output_times, 
-               rules         = rules)
+  simulate_rules(
+    object        = object,
+    subjects      = subs[["subjects"]],
+    eval_times    = eval_times,
+    output_times  = output_times, 
+    rules         = rules)
 
 # First subject data:
 sub_1 = simres$simall[simres$simall$id == 1, ]
@@ -287,15 +288,24 @@ sub_1 = simres$simall[simres$simall$id == 1, ]
 evall = as.data.frame(simres$evall)
 ev_sub_1 = evall[evall$id ==1, ]
 
+# All of the simulation data
 simall = simres$simall
 simall$id = as.factor(simall$id)
 
-p = ggplot(data=simall)+
-  geom_line(aes(x=time, y=Cc, group=id, color=id)) +
-  theme_linedraw()+
-  facet_wrap(.~id)
+# Timecourse
+psim = 
+  plot_sr_tc(
+    sro    = simres,
+    dvcols = "Cc")
+psim$fig
 
-print(p)
+# Events
+pev = 
+  plot_sr_ev(
+    sro    = simres,
+    ylog   = FALSE)
+pev$fig
+
 }
 }
 \seealso{

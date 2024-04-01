@@ -76,6 +76,9 @@
     <loc>/reference/CTS_new_element.html</loc>
   </url>
   <url>
+    <loc>/reference/CTS_plot_element.html</loc>
+  </url>
+  <url>
     <loc>/reference/CTS_set_current_element.html</loc>
   </url>
   <url>
@@ -248,6 +251,9 @@
   </url>
   <url>
     <loc>/reference/nca_builder.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_sr_ev.html</loc>
   </url>
   <url>
     <loc>/reference/plot_sr_tc.html</loc>

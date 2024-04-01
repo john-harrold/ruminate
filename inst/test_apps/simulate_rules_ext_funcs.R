@@ -32,7 +32,7 @@ rxdetails$elements
 
 # Next we will create subjects. To do that we need to 
 # specify information about covariates:
-nsub = 5
+nsub = 24
 covs = list(
   SEX_ID     = list(type     = "discrete", 
                     values   = c(0,1)),
@@ -81,8 +81,6 @@ rules = list(
   )
 )
 
-
-
 # We evaulate the rules for dosing at time 0
 eval_times =  0
 
@@ -114,10 +112,19 @@ ev_sub_1 = evall[evall$id ==1, ]
 simall = simres$simall
 simall$id = as.factor(simall$id)
 
-p = ggplot(data=simall)+
-  geom_line(aes(x=time, y=Ac, group=id, color=id)) +
-  theme_linedraw()+
-  facet_wrap(.~id)
+# Timecourse
+psim = 
+  plot_sr_tc(
+    sro    = simres,
+    dvcols = "Cc")
+psim$fig
 
-print(p)
+# Events
+pev = 
+  plot_sr_ev(
+    evplot = c(1,4),
+    sro    = simres,
+    ylog   = FALSE)
+pev$fig
+
 }

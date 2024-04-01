@@ -384,19 +384,19 @@ fixing the <code>SUBTYPE_ID</code> at 0, and sampling the
 <span><span class="co">## 5  5 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">## 6  6 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">##   TV_kdeg_BM TV_Emax TV_EC50      ETAka       ETACL       ETAVc       ETAVp</span></span>
-<span><span class="co">## 1        0.1     100     300  0.2240350  0.83440915  0.85437212  0.48929242</span></span>
-<span><span class="co">## 2        0.1     100     300 -0.5617135 -0.19506773 -0.20728790  0.24303055</span></span>
-<span><span class="co">## 3        0.1     100     300 -0.5137232  0.17809219 -0.35336522  0.24352354</span></span>
-<span><span class="co">## 4        0.1     100     300  0.1327522 -0.04871234  0.03550152 -0.02476579</span></span>
-<span><span class="co">## 5        0.1     100     300  0.3325247  0.30790367  0.42996202  0.29258809</span></span>
-<span><span class="co">## 6        0.1     100     300 -0.5156816  0.20655724 -0.09940111  0.10277911</span></span>
-<span><span class="co">##         ETAQ    ETABM_IC    ETAEmax SEX_ID SUBTYPE_ID       WT</span></span>
-<span><span class="co">## 1 -0.4683889  0.32223391 -0.2174621      0          0 69.19770</span></span>
-<span><span class="co">## 2  0.4294534 -0.08358525 -0.3185055      0          0 75.58309</span></span>
-<span><span class="co">## 3  0.6138633  0.31654320  0.2039104      0          0 70.43979</span></span>
-<span><span class="co">## 4 -0.6995070  0.45610556  0.3607774      0          0 72.01280</span></span>
-<span><span class="co">## 5 -1.0559441 -0.39425848 -0.2082154      0          0 52.69303</span></span>
-<span><span class="co">## 6  0.1707028 -0.04943254  0.2211391      0          0 67.17698</span></span></code></pre>
+<span><span class="co">## 1        0.1     100     300 -0.1839322  0.06355797  0.28666395  0.12877181</span></span>
+<span><span class="co">## 2        0.1     100     300 -1.0219401  0.18061570 -0.06785457  0.18717918</span></span>
+<span><span class="co">## 3        0.1     100     300  1.0099282 -0.16389542 -0.08654096  0.26034660</span></span>
+<span><span class="co">## 4        0.1     100     300  0.1923332  0.56243531  0.85566680 -0.09880074</span></span>
+<span><span class="co">## 5        0.1     100     300  0.5074022  0.18707947  0.34229591  0.21094640</span></span>
+<span><span class="co">## 6        0.1     100     300 -0.1915306 -0.22050159 -0.33655640 -0.03953300</span></span>
+<span><span class="co">##         ETAQ    ETABM_IC     ETAEmax SEX_ID SUBTYPE_ID       WT</span></span>
+<span><span class="co">## 1  0.4547419  0.06754999  0.06005644      1          0 85.03019</span></span>
+<span><span class="co">## 2  0.1577967  0.08825751 -0.24226099      0          0 61.81107</span></span>
+<span><span class="co">## 3 -1.4055325  0.04040625  0.49446748      0          0 55.64822</span></span>
+<span><span class="co">## 4  0.9224769  0.13207025 -0.06521338      1          0 76.06717</span></span>
+<span><span class="co">## 5  0.6422061  0.15542774 -0.16016938      1          0 64.82461</span></span>
+<span><span class="co">## 6  0.3819049 -0.17993341  0.46794753      1          0 75.16375</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="creating-rules">Creating rules<a class="anchor" aria-label="anchor" href="#creating-rules"></a>
@@ -706,6 +706,7 @@ a character string with the function definitions and pass those as the
 <span>   <span class="va">STIM</span>        <span class="op">=</span> <span class="fl">1.0</span><span class="op">+</span> <span class="va">Emax</span><span class="op">*</span><span class="va">Cc</span><span class="op">/</span><span class="op">(</span><span class="va">EC50</span><span class="op">+</span><span class="va">Cc</span><span class="op">)</span> </span>
 <span></span>
 <span>   <span class="co"># Defining ODEs</span></span>
+<span>   <span class="fu">BM</span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>       <span class="op">=</span> <span class="va">BM_IC</span></span>
 <span>   <span class="va">d</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html" class="external-link">dt</a></span><span class="op">(</span><span class="va">At</span><span class="op">)</span>    <span class="op">=</span> <span class="op">(</span><span class="op">-</span><span class="va">ka</span><span class="op">*</span><span class="va">At</span><span class="op">)</span></span>
 <span>   <span class="va">d</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html" class="external-link">dt</a></span><span class="op">(</span><span class="va">Ac</span><span class="op">)</span>    <span class="op">=</span> <span class="op">(</span><span class="op">(</span><span class="va">ka</span><span class="op">*</span><span class="va">At</span><span class="op">*</span><span class="va">F1</span><span class="op">/</span><span class="va">Vc</span>  <span class="op">-</span><span class="va">kel</span><span class="op">*</span><span class="va">Cc</span> <span class="op">-</span> <span class="va">kcp</span><span class="op">*</span><span class="va">Cc</span>  <span class="op">+</span> <span class="va">kpc</span><span class="op">*</span><span class="va">Cp</span><span class="op">*</span><span class="va">Vp</span><span class="op">/</span><span class="va">Vc</span> <span class="op">+</span> <span class="va">Dinf</span><span class="op">/</span><span class="va">Vc</span><span class="op">)</span><span class="op">)</span><span class="op">*</span><span class="va">Vc</span></span>
 <span>   <span class="va">d</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/TDist.html" class="external-link">dt</a></span><span class="op">(</span><span class="va">Cp</span><span class="op">)</span>    <span class="op">=</span> <span class="op">(</span><span class="va">kcp</span><span class="op">*</span><span class="va">Cc</span><span class="op">*</span><span class="va">Vc</span><span class="op">/</span><span class="va">Vp</span> <span class="op">-</span> <span class="va">kpc</span><span class="op">*</span><span class="va">Cp</span><span class="op">)</span></span>

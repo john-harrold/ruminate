@@ -28,6 +28,7 @@ reference:
      - fetch_rxinfo
      - fetch_rxtc
      - mk_subjects
+     - plot_sr_ev
      - plot_sr_tc
      - simulate_rules
    - title: "MB Module functions"

@@ -2,7 +2,7 @@
 % Please edit documentation in R/CTS_Server.R
 \name{CTS_simulate_element}
 \alias{CTS_simulate_element}
-\title{Simulates the specifid elemnt}
+\title{Simulates the Specified Element}
 \usage{
 CTS_simulate_element(state, element)
 }

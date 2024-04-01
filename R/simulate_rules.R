@@ -1,7 +1,7 @@
 #'@import dplyr
 #'@import rxode2
+#'@import ggplot2
 #'@importFrom stats rnorm  runif
-
 
 #'@export
 #'@title Rule-Based simulates
@@ -28,6 +28,7 @@
 #'  \item{msgs:}       Error or warning messages if any issues were encountered.
 #'  \item{simall:}     Simulation results.
 #'  \item{ev_history:} The event table for the entire simulation history.
+#'  \item{eval_times:} Evaluation time points
 #'}
 #'@details
 #' For a detailed examples see \code{vignette("clinical_trial_simulation", package = "ruminate")}
@@ -664,54 +665,430 @@ simulate_rules <- function(object,
     simall      = simall,
     ev_history  = ev_history,
     msgs        = msgs,
+    eval_times  = eval_times,
     isgood      = isgood
   )
 res}
 
 #'@export
-#'@title Plots Timecourse of Rules Simulations
-#'@description Plots the timecourse of `simulate_rules()` output.
-#'@param sro    Output of 'simulate_rules()'.
-#'@param dvcols Character vector of dependent variables.
-#'@param fcol   Character vector of column to facet by.
-#'@param fncol  Number of columns in faceted output.
-#'@param fnrow  Number of rows in faceted output.
-#'@return List with the following elements:
+#'@title Plots        Timecourse of Rules Simulations
+#'@description        Plots the timecourse of `simulate_rules()` output.
+#'@param sro          Output of 'simulate_rules()'.
+#'@param fpage        If facets are selected and multiple pages are generated then
+#'this indcates       the page to return.
+#'@param fcol         Name of column to facet by or \code{NULL} to disable faceting (\code{"id"}).
+#'@param error_msgs   Named list with error messages to overwrite (\code{NULL}
+#'@param ylog         Boolean to enable log10 scaling of the y-axis (\code{TRUE}
+#'@param ylab_str     Label for the y-axis (\code{"Output"}
+#'@param xlab_str     Label for the x-axis (\code{"Output"}
+#'@param post_proc    Character object with post processing post-processing code for the figure object named \code{fig} internall  (\code{"fig = fig + theme_light()"})
+#'@param evplot       Evids to plot can be 1 or 4
+#'@param fncol        Number of columns in faceted output.
+#'@param fnrow        Number of rows in faceted output.
+#'@return List with the followin1g elements:
 #' \itemize{
-#'  \item{isgood:}     Return status of the function.
-#'  \item{msgs:}       Error or warning messages if any issues were encountered.
-#'  \item{figs:}   
+#'  \item{isgood:}       Return status of the function.
+#'  \item{msgs:}         Error or warning messages if any issues were encountered.
+#'  \item{npages:}       Total number of pages using the current configuration. 
+#'  \item{error_msgs:}   List of error messages used.
+#'  \item{dsp:}          Intermediate dataset generated from \code{sro} to plot in ggplot.
+#'  \item{fig:}          Figure generated.
+#'}
+#'@details
+#' For a detailed examples see \code{vignette("clinical_trial_simulation", package = "ruminate")}.
+#'@example inst/test_apps/simulate_rules_funcs.R
+plot_sr_ev <- function(
+  sro        = NULL,
+  fpage      = 1,
+  fcol       = "id",
+  error_msgs = NULL,
+  ylog       = TRUE,
+  ylab_str   = "Amount",
+  xlab_str   = "Time",
+  post_proc  = "fig  = fig + ggplot2::theme_light()",
+  evplot     = c(1,4),
+  fncol      = 4,
+  fnrow      = 2 ){
+
+  dvcols     = "amt"
+
+
+  error_msgs = list(
+   char_bad         = "Should be character data.",
+   fpage_dne        = "The specified figure page does not exist using 1 instead.",
+   num_bad          = "Should be numeric data.",
+   sim_failed       = "The simulation failed.",
+   sim_bad          = "The simulation_rules() output does not appear to be valid",
+   col_not_found    = "The following columns were missing:"
+  )
+
+  isgood = TRUE
+  msgs   = c()
+  fig    = list()
+  npages = 1
+  dsp    = NULL
+
+  allowed_evplot = c(1,4)
+
+  if(!all(evplot %in% allowed_evplot)){
+    isgood = FALSE
+    msgs = c(msgs, paste0("evplot not allowed: ", 
+             paste0(evplot[!(evplot %in% allowed_evplot)], collapse=", "))
+            )
+  }
+
+  #---------------------------------------
+  # These are high level checks
+  if(is.logical(sro[["isgood"]])){
+    if(!sro[["isgood"]]){
+      msgs = c(msgs, error_msgs[["sim_failed"]], sro[["msgs"]])
+      isgood = FALSE
+    }
+  } else {
+    isgood = FALSE
+    msgs = c(msgs, error_msgs[["sim_bad"]])
+  }
+  # This is required
+  if(!is.character(dvcols)){
+    isgood = FALSE
+    msgs = c(msgs, paste0("dvcols: ", error_msgs[["char_bad"]]))
+  }
+  # This is optional
+  if(!is.null(fcol)){
+    if(!is.character(fcol)){
+      isgood = FALSE
+      msgs = c(msgs, paste0("fcol: ", error_msgs[["char_bad"]]))
+    }
+  }
+  if(!is.numeric(fncol)){
+    isgood = FALSE
+    msgs = c(msgs, paste0("fncol: ", error_msgs[["num_bad"]]))
+  }
+  if(!is.numeric(fnrow)){
+    isgood = FALSE
+    msgs = c(msgs, paste0("fnrow: ", error_msgs[["num_bad"]]))
+  }
+
+  #---------------------------------------
+  # Now we inspect the datasets
+  if(isgood){
+
+    col_keep = c("id", "time", "cmt", "amt", "evid", 
+                 "Event", "Group")
+    
+    dsp = sro[["ev_history"]]                            |>
+     dplyr::filter(!is.na(.data[["amt"]]))               |>
+     dplyr::filter(.data[["evid"]] %in% evplot)          |>
+     dplyr::mutate(Event = "")                           |>
+     dplyr::mutate(Event = 
+       ifelse(.data[["evid"]] == 1, 
+              "Dose", 
+              .data[["Event"]]))                         |>
+     dplyr::mutate(Event =                               
+       ifelse(.data[["evid"]] == 4,                      
+              "Set State",                                    
+              .data[["Event"]]))                         |>
+     dplyr::mutate(Group = 
+       paste0(.data[["Event"]], ": ", .data[["cmt"]]))   |>
+     dplyr::select(col_keep)
+
+
+    # If there is a factor column we will shrink the dataset down (if needed)
+    # based on the number of columns/rows and the page requested.
+    if(!is.null(fcol)){
+      # Making sure the column exists
+      if(fcol %in% names(dsp)){
+
+        # Total number:
+        num_fcol = length(unique(dsp[[fcol]]))
+        
+        # Number per page:
+        num_pp =  fnrow*fncol
+        
+        # We only have to shrink it down  if there 
+        # are too many for a single page:
+        if(num_fcol > num_pp){
+          # Total number of pages needed for all the figures
+          npages = ceiling(num_fcol/num_pp)
+        
+          # This will reset the facet page if a value > npages was specified
+          if(fpage > npages){
+            msgs = c(msgs, paste0("fpage: ", error_msgs[["fpage_dne"]]))
+            fpage = 1
+          }
+        
+          start_idx = (fpage-1)*num_pp+1
+          stop_idx  = min(c((fpage)*num_pp, num_fcol))
+        
+        
+          # This is all of the factor column values:
+          tmp_fcol_vals = sort(unique(dsp[[fcol]]))
+        
+          # now we pull out the subset
+          tmp_fcol_vals = tmp_fcol_vals[start_idx:stop_idx]
+        
+          # Now we need to filter down to the subset 
+          # that will be on the page requested:
+          dsp = dsp[dsp[[fcol]] %in% tmp_fcol_vals, ]
+        }
+      } else {
+         msgs = c(msgs, paste0("fcol: ", error_msgs[["col_not_found"]]))
+         msgs = c(msgs, paste0("  -> ", fcol))
+        isgood = FALSE
+      }
+    }
+  }
+
+  # once we get here we should have the following:
+  # dsp - should be defined with subset of the data for the current figure
+  if(isgood){
+
+    fig = ggplot2::ggplot(data=dsp)+
+      ggplot2::geom_vline(
+        xintercept = sro[["eval_times"]],
+        color      = "grey",
+        linetype   = "dashed")       +
+      ggplot2::geom_point(
+        aes(x    = .data[["time"]], 
+           y     = .data[["amt"]], 
+           group = .data[["Group"]], 
+           color = .data[["Group"]]))  +
+      ggplot2::geom_line(
+        aes(x     = .data[["time"]], 
+            y     = .data[["amt"]], 
+            group = .data[["Group"]], 
+            color = .data[["Group"]])) 
+
+    if(!is.null(fcol)){
+      fig = fig +facet_wrap(.~.data[[fcol]], ncol=fncol, nrow=fnrow)
+    }
+
+    if(ylog){
+      fig = fig +ggplot2::scale_y_log10() 
+    }
+
+    if(!is.null(ylab_str)){
+      fig  = fig +ylab(ylab_str)
+    }
+    if(!is.null(xlab_str)){
+      fig  = fig +xlab(xlab_str)
+    }
+
+    if(!is.null(post_proc)){
+      eval(parse(text=post_proc))
+    }
+  }
+
+  # If somethign went wrong we store the error messages in a figure.
+  if(!isgood){
+    fig  = formods::FM_mk_error_fig(msgs)
+  }
+
+  res = list(
+    isgood     = isgood,
+    msgs       = msgs,
+    npages     = npages,
+    error_msgs = error_msgs,
+    dsp        = dsp,
+    fig        = fig 
+  )
+res}
+
+
+#'@export
+#'@title Plots        Timecourse of Rules Simulations
+#'@description        Plots the timecourse of `simulate_rules()` output.
+#'@param sro          Output of 'simulate_rules()'.
+#'@param dvcols       Character vector of dependent variables.
+#'@param fpage        If facets are selected and multiple pages are generated then
+#'this indcates       the page to return.
+#'@param fcol         Name of column to facet by or \code{NULL} to disable faceting (\code{"id"}).
+#'@param error_msgs   Named list with error messages to overwrite (\code{NULL}
+#'@param ylog         Boolean to enable log10 scaling of the y-axis (\code{TRUE}
+#'@param ylab_str     Label for the y-axis (\code{"Output"}
+#'@param xlab_str     Label for the x-axis (\code{"Output"}
+#'@param post_proc    Character object with post processing post-processing code for the figure object named \code{fig} internall  (\code{"fig = fig + theme_light()"})
+#'@param fncol        Number of columns in faceted output.
+#'@param fnrow        Number of rows in faceted output.
+#'@return List with the followin1g elements:
+#' \itemize{
+#'  \item{isgood:}       Return status of the function.
+#'  \item{msgs:}         Error or warning messages if any issues were encountered.
+#'  \item{npages:}       Total number of pages using the current configuration. 
+#'  \item{error_msgs:}   List of error messages used.
+#'  \item{dsp:}          Intermediate dataset generated from \code{sro} to plot in ggplot.
+#'  \item{fig:}          Figure generated.
 #'}
 #'@details
 #' For a detailed examples see \code{vignette("clinical_trial_simulation", package = "ruminate")}.
 #'@example inst/test_apps/simulate_rules_funcs.R
 plot_sr_tc <- function(
-  sro    = NULL,
-  dvcols = NULL,
-  fcol   = NULL,
-  fncol   = 4,
-  fnrow   = 2 ){
+  sro        = NULL,
+  dvcols     = NULL,
+  fpage      = 1,
+  fcol       = "id",
+  error_msgs = NULL,
+  ylog       = TRUE,
+  ylab_str   = "Output",
+  xlab_str   = "Time",
+  post_proc  = "fig  = fig + ggplot2::theme_light()",
+  fncol      = 4,
+  fnrow      = 2 ){
+
+  error_msgs = list(
+   char_bad         = "Should be character data.",
+   fpage_dne        = "The specified figure page does not exist using 1 instead.",
+   num_bad          = "Should be numeric data.",
+   sim_failed       = "The simulation failed.",
+   sim_bad          = "The simulation_rules() output does not appear to be valid",
+   col_not_found    = "The following columns were missing:"
+  )
 
   isgood = TRUE
   msgs   = c()
-  figs   = list()
+  fig    = list()
+  npages = 1
+  dsp    = NULL
 
+
+  #---------------------------------------
+  # These are high level checks
   if(is.logical(sro[["isgood"]])){
-    if(sro[["isgood"]]){
-      ggplot()
-    } else {
-      msgs = c(msgs, "The simulation failed.", sro[["msgs"]])
+    if(!sro[["isgood"]]){
+      msgs = c(msgs, error_msgs[["sim_failed"]], sro[["msgs"]])
       isgood = FALSE
     }
   } else {
     isgood = FALSE
-    msgs = c(msgs, "The simulation_rules() output does not appear to be valid")
+    msgs = c(msgs, error_msgs[["sim_bad"]])
+  }
+  # This is required
+  if(!is.character(dvcols)){
+    isgood = FALSE
+    msgs = c(msgs, paste0("dvcols: ", error_msgs[["char_bad"]]))
+  }
+  # This is optional
+  if(!is.null(fcol)){
+    if(!is.character(fcol)){
+      isgood = FALSE
+      msgs = c(msgs, paste0("fcol: ", error_msgs[["char_bad"]]))
+    }
+  }
+  if(!is.numeric(fncol)){
+    isgood = FALSE
+    msgs = c(msgs, paste0("fncol: ", error_msgs[["num_bad"]]))
+  }
+  if(!is.numeric(fnrow)){
+    isgood = FALSE
+    msgs = c(msgs, paste0("fnrow: ", error_msgs[["num_bad"]]))
+  }
+
+  #---------------------------------------
+  # Now we inspect the datasets
+  if(isgood){
+    # The object dsp is the data source to plot. We create the data frame here
+    # which will be altered below as needed.
+    dsp = sro[["simall"]]
+
+    # If there is a factor column we will shrink the dataset down (if needed)
+    # based on the number of columns/rows and the page requested.
+    if(!is.null(fcol)){
+      # Making sure the column exists
+      if(fcol %in% names(dsp)){
+
+        # Total number:
+        num_fcol = length(unique(dsp[[fcol]]))
+        
+        # Number per page:
+        num_pp =  fnrow*fncol
+        
+        # We only have to shrink it down  if there 
+        # are too many for a single page:
+        if(num_fcol > num_pp){
+          # Total number of pages needed for all the figures
+          npages = ceiling(num_fcol/num_pp)
+        
+          # This will reset the facet page if a value > npages was specified
+          if(fpage > npages){
+            msgs = c(msgs, paste0("fpage: ", error_msgs[["fpage_dne"]]))
+            fpage = 1
+          }
+        
+          start_idx = (fpage-1)*num_pp+1
+          stop_idx  = min(c((fpage)*num_pp, num_fcol))
+        
+        
+          # This is all of the factor column values:
+          tmp_fcol_vals = sort(unique(dsp[[fcol]]))
+        
+          # now we pull out the subset
+          tmp_fcol_vals = tmp_fcol_vals[start_idx:stop_idx]
+        
+          # Now we need to filter down to the subset 
+          # that will be on the page requested:
+          dsp = dsp[dsp[[fcol]] %in% tmp_fcol_vals, ]
+        }
+      } else {
+         msgs = c(msgs, paste0("fcol: ", error_msgs[["col_not_found"]]))
+         msgs = c(msgs, paste0("  -> ", fcol))
+        isgood = FALSE
+      }
+    }
+  }
+
+  # once we get here we should have the following:
+  # dsp - should be defined with subset of the data for the current figure
+  if(isgood){
+    # These are the columns we keep for plotting
+    col_keep = c("time", "id", dvcols, fcol) 
+    dsp = dplyr::select(dsp, dplyr::all_of(col_keep))
+
+    # This puts the dependent variables into standard columns
+    dsp = tidyr::pivot_longer(dsp, 
+            cols      = dvcols, 
+            names_to  = "output_names", 
+            values_to = "output")
+    dsp = dplyr::mutate(dsp, 
+              pgroup = paste0(.data[["id"]], ":", .data[["output_names"]]))
+
+    fig = ggplot(data=dsp)+
+      geom_line(aes(x     = .data[["time"]], 
+                    y     = .data[["output"]], 
+                    group = .data[["pgroup"]], 
+                    color = .data[["output_names"]]))
+
+    if(!is.null(fcol)){
+      fig = fig +facet_wrap(.~.data[[fcol]], ncol=fncol, nrow=fnrow)
+    }
+
+    if(ylog){
+      fig = fig +ggplot2::scale_y_log10() 
+    }
+
+    if(!is.null(ylab_str)){
+      fig  = fig +ylab(ylab_str)
+    }
+    if(!is.null(xlab_str)){
+      fig  = fig +xlab(xlab_str)
+    }
+
+    if(!is.null(post_proc)){
+      eval(parse(text=post_proc))
+    }
+  }
+
+  # If somethign went wrong we store the error messages in a figure.
+  if(!isgood){
+    fig  = formods::FM_mk_error_fig(msgs)
   }
 
   res = list(
-    isgood = isgood,
-    msgs = msgs,
-    figs = figs
+    isgood     = isgood,
+    msgs       = msgs,
+    npages     = npages,
+    error_msgs = error_msgs,
+    dsp        = dsp,
+    fig        = fig 
   )
 res}
 
@@ -758,6 +1135,20 @@ fetch_rxinfo <- function(object){
       iiv            = iiv,
       outputs        = outputs,    
       states         = states)
+
+
+    # Output details
+    txt_info = c(txt_info, "Outputs\n")
+    ht_info  = tagList(ht_info, tags$b("Outputs"), tags$br())
+    if(length(outputs) > 0){
+      txt_info = c(txt_info, paste0(outputs, collapse=", "), "\n\n")
+      ht_info  = tagList(ht_info, paste0(outputs, collapse=", "), tags$br(), tags$br())
+    } else{
+      txt_info = c(txt_info, "None found\n\n")
+      ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+      isgood   = FALSE
+      msgs = c(msgs, "No output information found.")
+    }
 
     # State details
     txt_info = c(txt_info, "States/Compartments\n")

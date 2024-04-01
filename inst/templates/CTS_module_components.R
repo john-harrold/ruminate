@@ -91,12 +91,6 @@ ui <- dashboardPage(
            width=12)
          ),
        fluidRow(
-         box(title="Simulation Environment",
-           "CTS_ui_sim_env",           
-           htmlOutput(NS("CTS", "CTS_ui_sim_env")), 
-           width=12)
-         ),
-       fluidRow(
          box(title="Rules",
            "CTS_ui_select_rule_type",
            htmlOutput(NS("CTS", "CTS_ui_select_rule_type")), 
@@ -132,8 +126,14 @@ ui <- dashboardPage(
          ),
        fluidRow(
          box(title="Current Rules",
+             "ui_cts_save_btn",
+             htmlOutput(NS("CTS", "ui_cts_runsim_btn")),
              "hot_current_rules",
              rhandsontable::rHandsontableOutput(NS("CTS", "hot_current_rules")), width=12)),
+       fluidRow(
+         box(title="Simulation Results",
+             "CTS_ui_simres",
+            htmlOutput(NS("CTS", "CTS_ui_simres")) , width=12)),
        fluidRow(
          box(title="Configuration",
            "CTS_ui_sim_cfg",      
@@ -163,6 +163,7 @@ ui <- dashboardPage(
 server <- function(input, output, session) {
 
   CTS_test_mksession(session, full_session=TRUE)
+  #CTS_test_mksession(session, full_session=FALSE)
 
   # Empty reactive object to track and react to
   # changes in the module state outside of the module

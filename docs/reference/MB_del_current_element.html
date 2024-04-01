@@ -125,14 +125,14 @@ If that is the last element, then a new default will be added.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: d28e938fc33d82fd26bb47e77a69f9a0</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:2a4e2c778f6532d3fe2b2b5cba836c0c</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: b38397cfa197a5524384e24f3b84e8ad</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:864b2c1cd5fac248ee419fca16206fb4</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 26b731e845922dc33e07e40ba9f1e637</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:a1c4f946cbb64882991a251884ff6474</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: febd1683a711639873c55d4e706d2727</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:dd8b9a14b02e34b76773cfe202253e4e</span>
 <span class="r-in"><span><span class="co"># This is just for CRAN</span></span></span>
 <span class="r-in"><span><span class="co">#sess_res = MB_test_mksession(session=list())</span></span></span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
@@ -278,8 +278,8 @@ If that is the last element, then a new default will be added.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can now place element back in the state</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="MB_set_current_element.html">MB_set_current_element</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">element</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: a11a1939b2f4547cf0f483f924bed649</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:8e3c3a5c7216f07a2714a4e275ad220f</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 26899dd60625a5fc831f0197697d8aea</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:72977c6336011aad6e858bd86fbceb02</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will fetch the current component</span></span></span>
 <span class="r-in"><span><span class="va">component</span> <span class="op">=</span> <span class="fu"><a href="MB_fetch_component.html">MB_fetch_component</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">element</span><span class="op">)</span></span></span>
@@ -419,6 +419,7 @@ If that is the last element, then a new default will be added.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>         kpc = Q/Vp * ((WT/WTTV))^(-0.35)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>         ksyn_BM = kdeg_BM * BM_IC</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>         STIM = 1 + Emax * Cc/(EC50 + Cc)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         BM(0) = BM_IC</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>         d/dt(At) = (-ka * At)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>         d/dt(Ac) = ((ka * At * F1/Vc - kel * Cc - kcp * Cc + </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>             kpc * Cp * Vp/Vc + Dinf/Vc)) * Vc</span>

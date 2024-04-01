@@ -60,6 +60,7 @@ model({
    STIM        = 1.0+ Emax*Cc/(EC50+Cc) 
 
    # Defining ODEs
+   BM(0)       = BM_IC
    d/dt(At)    = (-ka*At)
    d/dt(Ac)    = ((ka*At*F1/Vc  -kel*Cc - kcp*Cc  + kpc*Cp*Vp/Vc + Dinf/Vc))*Vc
    d/dt(Cp)    = (kcp*Cc*Vc/Vp - kpc*Cp)

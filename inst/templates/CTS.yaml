@@ -59,6 +59,16 @@ MC:
       block: TRUE
       tooltip: "Save the name for the current cohort."
       tooltip_position: "right"
+    button_clk_runsim:
+      size: "sm"
+      block: TRUE
+      tooltip: "Run the current simulation."
+      tooltip_position: "right"
+    button_clk_update_plot:
+      size: "sm"
+      block: TRUE
+      tooltip: "Update timecourse figures."
+      tooltip_position: "top"
     button_clk_clip:
       size: "sm"
       block: TRUE
@@ -183,10 +193,66 @@ MC:
       placeholder: "first_dose"
       tooltip: "This is a unique identifier for the current rule. It should start witha letter and can contain letters, numbers and underscores."
       tooltip_position: "bottom"
+    tc_dim:
+      width:  100 
+      default: "d2x4"
+      tooltip: "rows x cols for figures"
+      tooltip_position: "top"
+      choices:
+        d4x4: 
+          verb: "4x4"
+          nrow: 4
+          ncol: 4
+        d2x4: 
+          verb: "2x4"
+          nrow: 2
+          ncol: 4
+        d2x2: 
+          verb: "2x2"
+          nrow: 2
+          ncol: 2
+        d1x1: 
+          verb: "1x1"
+          nrow: 1
+          ncol: 1
+    dvcols:
+      width: 150
+      size: 10
+      tooltip: "Select the different model outputs, states, etc to plot"
+      tooltip_position: "top"
+      choices:
+        outputs: 
+          verb: "Outputs"
+        states:  
+          verb: "States"
+        parameters:
+          verb: "Parameters"
+        secondary: 
+          verb: "Secondary Parameters"
+        covariates:
+          verb: "Covariates"
+    evplot:
+      width: 150
+      tooltip: "Select the events to plot"
+      tooltip_position: "top"
+      default: "dose"
+      choices:
+        dose: 
+          value: 1
+          verb: "Dose"
+        set_state:
+          value: 4
+          verb: "State Resets"
+    fpage:  
+      width:  50 
+      tooltip: "Go to the selected output page"
+      tooltip_position: "top"
   labels:
     current_element:     NULL # "Select cohort"
     element_name :       NULL # "cohort name"
     save_btn:            "Save"
+    runsim_btn:          "Run Simulation"
+    update_plot_btn:     "Update Plots"
     clip_btn:            "Code" 
     copy_btn:            "Copy"
     del_btn:             "Delete"
@@ -194,6 +260,8 @@ MC:
     add_cov_btn:         "Add Covariate Details"
     new_btn:             "New"
     source_model:        "Select Model"
+    dvcols:              NULL
+    evplot:              NULL
     rule_type:           "Type of rule"
     rule_condition:      "Condition to trigger rule"
     action_dosing_state: "Dosing into"
@@ -209,8 +277,15 @@ MC:
     selected_covariate:      "Covariate"
     covariate_type:          "Type/Distribution"
     covariate_value:         "Values"
+    switch_output_interactive:  "Interactive"
+    switch_output_report:       "Report Preview"
+    tab_res_tc_figure:        "Timecourse"
+    tab_res_events_figure:    "Events"
+    tab_sim_env:              "Simulation Environment"
   errors:
-    bad_input: "Input error message"
+    no_sim_found: "You need to run the simulation first."
+    bad_sim:      "There was a problem with the simulation."
+    cts_no_fig:   "There are no figures to display. You must run the simulation first"
   tooltips:
     # Set to FALSE to disable tool tips for this module
     include: TRUE
@@ -327,7 +402,7 @@ MC:
     preamble:
       group:         "Rule Environment Preamble"
       label:         NULL
-      tooltip:       'Optional user-defined code to be created in the rule-evaluation environment.'
+      tooltip:       'Optional user-defined code to be executed in the rule-evaluation environment. You can create user-defined functions here.'
       uitype:        "textarea"
       type:          "character"
       value:         NULL

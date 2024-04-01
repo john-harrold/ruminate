@@ -463,6 +463,491 @@ CTS_Server <- function(id,
 
       uiele})
     #------------------------------------
+    #  Simulation results
+    output$CTS_ui_simres       = renderUI({
+      input$element_selection
+      input$button_clk_runsim
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      current_ele = CTS_fetch_current_element(state)
+      rx_details = current_ele[["rx_details"]]
+
+      uiele = NULL
+      if(is.null(current_ele[["simres"]])){
+        uiele = state[["MC"]][["errors"]][["no_sim_found"]]
+      } else if(current_ele[["simres"]][["isgood"]]){
+      # JMH generate simulation output
+
+        # Current simulation results
+        simres = current_ele[["simres"]][["capture"]][[ current_ele[["simres_object_name"]] ]]
+
+        #------------------------------------
+        # This creates a switch to change from the interactive and report
+        # views of tables and figures:
+        choiceValues = c("report", "interactive")
+        choiceNames  = c(state[["MC"]][["labels"]][["switch_output_report"]],
+                         state[["MC"]][["labels"]][["switch_output_interactive"]])
+
+        switch_selected = state[["CTS"]][["ui"]][["switch_output"]]
+        if(!(switch_selected %in% choiceValues)){
+          switch_selected = "report"
+        }
+
+        uiele_switch =
+          shinyWidgets::radioGroupButtons(
+           inputId       = NS(id, "switch_output"),
+           label         = state[["MC"]][["labels"]][["switch_output"]],
+           selected      = switch_selected,
+           choiceValues  = choiceValues,
+           choiceNames   = choiceNames ,
+           status        = "primary")
+        #------------------------------------
+        uiele_res_tabs =
+            shinydashboard::tabBox(
+              width = 10,
+              title = NULL,
+              # The id lets us use input$tabset1 on the server to find the current tab
+              shiny::tabPanel(id=NS(id, "tab_res_tc_figure"),
+                       title=tagList(shiny::icon("chart-line"),
+                                     state[["MC"]][["labels"]][["tab_res_tc_figure"]]),
+                htmlOutput(NS(id, "ui_res_tc_figure"))
+              ),
+              shiny::tabPanel(id=NS(id, "tab_res_event_figure"),
+                       title=tagList(shiny::icon("chart-line"),
+                                     state[["MC"]][["labels"]][["tab_res_events_figure"]]),
+                htmlOutput(NS(id, "ui_res_events_figure"))
+              ),
+              shiny::tabPanel(id=NS(id, "tab_sim_env"),
+                       title=tagList(shiny::icon("puzzle-piece"),
+                                     state[["MC"]][["labels"]][["tab_sim_env"]]),
+                htmlOutput(NS(id, "CTS_ui_sim_env"))
+              )
+            )
+
+
+      uiele_btn_update = shinyWidgets::actionBttn(
+                inputId = NS(id, "button_clk_update_plot"),
+                label   = state[["MC"]][["labels"]][["update_plot_btn"]],
+                style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+                size    = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["size"]],
+                block   = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["block"]],
+                color   = "primary",
+                icon    = icon("circle-play"))
+
+      # Optinally adding the tooltip:
+      uiele_btn_update =
+        formods::FM_add_ui_tooltip(state, uiele_btn_update,
+               tooltip     = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["tooltip"]],
+               position    = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["tooltip_position"]])
+
+
+      # Creating the pulldown for the plot output dimensions
+      choices = list()
+      for(dim_id in names(state[["MC"]][["formatting"]][["tc_dim"]][["choices"]])){
+        choices[[ state[["MC"]][["formatting"]][["tc_dim"]][["choices"]][[dim_id]][["verb"]] ]] = dim_id
+      }
+
+      uiele_tc_dim =
+        shinyWidgets::pickerInput(
+          selected   = current_ele[["ui"]][["tc_dim"]],
+          inputId    = NS(id, "tc_dim"),
+          label      = state[["MC"]][["labels"]][["tc_dim"]],
+          choices    = choices,
+          width      = state[["MC"]][["formatting"]][["tc_dim"]][["width"]])
+
+      uiele_tc_dim =
+        formods::FM_add_ui_tooltip(state, uiele_tc_dim,
+               tooltip     = state[["MC"]][["formatting"]][["tc_dim"]][["tooltip"]],
+               position    = state[["MC"]][["formatting"]][["tc_dim"]][["tooltip_position"]])
+
+      # Figure page selection
+      uiele_fpage = htmlOutput(NS(id, "CTS_ui_fpage")) 
+
+      # DV cols selection
+      choices = list()
+      all_values = c()
+      for(etype in names(state[["MC"]][["formatting"]][["dvcols"]][["choices"]])){
+        verb   = state[["MC"]][["formatting"]][["dvcols"]][["choices"]][[etype]][["verb"]]
+        values = rx_details[["elements"]][[etype]]
+        if(!is.null(values)){
+          values = values[(values %in% names(simres[["simall"]]))]
+          if(length(values) > 0){
+            choices[[ verb ]] = values
+            all_values = c(all_values, values)
+          }
+        }
+      }
+
+
+      selected = current_ele[["ui"]][["dvcols"]] 
+
+      # If selected gets confused because of changes in the model this will
+      # just default to the first output
+      if(!all(selected %in% all_values)){
+        selected = all_values[1]
+      }
+
+      uiele_dvcols =
+        shinyWidgets::pickerInput(
+          selected   = selected,
+          multiple   = TRUE,
+          inputId    = NS(id, "dvcols"),
+          label      = state[["MC"]][["labels"]][["dvcols"]],
+          choices    = choices,
+          options = list(
+           size      = state[["MC"]][["formatting"]][["dvcols"]][["size"]]),
+          width      = state[["MC"]][["formatting"]][["dvcols"]][["width"]])
+      
+      uiele_dvcols =
+        formods::FM_add_ui_tooltip(state, uiele_dvcols,
+               tooltip     = state[["MC"]][["formatting"]][["dvcols"]][["tooltip"]],
+               position    = state[["MC"]][["formatting"]][["dvcols"]][["tooltip_position"]])
+
+      # EV ids to plot
+      uiele_evplot =  NULL
+      choices = list()
+      all_values = c()
+      for(etype in names(state[["MC"]][["formatting"]][["evplot"]][["choices"]])){
+        verb   = state[["MC"]][["formatting"]][["evplot"]][["choices"]][[etype]][["verb"]]
+        value  = state[["MC"]][["formatting"]][["evplot"]][["choices"]][[etype]][["value"]]
+        choices[[ verb ]] = value
+      }
+      selected = current_ele[["ui"]][["evplot"]] 
+
+      uiele_evplot =
+        shinyWidgets::pickerInput(
+          selected   = selected,
+          multiple   = TRUE,
+          inputId    = NS(id, "evplot"),
+          label      = state[["MC"]][["labels"]][["evplot"]],
+          choices    = choices,
+          width      = state[["MC"]][["formatting"]][["evplot"]][["width"]])
+      
+      uiele_evplot =
+        formods::FM_add_ui_tooltip(state, uiele_evplot,
+               tooltip     = state[["MC"]][["formatting"]][["evplot"]][["tooltip"]],
+               position    = state[["MC"]][["formatting"]][["evplot"]][["tooltip_position"]])
+
+      div_style ="display:inline-block;vertical-align:top;text-align:center" 
+      uiele_btn_update = div(style=div_style, uiele_btn_update)
+      uiele_switch     = div(style=div_style, uiele_switch)
+      uiele_tc_dim     = div(style=div_style, uiele_tc_dim)
+      uiele_fpage      = div(style=div_style, uiele_fpage)
+      uiele_dvcols     = div(style=div_style, uiele_dvcols)
+      uiele_evplot     = div(style=div_style, uiele_evplot)
+
+      uiele = tagList(
+                uiele_btn_update,
+                uiele_tc_dim,
+                uiele_fpage,
+                uiele_dvcols,
+                uiele_evplot,
+                tags$br(),
+                uiele_res_tabs,
+                tags$br(),
+                uiele_switch )
+      } else{
+        uiele = state[["MC"]][["errors"]][["bad_sim"]]
+      }
+      uiele})
+    #------------------------------------
+    # The fpage is rendered separately so it can responnd to the update_plot
+    # button clicks separately
+    output$CTS_ui_fpage        = renderUI({
+      input$element_selection
+      input$button_clk_runsim
+      input$button_clk_update_plot
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      current_ele = CTS_fetch_current_element(state)
+      rx_details = current_ele[["rx_details"]]
+
+      uiele_fpage = NULL
+
+      if(!is.null(current_ele[["plotres"]])){
+      if(!is.null(current_ele[["isgood"]])){
+      if(current_ele[["isgood"]]){
+        plotres = current_ele[["plotres"]][["capture"]][[ current_ele[["fgtc_object_name"]] ]]
+        npages = plotres[["npages"]]
+        # If there isn't a value in selected we select the first one
+        if(is.null(current_ele[["ui"]][["fpage"]])){
+          selected = 1
+        } else {
+          selected = current_ele[["ui"]][["fpage"]]
+        }
+        # This will catch the case where we previously had more figures than
+        # we currently do
+        if(as.numeric(as.character(selected)) > npages){
+          selected = 1
+        }
+        choices = c(1:npages)
+
+        uiele_fpage =
+          shinyWidgets::pickerInput(
+            selected   = current_ele[["ui"]][["fpage"]],
+            inputId    = NS(id, "fpage"),
+            label      = state[["MC"]][["labels"]][["fpage"]],
+            choices    = choices,
+            width      = state[["MC"]][["formatting"]][["fpage"]][["width"]])
+        
+        uiele_fpage =
+          formods::FM_add_ui_tooltip(state, uiele_fpage,
+                 tooltip     = state[["MC"]][["formatting"]][["fpage"]][["tooltip"]],
+                 position    = state[["MC"]][["formatting"]][["fpage"]][["tooltip_position"]])
+
+      }
+      }
+      }
+      uiele_fpage})
+    #------------------------------------
+    output$ui_res_tc_figure      = renderUI({
+      input$element_selection
+      input$button_clk_runsim
+      input$switch_output
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+      current_ele = CTS_fetch_current_element(state)
+
+      figs_found = FALSE
+      uiele      = state[["MC"]][["errors"]][["cts_no_fig"]]
+
+      if("plotres" %in% names(current_ele)){
+         if(current_ele[["plotres"]][["isgood"]]){
+           figs_found = TRUE
+         }else{
+           uiele = current_ele[["plotres"]][["msgs"]]
+         }
+      }
+
+      if(figs_found){
+
+        pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
+        pvh          = state[["MC"]][["formatting"]][["preview"]][["height"]]
+        pv_div_style = paste0("height:",pvh,";width:",pvw,";display:inline-block;vertical-align:top")
+
+        output_type = state[["CTS"]][["ui"]][["switch_output"]]
+        if(output_type == "report"){
+          uiele =
+             div(style=pv_div_style,
+                 plotOutput(
+                   NS(id, "ui_res_tc_figure_ggplot"),
+                   width=pvw, height=pvh))
+        } else {
+          uiele =
+             div(style=pv_div_style,
+                 plotly::plotlyOutput(
+                   NS(id, "ui_rec_tc_figure_plotly"),
+                   width=pvw, height=pvh))
+        }
+      }
+      uiele})
+    #------------------------------------
+    # timecourse plotly
+    output$ui_res_tc_figure_plotly  = plotly::renderPlotly({
+      input$element_selection
+      input$button_clk_runsim
+      input$button_clk_update_plot
+      input$switch_output
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+      current_ele = CTS_fetch_current_element(state)
+      uiele = NULL
+      figs_found = FALSE
+      msgs       = state[["MC"]][["errors"]][["cts_no_fig"]]
+
+      if("plotres" %in% names(current_ele)){
+         if(current_ele[["plotres"]][["isgood"]]){
+           figs_found = TRUE
+         }
+      }
+
+      if(figs_found){
+        fig_obj = current_ele[["fgtc_object_name"]]
+        fig     = current_ele[["plotres"]][["capture"]][[fig_obj]][["fig"]]
+      } else {
+        fig     = FM_mk_error_fig(msgs)
+      }
+
+      uiele = plotly::ggplotly(fig)
+
+      uiele})
+    # timecourse ggplot
+    output$ui_res_tc_figure_ggplot             = renderPlot({
+      input$element_selection
+      input$button_clk_runsim
+      input$button_clk_update_plot
+      input$switch_output
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+      current_ele = CTS_fetch_current_element(state)
+      uiele = NULL
+      figs_found = FALSE
+      msgs       = state[["MC"]][["errors"]][["cts_no_fig"]]
+
+      if("plotres" %in% names(current_ele)){
+         if(current_ele[["plotres"]][["isgood"]]){
+           figs_found = TRUE
+         }
+      }
+
+      if(figs_found){
+        fig_obj = current_ele[["fgtc_object_name"]]
+        uiele = current_ele[["plotres"]][["capture"]][[fig_obj]][["fig"]]
+      } else {
+        uiele = FM_mk_error_fig(msgs)
+      }
+
+      uiele})
+    #------------------------------------
+    # Events figure
+    output$ui_res_events_figure      = renderUI({
+      input$element_selection
+      input$button_clk_runsim
+      input$switch_output
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+      current_ele = CTS_fetch_current_element(state)
+
+      figs_found = FALSE
+      uiele      = state[["MC"]][["errors"]][["cts_no_fig"]]
+
+      if("plotres" %in% names(current_ele)){
+         if(current_ele[["plotres"]][["isgood"]]){
+           figs_found = TRUE
+         }else{
+           uiele = current_ele[["plotres"]][["msgs"]]
+         }
+      }
+
+      if(figs_found){
+        pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
+        pvh          = state[["MC"]][["formatting"]][["preview"]][["height"]]
+        pv_div_style = paste0("height:",pvh,";width:",pvw,";display:inline-block;vertical-align:top")
+
+        output_type = state[["CTS"]][["ui"]][["switch_output"]]
+        if(output_type == "report"){
+          uiele =
+             div(style=pv_div_style,
+                 plotOutput(
+                   NS(id, "ui_res_events_figure_ggplot"),
+                   width=pvw, height=pvh))
+        } else {
+          uiele =
+             div(style=pv_div_style,
+                 plotly::plotlyOutput(
+                   NS(id, "ui_rec_events_figure_plotly"),
+                   width=pvw, height=pvh))
+        }
+      }
+      uiele})
+    #------------------------------------
+    # events plotly
+    output$ui_res_events_figure_plotly  = plotly::renderPlotly({
+      input$element_selection
+      input$button_clk_runsim
+      input$button_clk_update_plot
+      input$switch_output
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+      current_ele = CTS_fetch_current_element(state)
+      uiele = NULL
+      figs_found = FALSE
+      msgs       = state[["MC"]][["errors"]][["cts_no_fig"]]
+
+      if("plotres" %in% names(current_ele)){
+         if(current_ele[["plotres"]][["isgood"]]){
+           figs_found = TRUE
+         }
+      }
+
+      if(figs_found){
+        fig_obj = current_ele[["fgev_object_name"]]
+        fig = current_ele[["plotres"]][["capture"]][[fig_obj]][["fig"]]
+      } else {
+        fig = FM_mk_error_fig(msgs)
+      }
+
+      uiele = plotly::ggplotly(fig)
+
+      uiele})
+    # events ggplot
+    output$ui_res_events_figure_ggplot             = renderPlot({
+      input$element_selection
+      input$button_clk_runsim
+      input$button_clk_update_plot
+      input$switch_output
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+      current_ele = CTS_fetch_current_element(state)
+      uiele = NULL
+      figs_found = FALSE
+      msgs       = state[["MC"]][["errors"]][["cts_no_fig"]]
+
+      if("plotres" %in% names(current_ele)){
+         if(current_ele[["plotres"]][["isgood"]]){
+           figs_found = TRUE
+         }
+      }
+
+      if(figs_found){
+        fig_obj = current_ele[["fgev_object_name"]]
+        uiele = current_ele[["plotres"]][["capture"]][[fig_obj]][["fig"]]
+      } else {
+        uiele = FM_mk_error_fig(msgs)
+      }
+
+      uiele})
+    #------------------------------------
     # Configuration options
     output$CTS_ui_sim_cfg   = renderUI({
       input$element_selection
@@ -1032,10 +1517,15 @@ CTS_Server <- function(id,
       input$action_set_state_value
       input$action_manual_code
       input$button_clk_add_rule
+      input$button_clk_update_plot
       input$hot_current_rules
       input$nsub
       input$visit_times
       input$button_clk_add_cov
+      input$fpage
+      input$tc_dim
+      input$dvcols
+      input$evplot
       # Reacting to file changes
       state = CTS_fetch_state(id              = id,
                              id_ASM          = id_ASM,
@@ -1145,6 +1635,33 @@ CTS_Server <- function(id,
 
       uiele})
     #------------------------------------
+    # run simulation
+    output$ui_cts_runsim_btn = renderUI({
+      state = CTS_fetch_state(id        = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      uiele = shinyWidgets::actionBttn(
+                inputId = NS(id, "button_clk_runsim"),
+                label   = state[["MC"]][["labels"]][["runsim_btn"]],
+                style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+                size    = state[["MC"]][["formatting"]][["button_clk_runsim"]][["size"]],
+                block   = state[["MC"]][["formatting"]][["button_clk_runsim"]][["block"]],
+                color   = "primary",
+                icon    = icon("circle-play"))
+
+      # Optinally adding the tooltip:
+      uiele = formods::FM_add_ui_tooltip(state, uiele,
+               tooltip     = state[["MC"]][["formatting"]][["button_clk_runsim"]][["tooltip"]],
+               position    = state[["MC"]][["formatting"]][["button_clk_runsim"]][["tooltip_position"]])
+
+      uiele})
+    #------------------------------------
     # clip code
     output$ui_cts_clip_code = renderUI({
       state = CTS_fetch_state(id              = id,
@@ -1239,6 +1756,9 @@ CTS_Server <- function(id,
       input$nsub
       input$visit_times
       input$button_clk_add_cov
+      input$button_clk_runsim
+      input$button_clk_update_plot
+      input$switch_output
 
       state = CTS_fetch_state(id              = id,
                              id_ASM          = id_ASM,
@@ -1605,6 +2125,11 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
       element = current_ele)
   }
   #---------------------------------------------
+  # save cohort
+  if("button_clk_runsim" %in% changed_uis){
+    FM_le(state, "run simulation")
+  }
+  #---------------------------------------------
   # clip cohort
   if("button_clk_clip" %in% changed_uis){
     FM_le(state, "clip cohort")
@@ -1652,6 +2177,21 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
   if("button_clk_new" %in% changed_uis){
     FM_le(state, "new cohort")
     state = CTS_new_element(state)
+  }
+  #---------------------------------------------
+  # save cohort
+  if("button_clk_update_plot" %in% changed_uis){
+    FM_le(state, "update plot")
+    # Pull out the current element
+    current_ele = CTS_fetch_current_element(state)
+
+    # Next we plot the element
+    current_ele = CTS_plot_element(state, current_ele)
+
+    # Putting the element back in the state
+    state = CTS_set_current_element(
+      state   = state,
+      element = current_ele)
   }
   #---------------------------------------------
   # rule table clicked
@@ -1819,7 +2359,9 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
 
   sc_meta = CTS_fetch_sc_meta(MOD_yaml_file)
 
-  button_counters = c("button_clk_save",
+  button_counters = c("button_clk_runsim",
+                      "button_clk_update_plot",
+                      "button_clk_save",
                       "button_clk_clip",
                       "button_clk_del",
                       "button_clk_copy",
@@ -1831,6 +2373,10 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
   # the current element
   ui_ele          = c("element_name",
                       "nsub",
+                      "fpage",
+                      "dvcols",
+                      "tc_dim",
+                      "evplot",
                       "visit_times",
                       "trial_end",
                       "rule_condition",
@@ -1854,6 +2400,7 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
                       "covariate_type_selected",
                       "covariate_value",
                       "selected_covariate",
+                      "switch_output",
                       "element_selection")
 
   # Making all the ui_ids holdable
@@ -1870,7 +2417,6 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
     ui_ids          = ui_ids,
     ui_hold         = ui_hold,
     session         = session)
-
 
   # Getting the currently defined models
   # JMH update this when reacting to id_MB
@@ -2492,18 +3038,31 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
   state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0)"
   state[["CTS"]][["ui"]][["rule_name"]]                = "Single_Dose"
 
+
   # Adding the rule:
   current_ele = CTS_add_rule(state, current_ele)
+
+  # Appending the plotting details as well
+  current_ele[["ui"]][["fpage"]]             = "1"
+  current_ele[["ui"]][["dvcols"]]            = "Cc"
+
 
   # Putting the element back in the state forcing code generation
   state = CTS_set_current_element(
     state   = state,
     element = current_ele)
 
-  # Now we pull out the current element, simulate, and resave it:
+  # Now we pull out the current element, and simulate it
   current_ele = CTS_fetch_current_element(state)
   current_ele = CTS_simulate_element(state, current_ele)
-  state = CTS_set_current_element( state   = state, element = current_ele)
+
+  # Next we plot the element
+  current_ele = CTS_plot_element(state, current_ele)
+
+  # Now we save those results back into the state:
+  state = CTS_set_current_element(
+    state   = state,
+    element = current_ele)
 
   #-------------------------------------------------------
   if(full_session){
@@ -2527,7 +3086,7 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
     current_ele = CTS_add_covariate(state, current_ele)
 
     state[["CTS"]][["ui"]][["covariate_value"]]            = "1"
-    state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "fixed"    
+    state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "fixed"
     state[["CTS"]][["ui"]][["selected_covariate"]]         = "SUBTYPE_ID"
     current_ele = CTS_add_covariate(state, current_ele)
 
@@ -2569,17 +3128,26 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
     state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(1.30,  1.30,  1.30,  1.30)*SI_fpd(id=id, state='Ac')"
     state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
     state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
-    state[["CTS"]][["ui"]][["rule_name"]]                = "increase dose"
+    state[["CTS"]][["ui"]][["rule_name"]]                = "increase_dose"
     current_ele = CTS_add_rule(state, current_ele)
+
+    # Appending the plotting details as well
+    current_ele[["ui"]][["fpage"]]                = "1"
+    current_ele[["ui"]][["trial_end"]]            = "400"
+    current_ele[["ui"]][["dvcols"]]               = c("Cc", "BM")
 
     # Putting the element back in the state forcing code generation
     state = CTS_set_current_element( state   = state, element = current_ele)
 
-    # Now we pull out the current element, simulate, and resave it:
+    # Now we pull out the current element and simulate it:
     current_ele = CTS_fetch_current_element(state)
     current_ele = CTS_simulate_element(state, current_ele)
+
+    # Next we plot the element
+    current_ele = CTS_plot_element(state, current_ele)
+
+    # then we save everything:
     state = CTS_set_current_element( state   = state, element = current_ele)
-    browser()
   }
 
   if(("ShinySession" %in% class(session))){
@@ -2587,7 +3155,6 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
   } else {
     session = FM_set_mod_state(session, id, state)
   }
-
 
   res = list(
     isgood  = isgood,
@@ -2633,6 +3200,10 @@ CTS_new_element = function(state){
   element_object_name = paste0(state[["MC"]][["element_object_name"]],
                        "_", state[["CTS"]][["element_cntr"]])
 
+  def_evplot = state[["MC"]][["formatting"]][["evplot"]][["choices"]][[ 
+                state[["MC"]][["formatting"]][["evplot"]][["default"]] 
+                ]][["value"]]
+
   # Default for a new element:
   element_def =
     list(
@@ -2644,6 +3215,10 @@ CTS_new_element = function(state){
            nsub          =  state[["MC"]][["formatting"]][["nsub"]][["value"]],
            visit_times   =  state[["MC"]][["formatting"]][["visit_times"]][["value"]],
            trial_end     =  state[["MC"]][["formatting"]][["trial_end"]][["value"]],
+           fpage         = "1",
+           dvcols        = "",
+           tc_dim        = state[["MC"]][["formatting"]][["tc_dim"]][["default"]],
+           evplot        = def_evplot,
            source_model  = source_model
            ),
          id                     = element_id,
@@ -2655,6 +3230,8 @@ CTS_new_element = function(state){
          rxopts_object_name     = paste0(element_object_name, "_rxopts"),
          simres_object_name     = paste0(element_object_name, "_simres"),
          ot_object_name         = paste0(element_object_name, "_output_times"),
+         fgtc_object_name       = paste0(element_object_name, "_fgtc"),
+         fgev_object_name       = paste0(element_object_name, "_fgev"),
          code_previous          = NULL,
          # This is information about the source model from fetch_rxinfo()
          rx_details             = rx_details,
@@ -2724,7 +3301,7 @@ CTS_fetch_current_element    = function(state){
 current_element}
 
 #'@export
-#'@title Simulates the specifid elemnt
+#'@title Simulates the Specified Element
 #'@description Takes a CTS state and element and simulates the current set of
 #'rules.
 #'@param state CTS state from \code{CTS_fetch_state()}
@@ -2742,7 +3319,7 @@ CTS_simulate_element    = function(state, element){
 
   # Here we can do some high-level checks before we run the simulation:
 
-  # This makes sure all the covariates have been defined: 
+  # This makes sure all the covariates have been defined:
   if(!all(element[["rx_details"]][["elements"]][["covariates"]] %in% names(element[["covariates"]]))){
     missing_covars = element[["rx_details"]][["elements"]][["covariates"]][
           !(element[["rx_details"]][["elements"]][["covariates"]] %in% names(element[["covariates"]])) ]
@@ -2788,7 +3365,7 @@ CTS_simulate_element    = function(state, element){
         msgs = c(msgs, tcres[["capture"]][[ element[["simres_object_name"]] ]][["msgs"]])
       } else {
         ELE_ISGOOD = tcres[["isgood"]]
-        msgs       = c(msgs, tcres[["error"]])
+        msgs       = c(msgs, tcres[["msgs"]])
       }
 
 
@@ -2798,6 +3375,11 @@ CTS_simulate_element    = function(state, element){
     }
   }
 
+  if(!ELE_ISGOOD){
+    FM_le(state, "CTS_simulate_element()")
+    FM_le(state, unlist(strsplit(element[["code_sim_only"]], split="\n")))
+    FM_le(state, msgs)
+  }
   element[["simres"]] = list(
     capture = capture,
     isgood  = ELE_ISGOOD,
@@ -2805,6 +3387,62 @@ CTS_simulate_element    = function(state, element){
 
 element}
 
+#'@export
+#'@title Plots the Specified Element
+#'@description Takes a CTS state and element and simulates the current set of
+#'rules.
+#'@param state CTS state from \code{CTS_fetch_state()}
+#'@param element Element list from \code{CTS_fetch_current_element()}
+#'@return Simulation element with plot results stored in the '\code{"plotres"} element.
+# with the following structure:
+#' \itemize{
+#'   \item{isgood}   Boolean value indicating the state of the figure generation code.
+#'   \item{msgs}     Any messages to be passed to the user.
+#'   \item{capture}  Captured figure generation output from \code{plot_sr_tc()}
+#'}
+#'@example inst/test_apps/CTS_funcs.R
+CTS_plot_element    = function(state, element){
+
+  ELE_ISGOOD = TRUE
+  capture    = NULL
+  msgs       = c()
+
+  if(is.null(element[["simres"]][["isgood"]])){
+    ELE_ISGOOD = FALSE
+    msgs = c(msgs, state[["MC"]][["errors"]][["no_sim_found"]])
+  } else if(!element[["simres"]][["isgood"]]){
+    ELE_ISGOOD = FALSE
+    msgs = c(msgs, state[["MC"]][["errors"]][["bad_sim"]])
+  }
+
+
+
+  if(ELE_ISGOOD){
+    tcres =
+    FM_tc(cmd     = element[["code_figtcev"]],
+          tc_env  = element[["simres"]][["capture"]],
+          capture = c(element$fgtc_object_name,
+                      element$fgev_object_name))
+
+    if(tcres[["isgood"]]){
+      capture = tcres[["capture"]]
+    } else {
+      ELE_ISGOOD = FALSE
+      msgs = c(msgs, tcres[["msgs"]])
+    }
+  }
+
+  if(!ELE_ISGOOD){
+    FM_le(state, "CTS_plot_element()")
+    FM_le(state, unlist(strsplit(element[["code_figtcev"]], split="\n")))
+    FM_le(state, msgs)
+  }
+  element[["plotres"]] = list(
+    capture = capture,
+    isgood  = ELE_ISGOOD,
+    msgs    = msgs)
+
+element}
 
 #'@export
 #'@title Sets the Value for the  Current cohort
@@ -2830,6 +3468,8 @@ CTS_set_current_element    = function(state, element){
   simres_object_name  = element[["simres_object_name"]]
   rules_object_name   = element[["rules_object_name"]]
   ot_object_name      = element[["ot_object_name"]]
+  fgtc_object_name    = element[["fgtc_object_name"]]
+  fgev_object_name    = element[["fgev_object_name"]]
 
   # These are the little code chunks that will be stacked to create the final
   # pieces of code for the element
@@ -3003,8 +3643,40 @@ CTS_set_current_element    = function(state, element){
     paste0('                eval_times    = ', visit_str,          ','),
     paste0('                output_times  = ', ot_object_name,     ','),
     paste0('                rules         = ', rules_object_name,  ','),
-    paste0('                rx_options    = ', rxopts_object_name, ')')
+    paste0('                rx_options    = ', rxopts_object_name, ')'),
+    ""
    )
+
+
+  # By default we use the dvcols from the element:
+  dvcols    = element[["ui"]][["dvcols"]]
+  evplot    = as.numeric(as.character(element[["ui"]][["evplot"]]))
+
+  fnrow=state[["MC"]][["formatting"]][["tc_dim"]][["choices"]][[   element[["ui"]][["tc_dim"]]  ]][["nrow"]]
+  fncol=state[["MC"]][["formatting"]][["tc_dim"]][["choices"]][[   element[["ui"]][["tc_dim"]]  ]][["ncol"]]
+
+  # Code to make the timecourse and event figures
+  code_figtcev =
+  c(
+    paste0('# Plotting timecourse'),
+    paste0(fgtc_object_name, ' =                                 '),
+    paste0('  plot_sr_tc(sro = ', simres_object_name, ','         ),
+    paste0('    fncol        = ', fncol,',                       '),
+    paste0('    fnrow        = ', fnrow,',                       '),
+    paste0('    dvcols       = ', deparse(dvcols),','          ),
+    paste0('    fpage        = ', element[["ui"]][["fpage"]],  ")"),
+    "",
+    paste0('# Plotting events'),
+    paste0(fgev_object_name, ' =                                 '),
+    paste0('  plot_sr_ev(sro = ', simres_object_name, ','         ),
+    paste0('    fncol        = ', fncol,',                       '),
+    paste0('    fnrow        = ', fnrow,',                       '),
+    paste0('    evplot       = ', deparse(evplot),','             ),
+    paste0('    fpage        = ', element[["ui"]][["fpage"]],  ")"),
+    ""
+   )
+
+  element[["code_figtcev"]] = paste0(code_figtcev , collapse = "\n")
 
   # Stand alone code to make the element
   element[["code"]]          = paste0(c(code_packages,
@@ -3016,7 +3688,8 @@ CTS_set_current_element    = function(state, element){
                                         code_rules,
                                         code_rxopts,
                                         code_ot,
-                                        code_simrules
+                                        code_simrules,
+                                        code_figtcev
                                         ), collapse="\n")
 
 
