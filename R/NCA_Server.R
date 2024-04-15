@@ -3000,7 +3000,8 @@ NCA_Server <- function(id,
     #------------------------------------
     # Removing holds
     remove_hold_listen  <- reactive({
-      list(input$select_current_ana,
+      list(react_state[[id_ASM]],
+           input$select_current_ana,
            input$select_current_view)
     })
     observeEvent(remove_hold_listen(), {

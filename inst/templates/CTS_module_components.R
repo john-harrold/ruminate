@@ -126,13 +126,12 @@ ui <- dashboardPage(
          ),
        fluidRow(
          box(title="Current Rules",
-             "ui_cts_save_btn",
-             htmlOutput(NS("CTS", "ui_cts_runsim_btn")),
              "hot_current_rules",
              rhandsontable::rHandsontableOutput(NS("CTS", "hot_current_rules")), width=12)),
        fluidRow(
          box(title="Simulation Results",
              "CTS_ui_simres",
+             tags$br(),
             htmlOutput(NS("CTS", "CTS_ui_simres")) , width=12)),
        fluidRow(
          box(title="Configuration",

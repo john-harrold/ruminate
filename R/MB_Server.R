@@ -711,7 +711,7 @@ MB_Server <- function(id,
     # Removing holds
     remove_hold_listen  <- reactive({
         list(
-           # react_state[[id_ASM]])
+             react_state[[id_ASM]],
            # input$button_clk_new,
            # input$button_clk_del,
            # input$button_clk_copy,

@@ -21,6 +21,7 @@ DW.yaml       = system.file(package="formods",  "templates",  "DW.yaml")
 FG.yaml       = system.file(package="formods",  "templates",  "FG.yaml")
 MB.yaml       = system.file(package="ruminate", "templates",  "MB.yaml")
 NCA.yaml      = system.file(package="ruminate", "templates",  "NCA.yaml")
+CTS.yaml      = system.file(package="ruminate", "templates",  "CTS.yaml")
 
 # Making sure that the deployed object is created
 if(!exists("deployed")){
@@ -48,6 +49,7 @@ CSS <- "
 "
 
 #https://fontawesome.com/icons?from=io
+#https://fontawesome.com/search?o=r&m=free
 logo_url =
   "https://raw.githubusercontent.com/john-harrold/ruminate/main/man/figures/logo.png"
 data_url =
@@ -89,11 +91,12 @@ ui <- shinydashboard::dashboardPage(
        shinydashboard::menuItem("Load/Save",
                                 tabName="loadsave",
                                 icon=icon("arrow-down-up-across-line")) ,
-       shinydashboard::menuItem("Transform Data", tabName="wrangle", icon=icon("shuffle")),
-       shinydashboard::menuItem("Visualize",      tabName="plot",    icon=icon("chart-line")),
-       shinydashboard::menuItem("NCA",            tabName="nca",     icon=icon("chart-area")),
-       shinydashboard::menuItem("Models",         tabName="model",   icon=icon("trowel-bricks")),
-       shinydashboard::menuItem("App Info",       tabName="sysinfo", icon=icon("book-medical"))
+       shinydashboard::menuItem("Transform Data",  tabName="wrangle", icon=icon("shuffle")),
+       shinydashboard::menuItem("Visualize",       tabName="plot",    icon=icon("chart-line")),
+       shinydashboard::menuItem("NCA",             tabName="nca",     icon=icon("chart-area")),
+       shinydashboard::menuItem("Models",          tabName="model",   icon=icon("trowel-bricks")),
+       shinydashboard::menuItem("Trial Simulator", tabName="trials",  icon=icon("laptop-medical")),
+       shinydashboard::menuItem("App Info",        tabName="sysinfo", icon=icon("book-medical"))
      )
   ),
   shinydashboard::dashboardBody(
@@ -112,6 +115,12 @@ ui <- shinydashboard::dashboardPage(
                fluidRow( 
                column(width=12,
                htmlOutput(NS("MB",  "MB_ui_compact")))))
+               ),
+       shinydashboard::tabItem(tabName="trials",
+               shinydashboard::box(title="Define and Simulate Cohorts", width=12,
+               fluidRow( 
+               column(width=12,
+               htmlOutput(NS("CTS",  "CTS_ui_compact")))))
                ),
        shinydashboard::tabItem(tabName="loadsave",
          #     shinydashboard::box(title=NULL, width=12,
@@ -134,7 +143,7 @@ ui <- shinydashboard::dashboardPage(
                              class = "wrapfig",
                              src   = logo_url,
                              width = 150,
-                             alt = "formods logo" ),
+                             alt = "ruminate logo" ),
                          intro_text
                          ))
                    ),
@@ -259,6 +268,11 @@ server <- function(input, output, session) {
                       MOD_yaml_file    = MB.yaml,
                       FM_yaml_file     = formods.yaml)
 
+  ruminate::CTS_Server(id="CTS", id_ASM = "ASM", 
+                      deployed         = deployed,
+                      react_state      = react_FM,
+                      MOD_yaml_file    = CTS.yaml,
+                      FM_yaml_file     = formods.yaml)
 }
 
 shinyApp(ui, server)

@@ -95,6 +95,8 @@ UD.yaml       = system.file(package="formods",  "templates",  "UD.yaml")
 DW.yaml       = system.file(package="formods",  "templates",  "DW.yaml")
 FG.yaml       = system.file(package="formods",  "templates",  "FG.yaml")
 NCA.yaml      = system.file(package="ruminate", "templates",  "NCA.yaml")
+MB.yaml       = system.file(package="ruminate", "templates",  "MB.yaml")
+CTS.yaml      = system.file(package="ruminate", "templates",  "CTS.yaml")
 ```
 
 Each of these controls different aspects of the module including the text displayed, icons used, certain behaviors of the app, default values, etc. These options and are described in the comments of the configuration files. To use these you need to first make a copy of the specific configuration file. For example, to customize the NCA module you would make a copy of the `NCA.yaml` file:
