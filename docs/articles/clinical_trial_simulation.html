@@ -17,7 +17,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Clinical Trial Simulation">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Clinical Trial Simulation">
 <meta property="og:description" content="ruminate">
 <meta property="og:image" content="/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -383,20 +383,20 @@ fixing the <code>SUBTYPE_ID</code> at 0, and sampling the
 <span><span class="co">## 4  4 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">## 5  5 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">## 6  6 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
-<span><span class="co">##   TV_kdeg_BM TV_Emax TV_EC50       ETAka      ETACL      ETAVc      ETAVp</span></span>
-<span><span class="co">## 1        0.1     100     300  1.21921403 -0.2009231 -0.3384823  0.1217864</span></span>
-<span><span class="co">## 2        0.1     100     300 -1.11242836 -0.1640987 -0.1598991  0.1466910</span></span>
-<span><span class="co">## 3        0.1     100     300 -0.06807962 -0.3341488 -0.5686558 -0.1215476</span></span>
-<span><span class="co">## 4        0.1     100     300 -0.44491868  0.6433960  0.2223175  0.5390626</span></span>
-<span><span class="co">## 5        0.1     100     300 -0.44409456 -0.4895307 -0.5000220 -0.1807666</span></span>
-<span><span class="co">## 6        0.1     100     300 -0.15464546 -0.4426699 -0.3959970 -0.3404295</span></span>
-<span><span class="co">##         ETAQ    ETABM_IC    ETAEmax SEX_ID SUBTYPE_ID       WT</span></span>
-<span><span class="co">## 1  0.3975154  0.23930808  0.1464248      1          0 53.65521</span></span>
-<span><span class="co">## 2  2.1129804  0.45798783 -0.1063589      0          0 88.42572</span></span>
-<span><span class="co">## 3 -0.8616051  0.36654199 -0.3259271      1          0 65.97745</span></span>
-<span><span class="co">## 4  0.5297385  0.27421551  0.1487639      1          0 58.48501</span></span>
-<span><span class="co">## 5 -0.5466695  0.17227432 -0.1335189      1          0 63.43319</span></span>
-<span><span class="co">## 6  1.3824647 -0.03320645 -0.2711974      1          0 82.05225</span></span></code></pre>
+<span><span class="co">##   TV_kdeg_BM TV_Emax TV_EC50       ETAka       ETACL       ETAVc       ETAVp</span></span>
+<span><span class="co">## 1        0.1     100     300  0.30065410  0.02638762  0.22298038 -0.03439826</span></span>
+<span><span class="co">## 2        0.1     100     300  0.08502272  0.09481141 -0.26303939  0.24911727</span></span>
+<span><span class="co">## 3        0.1     100     300 -1.12982057  0.32226445 -0.16893668  0.53718003</span></span>
+<span><span class="co">## 4        0.1     100     300  0.41441629 -0.12367437 -0.31273632 -0.07090379</span></span>
+<span><span class="co">## 5        0.1     100     300 -0.48897344  0.02604895 -0.03895797 -0.17078974</span></span>
+<span><span class="co">## 6        0.1     100     300  1.11064814 -0.65061266 -0.33562320 -0.35589967</span></span>
+<span><span class="co">##         ETAQ    ETABM_IC     ETAEmax SEX_ID SUBTYPE_ID       WT</span></span>
+<span><span class="co">## 1  0.6900363 -0.04931769  0.39039383      0          0 51.00773</span></span>
+<span><span class="co">## 2  1.4615575  0.32202532  0.75203484      0          0 81.35479</span></span>
+<span><span class="co">## 3 -0.4840149 -0.29372697 -0.04508853      1          0 70.17848</span></span>
+<span><span class="co">## 4 -2.7754122  0.25222657 -0.05102237      1          0 73.50821</span></span>
+<span><span class="co">## 5  0.2097416 -0.51675088  0.24546028      0          0 68.13168</span></span>
+<span><span class="co">## 6 -0.8491960 -0.20730296 -0.06938995      0          0 72.56017</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="creating-rules">Creating rules<a class="anchor" aria-label="anchor" href="#creating-rules"></a>
@@ -735,7 +735,7 @@ a character string with the function definitions and pass those as the
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
     </footer>

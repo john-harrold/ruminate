@@ -2827,9 +2827,9 @@ element}
 #'}
 #'@details This depends on the following UI values in the state
 #'\itemize{
-#'  \item{} state[["CTS"]][["ui"]][["covariate_value"]]
-#'  \item{} state[["CTS"]][["ui"]][["covariate_type_selected"]]
-#'  \item{} state[["CTS"]][["ui"]][["selected_covariate"]]
+#'  \item{} \code{state[["CTS"]][["ui"]][["covariate_value"]]}
+#'  \item{} \code{state[["CTS"]][["ui"]][["covariate_type_selected"]]}
+#'  \item{} \code{state[["CTS"]][["ui"]][["selected_covariate"]]}
 #'}
 #'@example inst/test_apps/CTS_funcs.R
 CTS_add_covariate   = function(state, element){

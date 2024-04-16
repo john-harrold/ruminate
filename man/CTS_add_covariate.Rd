@@ -26,9 +26,9 @@ Takes the ui elements in the module state and processes the covariate elements f
 \details{
 This depends on the following UI values in the state
 \itemize{
-\item{} state[\link{"CTS"}][\link{"ui"}][\link{"covariate_value"}]
-\item{} state[\link{"CTS"}][\link{"ui"}][\link{"covariate_type_selected"}]
-\item{} state[\link{"CTS"}][\link{"ui"}][\link{"selected_covariate"}]
+\item{} \code{state[["CTS"]][["ui"]][["covariate_value"]]}
+\item{} \code{state[["CTS"]][["ui"]][["covariate_type_selected"]]}
+\item{} \code{state[["CTS"]][["ui"]][["selected_covariate"]]}
 }
 }
 \examples{
@@ -36,6 +36,7 @@ This depends on the following UI values in the state
 # https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html
 
 # None of this will work if rxode2 isn't installed:
+library(formods)
 if(is_installed("rxode2")){
 
 sess_res = CTS_test_mksession(session=list(), full_session=FALSE)

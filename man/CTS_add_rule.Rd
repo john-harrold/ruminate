@@ -64,6 +64,7 @@ This depends on the following UI values in the state and element
 # https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html
 
 # None of this will work if rxode2 isn't installed:
+library(formods)
 if(is_installed("rxode2")){
 
 sess_res = CTS_test_mksession(session=list(), full_session=FALSE)
