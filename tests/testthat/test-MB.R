@@ -2,7 +2,7 @@ library(formods)
 library(ruminate)
 library(stringr)
 
-sess_res = suppressMessages(suppressWarnings(MB_test_mksession(session=list())))
+sess_res = suppressMessages(suppressWarnings(MB_test_mksession(session=list(), full_session=FALSE)))
 
 current_dir = getwd()
 on.exit( setwd(current_dir))
