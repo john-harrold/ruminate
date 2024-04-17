@@ -20,7 +20,7 @@ Takes the ui elements in the state and element and processes any changes to the 
 \details{
 This depends on the following UI values in the state.
 \itemize{
-\item{}  state[\link{"CTS"}][\link{"ui"}][\link{"source_model"}]
+\item{}  \code{state[["CTS"]][["ui"]][["source_model"]]}
 }
 }
 \examples{

@@ -3956,7 +3956,7 @@ res}
 #'@return Element with the necessary changes to the source model.
 #'@details This depends on the following UI values in the state.
 #'\itemize{
-#'  \item{}  state[["CTS"]][["ui"]][["source_model"]]
+#'  \item{}  \code{state[["CTS"]][["ui"]][["source_model"]]}
 #'}
 #'@example inst/test_apps/CTS_funcs.R
 CTS_change_source_model   = function(state, element){
