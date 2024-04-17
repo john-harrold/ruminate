@@ -2600,29 +2600,29 @@ code}
 #'}
 #'@details This depends on the following UI values in the state and element
 #'\itemize{
-#'  \item{}  state[["CTS"]][["ui"]][["rule_name"]]
-#'  \item{}  state[["CTS"]][["ui"]][["rule_condition"]]
-#'  \item{}  state[["CTS"]][["ui"]][["rule_type"]]
+#'  \item{}  \code{state[["CTS"]][["ui"]][["rule_name"]]}
+#'  \item{}  \code{state[["CTS"]][["ui"]][["rule_condition"]]}
+#'  \item{}  \code{state[["CTS"]][["ui"]][["rule_type"]]}
 #'    \itemize{
 #'      \item{}  For rule type "dose"
 #'      \itemize{
-#'         \item{}  state[["CTS"]][["ui"]][["action_dosing_state"]]
-#'         \item{}  state[["CTS"]][["ui"]][["action_dosing_values"]]
-#'         \item{}  state[["CTS"]][["ui"]][["action_dosing_times"]]
-#'         \item{}  state[["CTS"]][["ui"]][["action_dosing_durations"]]
+#'         \item{}  \code{state[["CTS"]][["ui"]][["action_dosing_state"]]}
+#'         \item{}  \code{state[["CTS"]][["ui"]][["action_dosing_values"]]}
+#'         \item{}  \code{state[["CTS"]][["ui"]][["action_dosing_times"]]}
+#'         \item{}  \code{state[["CTS"]][["ui"]][["action_dosing_durations"]]}
 #'      }
 #'    }
 #'    \itemize{
 #'      \item{}  For rule type "set state"
 #'      \itemize{
-#'         \item{}  state[["CTS"]][["ui"]][["action_set_state_state"]]
-#'         \item{}  state[["CTS"]][["ui"]][["action_set_state_values"]]
+#'         \item{}  \code{state[["CTS"]][["ui"]][["action_set_state_state"]]}
+#'         \item{}  \code{state[["CTS"]][["ui"]][["action_set_state_values"]]}
 #'      }
 #'    }
 #'    \itemize{
 #'      \item{}  For rule type "manual code"
 #'      \itemize{
-#'         \item{}  state[["CTS"]][["ui"]][["action_manual_code"]]
+#'         \item{}  \code{state[["CTS"]][["ui"]][["action_manual_code"]]}
 #'      }
 #'    }
 #'}

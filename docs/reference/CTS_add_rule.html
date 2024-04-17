@@ -110,17 +110,17 @@ RULE_UPDATED is FALSE then a new rule was added.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This depends on the following UI values in the state and element</p><ul><li><p>state["CTS"]["ui"]["rule_name"]</p></li>
-<li><p>state["CTS"]["ui"]["rule_condition"]</p></li>
-<li><p>state["CTS"]["ui"]["rule_type"]</p><ul><li><p>For rule type "dose"</p><ul><li><p>state["CTS"]["ui"]["action_dosing_state"]</p></li>
-<li><p>state["CTS"]["ui"]["action_dosing_values"]</p></li>
-<li><p>state["CTS"]["ui"]["action_dosing_times"]</p></li>
-<li><p>state["CTS"]["ui"]["action_dosing_durations"]</p></li>
+    <p>This depends on the following UI values in the state and element</p><ul><li><p><code>state[["CTS"]][["ui"]][["rule_name"]]</code></p></li>
+<li><p><code>state[["CTS"]][["ui"]][["rule_condition"]]</code></p></li>
+<li><p><code>state[["CTS"]][["ui"]][["rule_type"]]</code></p><ul><li><p>For rule type "dose"</p><ul><li><p><code>state[["CTS"]][["ui"]][["action_dosing_state"]]</code></p></li>
+<li><p><code>state[["CTS"]][["ui"]][["action_dosing_values"]]</code></p></li>
+<li><p><code>state[["CTS"]][["ui"]][["action_dosing_times"]]</code></p></li>
+<li><p><code>state[["CTS"]][["ui"]][["action_dosing_durations"]]</code></p></li>
 </ul></li>
-</ul><ul><li><p>For rule type "set state"</p><ul><li><p>state["CTS"]["ui"]["action_set_state_state"]</p></li>
-<li><p>state["CTS"]["ui"]["action_set_state_values"]</p></li>
+</ul><ul><li><p>For rule type "set state"</p><ul><li><p><code>state[["CTS"]][["ui"]][["action_set_state_state"]]</code></p></li>
+<li><p><code>state[["CTS"]][["ui"]][["action_set_state_values"]]</code></p></li>
 </ul></li>
-</ul><ul><li><p>For rule type "manual code"</p><ul><li><p>state["CTS"]["ui"]["action_manual_code"]</p></li>
+</ul><ul><li><p>For rule type "manual code"</p><ul><li><p><code>state[["CTS"]][["ui"]][["action_manual_code"]]</code></p></li>
 </ul></li>
 </ul></li>
 </ul></div>
@@ -188,8 +188,8 @@ RULE_UPDATED is FALSE then a new rule was added.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 04c4a233276d3bd6cbefe58cce05fbd1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:744fb14ce39ea9d846513e6bc52ee905</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: fd50f686258ced0cf49f094cee90f1aa</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:3557cd4e3571b5414f8f3037ad7b29c8</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.docx")</span>
