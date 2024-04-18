@@ -1935,46 +1935,58 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
       }
 
       # String for creating model function in R
-      fcn_def    = paste0(deparse(as.function(rx_obj$fun)), collapse="\n")
+      cmd = 'fcn_def    = paste0(deparse(as.function(rx_obj$fun)), collapse="\n")'
+      tcres = 
+        FM_tc(cmd     = cmd,
+              tc_env  = list(rx_obj=rx_obj),
+              capture = c("fcn_def"))
 
-      if(nrow(current_ele[["components_table"]]) == 0){
-        component_id = 1
-      }else{
-        component_id = max(current_ele[["components_table"]][["id"]]) + 1
+      if(tcres[["isgood"]]){
+        fcn_def = tcres[["capture"]][["fcn_def"]]
+
+        if(nrow(current_ele[["components_table"]]) == 0){
+          component_id = 1
+        }else{
+          component_id = max(current_ele[["components_table"]][["id"]]) + 1
+        }
+
+        component_id_str = paste0("component_", component_id)
+
+        bcres =
+          MB_build_code(state        = state,
+                        session      = session,
+                        fcn_def      = fcn_def,
+                        fcn_obj_name = current_ele[["fcn_obj_name"]],
+                        rx_obj_name  = current_ele[["rx_obj_name"]])
+
+        tmpdf =
+        data.frame(id            = component_id,
+                   id_str        = component_id_str,
+                   note          = note,
+                   model_code    = paste0(bcres[["model_code"]],    collapse="\n"),
+                   model_code_sa = paste0(bcres[["model_code_sa"]], collapse="\n"),
+                   fcn_def       = fcn_def)
+
+
+        if(is.null(current_ele[["components_table"]])){
+          current_ele[["components_table"]] = tmpdf
+        }else{
+          current_ele[["components_table"]] = rbind(
+            current_ele[["components_table"]],
+            tmpdf)
+        }
+
+        # Saving the rxode2 object. The component ID is saved as a string
+        # "component_N":
+        current_ele[["components_list"]][[component_id_str]][["rx_obj"]] = rx_obj
+
+        # Setting the added component as the selected id:
+        current_ele[["selected_component_id"]]  = component_id
+      } else {
+        isgood = FALSE
+        FM_le(state, "MB_update_model() failed", entry_type="danger")
+        FM_le(state, msgs, entry_type="danger")
       }
-
-      component_id_str = paste0("component_", component_id)
-
-      bcres =
-        MB_build_code(state        = state,
-                      session      = session,
-                      fcn_def      = fcn_def,
-                      fcn_obj_name = current_ele[["fcn_obj_name"]],
-                      rx_obj_name  = current_ele[["rx_obj_name"]])
-
-      tmpdf =
-      data.frame(id            = component_id,
-                 id_str        = component_id_str,
-                 note          = note,
-                 model_code    = paste0(bcres[["model_code"]],    collapse="\n"),
-                 model_code_sa = paste0(bcres[["model_code_sa"]], collapse="\n"),
-                 fcn_def       = fcn_def)
-
-
-      if(is.null(current_ele[["components_table"]])){
-        current_ele[["components_table"]] = tmpdf
-      }else{
-        current_ele[["components_table"]] = rbind(
-          current_ele[["components_table"]],
-          tmpdf)
-      }
-
-      # Saving the rxode2 object. The component ID is saved as a string
-      # "component_N":
-      current_ele[["components_list"]][[component_id_str]][["rx_obj"]] = rx_obj
-
-      # Setting the added component as the selected id:
-      current_ele[["selected_component_id"]]  = component_id
     }
   } else {
     isgood = FALSE
