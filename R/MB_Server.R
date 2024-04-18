@@ -1985,7 +1985,7 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
       } else {
         isgood = FALSE
         FM_le(state, "MB_update_model() failed", entry_type="danger")
-        FM_le(state, msgs, entry_type="danger")
+        FM_le(state, tcres[["msgs"]], entry_type="danger")
       }
     }
   } else {
