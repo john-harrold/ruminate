@@ -3168,6 +3168,8 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
   current_ele[["ui"]][["fpage"]]             = "1"
   current_ele[["ui"]][["dvcols"]]            = "Cc"
 
+  # Just 2 subjects
+  current_ele[["ui"]][["nsub"]]             = "2"
 
   # Putting the element back in the state forcing code generation
   state = CTS_set_current_element(
@@ -3257,6 +3259,9 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
     current_ele[["ui"]][["fpage"]]                = "1"
     current_ele[["ui"]][["trial_end"]]            = "400"
     current_ele[["ui"]][["dvcols"]]               = c("Cc", "BM")
+
+    # Number of sujbects
+    current_ele[["ui"]][["nsub"]]                 = "12"
 
     # Putting the element back in the state forcing code generation
     state = CTS_set_current_element( state   = state, element = current_ele)
