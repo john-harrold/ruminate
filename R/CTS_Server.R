@@ -3083,7 +3083,6 @@ CTS_update_checksum     = function(state){
   for(element_id in element_ids){
     # We trigger updates when the element changes:
     chk_str = paste0(chk_str, ":", state[["CTS"]][["elements"]][[element_id]][["checksum"]])
-
     #JMH add element_name here?
   }
 

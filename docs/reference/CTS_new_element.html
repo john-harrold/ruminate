@@ -115,12 +115,6 @@ cohort is set as the current active cohort. See the help for
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
 <span class="r-in"><span><span class="va">input</span>   <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">input</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Creates a new empty element</span></span></span>
-<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu">CTS_new_element</span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Delete the current element</span></span></span>
-<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_del_current_element.html">CTS_del_current_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fetch a list of the current element</span></span></span>
 <span class="r-in"><span><span class="va">element</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_current_element.html">CTS_fetch_current_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -137,11 +131,14 @@ cohort is set as the current active cohort. See the help for
 <span class="r-in"><span><span class="va">code</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_code.html">CTS_fetch_code</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">code</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will update the checksum of the module state</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_update_checksum.html">CTS_update_checksum</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">#'@example inst/test_apps/CTS_funcs.R</span></span></span>
+<span class="r-in"><span><span class="co"># Creates a new empty element</span></span></span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu">CTS_new_element</span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Delete the current element</span></span></span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_del_current_element.html">CTS_del_current_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
@@ -164,8 +161,8 @@ cohort is set as the current active cohort. See the help for
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 3636d24fedea3424eb6fa9e959db944c</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:17375bac3f1dafb955968f7aa472cf88</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 88c81588c262c80bdac2bffdd4c5687b</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:214610facad6e4beb9d4835d56491270</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.docx")</span>
@@ -181,8 +178,8 @@ cohort is set as the current active cohort. See the help for
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 15b4e3d941fb672f0346104f34aa2149</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: c4e664d7b349ffd79d757f6c40d0c3f3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 63cccedeb8c1f215b5f1bdb3251cf32f</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 6020ecb34514ac72cb6afdb1e30991ee</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 1fcfec5e7807a507812a074d66ba364e</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
@@ -191,8 +188,8 @@ cohort is set as the current active cohort. See the help for
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: c8c9f2770a80b6e684999ad3280cf89f</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: c5408dd76d32b14bec6868a873035dc1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 9b1156961893bfbdf9d7a543ced4e261</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: a57b2413ec0dedc5a6fcdffcc638f8c6</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
@@ -201,8 +198,8 @@ cohort is set as the current active cohort. See the help for
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 5ccbfa31ae9f099494aca239222cee8a</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: abb64ec2c533d6039bc04f28cb32c258</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 3b8eea0cb6602c0de0eb6893ee7bed13</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 3b6590a79f9444cc1907ddf0b50cdd63</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

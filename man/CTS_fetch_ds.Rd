@@ -36,7 +36,7 @@ Fetches the datasets contained in the module.
 }
 \examples{
 # We need a module state:
-sess_res = CTS_test_mksession(session=list())
+sess_res = CTS_test_mksession(session=list(), full_session=FALSE)
 state = sess_res$state
 
 ds = CTS_fetch_ds(state)

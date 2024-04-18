@@ -148,7 +148,7 @@ used to detect changes in the state.</p></li>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Within shiny both session and input variables will exist,</span></span></span>
 <span class="r-in"><span><span class="co"># this creates examples here for testing purposes:</span></span></span>
-<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="CTS_test_mksession.html">CTS_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="CTS_test_mksession.html">CTS_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   dest:   file.path("config","report.docx")</span>
@@ -170,14 +170,8 @@ used to detect changes in the state.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 3636d24fedea3424eb6fa9e959db944c</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:17375bac3f1dafb955968f7aa472cf88</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: b92d5188aaaff6f5f9f397434bbdd56e</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:e716a382fda7646e3e563f76052234f1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 88c81588c262c80bdac2bffdd4c5687b</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:214610facad6e4beb9d4835d56491270</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.docx")</span>
@@ -193,8 +187,8 @@ used to detect changes in the state.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 15b4e3d941fb672f0346104f34aa2149</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: c4e664d7b349ffd79d757f6c40d0c3f3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 63cccedeb8c1f215b5f1bdb3251cf32f</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 6020ecb34514ac72cb6afdb1e30991ee</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 1fcfec5e7807a507812a074d66ba364e</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
@@ -203,54 +197,8 @@ used to detect changes in the state.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 360f8b9307c486e662836148e1f02e0c</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 194c5a9d38b07c3f460584172c991b84</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: source model change detected</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:  &gt; covariates reset</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 1b4ac211aa2c5b86e6c80fe5ee0086aa</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: c243ca52aba9ad8a3bb2228dedcd0b67</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 10 9 8 7 6 5 4 3 2 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 10 9 8 7 6 5 4 3 2 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 10 9 8 7 6 5 4 3 2 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 10 9 8 7 6 5 4 3 2 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 10 9 8 7 6 5 4 3 2 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 10 9 8 7 6 5 4 3 2 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: f02d4b20743252d7d21abfa8412c0dc5</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: f51e52188412a77c702aaee3432b40ef</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 93216998de8d90a543247b2088d8a3c0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 5989fe2cac4c8433ad5efb4754ce1b19</span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
 <span class="r-in"><span><span class="va">input</span>   <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">input</span></span></span>
 <span class="r-in"><span></span></span>

@@ -29,12 +29,6 @@ state = sess_res$state
 session = sess_res$session
 input   = sess_res$input
 
-# Creates a new empty element
-state = CTS_new_element(state)
-
-# Delete the current element
-state = CTS_del_current_element(state)
-
 # Fetch a list of the current element
 element = CTS_fetch_current_element(state)
 
@@ -51,10 +45,13 @@ state = CTS_set_current_element(state, element)
 code = CTS_fetch_code(state)
 code
 
-
 # This will update the checksum of the module state
 state = CTS_update_checksum(state)
 
-#'@example inst/test_apps/CTS_funcs.R
+# Creates a new empty element
+state = CTS_new_element(state)
+
+# Delete the current element
+state = CTS_del_current_element(state)
 }
 }
