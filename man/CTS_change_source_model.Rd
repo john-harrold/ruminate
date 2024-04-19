@@ -55,6 +55,14 @@ code
 # This will update the checksum of the module state
 state = CTS_update_checksum(state)
 
+
+# CTS_add_covariate
+# CTS_add_rule
+# CTS_change_source_model
+# CTS_fetch_code
+# CTS_plot_element
+
+
 # Creates a new empty element
 state = CTS_new_element(state)
 

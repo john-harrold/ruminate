@@ -1545,6 +1545,7 @@ res}
 #'@description Populates the supplied session variable for testing.
 #'@param session Shiny session variable (in app) or a list (outside of app)
 #'@param id An ID string that corresponds with the ID used to call the modules UI elements
+#'@param id_ASM An ID string that corresponds with the ID used to call the ASM module
 #'@param full_session  Boolean to indicate if the full test session should be created (default \code{TRUE}).
 #'@return list with the following elements
 #' \itemize{
@@ -1556,7 +1557,7 @@ res}
 #'}
 #'@examples
 #' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
-MB_test_mksession = function(session, id = "MB", full_session=TRUE){
+MB_test_mksession = function(session, id = "MB", id_ASM="ASM", full_session=TRUE){
 
 
   isgood = TRUE
@@ -1569,7 +1570,8 @@ MB_test_mksession = function(session, id = "MB", full_session=TRUE){
   MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
 
   # Creating an empty state object
-  state = MB_fetch_state(id              = "MB",
+  state = MB_fetch_state(id              = id,
+                         id_ASM          = id_ASM,
                          input           = input,
                          session         = session,
                          FM_yaml_file    = FM_yaml_file,

@@ -3103,7 +3103,8 @@ state}
 #'@description Populates the supplied session variable for testing.
 #'@param session Shiny session variable (in app) or a list (outside of app)
 #'@param id An ID string that corresponds with the ID used to call the modules UI elements
-#'@param id_MB An ID string that corresponds with the ID used to call the MB modules
+#'@param id_ASM An ID string that corresponds with the ID used to call the ASM module
+#'@param id_MB An ID string that corresponds with the ID used to call the MB module
 #'@param full_session  Boolean to indicate if the full test session should be created (default \code{TRUE}).
 #'@return list with the following elements
 #' \itemize{
@@ -3115,7 +3116,7 @@ state}
 #'}
 #'@examples
 #'sess_res = CTS_test_mksession(session=list(), full_session=FALSE)
-CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TRUE){
+CTS_test_mksession = function(session, id = "CTS", id_ASM="ASM", id_MB = "MB", full_session=TRUE){
 
   isgood = TRUE
   rsc    = list()
@@ -3130,9 +3131,9 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
   MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml")
 
   # Creating an empty state object
-  state = CTS_fetch_state(id             = "CTS",
-                         id_ASM          = "ASM",
-                         id_MB           = "MB",
+  state = CTS_fetch_state(id             = id,
+                         id_ASM          = id_ASM,
+                         id_MB           = id_MB,
                          input           = input,
                          session         = session,
                          FM_yaml_file    = FM_yaml_file,
@@ -3149,6 +3150,7 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
 
   # Single visit
   current_ele[["ui"]][["visit_times"]]                 = "0"
+  current_ele[["ui"]][["cts_config_nsteps"]]           = "5"
 
   # Creating a dosing rule
   state[["CTS"]][["ui"]][["rule_condition"]]           = "time == 0"
@@ -3167,8 +3169,9 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
   current_ele[["ui"]][["fpage"]]             = "1"
   current_ele[["ui"]][["dvcols"]]            = "Cc"
 
-  # Just 2 subjects
-  current_ele[["ui"]][["nsub"]]             = "2"
+  # Reducing the number of subjects and steps to speed things up on CRAN
+  current_ele[["ui"]][["nsub"]]              = "2"
+  current_ele[["ui"]][["cts_config_nsteps"]] = "5"
 
   # Putting the element back in the state forcing code generation
   state = CTS_set_current_element(
@@ -3261,6 +3264,7 @@ CTS_test_mksession = function(session, id = "CTS", id_MB = "MB", full_session=TR
 
     # Number of sujbects
     current_ele[["ui"]][["nsub"]]                 = "12"
+    current_ele[["ui"]][["cts_config_nsteps"]]    = "50"
 
     # Putting the element back in the state forcing code generation
     state = CTS_set_current_element( state   = state, element = current_ele)

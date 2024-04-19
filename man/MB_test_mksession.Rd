@@ -4,12 +4,14 @@
 \alias{MB_test_mksession}
 \title{Populate Session Data for Module Testing}
 \usage{
-MB_test_mksession(session, id = "MB", full_session = TRUE)
+MB_test_mksession(session, id = "MB", id_ASM = "ASM", full_session = TRUE)
 }
 \arguments{
 \item{session}{Shiny session variable (in app) or a list (outside of app)}
 
 \item{id}{An ID string that corresponds with the ID used to call the modules UI elements}
+
+\item{id_ASM}{An ID string that corresponds with the ID used to call the ASM module}
 
 \item{full_session}{Boolean to indicate if the full test session should be created (default \code{TRUE}).}
 }
