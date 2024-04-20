@@ -286,6 +286,8 @@ MC:
     tab_chrt_ele_rules:       "Create Rules"
     tab_chrt_ele_trial:       "Trial Options"
     tab_chrt_ele_sim:         "Simulation Options"
+    ds_tc:                    "Timecourse"
+    ds_ev:                    "Events"
   errors:
     no_sim_found: "You need to run the simulation first."
     bad_sim:      "There was a problem with the simulation."

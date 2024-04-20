@@ -2923,7 +2923,8 @@ res}
 
 #'@export
 #'@title Fetch Clinical Trial Simulator Module Datasets
-#'@description Fetches the datasets contained in the module.
+#'@description Fetches the datasets produced by the module. For each cohort
+#'this will be the simulation timecourse and the event table
 #'@param state CTS state from \code{CTS_fetch_state()}
 #'@return Character object vector with the lines of code
 #'@return list containing the following elements
@@ -2958,26 +2959,60 @@ CTS_fetch_ds = function(state){
   msgs   = c()
   ds     = list()
 
-# # Empty list for new datasets
-# NEWDS = list(label      = NULL,
-#              MOD_TYPE   = NULL,
-#              id         = NULL,
-#              DS         = NULL,
-#              DSMETA     = NULL,
-#              code       = NULL,
-#              checksum   = NULL,
-#              DSchecksum = NULL)
-#
 # # This prevents returning a dataset if this is triggered before data has
 # # been loaded
-# if(state[["CTS"]][["isgood"]]){
-#
-#   # Fill in the DS creation stuff here
-#   isgood = FALSE
-#
-#   # Putting it all into the ds object to be returned
-#   ds[[object_name]] = NEWDS
-# }
+  if(state[["CTS"]][["isgood"]]){
+ 
+    # Fill in the DS creation stuff here
+    isgood = FALSE
+
+    # Empty list for new datasets
+    NEWDS = list(label      = NULL,
+                 MOD_TYPE   = "CTS",
+                 id         = NULL,
+                 DS         = NULL,
+                 DSMETA     = NULL,
+                 code       = NULL,
+                 checksum   = NULL,
+                 DSchecksum = NULL)
+    
+    # Putting it all into the ds object to be returned
+    for(ename in names(state[["CTS"]][["elements"]])){
+      current_ele = state[["CTS"]][["elements"]][[ename]] 
+      if(current_ele[["isgood"]]){
+        if(current_ele[["simres"]][["isgood"]]){
+          hasds = TRUE
+          sim_tc_obj = current_ele[["sim_tc_object_name"]]
+          sim_ev_obj = current_ele[["sim_ev_object_name"]]
+
+          # Timecourse dataset
+          ds[[sim_tc_obj]] = NEWDS
+          ds[[sim_tc_obj]][["label"]]       = paste0(current_ele[[ename]][["element_name"]])
+          ds[[sim_tc_obj]][["DS"]]          =  current_ele[["simres"]][["capture"]][[sim_tc_obj]]
+          ds[[sim_tc_obj]][["DSMETA"]]      =  state[["MC"]][["labels"]][["ds_tc"]]
+          ds[[sim_tc_obj]][["code"]]        =  current_ele[["code_ele_only"]]
+          ds[[sim_tc_obj]][["checksum"]]    =  state[["CTS"]][["checksum"]]
+          ds[[sim_tc_obj]][["DSchecksum"]]  =  digest::digest(
+            current_ele[["simres"]][["capture"]][[sim_tc_obj]],
+            algo=c("md5"))
+
+          # Event table dataset
+          ds[[sim_ev_obj]] = NEWDS
+          ds[[sim_ev_obj]][["label"]]       = paste0(current_ele[[ename]][["element_name"]])
+          ds[[sim_ev_obj]][["DS"]]          =  current_ele[["simres"]][["capture"]][[sim_ev_obj]]
+          ds[[sim_ev_obj]][["DSMETA"]]      =  state[["MC"]][["labels"]][["ds_ev"]]
+          ds[[sim_ev_obj]][["code"]]        =  current_ele[["code_ele_only"]]
+          ds[[sim_ev_obj]][["checksum"]]    =  state[["CTS"]][["checksum"]]
+          ds[[sim_ev_obj]][["DSchecksum"]]  =  digest::digest(
+            current_ele[["simres"]][["capture"]][[sim_ev_obj]],
+            algo=c("md5"))
+        }
+      }
+    }
+  } else {
+    # Fill in the DS creation stuff here
+    isgood = FALSE
+  }
 
   res = list(hasds  = hasds,
              isgood = isgood,
@@ -3359,6 +3394,8 @@ CTS_new_element = function(state){
          subs_object_name       = paste0(element_object_name, "_subs"),
          rxopts_object_name     = paste0(element_object_name, "_rxopts"),
          simres_object_name     = paste0(element_object_name, "_simres"),
+         sim_tc_object_name     = paste0(element_object_name, "_sim_tc"),
+         sim_ev_object_name     = paste0(element_object_name, "_sim_ev"),
          ot_object_name         = paste0(element_object_name, "_output_times"),
          fgtc_object_name       = paste0(element_object_name, "_fgtc"),
          fgev_object_name       = paste0(element_object_name, "_fgev"),
@@ -3471,6 +3508,8 @@ CTS_simulate_element    = function(state, element){
       capture  = c(
         element[["cov_object_name"]],
         element[["subs_object_name"]],
+        element[["sim_tc_object_name"]],
+        element[["sim_ev_object_name"]],
         element[["simres_object_name"]])
 
 
@@ -3596,6 +3635,8 @@ CTS_set_current_element    = function(state, element){
   subs_object_name    = element[["subs_object_name"]]
   rxopts_object_name  = element[["rxopts_object_name"]]
   simres_object_name  = element[["simres_object_name"]]
+  sim_tc_object_name  = element[["sim_tc_object_name"]]
+  sim_ev_object_name  = element[["sim_ev_object_name"]]
   rules_object_name   = element[["rules_object_name"]]
   ot_object_name      = element[["ot_object_name"]]
   fgtc_object_name    = element[["fgtc_object_name"]]
@@ -3774,6 +3815,9 @@ CTS_set_current_element    = function(state, element){
     paste0('                output_times  = ', ot_object_name,     ','),
     paste0('                rules         = ', rules_object_name,  ','),
     paste0('                rx_options    = ', rxopts_object_name, ')'),
+    "# Collecting the simulation and event history values",
+    paste0(sim_tc_object_name, ' = ', simres_object_name, '[["simall"]]'),
+    paste0(sim_ev_object_name, ' = ', simres_object_name, '[["ev_history"]]'),
     ""
    )
 

@@ -105,22 +105,79 @@
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://formods.ubiquity.tools/" class="external-link">formods</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://formods.ubiquity.tools/reference/is_installed.html" class="external-link">is_installed</a></span><span class="op">(</span><span class="st">"rxode2"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="CTS_test_mksession.html">CTS_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">state</span></span></span>
-<span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
-<span class="r-in"><span><span class="va">input</span>   <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">input</span></span></span>
+<span class="r-in"><span><span class="co"># This will populate the session variable with the model building (MB) module</span></span></span>
+<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="MB_test_mksession.html">MB_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">[[</span><span class="st">"session"</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">id</span>     <span class="op">=</span> <span class="st">"CTS"</span></span></span>
+<span class="r-in"><span><span class="va">id_ASM</span> <span class="op">=</span> <span class="st">"ASM"</span></span></span>
+<span class="r-in"><span><span class="va">id_MB</span>  <span class="op">=</span> <span class="st">"MB"</span></span></span>
+<span class="r-in"><span><span class="va">input</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Configuration files</span></span></span>
+<span class="r-in"><span><span class="va">FM_yaml_file</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"formods"</span>, <span class="st">"templates"</span>, <span class="st">"formods.yaml"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">MOD_yaml_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"ruminate"</span>, <span class="st">"templates"</span>, <span class="st">"CTS.yaml"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_state.html">CTS_fetch_state</a></span><span class="op">(</span>id              <span class="op">=</span> <span class="va">id</span>,</span></span>
+<span class="r-in"><span>                        id_ASM          <span class="op">=</span> <span class="va">id_ASM</span>,</span></span>
+<span class="r-in"><span>                        id_MB           <span class="op">=</span> <span class="va">id_MB</span>,</span></span>
+<span class="r-in"><span>                        input           <span class="op">=</span> <span class="va">input</span>,</span></span>
+<span class="r-in"><span>                        session         <span class="op">=</span> <span class="va">session</span>,</span></span>
+<span class="r-in"><span>                        FM_yaml_file    <span class="op">=</span> <span class="va">FM_yaml_file</span>,</span></span>
+<span class="r-in"><span>                        MOD_yaml_file   <span class="op">=</span> <span class="va">MOD_yaml_file</span>,</span></span>
+<span class="r-in"><span>                        react_state     <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fetch a list of the current element</span></span></span>
-<span class="r-in"><span><span class="va">element</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_current_element.html">CTS_fetch_current_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_current_element.html">CTS_fetch_current_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can modify the element</span></span></span>
-<span class="r-in"><span><span class="va">element</span><span class="op">[[</span><span class="st">"element_name"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="st">"A more descriptive name"</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"element_name"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="st">"A more descriptive name"</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Simulating the current element</span></span></span>
-<span class="r-in"><span><span class="va">element</span> <span class="op">=</span> <span class="fu"><a href="CTS_simulate_element.html">CTS_simulate_element</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">element</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Defining the source model</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"source_model"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="st">"MB_obj_1_rx"</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_change_source_model.html">CTS_change_source_model</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ele</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># You can now place element back in the state</span></span></span>
-<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_set_current_element.html">CTS_set_current_element</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">element</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Single visit</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"visit_times"</span><span class="op">]</span><span class="op">]</span>                 <span class="op">=</span> <span class="st">"0"</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"cts_config_nsteps"</span><span class="op">]</span><span class="op">]</span>           <span class="op">=</span> <span class="st">"5"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Creating a dosing rule</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"rule_condition"</span><span class="op">]</span><span class="op">]</span>           <span class="op">=</span> <span class="st">"time == 0"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"rule_type"</span><span class="op">]</span><span class="op">]</span>                <span class="op">=</span> <span class="st">"dose"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"action_dosing_state"</span><span class="op">]</span><span class="op">]</span>      <span class="op">=</span> <span class="st">"central"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"action_dosing_values"</span><span class="op">]</span><span class="op">]</span>     <span class="op">=</span> <span class="st">"c(1)"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"action_dosing_times"</span><span class="op">]</span><span class="op">]</span>      <span class="op">=</span> <span class="st">"c(0)"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"action_dosing_durations"</span><span class="op">]</span><span class="op">]</span>  <span class="op">=</span> <span class="st">"c(0)"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"rule_name"</span><span class="op">]</span><span class="op">]</span>                <span class="op">=</span> <span class="st">"Single_Dose"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Adding the rule:</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_add_rule.html">CTS_add_rule</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ele</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Appending the plotting details as well</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"fpage"</span><span class="op">]</span><span class="op">]</span>             <span class="op">=</span> <span class="st">"1"</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"dvcols"</span><span class="op">]</span><span class="op">]</span>            <span class="op">=</span> <span class="st">"Cc"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Reducing the number of subjects and steps to speed things up on CRAN</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"nsub"</span><span class="op">]</span><span class="op">]</span>              <span class="op">=</span> <span class="st">"2"</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"cts_config_nsteps"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="st">"5"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Putting the element back in the state forcing code generation</span></span></span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_set_current_element.html">CTS_set_current_element</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  state   <span class="op">=</span> <span class="va">state</span>,</span></span>
+<span class="r-in"><span>  element <span class="op">=</span> <span class="va">current_ele</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Now we pull out the current element, and simulate it</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_current_element.html">CTS_fetch_current_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_simulate_element.html">CTS_simulate_element</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ele</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Next we plot the element</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_plot_element.html">CTS_plot_element</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ele</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Now we save those results back into the state:</span></span></span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_set_current_element.html">CTS_set_current_element</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  state   <span class="op">=</span> <span class="va">state</span>,</span></span>
+<span class="r-in"><span>  element <span class="op">=</span> <span class="va">current_ele</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will extract the code for the current module</span></span></span>
 <span class="r-in"><span><span class="va">code</span> <span class="op">=</span> <span class="fu">CTS_fetch_code</span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
@@ -129,13 +186,10 @@
 <span class="r-in"><span><span class="co"># This will update the checksum of the module state</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_update_checksum.html">CTS_update_checksum</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Access the datasets generated from simulations</span></span></span>
+<span class="r-in"><span><span class="va">ds</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_ds.html">CTS_fetch_ds</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># CTS_add_covariate</span></span></span>
-<span class="r-in"><span><span class="co"># CTS_add_rule</span></span></span>
-<span class="r-in"><span><span class="co"># CTS_change_source_model</span></span></span>
-<span class="r-in"><span><span class="co"># CTS_fetch_code</span></span></span>
-<span class="r-in"><span><span class="co"># CTS_plot_element</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Creates a new empty element</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_new_element.html">CTS_new_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
@@ -164,8 +218,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: d123144ebb797cae626187faa5b1d5e0</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:df9d0b5518b26f16e89a591aa4418c7c</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 7129b1bf58fe87bc710aadf83b142cb7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:977b32afa99b018b44fe887b96a452c2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.docx")</span>
@@ -175,14 +229,14 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.yaml")</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 4affbc8f5039c017fb6d555c8aa0f450</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: f312310118fbc0d82246501049f0eac7</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: State initialized</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 7b7f6b1ffa36a534ff4d377fb5317f69</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 15b4e3d941fb672f0346104f34aa2149</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: f07847307239b964d91692e8b32808db</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: c462b0919a3c63afc12588f62e835a11</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: d191583962f51788bb656c74d1b7c9d4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: ec24440a30166ee673026039f590e803</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: e8b3ecb1ebd0181df2bca8384b1258b6</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 93c644c3dc1dded0ff001303211abfac</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
@@ -191,18 +245,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: f513472f12b788da345495277ebf5247</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 034f394909b2e96a44fcac99e1f943bf</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 7d96f765b669a54852f5f746331fe756</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: e0c0ac9d32f73ec434bca250b31d2ac9</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 0caa327fcb1339ceeffc05f572665ff3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: b708c62d3bce8150c287e77c7c6e7971</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

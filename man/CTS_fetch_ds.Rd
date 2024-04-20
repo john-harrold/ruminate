@@ -32,7 +32,8 @@ the R-object for that dataset. Each element has the following structure:
 }
 }
 \description{
-Fetches the datasets contained in the module.
+Fetches the datasets produced by the module. For each cohort
+this will be the simulation timecourse and the event table
 }
 \examples{
 # We need a module state:
