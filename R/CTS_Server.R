@@ -2959,8 +2959,8 @@ CTS_fetch_ds = function(state){
   msgs   = c()
   ds     = list()
 
-# # This prevents returning a dataset if this is triggered before data has
-# # been loaded
+  # This prevents returning a dataset if this is triggered before data has
+  # been loaded
   if(state[["CTS"]][["isgood"]]){
  
     # Fill in the DS creation stuff here
@@ -2980,32 +2980,34 @@ CTS_fetch_ds = function(state){
     for(ename in names(state[["CTS"]][["elements"]])){
       current_ele = state[["CTS"]][["elements"]][[ename]] 
       if(current_ele[["isgood"]]){
-        if(current_ele[["simres"]][["isgood"]]){
-          hasds = TRUE
-          sim_tc_obj = current_ele[["sim_tc_object_name"]]
-          sim_ev_obj = current_ele[["sim_ev_object_name"]]
+        if("isgood" %in% names(current_ele[["simres"]])){
+          if(current_ele[["simres"]][["isgood"]]){
+            hasds = TRUE
+            sim_tc_obj = current_ele[["sim_tc_object_name"]]
+            sim_ev_obj = current_ele[["sim_ev_object_name"]]
 
-          # Timecourse dataset
-          ds[[sim_tc_obj]] = NEWDS
-          ds[[sim_tc_obj]][["label"]]       = paste0(current_ele[[ename]][["element_name"]])
-          ds[[sim_tc_obj]][["DS"]]          =  current_ele[["simres"]][["capture"]][[sim_tc_obj]]
-          ds[[sim_tc_obj]][["DSMETA"]]      =  state[["MC"]][["labels"]][["ds_tc"]]
-          ds[[sim_tc_obj]][["code"]]        =  current_ele[["code_ele_only"]]
-          ds[[sim_tc_obj]][["checksum"]]    =  state[["CTS"]][["checksum"]]
-          ds[[sim_tc_obj]][["DSchecksum"]]  =  digest::digest(
-            current_ele[["simres"]][["capture"]][[sim_tc_obj]],
-            algo=c("md5"))
+            # Timecourse dataset
+            ds[[sim_tc_obj]] = NEWDS
+            ds[[sim_tc_obj]][["label"]]       = paste0(current_ele[[ename]][["element_name"]])
+            ds[[sim_tc_obj]][["DS"]]          =  current_ele[["simres"]][["capture"]][[sim_tc_obj]]
+            ds[[sim_tc_obj]][["DSMETA"]]      =  state[["MC"]][["labels"]][["ds_tc"]]
+            ds[[sim_tc_obj]][["code"]]        =  current_ele[["code_ele_only"]]
+            ds[[sim_tc_obj]][["checksum"]]    =  state[["CTS"]][["checksum"]]
+            ds[[sim_tc_obj]][["DSchecksum"]]  =  digest::digest(
+              current_ele[["simres"]][["capture"]][[sim_tc_obj]],
+              algo=c("md5"))
 
-          # Event table dataset
-          ds[[sim_ev_obj]] = NEWDS
-          ds[[sim_ev_obj]][["label"]]       = paste0(current_ele[[ename]][["element_name"]])
-          ds[[sim_ev_obj]][["DS"]]          =  current_ele[["simres"]][["capture"]][[sim_ev_obj]]
-          ds[[sim_ev_obj]][["DSMETA"]]      =  state[["MC"]][["labels"]][["ds_ev"]]
-          ds[[sim_ev_obj]][["code"]]        =  current_ele[["code_ele_only"]]
-          ds[[sim_ev_obj]][["checksum"]]    =  state[["CTS"]][["checksum"]]
-          ds[[sim_ev_obj]][["DSchecksum"]]  =  digest::digest(
-            current_ele[["simres"]][["capture"]][[sim_ev_obj]],
-            algo=c("md5"))
+            # Event table dataset
+            ds[[sim_ev_obj]] = NEWDS
+            ds[[sim_ev_obj]][["label"]]       = paste0(current_ele[[ename]][["element_name"]])
+            ds[[sim_ev_obj]][["DS"]]          =  current_ele[["simres"]][["capture"]][[sim_ev_obj]]
+            ds[[sim_ev_obj]][["DSMETA"]]      =  state[["MC"]][["labels"]][["ds_ev"]]
+            ds[[sim_ev_obj]][["code"]]        =  current_ele[["code_ele_only"]]
+            ds[[sim_ev_obj]][["checksum"]]    =  state[["CTS"]][["checksum"]]
+            ds[[sim_ev_obj]][["DSchecksum"]]  =  digest::digest(
+              current_ele[["simres"]][["capture"]][[sim_ev_obj]],
+              algo=c("md5"))
+          }
         }
       }
     }

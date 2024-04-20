@@ -138,8 +138,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 7129b1bf58fe87bc710aadf83b142cb7</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:977b32afa99b018b44fe887b96a452c2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 603ec2781e2724c70b7efa70a2926aab</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:f30399e7272d92a24cf798db1e1fe3d1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.docx")</span>
@@ -165,8 +165,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: d9e605460d9f9ecd184b27a85653c846</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 50239a5c8c0886701a07a909479c1563</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: cf4981c45e2b740f5f5b7b3d2a36f348</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: efded18e46a2434ff672204b5fddf604</span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
 <span class="r-in"><span><span class="va">input</span>   <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">input</span></span></span>
 <span class="r-in"><span></span></span>
@@ -1614,14 +1614,14 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   label      object MOD_TYPE id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 One compartment model MB_obj_1_rx       MB MB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           checksum                      MDLchecksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 977b32afa99b018b44fe887b96a452c2 7129b1bf58fe87bc710aadf83b142cb7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 f30399e7272d92a24cf798db1e1fe3d1 603ec2781e2724c70b7efa70a2926aab</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 code</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 MB_obj_1_fcn = function () \n{\n    description &lt;- "One compartment PK model with linear clearance using differential equations"\n    ini({\n        lka &lt;- 0.45\n        label("Absorption rate (Ka)")\n        lcl &lt;- 1\n        label("Clearance (CL)")\n        lvc &lt;- 3.45\n        label("Central volume of distribution (V)")\n        propSd &lt;- c(0, 0.5)\n        label("Proportional residual error (fraction)")\n        etalcl ~ 0.1\n    })\n    model({\n        ka &lt;- exp(lka)\n        cl &lt;- exp(lcl + etalcl)\n        vc &lt;- exp(lvc)\n        kel &lt;- cl/vc\n        d/dt(depot) &lt;- -ka * depot\n        d/dt(central) &lt;- ka * depot - kel * central\n        Cc &lt;- central/vc\n        Cc ~ prop(propSd)\n    })\n}\nMB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$modules</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$modules$MB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$modules$MB$MB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "977b32afa99b018b44fe887b96a452c2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "f30399e7272d92a24cf798db1e1fe3d1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1694,10 +1694,10 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB_obj_1_fcn = function () \n{\n    description &lt;- \"One compartment PK model with linear clearance using differential equations\"\n    ini({\n        lka &lt;- 0.45\n        label(\"Absorption rate (Ka)\")\n        lcl &lt;- 1\n        label(\"Clearance (CL)\")\n        lvc &lt;- 3.45\n        label(\"Central volume of distribution (V)\")\n        propSd &lt;- c(0, 0.5)\n        label(\"Proportional residual error (fraction)\")\n        etalcl ~ 0.1\n    })\n    model({\n        ka &lt;- exp(lka)\n        cl &lt;- exp(lcl + etalcl)\n        vc &lt;- exp(lvc)\n        kel &lt;- cl/vc\n        d/dt(depot) &lt;- -ka * depot\n        d/dt(central) &lt;- ka * depot - kel * central\n        Cc &lt;- central/vc\n        Cc ~ prop(propSd)\n    })\n}\nMB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_1_rx$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "977b32afa99b018b44fe887b96a452c2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "f30399e7272d92a24cf798db1e1fe3d1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_1_rx$MDLchecksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "7129b1bf58fe87bc710aadf83b142cb7"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "603ec2781e2724c70b7efa70a2926aab"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -2137,7 +2137,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library/formods/templates/formods.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MOD_yaml_file</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/l9/6pm7xq5j1hn6l00zrs22j6mc0000gn/T/Rtmpke0KwN/temp_libpath790c45c45c61/ruminate/templates/CTS.yaml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/l9/6pm7xq5j1hn6l00zrs22j6mc0000gn/T/Rtmpb3gfio/temp_libpath14dc63572e411/ruminate/templates/CTS.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $shiny_token</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "non_shiny"</span>

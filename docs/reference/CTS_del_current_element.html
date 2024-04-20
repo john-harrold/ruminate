@@ -172,7 +172,7 @@ If that is the last element, then a new default will be added.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Now we pull out the current element, and simulate it</span></span></span>
 <span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_current_element.html">CTS_fetch_current_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_simulate_element.html">CTS_simulate_element</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ele</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">#current_ele = CTS_simulate_element(state, current_ele)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Next we plot the element</span></span></span>
 <span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_plot_element.html">CTS_plot_element</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ele</span><span class="op">)</span></span></span>
@@ -189,10 +189,15 @@ If that is the last element, then a new default will be added.</p>
 <span class="r-in"><span><span class="co"># This will update the checksum of the module state</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_update_checksum.html">CTS_update_checksum</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Access the datasets generated from simulations</span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_ds.html">CTS_fetch_ds</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># CTS_add_covariate</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"covariate_value"</span><span class="op">]</span><span class="op">]</span>            <span class="op">=</span> <span class="st">"70, .1"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"covariate_type_selected"</span><span class="op">]</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"cont_lognormal"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"selected_covariate"</span><span class="op">]</span><span class="op">]</span>         <span class="op">=</span> <span class="st">"WT"</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_add_covariate.html">CTS_add_covariate</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ele</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Creates a new empty element</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_new_element.html">CTS_new_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
@@ -221,8 +226,8 @@ If that is the last element, then a new default will be added.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 7129b1bf58fe87bc710aadf83b142cb7</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:977b32afa99b018b44fe887b96a452c2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: cdfcbf111f1e9cc959894800df9e3aa7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:bf44543da2f27ba698ac16981e68c0cb</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.docx")</span>
@@ -240,16 +245,25 @@ If that is the last element, then a new default will be added.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: e8b3ecb1ebd0181df2bca8384b1258b6</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 93c644c3dc1dded0ff001303211abfac</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: e3d1bd9b59936f89ce4af81e7de550e2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: ceabb1cd0fbb2c10e4bee79ff7285628</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_plot_element()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Plotting timecourse</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_fgtc =                                 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   plot_sr_tc(sro = CTS_obj_1_simres,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fncol        = 4,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fnrow        = 2,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     dvcols       = "Cc",</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fpage        = 1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Plotting events</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_fgev =                                 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   plot_sr_ev(sro = CTS_obj_1_simres,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fncol        = 4,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fnrow        = 2,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     evplot       = 1,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fpage        = 1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: You need to run the simulation first.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 7f4c4c8f439a0ea6d807e9445accf613</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 187a647561230150837aa9ba728bdb4b</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

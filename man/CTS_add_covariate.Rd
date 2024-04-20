@@ -103,7 +103,7 @@ state = CTS_set_current_element(
 
 # Now we pull out the current element, and simulate it
 current_ele = CTS_fetch_current_element(state)
-current_ele = CTS_simulate_element(state, current_ele)
+#current_ele = CTS_simulate_element(state, current_ele)
 
 # Next we plot the element
 current_ele = CTS_plot_element(state, current_ele)
@@ -120,10 +120,15 @@ code
 # This will update the checksum of the module state
 state = CTS_update_checksum(state)
 
+
 # Access the datasets generated from simulations
 ds = CTS_fetch_ds(state)
 
 # CTS_add_covariate
+state[["CTS"]][["ui"]][["covariate_value"]]            = "70, .1"
+state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "cont_lognormal"
+state[["CTS"]][["ui"]][["selected_covariate"]]         = "WT"
+current_ele = CTS_add_covariate(state, current_ele)
 
 # Creates a new empty element
 state = CTS_new_element(state)
