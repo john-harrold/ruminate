@@ -1402,12 +1402,13 @@ MB_fetch_code = function(state){
     for(ename in enames){
       current_element = state[["MB"]][["elements"]][[ename]]
       component       = MB_fetch_component(state, current_element)
-      cmds            = c(cmds, paste0("# Base model: ", current_element[["base_model_name"]]))
+      cmds            = c(cmds, paste0("# Base model: ", current_element[["base_model_name"]], "===="))
       cmds            = c(cmds, component$model_code)
       cmds            = c(cmds, "\n")
     }
+    cmds = c("# Model Building ----", cmds)
   } else {
-    cmds = "# No model building modules"
+    cmds = "# No models available"
   }
 
   code_str = paste0(cmds, collapse="\n")

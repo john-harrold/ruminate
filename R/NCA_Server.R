@@ -3836,7 +3836,7 @@ NCA_fetch_code = function(state){
     nps_def = paste0('NCA_nps = NCA_fetch_np_meta(file.path("config", "',
                      basename(state[["MOD_yaml_file"]]),
                      '"))[["summary"]]')
-    code = c("# NCA analyses", "", nps_def, code)
+    code = c("# NCA analyses ----", "", nps_def, code)
 
   } else {
     # Otherwise we just pass a comment that there were

@@ -2576,7 +2576,22 @@ state}
 #'@example inst/test_apps/CTS_funcs.R
 CTS_fetch_code = function(state){
 
-  code = NULL
+  cmds = c()
+
+  enames = names(state[["CTS"]][["elements"]])
+  if(length(enames) > 0){
+    for(ename in enames){
+      current_element = state[["CTS"]][["elements"]][[ename]]
+      cmds            = c(cmds, paste0("# Cohort: ", current_element[["element_name"]], "===="))
+      cmds            = c(cmds, current_element[["code_ele_only"]])
+      cmds            = c(cmds, "\n")
+    }
+    cmds = c("# Adaptive Trial Simulations ----", cmds)
+  } else {
+    cmds = "# No cohorts available"
+  }
+
+  code = paste0(cmds, collapse="\n")
 
 code}
 

@@ -148,14 +148,14 @@ stand alone.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 603ec2781e2724c70b7efa70a2926aab</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:f30399e7272d92a24cf798db1e1fe3d1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 1b961f4be645de7c2128f2550cd7f862</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:f33974f5e94b5aecd87eee3ed8e28ee5</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 8154ac50da82af30be221d6302baeaad</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:4b01aacfc8b2c35a367e388755e69221</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 82563ff2306426d4c85127387944d01d</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:19ad6e2100a85fea3ea2815790d3fd99</span>
 <span class="r-in"><span><span class="co"># This is just for CRAN</span></span></span>
 <span class="r-in"><span><span class="co">#sess_res = MB_test_mksession(session=list())</span></span></span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
@@ -301,8 +301,8 @@ stand alone.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can now place element back in the state</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="MB_set_current_element.html">MB_set_current_element</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">element</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: a33aa05f3168f04799184077f07605ba</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:487a9b45d9a2fac6a3ef04185f52b8a9</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 2bf418ab307ea7d2daf5dd8c65a8478e</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:1844224a4b2aee5769daaf032f30d31f</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will fetch the current component</span></span></span>
 <span class="r-in"><span><span class="va">component</span> <span class="op">=</span> <span class="fu"><a href="MB_fetch_component.html">MB_fetch_component</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">element</span><span class="op">)</span></span></span>
@@ -370,7 +370,8 @@ stand alone.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will fetch the code to regenerate all of the components of this module</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="MB_fetch_code.html">MB_fetch_code</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # Base model: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # Model Building ----</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # Base model: manual====</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MB_obj_1_fcn = function () </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     description &lt;- "One compartment PK model with linear clearance"</span>
@@ -395,7 +396,7 @@ stand alone.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # Base model: user</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # Base model: user====</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MB_obj_2_fcn = function () </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     ini({</span>
