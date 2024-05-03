@@ -2924,6 +2924,211 @@ CTS_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
   supported_rpttypes = c("xlsx", "pptx", "docx")
 
   if(rpttype %in% supported_rpttypes){
+    enames = names(state[["CTS"]][["elements"]])
+    if(length(enames) > 0){
+      # This will hold objects for the try catch environment later:
+      tc_env = list()
+      for(ename in enames){
+        element = state[["CTS"]][["elements"]][[ename]]
+        if(element[["isgood"]]){
+          hasrptele = TRUE
+          # Adding the current simres object to the trycatch environment
+          tc_env[[element[["simres_object_name"]]]] = 
+             element[["simres"]][["capture"]][[  element[["simres_object_name"]] ]]
+
+          # Adding the rx_details
+          tc_env[[element[["rx_details_object_name"]]]] = 
+            element[["rx_details"]]
+
+          if(rpttype %in% c("xlsx")){
+            code =c(code,
+              paste0('#  ',element[["ui"]][["element_name"]]),
+              paste0('rpt[["sheets"]][["', element[["sim_tc_object_name"]], '"]]=as.data.frame(',element[["simres_object_name"]], '[["simall"]])'),
+              paste0('rpt[["sheets"]][["', element[["sim_ev_object_name"]], '"]]=as.data.frame(',element[["simres_object_name"]], '[["ev_history"]])'),
+             "",
+                     'rpt[["summary"]] = rbind(rpt[["summary"]],',
+                     "  data.frame(",
+              paste0('    Sheet_Name="', element[["sim_tc_object_name"]], '",'),
+              paste0('    Description="',element[["ui"]][["element_name"]], ' (simulation)"'),
+                     "  )",
+                     ')',
+                     'rpt[["summary"]] = rbind(rpt[["summary"]],',
+                     "  data.frame(",
+              paste0('    Sheet_Name="', element[["sim_ev_object_name"]], '",'),
+              paste0('    Description="',element[["ui"]][["element_name"]], ' (event table)"'),
+                     "  )",
+                     ')'
+              )
+          }
+          if(rpttype %in% c("pptx", "docx")){
+            # Depending on the output type we add figures in a different way
+            if(rpttype == "pptx"){
+              rptele_intro = c(
+                       '  # Adding timecourse-slide', 
+                       '  rpt = onbrand::report_add_slide(rpt,                                                              ',
+                       '          template = "content_list",                                                                ',
+                       '          elements = list(                                                                          ',
+                paste0('            title        = list( content = ', deparse(element[["ui"]][["element_name"]]),',         '),
+                       '                                 type    = "text"),                                                 ',
+                paste0('            sub_title    = list( content = ', deparse(element[["model_label"]]),         ',         '),
+                       '                                 type    = "text"),                                                 ',
+                paste0('            content_body = list( content = ',element[["rx_details_object_name"]], '[["list_info"]], '),
+                       '                                 type    = "list")))                                                ',
+              "")
+
+              rptele_tc = c(
+                       '  # Building out the figure titles',
+                paste0('  if(',element[["fgtc_object_name"]],'[["npages"]] > 1){'),
+                paste0("    tmp_title      = ", deparse(state[["MC"]][["reporting"]][["figures"]][["tc"]][["title_multiple"     ]])),
+                paste0("    tmp_sub_title  = ", deparse(state[["MC"]][["reporting"]][["figures"]][["tc"]][["sub_title_multiple" ]])),
+                       '  } else {',
+                paste0("    tmp_title      = ", deparse(state[["MC"]][["reporting"]][["figures"]][["tc"]][["title_single"       ]])),
+                paste0("    tmp_sub_title  = ", deparse(state[["MC"]][["reporting"]][["figures"]][["tc"]][["sub_title_single"   ]])),
+                       "  }",
+                paste0('  tmp_title     = stringr::str_replace_all(tmp_title,     "===CHTDESC===", ', deparse(element[["ui"]][["element_name"]]),')'),
+                paste0('  tmp_title     = stringr::str_replace_all(tmp_title,     "===FIGNUM===",  as.character(fg_page))'),
+                paste0('  tmp_title     = stringr::str_replace_all(tmp_title,     "===FIGTOT===",  as.character(', element[["fgtc_object_name"]],'[["npages"]]))'),
+                paste0('  tmp_sub_title = stringr::str_replace_all(tmp_sub_title, "===CHTDESC===", ', deparse(element[["ui"]][["element_name"]]),')'),
+                paste0('  tmp_sub_title = stringr::str_replace_all(tmp_sub_title, "===FIGNUM===",  as.character(fg_page))'),
+                paste0('  tmp_sub_title = stringr::str_replace_all(tmp_sub_title, "===FIGTOT===",  as.character(', element[["fgtc_object_name"]],'[["npages"]]))'),
+                       '     ',
+                       '  # Adding timecourse-slide', 
+                       '  rpt = onbrand::report_add_slide(rpt,                                                   ',
+                       '          template = "content_list",                                                     ',
+                       '          elements = list(                                                               ',
+                       '            title        = list( content = tmp_title,                                    ',
+                       '                                 type    = "text"),                                      ',
+                       '            sub_title    = list( content = tmp_sub_title,                                ',
+                       '                                 type    = "text"),                                      ',
+                paste0('            content_body = list( content = ', element[["fgtc_object_name"]],'[["fig"]],  '),
+                       '                                 type    = "ggplot")))                                   ',
+                "")
+              rptele_ev = c(
+                       '  # Building out the figure titles',
+                paste0('  if(',element[["fgev_object_name"]],'[["npages"]] > 1){'),
+                paste0("    tmp_title      = ", deparse(state[["MC"]][["reporting"]][["figures"]][["ev"]][["title_multiple"     ]])),
+                paste0("    tmp_sub_title  = ", deparse(state[["MC"]][["reporting"]][["figures"]][["ev"]][["sub_title_multiple" ]])),
+                       '  } else {',
+                paste0("    tmp_title      = ", deparse(state[["MC"]][["reporting"]][["figures"]][["ev"]][["title_single"       ]])),
+                paste0("    tmp_sub_title  = ", deparse(state[["MC"]][["reporting"]][["figures"]][["ev"]][["sub_title_single"   ]])),
+                       "  }",
+                paste0('  tmp_title     = stringr::str_replace_all(tmp_title,     "===CHTDESC===", ', deparse(element[["ui"]][["element_name"]]),')'),
+                paste0('  tmp_title     = stringr::str_replace_all(tmp_title,     "===FIGNUM===",  as.character(fg_page))'),
+                paste0('  tmp_title     = stringr::str_replace_all(tmp_title,     "===FIGTOT===",  as.character(', element[["fgev_object_name"]],'[["npages"]]))'),
+                paste0('  tmp_sub_title = stringr::str_replace_all(tmp_sub_title, "===CHTDESC===", ', deparse(element[["ui"]][["element_name"]]),')'),
+                paste0('  tmp_sub_title = stringr::str_replace_all(tmp_sub_title, "===FIGNUM===",  as.character(fg_page))'),
+                paste0('  tmp_sub_title = stringr::str_replace_all(tmp_sub_title, "===FIGTOT===",  as.character(', element[["fgev_object_name"]],'[["npages"]]))'),
+                       '     ',
+                       '  # Adding timecourse-slide', 
+                       '  rpt = onbrand::report_add_slide(rpt,                                                   ',
+                       '          template = "content_list",                                                     ',
+                       '          elements = list(                                                               ',
+                       '            title        = list( content = tmp_title,                                    ',
+                       '                                 type    = "text"),                                      ',
+                       '            sub_title    = list( content = tmp_sub_title,                                ',
+                       '                                 type    = "text"),                                      ',
+                paste0('            content_body = list( content = ', element[["fgev_object_name"]],'[["fig"]],  '),
+                       '                                 type    = "ggplot")))                                   ',
+                "")
+            }
+
+            if(rpttype == "docx"){
+              rptele_intro = NULL
+              rptele_tc    = c(
+                       '  # Building out the figure titles',
+                paste0('  if(',element[["fgtc_object_name"]],'[["npages"]] > 1){'),
+                paste0("    tmp_caption    = ", deparse(state[["MC"]][["reporting"]][["figures"]][["tc"]][["caption_multiple"     ]])),
+                       '  } else {',
+                paste0("    tmp_caption    = ", deparse(state[["MC"]][["reporting"]][["figures"]][["tc"]][["caption_single"       ]])),
+                       "  }",
+                paste0('  tmp_caption   = stringr::str_replace_all(tmp_caption,   "===CHTDESC===", ', deparse(element[["ui"]][["element_name"]]),')'),
+                paste0('  tmp_caption   = stringr::str_replace_all(tmp_caption,   "===FIGNUM===",  as.character(fg_page))'),
+                paste0('  tmp_caption   = stringr::str_replace_all(tmp_caption,   "===FIGTOT===",  as.character(', element[["fgtc_object_name"]],'[["npages"]]))'),
+                paste0('# Inserting figure'),
+                       'rpt = onbrand::report_add_doc_content(rpt,',
+                       '        type     = "ggplot",',
+                       '        content  = list(',
+                paste0('          image           =  ', element[["fgtc_object_name"]], '[["fig"]],'),
+                paste0('          key             = "', element[["fgtc_object_name"]],'",'),
+                paste0('          caption_format  = "text",'),
+                paste0('          caption         = tmp_caption))'),
+                       '# adding a page break',
+                       'rpt = onbrand::report_add_doc_content(rpt,',
+                       '        type    = "break",',
+                       '        content = NULL)',
+                       ' '
+                       )
+
+              rptele_ev    = c(
+                       '  # Building out the figure titles',
+                paste0('  if(',element[["fgev_object_name"]],'[["npages"]] > 1){'),
+                paste0("    tmp_caption    = ", deparse(state[["MC"]][["reporting"]][["figures"]][["ev"]][["caption_multiple"     ]])),
+                       '  } else {',
+                paste0("    tmp_caption    = ", deparse(state[["MC"]][["reporting"]][["figures"]][["ev"]][["caption_single"       ]])),
+                       "  }",
+                paste0('  tmp_caption   = stringr::str_replace_all(tmp_caption,   "===CHTDESC===", ', deparse(element[["ui"]][["element_name"]]),')'),
+                paste0('  tmp_caption   = stringr::str_replace_all(tmp_caption,   "===FIGNUM===",  as.character(fg_page))'),
+                paste0('  tmp_caption   = stringr::str_replace_all(tmp_caption,   "===FIGTOT===",  as.character(', element[["fgev_object_name"]],'[["npages"]]))'),
+                paste0('# Inserting figure'),
+                       'rpt = onbrand::report_add_doc_content(rpt,',
+                       '        type     = "ggplot",',
+                       '        content  = list(',
+                paste0('          image           =  ', element[["fgev_object_name"]], '[["fig"]],'),
+                paste0('          key             = "', element[["fgev_object_name"]],'",'),
+                paste0('          caption_format  = "text",'),
+                paste0('          caption         = tmp_caption))'),
+                       '# adding a page break',
+                       'rpt = onbrand::report_add_doc_content(rpt,',
+                       '        type    = "break",',
+                       '        content = NULL)',
+                       ' '
+                       )
+            }
+
+            code = c(code, 
+                       rptele_intro,
+                paste0('# ', element[["ui"]][["element_name"]]),
+                       'fg_page = 1',
+                       'while(fg_page>0){',
+                       element[["code_figtc_rpt"]],
+                       rptele_tc,
+                       '  # When we reach the last page this will kick us out',
+                paste0('  if(fg_page == ',element[["fgtc_object_name"]],'[["npages"]]){'),
+                       '    fg_page = 0', 
+                       '  }else{',
+                       '    fg_page = fg_page+1', 
+                       '  }',
+                       '}',
+                       '',
+                       'fg_page = 1',
+                       'while(fg_page>0){',
+                       element[["code_figev_rpt"]],
+                       rptele_ev,
+                       '  # When we reach the last page this will kick us out',
+                paste0('  if(fg_page == ',element[["fgtc_object_name"]],'[["npages"]]){'),
+                       '    fg_page = 0', 
+                       '  }else{',
+                       '    fg_page = fg_page+1', 
+                       '  }',
+                       '}')
+          }
+        }
+      }
+    }
+  }
+
+  code = paste0(code, collapse="\n")
+  if(hasrptele & !gen_code_only){
+    tc_env[["rpt"]] = rpt
+    tc_res = formods::FM_tc(capture="rpt", cmd=code, tc_env = tc_env)
+    if(tc_res[["isgood"]]){
+      rpt = tc_res[["capture"]][["rpt"]]
+    } else {
+      formods::FM_le(state, "Failed to add report element: ")
+      if(!is.null(tc_res[["msgs"]])){
+        formods::FM_le(state, tc_res[["msgs"]])
+      }
+    }
   }
 
   res = list(
@@ -3364,10 +3569,12 @@ CTS_new_element = function(state){
 
   # Figuring out the default source model:
   source_model = ""
+  model_label = ""
   if( !is.null(state[["CTS"]][["MDL"]][["hasmdl"]]) ){
   if( state[["CTS"]][["MDL"]][["hasmdl"]] ){
     # This just uses the first one
     source_model = state[["CTS"]][["MDL"]][["catalog"]][["object"]][1]
+    model_label  = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["label"]]
   }}
 
   rx_details = NULL
@@ -3405,11 +3612,13 @@ CTS_new_element = function(state){
            ),
          id                     = element_id,
          idx                    = state[["CTS"]][["element_cntr"]],
+         model_label            = model_label,
          element_object_name    = element_object_name,
          cov_object_name        = paste0(element_object_name, "_cov"),
          rules_object_name      = paste0(element_object_name, "_rules"),
          subs_object_name       = paste0(element_object_name, "_subs"),
          rxopts_object_name     = paste0(element_object_name, "_rxopts"),
+         rx_details_object_name = paste0(element_object_name, "_rx_details"),
          simres_object_name     = paste0(element_object_name, "_simres"),
          sim_tc_object_name     = paste0(element_object_name, "_sim_tc"),
          sim_ev_object_name     = paste0(element_object_name, "_sim_ev"),
@@ -3647,22 +3856,24 @@ CTS_set_current_element    = function(state, element){
   msgs                = c()
 
   # These are the objects names used in the code
-  model_object        = "not_found"
-  cov_object_name     = element[["cov_object_name"]]
-  subs_object_name    = element[["subs_object_name"]]
-  rxopts_object_name  = element[["rxopts_object_name"]]
-  simres_object_name  = element[["simres_object_name"]]
-  sim_tc_object_name  = element[["sim_tc_object_name"]]
-  sim_ev_object_name  = element[["sim_ev_object_name"]]
-  rules_object_name   = element[["rules_object_name"]]
-  ot_object_name      = element[["ot_object_name"]]
-  fgtc_object_name    = element[["fgtc_object_name"]]
-  fgev_object_name    = element[["fgev_object_name"]]
+  model_object            = "not_found"
+  cov_object_name         = element[["cov_object_name"]]
+  subs_object_name        = element[["subs_object_name"]]
+  rxopts_object_name      = element[["rxopts_object_name"]]
+  rx_details_object_name  = element[["rx_details_object_name"]]
+  simres_object_name      = element[["simres_object_name"]]
+  sim_tc_object_name      = element[["sim_tc_object_name"]]
+  sim_ev_object_name      = element[["sim_ev_object_name"]]
+  rules_object_name       = element[["rules_object_name"]]
+  ot_object_name          = element[["ot_object_name"]]
+  fgtc_object_name        = element[["fgtc_object_name"]]
+  fgev_object_name        = element[["fgev_object_name"]]
 
   # These are the little code chunks that will be stacked to create the final
   # pieces of code for the element
   code_packages       =  paste0("library(", state[["MC"]][["code"]][["packages"]],")")
   code_model          = c()
+  code_rx_details     = c()
   code_cov            = c("",
                           "# Defining covariates",
                           paste0(cov_object_name, " = list()"))
@@ -3677,9 +3888,14 @@ CTS_set_current_element    = function(state, element){
 
   # updating the code elements
   source_model = element[["ui"]][["source_model"]]
+  model_label  = ""
   if(source_model %in% names(state[["CTS"]][["MDL"]][["mdl"]])){
-    code_model   = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["code"]]
-    model_object = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["rx_obj_name"]]
+    code_model      = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["code"]]
+    model_object    = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["rx_obj_name"]]
+    code_rx_details = c(
+             "", 
+             "# Fetching the system information",
+      paste0(rx_details_object_name, " = fetch_rxinfo(", model_object, ")" ))
   } else {
     ELE_ISGOOD = FALSE
     msgs = c(msgs, "Source model not found")
@@ -3867,13 +4083,41 @@ CTS_set_current_element    = function(state, element){
     ""
    )
 
-  element[["code_figtcev"]] = paste0(code_figtcev , collapse = "\n")
+  # Code to make the timecourse and event figures used in reporting
+  code_figtc_rpt =
+  c(
+    paste0('  # Plotting timecourse'),
+    paste0('  ', fgtc_object_name, ' =                                 '),
+    paste0('    plot_sr_tc(sro = ', simres_object_name, ','         ),
+    paste0('      fncol        = ', fncol,',                       '),
+    paste0('      fnrow        = ', fnrow,',                       '),
+    paste0('      dvcols       = ', deparse(dvcols),','          ),
+    paste0('      fpage        = fg_page)'),
+    ""
+   )
+  code_figev_rpt =
+  c(
+    paste0('  # Plotting events'),
+    paste0('  ', fgev_object_name, ' =                                 '),
+    paste0('    plot_sr_ev(sro = ', simres_object_name, ','         ),
+    paste0('      fncol        = ', fncol,',                       '),
+    paste0('      fnrow        = ', fnrow,',                       '),
+    paste0('      evplot       = ', deparse(evplot),','             ),
+    paste0('      fpage        = fg_page)'),
+    ""
+   )
+
+
+  element[["code_figtcev"]]   = paste0(code_figtcev , collapse = "\n")
+  element[["code_figtc_rpt"]] = code_figtc_rpt
+  element[["code_figev_rpt"]] = code_figev_rpt
 
   # Stand alone code to make the element
   element[["code"]]          = paste0(c(code_packages,
                                         "",
                                         "# Creating the model",
                                         code_model,
+                                        code_rx_details,
                                         code_cov,
                                         code_mksubs,
                                         code_rules,
@@ -3885,7 +4129,8 @@ CTS_set_current_element    = function(state, element){
 
 
   # code to do everything upto the simulation
-  element[["code_sim_only"]] = paste0(c(code_cov,
+  element[["code_sim_only"]] = paste0(c(code_rx_details,
+                                        code_cov,
                                         code_mksubs,
                                         code_rules,
                                         code_rxopts,
@@ -3896,7 +4141,8 @@ CTS_set_current_element    = function(state, element){
 
   # Code to make the element only assuming all the goodies it needs are
   # already defined
-  element[["code_ele_only"]] = paste0(c(code_cov,
+  element[["code_ele_only"]] = paste0(c(code_rx_details, 
+                                        code_cov,
                                         code_mksubs,
                                         code_rules,
                                         code_rxopts,
@@ -3965,10 +4211,6 @@ CTS_del_current_element    = function(state){
   }
 
 state}
-
-
-
-
 
 #'@export
 #'@title Fetches Simulation Parameter Meta Information
@@ -4045,5 +4287,8 @@ CTS_change_source_model   = function(state, element){
 
     # updating the rx_details
     element[["rx_details"]] = fetch_rxinfo(state[["CTS"]][["MDL"]][["mdl"]][[tmp_source_model]][["rx_obj"]])
+
+    # Upddating the model label
+    element[["model_label"]] = state[["CTS"]][["MDL"]][["mdl"]][[tmp_source_model]][["label"]]
 
 element}

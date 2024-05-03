@@ -28,9 +28,34 @@ MC:
     enabled: FALSE
     # Priority of reporting relative to other modules 
     # (higher numbers are reported first)
-    priority: 1
-  # put different formatting options (widths, heights,
-  # shinyWidgets button sizes, etc) here.
+    priority: 2
+    # The following placeholders can be used bu surrounding them with ===. For
+    # example to include the total number of figures you would use
+    # ===FIGTOT===:
+    #
+    # CHTDESC               Description of the cohort provided by the
+    #                       user in the UI (tables and figures).
+    #
+    # FIGNUM                Number of the current figure for figures that span
+    #                       multiple pages (figures only).
+    #
+    # FIGTOT                Total number of figures for figures that span
+    #                       multiple pages (figures only).
+    figures:
+      tc:
+        caption_single:     "===CHTDESC=== (Time-course)"
+        caption_multiple:   "===CHTDESC=== (Time-course, panel ===FIGNUM=== of ===FIGTOT===)"
+        title_single:       "===CHTDESC=== (Time-course)"
+        title_multiple:     "===CHTDESC=== (Time-course)"
+        sub_title_single:   ""
+        sub_title_multiple: "===FIGNUM=== of ===FIGTOT==="
+      ev:
+        caption_single:     "===CHTDESC=== (Event Table)"
+        caption_multiple:   "===CHTDESC=== (Event Table, ===FIGNUM=== of ===FIGTOT===)"
+        title_single:       "===CHTDESC=== (Event Table)"
+        title_multiple:     "===CHTDESC=== (Event Table)"
+        sub_title_single:   ""
+        sub_title_multiple: "===FIGNUM=== of ===FIGTOT==="
   formatting:
     # Dimensions of code snippet box
     code:

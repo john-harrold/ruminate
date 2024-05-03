@@ -1100,6 +1100,8 @@ res}
 #'@param object rxode2 model object  An ID string that corresponds with the ID used to call the modules UI elements
 #'@return  List with the following elements.
 #' \itemize{
+#' \item{isgood:} Boolean variable indicating if the model is good.
+#' \item{msgs:} Any messages from parsing the model.
 #' \item{elements:} List with names of simulation elements:
 #'   \itemize{
 #'   \item{covariates:} Names of the covariates in the system.
@@ -1107,6 +1109,10 @@ res}
 #'   \item{iiv:} Names of the iiv parameters in the system.
 #'   \item{states:} Names of the states/compartments in the system.
 #'   }
+#' \item{txt_info:} Summary information in text format.
+#' \item{list_info:} Summary information in list format used with onbrand
+#' reporting.
+#' \item{ht_info:} Summary information in HTML formot.
 #' }
 #'@example inst/test_apps/simulate_rules_funcs.R
 fetch_rxinfo <- function(object){
@@ -1114,6 +1120,7 @@ fetch_rxinfo <- function(object){
   isgood    = TRUE
   msgs      = c()
   txt_info  = c()
+  list_info = c()
   ht_info   = tagList()
 
   if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
@@ -1141,11 +1148,13 @@ fetch_rxinfo <- function(object){
     txt_info = c(txt_info, "Outputs\n")
     ht_info  = tagList(ht_info, tags$b("Outputs"), tags$br())
     if(length(outputs) > 0){
-      txt_info = c(txt_info, paste0(outputs, collapse=", "), "\n\n")
-      ht_info  = tagList(ht_info, paste0(outputs, collapse=", "), tags$br(), tags$br())
+      txt_info  = c(txt_info, paste0(outputs, collapse=", "), "\n\n")
+      ht_info   = tagList(ht_info, paste0(outputs, collapse=", "), tags$br(), tags$br())
+      list_info = c(list_info, 1, paste0("Outputs: ", paste0(outputs, collapse=", ")))
     } else{
       txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+      list_info = c(list_info, 1,"Outputs: None Found")
       isgood   = FALSE
       msgs = c(msgs, "No output information found.")
     }
@@ -1156,9 +1165,11 @@ fetch_rxinfo <- function(object){
     if(length(states) > 0){
       txt_info = c(txt_info, paste0(states, collapse=", "), "\n\n")
       ht_info  = tagList(ht_info, paste0(states, collapse=", "), tags$br(), tags$br())
+      list_info = c(list_info, 1, paste0("States: ", paste0(states, collapse=", ")))
     } else{
       txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+      list_info = c(list_info, 1,"States: None Found")
       isgood   = FALSE
       msgs = c(msgs, "No state/compartment information found.")
     }
@@ -1168,9 +1179,11 @@ fetch_rxinfo <- function(object){
     if(length(covariates) > 0){
       txt_info = c(txt_info, paste0(covariates, collapse=", "), "\n\n")
       ht_info  = tagList(ht_info, paste0(covariates, collapse=", "), tags$br(), tags$br())
+      list_info = c(list_info, 1, paste0("Covariates: ", paste0(covariates, collapse=", ")))
     } else{
       txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+      list_info = c(list_info, 1,"Covariates: None Found")
     }
     # Population parameters 
     txt_info = c(txt_info, "Population Parameters\n")
@@ -1178,9 +1191,11 @@ fetch_rxinfo <- function(object){
     if(length(population) > 0){
       txt_info = c(txt_info, paste0(population, collapse=", "), "\n\n")
       ht_info  = tagList(ht_info, paste0(population, collapse=", "), tags$br(), tags$br())
+      list_info = c(list_info, 1, paste0("Population Parameters: ", paste0(population, collapse=", ")))
     } else{
       txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+      list_info = c(list_info, 1,"Population Parameters: None Found")
     }
     # Individual parameters details
     txt_info = c(txt_info, "Individual Parameters\n")
@@ -1188,9 +1203,11 @@ fetch_rxinfo <- function(object){
     if(length(parameters) > 0){
       txt_info = c(txt_info, paste0(parameters, collapse=", "), "\n\n")
       ht_info  = tagList(ht_info, paste0(parameters, collapse=", "), tags$br(), tags$br())
+      list_info = c(list_info, 1, paste0("Individual Parameters: ", paste0(parameters, collapse=", ")))
     } else{
       txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+      list_info = c(list_info, 1,"Individual Parameters: None Found")
     }
     # Secondary parameters details
     txt_info = c(txt_info, "Secondary Parameters\n")
@@ -1198,9 +1215,11 @@ fetch_rxinfo <- function(object){
     if(length(secondary) > 0){
       txt_info = c(txt_info, paste0(secondary, collapse=", "), "\n\n")
       ht_info  = tagList(ht_info, paste0(secondary, collapse=", "), tags$br(), tags$br())
+      list_info = c(list_info, 1, paste0("Secondary Parameters: ", paste0(secondary, collapse=", ")))
     } else{
       txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+      list_info = c(list_info, 1,"Secondary Parameters: None Found")
     }
     # IIV details
     txt_info = c(txt_info, "Between-Subject Variability\n")
@@ -1208,9 +1227,11 @@ fetch_rxinfo <- function(object){
     if(length(iiv) > 0){
       txt_info = c(txt_info, paste0(iiv, collapse=", "), "\n\n")
       ht_info  = tagList(ht_info, paste0(iiv, collapse=", "), tags$br(), tags$br())
+      list_info = c(list_info, 1, paste0("Between-Subject Variability: ", paste0(iiv, collapse=", ")))
     } else{
       txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+      list_info = c(list_info, 1,"Between-Subject Variability: None Found")
     }
     # Error parameter details
     txt_info = c(txt_info, "Residual Error Parameters\n")
@@ -1218,9 +1239,11 @@ fetch_rxinfo <- function(object){
     if(length(residual_error) > 0){
       txt_info = c(txt_info, paste0(residual_error, collapse=", "), "\n\n")
       ht_info  = tagList(ht_info, paste0(residual_error, collapse=", "), tags$br(), tags$br())
+      list_info = c(list_info, 1, paste0("Residual Error Parameters: ", paste0(residual_error, collapse=", ")))
     } else{
       txt_info = c(txt_info, "None found\n\n")
       ht_info  = tagList(ht_info, tags$em("None found"), tags$br(), tags$br())
+      list_info = c(list_info, 1,"Residual Error Parameters: None Found")
     }
 
   } else {
@@ -1236,11 +1259,12 @@ fetch_rxinfo <- function(object){
 
 
   res = list(
-    isgood   = isgood,
-    msgs     = msgs,
-    elements = elements,
-    txt_info = paste0(txt_info, collapse=""),
-    ht_info  = ht_info)
+    isgood    = isgood,
+    msgs      = msgs,
+    elements  = elements,
+    txt_info  = paste0(txt_info, collapse=""),
+    list_info = list_info,
+    ht_info   = ht_info)
 res}
 
 
