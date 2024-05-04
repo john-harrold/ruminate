@@ -1443,9 +1443,56 @@ MB_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 
 
   # The MB module only supports the following report types:
-  supported_rpttypes = c("xlsx", "pptx", "docx")
+  supported_rpttypes = c("docx")
 
   if(rpttype %in% supported_rpttypes){
+    enames = names(state[["MB"]][["elements"]])
+    if(length(enames) > 0){
+      # This will hold objects for the try catch environment later:
+      tc_env = list()
+      for(ename in enames){
+        element = state[["MB"]][["elements"]][[ename]]
+        if(element[["isgood"]]){
+          hasrptele = TRUE
+
+          component       = MB_fetch_component(state, element)
+          tc_env[[ element[["fcn_obj_name"]] ]] =eval(parse(text=component[["fcn_def"]]))
+          
+          code = c(code,
+                paste0('# Inserting header with model description'),
+                       'rpt = onbrand::report_add_doc_content(rpt,',
+                       '        type     = "text",',
+                       '        content  = list(',
+                paste0('          text            =  ',deparse( element[["ui"]][["element_name"]]),','),
+                paste0('          style           = "Heading_2"))'),
+                "",
+                paste0('# Inserting the model code'),
+                paste0('fcn_lines = deparse(', element[["fcn_obj_name"]], ')'),
+                       'for(tmp_line in fcn_lines){',
+                       '  rpt = onbrand::report_add_doc_content(rpt,',
+                       '          type     = "text",',
+                       '          content  = list(',
+                paste0('            text            =  tmp_line,'),
+                paste0('            style           = "Code"))'),
+                       '}',
+                "")
+        }
+      }
+    }
+  }
+
+  code = paste0(code, collapse="\n")
+  if(hasrptele & !gen_code_only){
+    tc_env[["rpt"]] = rpt
+    tc_res = formods::FM_tc(capture="rpt", cmd=code, tc_env = tc_env)
+    if(tc_res[["isgood"]]){
+      rpt = tc_res[["capture"]][["rpt"]]
+    } else {
+      formods::FM_le(state, "Failed to add report element: ")
+      if(!is.null(tc_res[["msgs"]])){
+        formods::FM_le(state, tc_res[["msgs"]])
+      }
+    }
   }
 
   res = list(

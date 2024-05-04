@@ -116,8 +116,110 @@ the R-object for that dataset. Each element has the following structure:</p><ul>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># We need a module state:</span></span></span>
-<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="CTS_test_mksession.html">CTS_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># For more information see the Clinical Trial Simulation vignette:</span></span></span>
+<span class="r-in"><span><span class="co"># https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># None of this will work if rxode2 isn't installed:</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://formods.ubiquity.tools/" class="external-link">formods</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://formods.ubiquity.tools/reference/is_installed.html" class="external-link">is_installed</a></span><span class="op">(</span><span class="st">"rxode2"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># This will populate the session variable with the model building (MB) module</span></span></span>
+<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="MB_test_mksession.html">MB_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">[[</span><span class="st">"session"</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">id</span>     <span class="op">=</span> <span class="st">"CTS"</span></span></span>
+<span class="r-in"><span><span class="va">id_ASM</span> <span class="op">=</span> <span class="st">"ASM"</span></span></span>
+<span class="r-in"><span><span class="va">id_MB</span>  <span class="op">=</span> <span class="st">"MB"</span></span></span>
+<span class="r-in"><span><span class="va">input</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Configuration files</span></span></span>
+<span class="r-in"><span><span class="va">FM_yaml_file</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"formods"</span>, <span class="st">"templates"</span>, <span class="st">"formods.yaml"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">MOD_yaml_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"ruminate"</span>, <span class="st">"templates"</span>, <span class="st">"CTS.yaml"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_state.html">CTS_fetch_state</a></span><span class="op">(</span>id              <span class="op">=</span> <span class="va">id</span>,</span></span>
+<span class="r-in"><span>                        id_ASM          <span class="op">=</span> <span class="va">id_ASM</span>,</span></span>
+<span class="r-in"><span>                        id_MB           <span class="op">=</span> <span class="va">id_MB</span>,</span></span>
+<span class="r-in"><span>                        input           <span class="op">=</span> <span class="va">input</span>,</span></span>
+<span class="r-in"><span>                        session         <span class="op">=</span> <span class="va">session</span>,</span></span>
+<span class="r-in"><span>                        FM_yaml_file    <span class="op">=</span> <span class="va">FM_yaml_file</span>,</span></span>
+<span class="r-in"><span>                        MOD_yaml_file   <span class="op">=</span> <span class="va">MOD_yaml_file</span>,</span></span>
+<span class="r-in"><span>                        react_state     <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Fetch a list of the current element</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_current_element.html">CTS_fetch_current_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># You can modify the element</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"element_name"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="st">"A more descriptive name"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Defining the source model</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"source_model"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="st">"MB_obj_1_rx"</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_change_source_model.html">CTS_change_source_model</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ele</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Single visit</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"visit_times"</span><span class="op">]</span><span class="op">]</span>                 <span class="op">=</span> <span class="st">"0"</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"cts_config_nsteps"</span><span class="op">]</span><span class="op">]</span>           <span class="op">=</span> <span class="st">"5"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Creating a dosing rule</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"rule_condition"</span><span class="op">]</span><span class="op">]</span>           <span class="op">=</span> <span class="st">"time == 0"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"rule_type"</span><span class="op">]</span><span class="op">]</span>                <span class="op">=</span> <span class="st">"dose"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"action_dosing_state"</span><span class="op">]</span><span class="op">]</span>      <span class="op">=</span> <span class="st">"central"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"action_dosing_values"</span><span class="op">]</span><span class="op">]</span>     <span class="op">=</span> <span class="st">"c(1)"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"action_dosing_times"</span><span class="op">]</span><span class="op">]</span>      <span class="op">=</span> <span class="st">"c(0)"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"action_dosing_durations"</span><span class="op">]</span><span class="op">]</span>  <span class="op">=</span> <span class="st">"c(0)"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"rule_name"</span><span class="op">]</span><span class="op">]</span>                <span class="op">=</span> <span class="st">"Single_Dose"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Adding the rule:</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_add_rule.html">CTS_add_rule</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ele</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Appending the plotting details as well</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"fpage"</span><span class="op">]</span><span class="op">]</span>             <span class="op">=</span> <span class="st">"1"</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"dvcols"</span><span class="op">]</span><span class="op">]</span>            <span class="op">=</span> <span class="st">"Cc"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Reducing the number of subjects and steps to speed things up on CRAN</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"nsub"</span><span class="op">]</span><span class="op">]</span>              <span class="op">=</span> <span class="st">"2"</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"cts_config_nsteps"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="st">"5"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Putting the element back in the state forcing code generation</span></span></span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_set_current_element.html">CTS_set_current_element</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  state   <span class="op">=</span> <span class="va">state</span>,</span></span>
+<span class="r-in"><span>  element <span class="op">=</span> <span class="va">current_ele</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Now we pull out the current element, and simulate it</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_current_element.html">CTS_fetch_current_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">#current_ele = CTS_simulate_element(state, current_ele)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Next we plot the element</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_plot_element.html">CTS_plot_element</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ele</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Now we save those results back into the state:</span></span></span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_set_current_element.html">CTS_set_current_element</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  state   <span class="op">=</span> <span class="va">state</span>,</span></span>
+<span class="r-in"><span>  element <span class="op">=</span> <span class="va">current_ele</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># This will extract the code for the current module</span></span></span>
+<span class="r-in"><span><span class="va">code</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_code.html">CTS_fetch_code</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">code</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># This will update the checksum of the module state</span></span></span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_update_checksum.html">CTS_update_checksum</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Access the datasets generated from simulations</span></span></span>
+<span class="r-in"><span><span class="va">ds</span> <span class="op">=</span> <span class="fu">CTS_fetch_ds</span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># CTS_add_covariate</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"covariate_value"</span><span class="op">]</span><span class="op">]</span>            <span class="op">=</span> <span class="st">"70, .1"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"covariate_type_selected"</span><span class="op">]</span><span class="op">]</span>    <span class="op">=</span> <span class="st">"cont_lognormal"</span></span></span>
+<span class="r-in"><span><span class="va">state</span><span class="op">[[</span><span class="st">"CTS"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"selected_covariate"</span><span class="op">]</span><span class="op">]</span>         <span class="op">=</span> <span class="st">"WT"</span></span></span>
+<span class="r-in"><span><span class="va">current_ele</span> <span class="op">=</span> <span class="fu"><a href="CTS_add_covariate.html">CTS_add_covariate</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ele</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Creates a new empty element</span></span></span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_new_element.html">CTS_new_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Delete the current element</span></span></span>
+<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_del_current_element.html">CTS_del_current_element</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   dest:   file.path("config","report.docx")</span>
@@ -139,8 +241,8 @@ the R-object for that dataset. Each element has the following structure:</p><ul>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 5d5ac790c93f94ab10e43d133905ea85</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:f76007f1dc2d5e150413eed77fe4f7eb</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 82d976733e8860b844bded38015a4059</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:38c55ab7d2de78ffe3f8a8501ed76411</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.docx")</span>
@@ -150,141 +252,33 @@ the R-object for that dataset. Each element has the following structure:</p><ul>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.yaml")</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: f312310118fbc0d82246501049f0eac7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 38283a393f302de9b97ba6c84639520e</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: State initialized</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: f07847307239b964d91692e8b32808db</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: c462b0919a3c63afc12588f62e835a11</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 474b73d4e46accb09dace49019e26865</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 67085c0a2939439db1f6e4b9123e814f</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 8b7ef832249bdb946586fa9b02b596db</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: c3763952a51c7f44564b6448058cc876</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 3cce8f7adcc2fa8ee03fc3caf9470d7d</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: dd42c9a26614d3edfb85e3a2b0c062c6</span>
-<span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">state</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ds</span> <span class="op">=</span> <span class="fu">CTS_fetch_ds</span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ds</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $hasds</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $isgood</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $msgs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_tc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_tc$label</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> character(0)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_tc$MOD_TYPE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "CTS"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_tc$id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_tc$DS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    id   time       ka       cl       vc        kel           Cc     ipredSim</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  1   0.00 1.568312 3.007394 31.50039 0.09547165 3.174564e-02 3.174564e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   1   0.01 1.568312 3.007394 31.50039 0.09547165 3.171534e-02 3.171534e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31  1  25.00 1.568312 3.007394 31.50039 0.09547165 2.918198e-03 2.918198e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   1  50.00 1.568312 3.007394 31.50039 0.09547165 2.682523e-04 2.682523e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   1  75.00 1.568312 3.007394 31.50039 0.09547165 2.465879e-05 2.465879e-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   1 100.00 1.568312 3.007394 31.50039 0.09547165 2.266722e-06 2.266722e-06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   2   0.00 1.568312 2.258416 31.50039 0.07169486 3.174564e-02 3.174564e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   2   0.01 1.568312 2.258416 31.50039 0.07169486 3.172288e-02 3.172288e-02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   2  25.00 1.568312 2.258416 31.50039 0.07169486 5.287709e-03 5.287709e-03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  2  50.00 1.568312 2.258416 31.50039 0.07169486 8.807459e-04 8.807459e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  2  75.00 1.568312 2.258416 31.50039 0.07169486 1.467008e-04 1.467008e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  2 100.00 1.568312 2.258416 31.50039 0.07169486 2.443510e-05 2.443510e-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             sim depot      central Single_Dose</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 3.217246e-03     0 1.000000e+00        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  4.717418e-02     0 9.990457e-01        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 1.981518e-03     0 9.192439e-02        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  3.345132e-04     0 8.450054e-03        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  3.219750e-05     0 7.767614e-04        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2.587942e-06     0 7.140263e-05        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2.675555e-02     0 1.000000e+00        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  8.676035e-03     0 9.992833e-01        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  7.611851e-03     0 1.665649e-01        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1.358158e-03     0 2.774384e-02        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 1.777412e-04     0 4.621132e-03        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 3.178687e-05     0 7.697152e-04        true</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_tc$DSMETA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Timecourse"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_tc$code</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "\n# Defining covariates\nCTS_obj_1_cov = list()\n\n# Generating the subjects\nCTS_obj_1_subs = mk_subjects(object = MB_obj_1_rx,\n  nsub   = 2,\n  covs   = CTS_obj_1_cov)\n\n# Creating rules\nCTS_obj_1_rules = list()\n\nCTS_obj_1_rules[[\"Single_Dose\"]] = \nlist(condition = \"time == 0\", action = list(type = \"dose\", state = \"central\", \n    values = \"c(1)\", times = \"c(0)\", durations = \"c(0)\"))\n\n# rxSolve options\nCTS_obj_1_rxopts = list(\n  atol = 1e-8,\n  rtol = 1e-6,\n  sigdig = NULL)\n\n# Output times\nCTS_obj_1_output_times = formods::linspace(0,100,5)\n\n# Running simulation\nCTS_obj_1_simres =                                 \n simulate_rules(object        = MB_obj_1_rx,\n                subjects      = CTS_obj_1_subs[[\"subjects\"]],\n                eval_times    = c(0),\n                output_times  = CTS_obj_1_output_times,\n                rules         = CTS_obj_1_rules,\n                rx_options    = CTS_obj_1_rxopts)\n# Collecting the simulation and event history values\nCTS_obj_1_sim_tc = CTS_obj_1_simres[[\"simall\"]]\nCTS_obj_1_sim_ev = CTS_obj_1_simres[[\"ev_history\"]]\n"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_tc$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "dd42c9a26614d3edfb85e3a2b0c062c6"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_tc$DSchecksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "edc19386a0709503304dfd094af35e38"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_ev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_ev$label</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> character(0)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_ev$MOD_TYPE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "CTS"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_ev$id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_ev$DS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">── EventTable with 18 records ──</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 dosing records (see $<span style="color: #0000BB;">get.dosing</span>(); add with <span style="color: #0000BB;">add.dosing</span> or <span style="color: #0000BB;">et</span>)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 observation times (see $<span style="color: #0000BB;">get.sampling</span>(); add with <span style="color: #0000BB;">add.sampling</span> or <span style="color: #0000BB;">et</span>)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">── First part of : ──</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       id   time cmt       amt evid                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;evid&gt;</span>                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1   0    Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     1   0    central     1 <span style="color: #0000BB; font-weight: bold;">1</span>:<span style="color: #BBBB00;">Dose (Add)</span>                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     1   0    depot       0 <span style="color: #0000BB; font-weight: bold;">4</span>:<span style="color: #BB0000;">Reset</span>&amp;<span style="color: #BBBB00;">Dose</span>                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     1   0    central     0 <span style="color: #0000BB; font-weight: bold;">4</span>:<span style="color: #BB0000;">Reset</span>&amp;<span style="color: #BBBB00;">Dose</span>                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     1   0.01 Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     1  25    Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     1  50    Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     1  75    Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     1 100    Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     2   0    Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>     2   0    central     1 <span style="color: #0000BB; font-weight: bold;">1</span>:<span style="color: #BBBB00;">Dose (Add)</span>                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>     2   0    depot       0 <span style="color: #0000BB; font-weight: bold;">4</span>:<span style="color: #BB0000;">Reset</span>&amp;<span style="color: #BBBB00;">Dose</span>                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>     2   0    central     0 <span style="color: #0000BB; font-weight: bold;">4</span>:<span style="color: #BB0000;">Reset</span>&amp;<span style="color: #BBBB00;">Dose</span>                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>     2   0.01 Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>     2  25    Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>     2  50    Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>     2  75    Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>     2 100    Cc         <span style="color: #BB0000;">NA</span> <span style="color: #0000BB; font-weight: bold;">0</span>:<span style="color: #BBBBBB;">Observation</span>               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_ev$DSMETA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Events"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_ev$code</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "\n# Defining covariates\nCTS_obj_1_cov = list()\n\n# Generating the subjects\nCTS_obj_1_subs = mk_subjects(object = MB_obj_1_rx,\n  nsub   = 2,\n  covs   = CTS_obj_1_cov)\n\n# Creating rules\nCTS_obj_1_rules = list()\n\nCTS_obj_1_rules[[\"Single_Dose\"]] = \nlist(condition = \"time == 0\", action = list(type = \"dose\", state = \"central\", \n    values = \"c(1)\", times = \"c(0)\", durations = \"c(0)\"))\n\n# rxSolve options\nCTS_obj_1_rxopts = list(\n  atol = 1e-8,\n  rtol = 1e-6,\n  sigdig = NULL)\n\n# Output times\nCTS_obj_1_output_times = formods::linspace(0,100,5)\n\n# Running simulation\nCTS_obj_1_simres =                                 \n simulate_rules(object        = MB_obj_1_rx,\n                subjects      = CTS_obj_1_subs[[\"subjects\"]],\n                eval_times    = c(0),\n                output_times  = CTS_obj_1_output_times,\n                rules         = CTS_obj_1_rules,\n                rx_options    = CTS_obj_1_rxopts)\n# Collecting the simulation and event history values\nCTS_obj_1_sim_tc = CTS_obj_1_simres[[\"simall\"]]\nCTS_obj_1_sim_ev = CTS_obj_1_simres[[\"ev_history\"]]\n"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_ev$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "dd42c9a26614d3edfb85e3a2b0c062c6"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ds$CTS_obj_1_sim_ev$DSchecksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2152329158c081210a67850665e6cf62"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 7ae60e615c0b3e59514fcd14363cb654</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: c428a476e082dbcd9f4b96c971482d49</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_plot_element()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Plotting timecourse</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_fgtc =                                 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   plot_sr_tc(sro = CTS_obj_1_simres,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fncol        = 4,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fnrow        = 2,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     dvcols       = "Cc",</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fpage        = 1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Plotting events</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_fgev =                                 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   plot_sr_ev(sro = CTS_obj_1_simres,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fncol        = 4,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fnrow        = 2,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     evplot       = 1,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fpage        = 1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: You need to run the simulation first.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 83e39523e5cfb24ba9bbe88b5047e8db</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: aef7266cb25b641357ec3e3ad154e7b4</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

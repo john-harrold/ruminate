@@ -36,11 +36,108 @@ Fetches the datasets produced by the module. For each cohort
 this will be the simulation timecourse and the event table
 }
 \examples{
-# We need a module state:
-sess_res = CTS_test_mksession(session=list(), full_session=FALSE)
-state = sess_res$state
+# For more information see the Clinical Trial Simulation vignette:
+# https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html
 
+# None of this will work if rxode2 isn't installed:
+library(formods)
+if(is_installed("rxode2")){
+
+# This will populate the session variable with the model building (MB) module
+sess_res = MB_test_mksession(session=list(), full_session=FALSE)
+session = sess_res[["session"]]
+
+id     = "CTS"
+id_ASM = "ASM"
+id_MB  = "MB"
+input  = list()
+
+# Configuration files
+FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
+MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml")
+
+state = CTS_fetch_state(id              = id,
+                        id_ASM          = id_ASM,
+                        id_MB           = id_MB,
+                        input           = input,
+                        session         = session,
+                        FM_yaml_file    = FM_yaml_file,
+                        MOD_yaml_file   = MOD_yaml_file,
+                        react_state     = NULL)
+
+
+# Fetch a list of the current element
+current_ele = CTS_fetch_current_element(state)
+
+# You can modify the element
+current_ele[["element_name"]] = "A more descriptive name"
+
+# Defining the source model
+state[["CTS"]][["ui"]][["source_model"]] = "MB_obj_1_rx"
+current_ele = CTS_change_source_model(state, current_ele)
+
+# Single visit
+current_ele[["ui"]][["visit_times"]]                 = "0"
+current_ele[["ui"]][["cts_config_nsteps"]]           = "5"
+
+# Creating a dosing rule
+state[["CTS"]][["ui"]][["rule_condition"]]           = "time == 0"
+state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
+state[["CTS"]][["ui"]][["action_dosing_state"]]      = "central"
+state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(1)"
+state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0)"
+state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0)"
+state[["CTS"]][["ui"]][["rule_name"]]                = "Single_Dose"
+
+# Adding the rule:
+current_ele = CTS_add_rule(state, current_ele)
+
+# Appending the plotting details as well
+current_ele[["ui"]][["fpage"]]             = "1"
+current_ele[["ui"]][["dvcols"]]            = "Cc"
+
+# Reducing the number of subjects and steps to speed things up on CRAN
+current_ele[["ui"]][["nsub"]]              = "2"
+current_ele[["ui"]][["cts_config_nsteps"]] = "5"
+
+# Putting the element back in the state forcing code generation
+state = CTS_set_current_element(
+  state   = state,
+  element = current_ele)
+
+# Now we pull out the current element, and simulate it
+current_ele = CTS_fetch_current_element(state)
+#current_ele = CTS_simulate_element(state, current_ele)
+
+# Next we plot the element
+current_ele = CTS_plot_element(state, current_ele)
+
+# Now we save those results back into the state:
+state = CTS_set_current_element(
+  state   = state,
+  element = current_ele)
+
+# This will extract the code for the current module
+code = CTS_fetch_code(state)
+code
+
+# This will update the checksum of the module state
+state = CTS_update_checksum(state)
+
+
+# Access the datasets generated from simulations
 ds = CTS_fetch_ds(state)
 
-ds
+# CTS_add_covariate
+state[["CTS"]][["ui"]][["covariate_value"]]            = "70, .1"
+state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "cont_lognormal"
+state[["CTS"]][["ui"]][["selected_covariate"]]         = "WT"
+current_ele = CTS_add_covariate(state, current_ele)
+
+# Creates a new empty element
+state = CTS_new_element(state)
+
+# Delete the current element
+state = CTS_del_current_element(state)
+}
 }

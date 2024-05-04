@@ -12,6 +12,8 @@ fetch_rxinfo(object)
 \value{
 List with the following elements.
 \itemize{
+\item{isgood:} Boolean variable indicating if the model is good.
+\item{msgs:} Any messages from parsing the model.
 \item{elements:} List with names of simulation elements:
 \itemize{
 \item{covariates:} Names of the covariates in the system.
@@ -19,6 +21,10 @@ List with the following elements.
 \item{iiv:} Names of the iiv parameters in the system.
 \item{states:} Names of the states/compartments in the system.
 }
+\item{txt_info:} Summary information in text format.
+\item{list_info:} Summary information in list format used with onbrand
+reporting.
+\item{ht_info:} Summary information in HTML formot.
 }
 }
 \description{
