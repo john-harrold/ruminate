@@ -278,7 +278,6 @@ NCA_Server <- function(id,
                              id_DW           = id_DW,
                              react_state     = react_state)
 
-
       current_ana = NCA_fetch_current_ana(state)
 
       value       = current_ana[["key"]]
@@ -3571,6 +3570,7 @@ NCA_fetch_state = function(id, input, session,
     current_ana = NCA_fetch_current_ana(state)
 
     if(state[["NCA"]][["ui"]][["text_ana_key"]] != ""){
+
       # Resetting the key
       current_ana[["key"]] = state[["NCA"]][["ui"]][["text_ana_key"]]
 
@@ -3598,6 +3598,8 @@ NCA_fetch_state = function(id, input, session,
 
     # Saving changes to the current analysis
     state = NCA_set_current_ana(state, current_ana)
+
+    # Setting holds to ensure any key changes are made
     state = set_hold(state)
 
     notify_text = paste(

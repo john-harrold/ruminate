@@ -135,3 +135,8 @@ You can use this to pull the image from DockerHub:
 ``` bash
 docker pull <username>/ruminate:latest
 ```
+
+## Deployment and Customization
+
+If you want to deploy and customize ruminate, please see the [Deployment
+vignette](https://ruminate.ubiquity.tools/articles/deployment.html).

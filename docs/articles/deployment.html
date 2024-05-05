@@ -189,6 +189,44 @@ to use the new configuration file.</p>
 <code class="sourceCode R"><span><span class="va">NCA.yaml</span>      <span class="op">=</span> <span class="st">"myNCA.yaml"</span></span></code></pre></div>
 <p>You can do the same thing for the other modules as well.</p>
 </div>
+<div class="section level3">
+<h3 id="reporting-templates">Reporting Templates<a class="anchor" aria-label="anchor" href="#reporting-templates"></a>
+</h3>
+<p>To use your own organizational templates you need to create
+<code>onbrand</code> Word and PowerPoint templates using the methods
+described here:</p>
+<ul>
+<li><a href="https://onbrand.ubiquity.tools/articles/Custom_Office_Templates.html" class="external-link">Creating
+onbrand templates</a></li>
+<li><a href="https://formods.ubiquity.tools/articles/included_modules.html#avialable-modules" class="external-link">formods
+reporting templates</a></li>
+</ul>
+<p>Place the Word (<code>report.docx</code>), PowerPoint
+(<code>report.pptx</code>), and YAML (<code>report.yaml</code>) files in
+a <code>templates</code> directory. Then you need to create a copy of
+the <code>formods</code> YAML file in the deployment folder.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"formods"</span>, <span class="st">"templates"</span>,  <span class="st">"formods.yaml"</span><span class="op">)</span>,</span>
+<span>          to   <span class="op">=</span> <span class="st">"myformods.yaml"</span><span class="op">)</span></span></code></pre></div>
+<p>Next you need to edit the <code>myformods.yaml</code> file to ensure
+those new files are used by editing the <code>include</code> section to
+update the sources for each file. See below:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">FM</span><span class="op">:</span> </span>
+<span>  <span class="va">include</span><span class="op">:</span></span>
+<span>    <span class="va">files</span><span class="op">:</span></span>
+<span>    <span class="op">-</span> <span class="va">file</span><span class="op">:</span></span>
+<span>        <span class="va">source</span><span class="op">:</span> <span class="st">'file.path(".", "templates", "report.docx")'</span></span>
+<span>        <span class="va">dest</span><span class="op">:</span>   <span class="st">'file.path("config","report.docx")'</span></span>
+<span>    <span class="op">-</span> <span class="va">file</span><span class="op">:</span></span>
+<span>        <span class="va">source</span><span class="op">:</span> <span class="st">'file.path(".", "templates", "report.pptx")'</span></span>
+<span>        <span class="va">dest</span><span class="op">:</span>   <span class="st">'file.path("config","report.pptx")'</span></span>
+<span>    <span class="op">-</span> <span class="va">file</span><span class="op">:</span></span>
+<span>        <span class="va">source</span><span class="op">:</span> <span class="st">'file.path(".", "templates", "report.yaml")'</span></span>
+<span>        <span class="va">dest</span><span class="op">:</span>   <span class="st">'file.path("config","report.yaml")'</span></span></code></pre></div>
+<p>Then change the <code>App.R</code> file to point to the new
+<code>myformods.yaml</code> file.</p>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

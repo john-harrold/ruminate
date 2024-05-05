@@ -113,3 +113,39 @@ NCA.yaml      = "myNCA.yaml"
 ```
 
 You can do the same thing for the other modules as well.
+
+## Reporting Templates
+
+To use your own organizational templates you need to create `onbrand` Word and
+PowerPoint templates using the methods described here:
+
+- [Creating onbrand templates](https://onbrand.ubiquity.tools/articles/Custom_Office_Templates.html)
+- [formods reporting templates](https://formods.ubiquity.tools/articles/included_modules.html#avialable-modules)
+
+Place the Word (`report.docx`), PowerPoint (`report.pptx`), and YAML (`report.yaml`) files
+in a `templates` directory. Then you need to create a copy of the `formods` YAML file
+in the deployment folder. 
+
+```{r, eval=FALSE}
+file.copy(from = system.file(package="formods", "templates",  "formods.yaml"),
+          to   = "myformods.yaml")
+```
+
+Next you need to edit the `myformods.yaml` file to ensure those new files are used by editing the `include` section to update the sources for each file. See below:
+
+```{r, eval=FALSE}
+FM: 
+  include:
+    files:
+    - file:
+        source: 'file.path(".", "templates", "report.docx")'
+        dest:   'file.path("config","report.docx")'
+    - file:
+        source: 'file.path(".", "templates", "report.pptx")'
+        dest:   'file.path("config","report.pptx")'
+    - file:
+        source: 'file.path(".", "templates", "report.yaml")'
+        dest:   'file.path("config","report.yaml")'
+```
+
+Then change the `App.R` file to point to the new `myformods.yaml` file.
