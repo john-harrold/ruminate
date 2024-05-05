@@ -3573,6 +3573,17 @@ NCA_fetch_state = function(id, input, session,
     if(state[["NCA"]][["ui"]][["text_ana_key"]] != ""){
       # Resetting the key
       current_ana[["key"]] = state[["NCA"]][["ui"]][["text_ana_key"]]
+
+      # If the key is the same as the ID (the default value) then we name it
+      # the same as the data view being used:
+      if(current_ana[["key"]] == current_ana[["id"]]){
+        ana_dsview = state[["NCA"]][["ui"]][["select_current_view"]]
+        if(!is.null(state[["NCA"]][["DSV"]][["ds"]][[ ana_dsview ]][["label"]])){
+          if(state[["NCA"]][["DSV"]][["ds"]][[ ana_dsview ]][["label"]] != ""){
+            current_ana[["key"]] = state[["NCA"]][["DSV"]][["ds"]][[ ana_dsview ]][["label"]]
+          }
+        }
+      }
     } else {
       # returning an error
       msgs = c(msgs,
@@ -3587,6 +3598,7 @@ NCA_fetch_state = function(id, input, session,
 
     # Saving changes to the current analysis
     state = NCA_set_current_ana(state, current_ana)
+    state = set_hold(state)
 
     notify_text = paste(
            tagList(paste0("Caption: ", current_ana[["key"]], ", " ),
@@ -3595,7 +3607,7 @@ NCA_fetch_state = function(id, input, session,
                         collapse="\n")
 
 
-    state = FM_set_notification(state, notify_text, "Interval Added", "info")
+    state = FM_set_notification(state, notify_text, "Analysis saved", "info")
 
 
     # Saving the button state to the counter

@@ -111,6 +111,8 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">NCA_fetch_np_meta</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> NCA: Parameter specified in YAML is not a valid PKNCA parameter: vd.obs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> NCA: Parameter specified in YAML is not a valid PKNCA parameter: vd.pred</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $choices</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $choices$`Common Parameters`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $choices$`Common Parameters`$AUCall</span>
@@ -403,12 +405,6 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> $choices$Other$Tlast</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "tlast"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $choices$Other$`Vd (based on Clast,obs)`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "vd.obs"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $choices$Other$`Vd (based on Clast,pred)`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "vd.pred"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $choices$Other$`Vss (for IV dosing, based on AUClast)`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "vss.iv.last"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -539,18 +535,16 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 94            time_above</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 95                  tlag</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 96                 tlast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97                vd.obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98               vd.pred</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99           vss.iv.last</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100           vss.iv.obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 101          vss.iv.pred</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 102             vss.last</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 103           vss.md.obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 104          vss.md.pred</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 105              vss.obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 106             vss.pred</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 107               vz.obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108              vz.pred</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97           vss.iv.last</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98            vss.iv.obs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99           vss.iv.pred</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100             vss.last</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101           vss.md.obs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102          vss.md.pred</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103              vss.obs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104             vss.pred</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105               vz.obs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106              vz.pred</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                        text</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                    AUCall</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                  r² (Adj)</span>
@@ -648,18 +642,16 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 94                                 Time above Concentration</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 95                                                     Tlag</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 96                                                    Tlast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97                                  Vd (based on Clast,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98                                 Vd (based on Clast,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99                    Vss (for IV dosing, based on AUClast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100                Vss (for IV dosing, based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 101               Vss (for IV dosing, based on AUCinf,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 102                                  Vss (based on AUClast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 103             Vss (for multiple-dose, based on Clast,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 104            Vss (for multiple-dose, based on Clast,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 105                               Vss (based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 106                              Vss (based on AUCinf,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 107                                Vz (based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108                               Vz (based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97                    Vss (for IV dosing, based on AUClast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                 Vss (for IV dosing, based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99                Vss (for IV dosing, based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100                                  Vss (based on AUClast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101             Vss (for multiple-dose, based on Clast,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102            Vss (for multiple-dose, based on Clast,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103                               Vss (based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104                              Vss (based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105                                Vz (based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106                               Vz (based on AUCinf,pred)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                 md</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                         AUC~all~</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                        Adj. R^2^</span>
@@ -757,18 +749,16 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 94                           t~ab~</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 95                          t~lag~</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 96                         t~last~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97                        V~d,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98                       V~d,pred~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99                   V~ss,iv,last~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100                   V~ss,iv,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 101                  V~ss,iv,pred~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 102                  V~ss,iv,last~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 103                   V~ss,md,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 104                  V~ss,md,pred~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 105                      V~ss,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 106                     V~ss,pred~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 107                       V~z,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108                      V~z,pred~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97                   V~ss,iv,last~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                    V~ss,iv,obs~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99                   V~ss,iv,pred~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100                  V~ss,iv,last~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101                   V~ss,md,obs~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102                  V~ss,md,pred~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103                      V~ss,obs~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104                     V~ss,pred~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105                       V~z,obs~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106                      V~z,pred~</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                       latex</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                    AUCall</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                               $r^2_{adj}$</span>
@@ -866,18 +856,16 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 94                                 Time above Concentration</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 95                                                     Tlag</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 96                                                    Tlast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97                                  Vd (based on Clast,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98                                 Vd (based on Clast,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99                    Vss (for IV dosing, based on AUClast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100                Vss (for IV dosing, based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 101               Vss (for IV dosing, based on AUCinf,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 102                                  Vss (based on AUClast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 103             Vss (for multiple-dose, based on Clast,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 104            Vss (for multiple-dose, based on Clast,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 105                               Vss (based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 106                              Vss (based on AUCinf,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 107                                Vz (based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108                               Vz (based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97                    Vss (for IV dosing, based on AUClast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                 Vss (for IV dosing, based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99                Vss (for IV dosing, based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100                                  Vss (based on AUClast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101             Vss (for multiple-dose, based on Clast,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102            Vss (for multiple-dose, based on Clast,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103                               Vss (based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104                              Vss (based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105                                Vz (based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106                               Vz (based on AUCinf,pred)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                          description</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                        The area under the concentration time curve from the beginning of the interval to the last concentration above the limit of quantification plus the triangle from that last concentration to 0 at the first concentration below the limit of quantification</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                                                                                                                                                                                The adjusted r^2 value of the half-life calculation</span>
@@ -918,7 +906,7 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 37                                                                                                                                 The area under the concentration time moment curve from the beginning of the interval to the last concentration above the limit of quantification</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 38                                                                                                                                                                                                                                                          Dose normalized aumclast</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 39                                                                                                                                                                                                                                           Initial concentration after an IV bolus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40                                                                                                                                                                                                                                      The average concentration during an interval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40                                                                                                                                                                                                            The average concentration during an interval (calculated with AUClast)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 41                                                                                                                                                                                                                                                               Dose normalized cav</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 42                                                                                                                                                                                                                                              Concentration at the end of infusion</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 43                                                                                                                                                                                                                       Clearance or observed oral clearance calculated with AUCall</span>
@@ -975,18 +963,16 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 94                                                                                                                                                                                                                                                  Time above a given concentration</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 95                                                                                                                                                                                                                                                                          Lag time</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 96                                                                                                                                                                                                         Time of the last concentration observed above the limit of quantification</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97                                                                                                                                                                                                           Apparent observed volume of distribution calculated with observed Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98                                                                                                                                                                                                          Apparent observed volume of distribution calculated with predicted Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99                                                                                                                                                                                       The steady-state volume of distribution with intravenous infusion calculating through Tlast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100                                                                                                                                                                                           The steady-state volume of distribution with intravenous infusion using observed Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 101                                                                                                                                                                                          The steady-state volume of distribution with intravenous infusion using predicted Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 102                                                                                                                                                                                                                The steady-state volume of distribution calculating through Tlast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 103                                                                                                                                                                                    The steady-state volume of distribution for nonlinear multiple-dose data using observed Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 104                                                                                                                                                                                   The steady-state volume of distribution for nonlinear multiple-dose data using predicted Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 105                                                                                                                                                                                                                     The steady-state volume of distribution using observed Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 106                                                                                                                                                                                                                    The steady-state volume of distribution using predicted Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 107                                                                                                                                                                                                                         The terminal volume of distribution using observed Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108                                                                                                                                                                                                                        The terminal volume of distribution using predicted Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97                                                                                                                                                                                       The steady-state volume of distribution with intravenous infusion calculating through Tlast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                                                                                                                                                                                            The steady-state volume of distribution with intravenous infusion using observed Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99                                                                                                                                                                                           The steady-state volume of distribution with intravenous infusion using predicted Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100                                                                                                                                                                                                                The steady-state volume of distribution calculating through Tlast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101                                                                                                                                                                                    The steady-state volume of distribution for nonlinear multiple-dose data using observed Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102                                                                                                                                                                                   The steady-state volume of distribution for nonlinear multiple-dose data using predicted Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103                                                                                                                                                                                                                     The steady-state volume of distribution using observed Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104                                                                                                                                                                                                                    The steady-state volume of distribution using predicted Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105                                                                                                                                                                                                                         The terminal volume of distribution using observed Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106                                                                                                                                                                                                                        The terminal volume of distribution using predicted Clast</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

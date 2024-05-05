@@ -3365,7 +3365,9 @@ state}
 #'   \item{rsc:} The \code{react_state} components.
 #'}
 #'@examples
+#'\donttest{
 #'sess_res = CTS_test_mksession(session=list(), full_session=FALSE)
+#'}
 CTS_test_mksession = function(session, id = "CTS", id_ASM="ASM", id_MB = "MB", full_session=TRUE){
 
   isgood = TRUE

@@ -37,5 +37,7 @@ list with the following elements
 Populates the supplied session variable for testing.
 }
 \examples{
+\donttest{
 sess_res = CTS_test_mksession(session=list(), full_session=FALSE)
+}
 }

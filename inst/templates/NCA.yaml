@@ -512,6 +512,14 @@ MC:
       value:         20
       options:       NULL
       pknca_option:  max.aucinf.pext
+ #  progress_bar:    
+ #    group:         "General"
+ #    label:         "Progress bar"
+ #    tooltip:       "Show progress bar"
+ #    type:          "logical"
+ #    value:         TRUE
+ #    options:       [TRUE, FALSE]
+ #    pknca_option:  progress 
   # Prefix used to create NCA analysis objects in generated code
   nca_object_name: "myANA_"
   # The following patterns are used when detecting columns in your dataset
