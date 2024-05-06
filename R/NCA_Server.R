@@ -584,7 +584,7 @@ NCA_Server <- function(id,
         selected   = value,
         multiple   = TRUE,
         width      = state[["MC"]][["formatting"]][["select_ana_nca_parameters"]][["width"]],
-        options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+        options    = list(`live-search`=TRUE, size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
         inline     = TRUE)
       uiele})
     #------------------------------------
