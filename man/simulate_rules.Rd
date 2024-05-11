@@ -12,6 +12,7 @@ simulate_rules(
   rules,
   rx_options = list(),
   preamble = "",
+  pbm = "Evaluation times",
   smooth_sampling = TRUE
 )
 }
@@ -33,6 +34,8 @@ included as well to ensure proper evaluation of the rules.}
 
 \item{preamble}{Character string of user-defined code to execute in
 rule-evaluation environment (e.g. you can put user-defined functions here).}
+
+\item{pbm}{Progress bar message, set to NULL to disable.}
 
 \item{smooth_sampling}{Boolean when TRUE will insert sampling just before
 dosing to make sampling smooth.}
