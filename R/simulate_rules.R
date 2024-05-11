@@ -20,6 +20,7 @@
 #'@param rx_options List of options to pass through to `rxSolve()`.
 #'@param preamble Character string of user-defined code to execute in
 #'rule-evaluation environment (e.g. you can put user-defined functions here).
+#'@param pbm Progress bar message, set to NULL to disable.
 #'@param smooth_sampling Boolean when TRUE will insert sampling just before
 #'dosing to make sampling smooth.
 #'@return List with the following elements:
@@ -40,10 +41,18 @@ simulate_rules <- function(object,
                            output_times,
                            rules, rx_options=list(),
                            preamble = "",
+                           pbm = "Evaluation times",
                            smooth_sampling=TRUE){
 
 
-  eval_times = sort(eval_times)
+  eval_times = unique(sort(eval_times))
+
+  # Number of evaluation times:
+  nevt = length(eval_times) + 1
+  pbo = NULL
+  if(formods::is_installed("cli") & !is.null(pbm)){
+    pbo = cli::cli_progress_bar(pbm, total=nevt)
+  }
 
   msgs        = c()
   isgood      = TRUE
@@ -257,6 +266,13 @@ simulate_rules <- function(object,
       tc_env  = list(object   = object,
                      subjects = subjects,
                      ev       = init_ev))
+
+
+    # Incrementing progress bar
+    if(!is.null(pbo)){
+      cli::cli_progress_update(id=pbo)
+    }
+  
 
     if(tcres[["isgood"]]){
       #sim_pre = as.data.frame(tcres[["capture"]][["sim"]])
@@ -639,8 +655,18 @@ simulate_rules <- function(object,
             }
           }
         }
+
+        # Incrementing progress bar
+        if(!is.null(pbo)){
+          cli::cli_progress_update(id=pbo)
+        }
       }
     }
+  }
+
+  # Cleaning up the progress bar
+  if(!is.null(pbo)){
+    cli::cli_progress_done(id=pbo)
   }
 
   if(isgood){

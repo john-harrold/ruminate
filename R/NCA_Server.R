@@ -576,6 +576,10 @@ NCA_Server <- function(id,
         parameters_link = NULL
       }
 
+      picker_options = do.call(shinyWidgets::pickerOptions, 
+        state[["MC"]][["formatting"]][["select_ana_nca_parameters"]][["picker_options"]])
+      picker_options[["size"]] = state[["yaml"]][["FM"]][["ui"]][["select_size"]] 
+
       uiele =
       shinyWidgets::pickerInput(
         inputId    = NS(id, "select_ana_nca_parameters"),
@@ -584,7 +588,7 @@ NCA_Server <- function(id,
         selected   = value,
         multiple   = TRUE,
         width      = state[["MC"]][["formatting"]][["select_ana_nca_parameters"]][["width"]],
-        options    = list(`live-search`=TRUE, size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+        options    = picker_options,
         inline     = TRUE)
       uiele})
     #------------------------------------

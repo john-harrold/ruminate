@@ -34,6 +34,7 @@ Imports:
   utils,
   yaml
 Suggests:
+  cli,
   clipr,
   gridExtra,
   knitr,

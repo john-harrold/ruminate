@@ -202,6 +202,10 @@ MC:
       width: 150
     select_ana_nca_parameters:
       width: 150
+      # ?pickerOptions
+      picker_options: 
+        liveSearch: TRUE
+        actionsBox: TRUE
     select_ana_col_id:
       width: 150
       tooltip:  "Unique id for each subject in the dataset (required)"
