@@ -3670,7 +3670,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session
     "tb_ind_params_rpt"              = "tb_ind_params_rpt",
     "tb_sum_params_rpt"              = "tb_sum_params_rpt",
     "check_fg_ind_obs_logy"          = "fg_ind_obs_logy",
-    "switch_ana_source_sampling"     = "sampling",
+    "select_ana_source_sampling"     = "sampling",
     "switch_ana_dose_from"           = "dose_from",
     "switch_ana_fig"                 = "fig_type",
     "switch_ana_tab"                 = "tab_type",
@@ -6721,14 +6721,19 @@ mk_table_nca_params = function(
   #        This has the same information in long format and can be
   #        used to look up things like units when constructing the
   #        headers for reporting.
-  col_keep = c(col_id, rpt_name_group, "pnames", "PPORRES")
+
+  # ID isn't present in sparse sampling
+  col_keep = c()
+  if(col_id %in% names(nca_data)){
+    col_keep = c(col_keep, col_id)
+  }
+  col_keep = c(col_keep, rpt_name_group, "pnames", "PPORRES")
 
   tdata = nca_data |>
     dplyr::mutate(PPORRES = ifelse(is.na(.data[["PPORRES"]]), not_calc, .data[["PPORRES"]])) |>
     dplyr::select(dplyr::all_of(col_keep)) |>
     tidyr::pivot_wider(names_from="pnames",
                        values_from="PPORRES")
-
   # Creating a lookup table to group output and create headers
   col_lookup = nca_data                     |>
     dplyr::group_by(.data[["pnames"]])      |>
@@ -6765,13 +6770,18 @@ mk_table_nca_params = function(
     }
   }
 
+  # ID isn't present in sparse sampling
+  col_keep_id = c()
+  if(col_id %in% names(nca_data)){
+    col_keep_id = col_id
+  }
 
   # Now we reorder the columns of tdata according to the grouping above:
   tdata = dplyr::select(tdata,
-                        dplyr::all_of(c(col_id, rpt_name_group, nps_found[["pnames"]])))
+                        dplyr::all_of(c(col_keep_id, rpt_name_group, nps_found[["pnames"]])))
 
   # Rows that are common for each table:
-  row_common  = dplyr::select(tdata, dplyr::all_of(c(col_id, rpt_name_group)))
+  row_common  = dplyr::select(tdata, dplyr::all_of(c(col_keep_id, rpt_name_group)))
 
   # The table body
   table_body  = dplyr::select(tdata, dplyr::all_of((nps_found[["pnames"]])))

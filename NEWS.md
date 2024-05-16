@@ -2,6 +2,7 @@
 
 - Added default naming of NCA analysis from datasets
 - Added searching in selection of NCA parameters
+- Fixed sparse sampling in NCA
 - Added CTS (Clinical trial simulator) module (in development)
 
 # ruminate 0.2.2 

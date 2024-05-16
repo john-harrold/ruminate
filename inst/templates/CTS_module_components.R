@@ -130,8 +130,8 @@ ui <- dashboardPage(
              rhandsontable::rHandsontableOutput(NS("CTS", "hot_current_rules")), width=12)),
        fluidRow(
          box(title="Simulation Results",
-             "CTS_ui_simres",
-             tags$br(),
+            "CTS_ui_simres",
+            tags$br(),
             htmlOutput(NS("CTS", "CTS_ui_simres")) , width=12)),
        fluidRow(
          box(title="Configuration",
@@ -161,7 +161,7 @@ ui <- dashboardPage(
 # Main app server
 server <- function(input, output, session) {
 
-  CTS_test_mksession(session, full_session=TRUE)
+  #CTS_test_mksession(session, full_session=TRUE)
   #CTS_test_mksession(session, full_session=FALSE)
 
   # Empty reactive object to track and react to

@@ -848,6 +848,26 @@ MC:
       text:        NULL
       md:          "C~ave~"
       group:       "Other"
+    cav.int.all: 
+      description: NULL
+      text:        NULL
+      md:          "C~ave,int,all~"
+      group:       "Other"
+    cav.int.inf.obs:
+      description: NULL
+      text:        NULL
+      md:          "C~ave,int,int,obs~"
+      group:       "Other"
+    cav.int.inf.pred:
+      description: NULL
+      text:        NULL
+      md:          "C~ave,int,int,pred~"
+      group:       "Other"
+    cav.int.last:
+      description: NULL
+      text:        NULL
+      md:          "C~ave,int,last~"
+      group:       "Other"
     cav.dn:
       description: NULL
       text:        NULL
@@ -927,6 +947,11 @@ MC:
       description: NULL
       text:        NULL
       md:          "C~min,dn~"
+      group:       "Other"
+    count_conc:
+      description: NULL
+      text:        NULL
+      md:          "N~obs~"
       group:       "Other"
     ctrough:
       description: NULL
@@ -1067,7 +1092,17 @@ MC:
       description: NULL
       text:        NULL
       md:          "AUC~last,sp~"
-      group:       "Common Parameters"
+      group:       "Sparse Analysis"
+    sparse_se:
+      description: NULL
+      text:        NULL
+      md:          "SE(AUC~last,sp~)"
+      group:       "Sparse Analysis"
+    sparse_df:
+      description: NULL
+      text:        NULL
+      md:          "DF(AUC~last,sp~)"
+      group:       "Sparse Analysis"
     start:
       description: NULL
       text:        NULL
@@ -1129,15 +1164,10 @@ MC:
       text:        NULL
       md:          "t~last~"
       group:       "Other"
-    vd.obs:
+    totdose:
       description: NULL
       text:        NULL
-      md:          "V~d,obs~"
-      group:       "Other"
-    vd.pred:
-      description: NULL
-      text:        NULL
-      md:          "V~d,pred~"
+      md:          "Dose~tot~"
       group:       "Other"
     vss.iv.last:
       description: NULL

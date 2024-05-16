@@ -314,9 +314,12 @@ MC:
     ds_tc:                    "Timecourse"
     ds_ev:                    "Events"
   errors:
-    no_sim_found: "You need to run the simulation first."
+    no_sim_found: "No simulation available, you need to run the simulation first."
     bad_sim:      "There was a problem with the simulation."
     cts_no_fig:   "There are no figures to display. You must run the simulation first"
+    no_mdl_found: "There are no source models to use. You need to create a model to use this module."
+#   mdl_missing:  "The source model ===MDLLABEL=== (===MDLID===) for ===CHTLABEL=== (===CHTID===) \nwas not found, choose a new source model and simulate."
+#   mdl_changed:  "The source model for ===CHTLABEL=== (===CHTID===) has changed. \nYou need to update the simulation"
   tooltips:
     # Set to FALSE to disable tool tips for this module
     include: TRUE

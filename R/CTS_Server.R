@@ -151,7 +151,7 @@ CTS_Server <- function(id,
               choices    = rx_details[["elements"]][["states"]],
               width      = state[["MC"]][["formatting"]][["action_set_state_state"]][["width"]])
         }else{
-          uiele = rx_details[["msgs"]]
+          uiele = paste0(rx_details[["msgs"]], collapse="\n")
         }
       }
       uiele})
@@ -226,7 +226,7 @@ CTS_Server <- function(id,
             position    = state[["MC"]][["formatting"]][["action_manual_code"]][["tooltip_position"]])
         }else{
           # The state UI will generate an error this will just return nothing
-          uiele = rx_details[["msgs"]]
+          uiele = paste0(rx_details[["msgs"]], collapse="\n")
         }
       }
       uiele})
@@ -247,6 +247,7 @@ CTS_Server <- function(id,
       current_ele = CTS_fetch_current_element(state)
       rx_details = current_ele[["rx_details"]]
 
+
       uiele =NULL
       if(input$rule_type == "dose"){
         if(rx_details[["isgood"]]){
@@ -264,7 +265,7 @@ CTS_Server <- function(id,
               choices    = rx_details[["elements"]][["states"]],
               width      = state[["MC"]][["formatting"]][["action_dosing_state"]][["width"]])
         }else{
-          uiele = rx_details[["msgs"]]
+          uiele = paste0(rx_details[["msgs"]], collapse="\n")
         }
       }
       uiele})
@@ -437,6 +438,8 @@ CTS_Server <- function(id,
     output$CTS_ui_sim_env      = renderUI({
       input$source_model
       input$button_clk_save
+      react_state[[id_MB]]
+      react_state[[id_ASM]]
       state = CTS_fetch_state(id              = id,
                              id_ASM          = id_ASM,
                              id_MB           = id_MB,
@@ -463,10 +466,161 @@ CTS_Server <- function(id,
 
       uiele})
     #------------------------------------
+    #  Row of controls above the simulation results
+    output$CTS_ui_top_btn_row  = renderUI({
+      react_state[[id_MB]]
+      react_state[[id_ASM]]
+      input$element_selection
+      input$button_clk_save
+      input$button_clk_runsim
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      current_ele = CTS_fetch_current_element(state)
+      sim_isgood  = CTS_sim_isgood(state, current_ele)
+
+      uiele_top_btn_row = NULL
+      # We only build out the elements if the simulation is good:
+      if(sim_isgood[["isgood"]]){
+        rx_details = current_ele[["rx_details"]]
+
+        uiele_btn_update = shinyWidgets::actionBttn(
+                  inputId = NS(id, "button_clk_update_plot"),
+                  label   = state[["MC"]][["labels"]][["update_plot_btn"]],
+                  style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+                  size    = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["size"]],
+                  block   = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["block"]],
+                  color   = "primary",
+                  icon    = icon("circle-play"))
+
+        # Optinally adding the tooltip:
+        uiele_btn_update =
+          formods::FM_add_ui_tooltip(state, uiele_btn_update,
+                 tooltip     = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["tooltip"]],
+                 position    = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["tooltip_position"]])
+
+        # Creating the pulldown for the plot output dimensions
+        choices = list()
+        for(dim_id in names(state[["MC"]][["formatting"]][["tc_dim"]][["choices"]])){
+          choices[[ state[["MC"]][["formatting"]][["tc_dim"]][["choices"]][[dim_id]][["verb"]] ]] = dim_id
+        }
+
+        uiele_tc_dim =
+          shinyWidgets::pickerInput(
+            selected   = current_ele[["ui"]][["tc_dim"]],
+            inputId    = NS(id, "tc_dim"),
+            label      = state[["MC"]][["labels"]][["tc_dim"]],
+            choices    = choices,
+            width      = state[["MC"]][["formatting"]][["tc_dim"]][["width"]])
+
+        uiele_tc_dim =
+          formods::FM_add_ui_tooltip(state, uiele_tc_dim,
+                 tooltip     = state[["MC"]][["formatting"]][["tc_dim"]][["tooltip"]],
+                 position    = state[["MC"]][["formatting"]][["tc_dim"]][["tooltip_position"]])
+
+        # Figure page selection
+        uiele_fpage = htmlOutput(NS(id, "CTS_ui_fpage"))
+
+        # DV cols selection
+        choices = list()
+        all_values = c()
+        for(etype in names(state[["MC"]][["formatting"]][["dvcols"]][["choices"]])){
+          verb   = state[["MC"]][["formatting"]][["dvcols"]][["choices"]][[etype]][["verb"]]
+          values = rx_details[["elements"]][[etype]]
+          if(!is.null(values)){
+            values = values[(values %in% names(simres[["simall"]]))]
+            if(length(values) > 0){
+              choices[[ verb ]] = values
+              all_values = c(all_values, values)
+            }
+          }
+        }
+
+
+        selected = current_ele[["ui"]][["dvcols"]]
+
+        # If selected gets confused because of changes in the model this will
+        # just default to the first output
+        if(!all(selected %in% all_values)){
+          selected = all_values[1]
+        }
+
+        uiele_dvcols =
+          shinyWidgets::pickerInput(
+            selected   = selected,
+            multiple   = TRUE,
+            inputId    = NS(id, "dvcols"),
+            label      = state[["MC"]][["labels"]][["dvcols"]],
+            choices    = choices,
+            options = list(
+             size      = state[["MC"]][["formatting"]][["dvcols"]][["size"]]),
+            width      = state[["MC"]][["formatting"]][["dvcols"]][["width"]])
+
+        uiele_dvcols =
+          formods::FM_add_ui_tooltip(state, uiele_dvcols,
+                 tooltip     = state[["MC"]][["formatting"]][["dvcols"]][["tooltip"]],
+                 position    = state[["MC"]][["formatting"]][["dvcols"]][["tooltip_position"]])
+
+        # EV ids to plot
+        uiele_evplot =  NULL
+        choices = list()
+        all_values = c()
+        for(etype in names(state[["MC"]][["formatting"]][["evplot"]][["choices"]])){
+          verb   = state[["MC"]][["formatting"]][["evplot"]][["choices"]][[etype]][["verb"]]
+          value  = state[["MC"]][["formatting"]][["evplot"]][["choices"]][[etype]][["value"]]
+          choices[[ verb ]] = value
+        }
+        selected = current_ele[["ui"]][["evplot"]]
+
+        uiele_evplot =
+          shinyWidgets::pickerInput(
+            selected   = selected,
+            multiple   = TRUE,
+            inputId    = NS(id, "evplot"),
+            label      = state[["MC"]][["labels"]][["evplot"]],
+            choices    = choices,
+            width      = state[["MC"]][["formatting"]][["evplot"]][["width"]])
+
+        uiele_evplot =
+          formods::FM_add_ui_tooltip(state, uiele_evplot,
+                 tooltip     = state[["MC"]][["formatting"]][["evplot"]][["tooltip"]],
+                 position    = state[["MC"]][["formatting"]][["evplot"]][["tooltip_position"]])
+
+        div_style ="display:inline-block;vertical-align:top;align-items:center"
+        uiele_btn_update = div(style=div_style,     uiele_btn_update)
+        uiele_tc_dim     = div(style=div_style,     uiele_tc_dim)
+        uiele_fpage      = div(style=div_style,     uiele_fpage)
+        uiele_dvcols     = div(style=div_style,     uiele_dvcols)
+        uiele_evplot     = div(style=div_style,     uiele_evplot)
+
+        uiele_top_btn_row =
+          div(style=div_style,
+            uiele_btn_update,
+            HTML('&nbsp;'),
+            uiele_tc_dim,
+            HTML('&nbsp;'),
+            uiele_fpage,
+            HTML('&nbsp;'),
+            uiele_dvcols,
+            HTML('&nbsp;'),
+            uiele_evplot)
+      }
+
+
+    uiele_top_btn_row})
+    #------------------------------------
     #  Simulation results
     output$CTS_ui_simres       = renderUI({
+      react_state[[id_MB]]
+      react_state[[id_ASM]]
       input$element_selection
-      input$button_clk_runsim
+      input$button_clk_save
       state = CTS_fetch_state(id              = id,
                              id_ASM          = id_ASM,
                              id_MB           = id_MB,
@@ -527,135 +681,18 @@ CTS_Server <- function(id,
           )
 
 
-      uiele_btn_update = shinyWidgets::actionBttn(
-                inputId = NS(id, "button_clk_update_plot"),
-                label   = state[["MC"]][["labels"]][["update_plot_btn"]],
-                style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
-                size    = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["size"]],
-                block   = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["block"]],
-                color   = "primary",
-                icon    = icon("circle-play"))
-
-      # Optinally adding the tooltip:
-      uiele_btn_update =
-        formods::FM_add_ui_tooltip(state, uiele_btn_update,
-               tooltip     = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["tooltip"]],
-               position    = state[["MC"]][["formatting"]][["button_clk_update_plot"]][["tooltip_position"]])
-
-
-      # Creating the pulldown for the plot output dimensions
-      choices = list()
-      for(dim_id in names(state[["MC"]][["formatting"]][["tc_dim"]][["choices"]])){
-        choices[[ state[["MC"]][["formatting"]][["tc_dim"]][["choices"]][[dim_id]][["verb"]] ]] = dim_id
-      }
-
-      uiele_tc_dim =
-        shinyWidgets::pickerInput(
-          selected   = current_ele[["ui"]][["tc_dim"]],
-          inputId    = NS(id, "tc_dim"),
-          label      = state[["MC"]][["labels"]][["tc_dim"]],
-          choices    = choices,
-          width      = state[["MC"]][["formatting"]][["tc_dim"]][["width"]])
-
-      uiele_tc_dim =
-        formods::FM_add_ui_tooltip(state, uiele_tc_dim,
-               tooltip     = state[["MC"]][["formatting"]][["tc_dim"]][["tooltip"]],
-               position    = state[["MC"]][["formatting"]][["tc_dim"]][["tooltip_position"]])
-
-      # Figure page selection
-      uiele_fpage = htmlOutput(NS(id, "CTS_ui_fpage"))
-
-      # DV cols selection
-      choices = list()
-      all_values = c()
-      for(etype in names(state[["MC"]][["formatting"]][["dvcols"]][["choices"]])){
-        verb   = state[["MC"]][["formatting"]][["dvcols"]][["choices"]][[etype]][["verb"]]
-        values = rx_details[["elements"]][[etype]]
-        if(!is.null(values)){
-          values = values[(values %in% names(simres[["simall"]]))]
-          if(length(values) > 0){
-            choices[[ verb ]] = values
-            all_values = c(all_values, values)
-          }
-        }
-      }
-
-
-      selected = current_ele[["ui"]][["dvcols"]]
-
-      # If selected gets confused because of changes in the model this will
-      # just default to the first output
-      if(!all(selected %in% all_values)){
-        selected = all_values[1]
-      }
-
-      uiele_dvcols =
-        shinyWidgets::pickerInput(
-          selected   = selected,
-          multiple   = TRUE,
-          inputId    = NS(id, "dvcols"),
-          label      = state[["MC"]][["labels"]][["dvcols"]],
-          choices    = choices,
-          options = list(
-           size      = state[["MC"]][["formatting"]][["dvcols"]][["size"]]),
-          width      = state[["MC"]][["formatting"]][["dvcols"]][["width"]])
-
-      uiele_dvcols =
-        formods::FM_add_ui_tooltip(state, uiele_dvcols,
-               tooltip     = state[["MC"]][["formatting"]][["dvcols"]][["tooltip"]],
-               position    = state[["MC"]][["formatting"]][["dvcols"]][["tooltip_position"]])
-
-      # EV ids to plot
-      uiele_evplot =  NULL
-      choices = list()
-      all_values = c()
-      for(etype in names(state[["MC"]][["formatting"]][["evplot"]][["choices"]])){
-        verb   = state[["MC"]][["formatting"]][["evplot"]][["choices"]][[etype]][["verb"]]
-        value  = state[["MC"]][["formatting"]][["evplot"]][["choices"]][[etype]][["value"]]
-        choices[[ verb ]] = value
-      }
-      selected = current_ele[["ui"]][["evplot"]]
-
-      uiele_evplot =
-        shinyWidgets::pickerInput(
-          selected   = selected,
-          multiple   = TRUE,
-          inputId    = NS(id, "evplot"),
-          label      = state[["MC"]][["labels"]][["evplot"]],
-          choices    = choices,
-          width      = state[["MC"]][["formatting"]][["evplot"]][["width"]])
-
-      uiele_evplot =
-        formods::FM_add_ui_tooltip(state, uiele_evplot,
-               tooltip     = state[["MC"]][["formatting"]][["evplot"]][["tooltip"]],
-               position    = state[["MC"]][["formatting"]][["evplot"]][["tooltip_position"]])
 
       uiele_btn_runsim = htmlOutput(NS(id, "ui_cts_runsim_btn"))
 
       div_style ="display:inline-block;vertical-align:top;align-items:center"
-      uiele_btn_update = div(style=div_style,     uiele_btn_update)
       uiele_btn_runsim = div(style=div_style,     uiele_btn_runsim)
       uiele_switch     = div(style=div_style,     uiele_switch)
-      uiele_tc_dim     = div(style=div_style,     uiele_tc_dim)
-      uiele_fpage      = div(style=div_style,     uiele_fpage)
-      uiele_dvcols     = div(style=div_style,     uiele_dvcols)
-      uiele_evplot     = div(style=div_style,     uiele_evplot)
 
-      div_style= "width:80%;display:flex;align-items:center;justify-content:center"
 
-      uiele_top_btn_row = 
-        div(style=div_style,
-          uiele_btn_update,
-          HTML('&nbsp;'),
-          uiele_tc_dim,
-          HTML('&nbsp;'),
-          uiele_fpage,
-          HTML('&nbsp;'),
-          uiele_dvcols,
-          HTML('&nbsp;'),
-          uiele_evplot)
+      uiele_top_btn_row = htmlOutput(NS(id, "CTS_ui_top_btn_row"))
 
-      uiele_switch  = 
+      div_style ="display:inline-block;vertical-align:top;align-items:center"
+      uiele_switch  =
         div(style=div_style,
             uiele_btn_runsim,
             HTML('&nbsp;'),
@@ -739,20 +776,16 @@ CTS_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
       current_ele = CTS_fetch_current_element(state)
+      sim_isgood  = CTS_sim_isgood(state, current_ele)
 
       figs_found = FALSE
       uiele      = state[["MC"]][["errors"]][["cts_no_fig"]]
 
-      simgood    = TRUE
-      if(is.null(current_ele[["simres"]])){
-        simgood = FALSE
-        uiele = state[["MC"]][["errors"]][["no_sim_found"]]
-      } else if(!current_ele[["simres"]][["isgood"]]){
-        uiele = uiele = state[["MC"]][["errors"]][["bad_sim"]]
-        simgood = FALSE
+      if(!sim_isgood[["isgood"]]){
+        uiele = sim_isgood[["msgs"]]
       }
 
-      if(simgood){
+      if(sim_isgood[["isgood"]]){
         if("plotres" %in% names(current_ele)){
            if(current_ele[["plotres"]][["isgood"]]){
              figs_found = TRUE
@@ -760,13 +793,13 @@ CTS_Server <- function(id,
              uiele = current_ele[["plotres"]][["msgs"]]
            }
         }
-        
+
         if(figs_found){
-        
+
           pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
           pvh          = state[["MC"]][["formatting"]][["preview"]][["height"]]
           pv_div_style = paste0("height:",pvh,";width:",pvw,";display:inline-block;vertical-align:top")
-        
+
           output_type = state[["CTS"]][["ui"]][["switch_output"]]
           if(output_type == "report"){
             uiele =
@@ -868,20 +901,17 @@ CTS_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
       current_ele = CTS_fetch_current_element(state)
+      sim_isgood  = CTS_sim_isgood(state, current_ele)
 
       figs_found = FALSE
       uiele      = state[["MC"]][["errors"]][["cts_no_fig"]]
 
-      simgood    = TRUE
-      if(is.null(current_ele[["simres"]])){
-        simgood = FALSE
-        uiele = state[["MC"]][["errors"]][["no_sim_found"]]
-      } else if(!current_ele[["simres"]][["isgood"]]){
-        uiele = uiele = state[["MC"]][["errors"]][["bad_sim"]]
-        simgood = FALSE
+
+      if(!sim_isgood[["isgood"]]){
+        uiele = sim_isgood[["msgs"]]
       }
 
-      if(simgood){
+      if(sim_isgood[["isgood"]]){
         if("plotres" %in% names(current_ele)){
            if(current_ele[["plotres"]][["isgood"]]){
              figs_found = TRUE
@@ -889,12 +919,12 @@ CTS_Server <- function(id,
              uiele = current_ele[["plotres"]][["msgs"]]
            }
         }
-        
+
         if(figs_found){
           pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
           pvh          = state[["MC"]][["formatting"]][["preview"]][["height"]]
           pv_div_style = paste0("height:",pvh,";width:",pvw,";display:inline-block;vertical-align:top")
-        
+
           output_type = state[["CTS"]][["ui"]][["switch_output"]]
           if(output_type == "report"){
             uiele =
@@ -1072,9 +1102,6 @@ CTS_Server <- function(id,
         uiele = tagList(uiele,tags$h3(gname), group_ele)
 
       }
-      # JMH create config ui here
-
-
       uiele})
     #------------------------------------
     # Configuration options
@@ -1810,6 +1837,8 @@ CTS_Server <- function(id,
     #------------------------------------
     # Compact ui
     output$CTS_ui_compact  =  renderUI({
+      react_state[[id_MB]]
+      react_state[[id_ASM]]
       state = CTS_fetch_state(id              = id,
                              id_ASM          = id_ASM,
                              id_MB           = id_MB,
@@ -1819,185 +1848,195 @@ CTS_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
 
+      MDL_FOUND = FALSE
 
-      uiele_code_button = NULL
-      # Generating code button if enabled
-      if( state[["MC"]][["compact"]][["code"]]){
-        uiele_code = tagList(shinyAce::aceEditor(
-          NS(id, "ui_cts_code"),
-          height  = state[["MC"]][["formatting"]][["code"]][["height"]]
-          ))
+      for(tmp_mdl in names(state[["CTS"]][["MDL"]][["mdl"]])){
+        if(!is.null(state[["CTS"]][["MDL"]][["mdl"]][[tmp_mdl]][["rx_obj"]])){
+          MDL_FOUND = TRUE
+        }
+      }
 
-        uiele_code_button = tagList(
+      if(MDL_FOUND){
+        uiele_code_button = NULL
+        # Generating code button if enabled
+        if( state[["MC"]][["compact"]][["code"]]){
+          uiele_code = tagList(shinyAce::aceEditor(
+            NS(id, "ui_cts_code"),
+            height  = state[["MC"]][["formatting"]][["code"]][["height"]]
+            ))
+
+          uiele_code_button = tagList(
+           shinyWidgets::dropdownButton(
+             uiele_code,
+             inline  = FALSE,
+             right   = TRUE ,
+             size    = "sm",
+             circle  = FALSE,
+             width   = state[["MC"]][["formatting"]][["code"]][["width"]],
+             status  = "danger btn-custom-cts",
+             icon    = icon("code", lib="font-awesome"),
+             tooltip = shinyWidgets::tooltipOptions(title = state[["MC"]][["tooltips"]][["show_code"]]))
+          )
+
+        }
+
+        # Button with CTS elements table
+        #uiele_cts_elements_button = NULL
+       # Uncomment this if your cohort has a components table
+        uiele_cts_elements = rhandsontable::rHandsontableOutput(NS(id, "hot_current_rules"))
+        uiele_cts_elements_button = tagList(
          shinyWidgets::dropdownButton(
-           uiele_code,
+           uiele_cts_elements,
            inline  = FALSE,
            right   = TRUE ,
            size    = "sm",
            circle  = FALSE,
-           width   = state[["MC"]][["formatting"]][["code"]][["width"]],
-           status  = "danger btn-custom-cts",
-           icon    = icon("code", lib="font-awesome"),
-           tooltip = shinyWidgets::tooltipOptions(title = state[["MC"]][["tooltips"]][["show_code"]]))
+           status  = "primary btn-custom-cts",
+           icon    = icon("layer-group", lib="font-awesome"),
+           tooltip = shinyWidgets::tooltipOptions(title = state[["MC"]][["tooltips"]][["elements"]]))
         )
 
-      }
-
-      # Button with CTS elements table
-      #uiele_cts_elements_button = NULL
-     # Uncomment this if your cohort has a components table
-      uiele_cts_elements = rhandsontable::rHandsontableOutput(NS(id, "hot_current_rules"))
-      uiele_cts_elements_button = tagList(
-       shinyWidgets::dropdownButton(
-         uiele_cts_elements,
-         inline  = FALSE,
-         right   = TRUE ,
-         size    = "sm",
-         circle  = FALSE,
-         status  = "primary btn-custom-cts",
-         icon    = icon("layer-group", lib="font-awesome"),
-         tooltip = shinyWidgets::tooltipOptions(title = state[["MC"]][["tooltips"]][["elements"]]))
-      )
-
-      uiele_upper = tagList(
-        div(style="display:inline-block",
-            htmlOutput(NS(id, "CTS_ui_select_element"))),
-        div(style="display:inline-block",
-            htmlOutput(NS(id, "CTS_ui_text_element_name"))),
-        div(style="display:inline-block",
-            htmlOutput(NS(id, "CTS_ui_source_model"))),
-        tags$br(),
-        div(style="display:inline-block", verbatimTextOutput(NS(id, "ui_cts_msg")))
-      )
-
-      # We only show the clip button if it's enabled
-      uiele_clip_button = NULL
-      if(state[["MC"]][["compact"]][["clip"]]){
-        uiele_clip_button = htmlOutput(NS(id, "ui_cts_clip_code"))
-      }
-
-      uiele_buttons_right = tagList(
-               tags$style(".btn-custom-cts {width: 100px;}"),
-               div(style="display:inline-block;vertical-align:top;height:100px",
-               uiele_cts_elements_button,
-               uiele_code_button,
-               uiele_clip_button,
-               htmlOutput(NS(id, "ui_cts_save_btn")),
-               htmlOutput(NS(id, "ui_cts_copy_btn")),
-               htmlOutput(NS(id, "ui_cts_del_btn")),
-               htmlOutput(NS(id, "ui_cts_new_btn"))
-               ))
-
-      # Appending the preview
-    # div_style = paste0("display:inline-block;vertical-align:top;",
-    #   "width:",   state[["MC"]][["formatting"]][["preview"]][["width"]],  ";",
-    #   "height: ", state[["MC"]][["formatting"]][["preview"]][["height"]])
-
-      div_style = paste0("display:inline-block;vertical-align:top;",
-        "width:",   state[["MC"]][["formatting"]][["preview"]][["width"]])
-
-      uiele_preview = div(style=div_style,
-                htmlOutput(NS(id, "CTS_ui_simres")))
-
-
-      td_style ="display:inline-block;vertical-align:top;text-align:top"
-      # These are the different cohort building elements
-      # Covariates
-      uiele_chrt_ele_covs = 
-        shiny::tabPanel(id=NS(id, "tab_res_chrt_ele_covs"),
-                 title=tagList(shiny::icon("users-between-lines"),
-                               state[["MC"]][["labels"]][["tab_chrt_ele_covs"]]),
-          htmlOutput(NS(id, "CTS_ui_covariates_none")),
+        uiele_upper = tagList(
+          div(style="display:inline-block",
+              htmlOutput(NS(id, "CTS_ui_select_element"))),
+          div(style="display:inline-block",
+              htmlOutput(NS(id, "CTS_ui_text_element_name"))),
+          div(style="display:inline-block",
+              htmlOutput(NS(id, "CTS_ui_source_model"))),
           tags$br(),
-          tags$table(
-            tags$tr(
-              tags$td(style=td_style,
-                htmlOutput(NS(id, "CTS_ui_covariates_selection")),
-                htmlOutput(NS(id, "CTS_ui_covariates_type")),
-                htmlOutput(NS(id, "CTS_ui_covariates_value")),
-                htmlOutput(NS(id, "CTS_ui_covariates_button"))
-              ), 
-              tags$td(HTML('&nbsp;'),HTML('&nbsp;'),HTML('&nbsp;')), 
-              tags$td(style=td_style,
-                htmlOutput(NS(id, "CTS_ui_covariates_table"))
+          div(style="display:inline-block", verbatimTextOutput(NS(id, "ui_cts_msg")))
+        )
+
+        # We only show the clip button if it's enabled
+        uiele_clip_button = NULL
+        if(state[["MC"]][["compact"]][["clip"]]){
+          uiele_clip_button = htmlOutput(NS(id, "ui_cts_clip_code"))
+        }
+
+        uiele_buttons_right = tagList(
+                 tags$style(".btn-custom-cts {width: 100px;}"),
+                 div(style="display:inline-block;vertical-align:top;height:100px",
+                 uiele_cts_elements_button,
+                 uiele_code_button,
+                 uiele_clip_button,
+                 htmlOutput(NS(id, "ui_cts_save_btn")),
+                 htmlOutput(NS(id, "ui_cts_copy_btn")),
+                 htmlOutput(NS(id, "ui_cts_del_btn")),
+                 htmlOutput(NS(id, "ui_cts_new_btn"))
+                 ))
+
+        # Appending the preview
+      # div_style = paste0("display:inline-block;vertical-align:top;",
+      #   "width:",   state[["MC"]][["formatting"]][["preview"]][["width"]],  ";",
+      #   "height: ", state[["MC"]][["formatting"]][["preview"]][["height"]])
+
+        div_style = paste0("display:inline-block;vertical-align:top;",
+          "width:",   state[["MC"]][["formatting"]][["preview"]][["width"]])
+
+        uiele_preview = div(style=div_style,
+                  htmlOutput(NS(id, "CTS_ui_simres")))
+
+
+        td_style ="display:inline-block;vertical-align:top;text-align:top"
+        # These are the different cohort building elements
+        # Covariates
+        uiele_chrt_ele_covs =
+          shiny::tabPanel(id=NS(id, "tab_res_chrt_ele_covs"),
+                   title=tagList(shiny::icon("users-between-lines"),
+                                 state[["MC"]][["labels"]][["tab_chrt_ele_covs"]]),
+            htmlOutput(NS(id, "CTS_ui_covariates_none")),
+            tags$br(),
+            tags$table(
+              tags$tr(
+                tags$td(style=td_style,
+                  htmlOutput(NS(id, "CTS_ui_covariates_selection")),
+                  htmlOutput(NS(id, "CTS_ui_covariates_type")),
+                  htmlOutput(NS(id, "CTS_ui_covariates_value")),
+                  htmlOutput(NS(id, "CTS_ui_covariates_button"))
+                ),
+                tags$td(HTML('&nbsp;'),HTML('&nbsp;'),HTML('&nbsp;')),
+                tags$td(style=td_style,
+                  htmlOutput(NS(id, "CTS_ui_covariates_table"))
+                )
               )
             )
           )
-        )
-      # Rules
-      uiele_chrt_ele_rules = 
-        shiny::tabPanel(id=NS(id, "tab_res_chrt_ele_rules"),
-                 title=tagList(shiny::icon("syringe"),
-                               state[["MC"]][["labels"]][["tab_chrt_ele_rules"]]),
-          tags$table(
-            tags$tr(
-              tags$td(style=td_style,
-                htmlOutput(NS(id, "CTS_ui_select_rule_type")),
-                htmlOutput(NS(id, "CTS_ui_rule_name")),
-                htmlOutput(NS(id, "CTS_ui_rule_condition")),
-                htmlOutput(NS(id, "CTS_ui_add_rule_btn"))
-              ), 
-              tags$td(HTML('&nbsp;'),HTML('&nbsp;'),HTML('&nbsp;')), 
-              tags$td(style=td_style,
-                htmlOutput(NS(id, "CTS_ui_action_dosing_state")),
-                htmlOutput(NS(id, "CTS_ui_action_dosing_values")),
-                htmlOutput(NS(id, "CTS_ui_action_dosing_times")),
-                htmlOutput(NS(id, "CTS_ui_action_dosing_durations")),
-                htmlOutput(NS(id, "CTS_ui_action_set_state_state")),
-                htmlOutput(NS(id, "CTS_ui_action_set_state_value")),
-                htmlOutput(NS(id, "CTS_ui_action_manual_code"))
+        # Rules
+        uiele_chrt_ele_rules =
+          shiny::tabPanel(id=NS(id, "tab_res_chrt_ele_rules"),
+                   title=tagList(shiny::icon("syringe"),
+                                 state[["MC"]][["labels"]][["tab_chrt_ele_rules"]]),
+            tags$table(
+              tags$tr(
+                tags$td(style=td_style,
+                  htmlOutput(NS(id, "CTS_ui_select_rule_type")),
+                  htmlOutput(NS(id, "CTS_ui_rule_name")),
+                  htmlOutput(NS(id, "CTS_ui_rule_condition")),
+                  htmlOutput(NS(id, "CTS_ui_add_rule_btn"))
+                ),
+                tags$td(HTML('&nbsp;'),HTML('&nbsp;'),HTML('&nbsp;')),
+                tags$td(style=td_style,
+                  htmlOutput(NS(id, "CTS_ui_action_dosing_state")),
+                  htmlOutput(NS(id, "CTS_ui_action_dosing_values")),
+                  htmlOutput(NS(id, "CTS_ui_action_dosing_times")),
+                  htmlOutput(NS(id, "CTS_ui_action_dosing_durations")),
+                  htmlOutput(NS(id, "CTS_ui_action_set_state_state")),
+                  htmlOutput(NS(id, "CTS_ui_action_set_state_value")),
+                  htmlOutput(NS(id, "CTS_ui_action_manual_code"))
+                )
               )
             )
           )
-        )
-      # Trial 
-      uiele_chrt_ele_trial = 
-        shiny::tabPanel(id=NS(id, "tab_res_chrt_ele_trial"),
-                 title=tagList(shiny::icon("chart-gantt"),
-                               state[["MC"]][["labels"]][["tab_chrt_ele_trial"]]),
-                div(style="display:inline-block",
-                htmlOutput(NS(id, "CTS_ui_nsub"))),
-                div(style="display:inline-block",
-                htmlOutput(NS(id, "CTS_ui_visit_times"))),
-                div(style="display:inline-block",
-                htmlOutput(NS(id, "CTS_ui_trial_end")))
-        )
-      # Simulation Options
-      uiele_chrt_ele_sim = 
-        shiny::tabPanel(id=NS(id, "tab_res_chrt_ele_sim"),
-                 title=tagList(shiny::icon("gear"),
-                               state[["MC"]][["labels"]][["tab_chrt_ele_sim"]]),
-                 htmlOutput(NS(id, "CTS_ui_sim_cfg"))
+        # Trial
+        uiele_chrt_ele_trial =
+          shiny::tabPanel(id=NS(id, "tab_res_chrt_ele_trial"),
+                   title=tagList(shiny::icon("chart-gantt"),
+                                 state[["MC"]][["labels"]][["tab_chrt_ele_trial"]]),
+                  div(style="display:inline-block",
+                  htmlOutput(NS(id, "CTS_ui_nsub"))),
+                  div(style="display:inline-block",
+                  htmlOutput(NS(id, "CTS_ui_visit_times"))),
+                  div(style="display:inline-block",
+                  htmlOutput(NS(id, "CTS_ui_trial_end")))
+          )
+        # Simulation Options
+        uiele_chrt_ele_sim =
+          shiny::tabPanel(id=NS(id, "tab_res_chrt_ele_sim"),
+                   title=tagList(shiny::icon("gear"),
+                                 state[["MC"]][["labels"]][["tab_chrt_ele_sim"]]),
+                   htmlOutput(NS(id, "CTS_ui_sim_cfg"))
+          )
+
+        uiele_chrt_ele =
+          shinydashboard::tabBox(
+            width = 10,
+            title = NULL,
+            uiele_chrt_ele_trial,
+            uiele_chrt_ele_rules,
+            uiele_chrt_ele_covs,
+            uiele_chrt_ele_sim
         )
 
-      uiele_chrt_ele = 
-        shinydashboard::tabBox(
-          width = 10,
-          title = NULL,
-          uiele_chrt_ele_trial, 
-          uiele_chrt_ele_rules,
-          uiele_chrt_ele_covs,
-          uiele_chrt_ele_sim 
-      )
+        uiele = tagList(
+          uiele_upper,
+          tags$br(),
+          uiele_preview,
+          uiele_buttons_right,
+          tags$br(),
+          uiele_chrt_ele
+        )
+    } else {
+      uiele = state[["MC"]][["errors"]][["no_mdl_found"]]
+    }
 
-      uiele = tagList(
-        uiele_upper,
-        tags$br(), 
-        uiele_preview,
-        uiele_buttons_right,
-        tags$br(), 
-        uiele_chrt_ele
-      )
-
-      uiele
-    })
+   uiele})
     #------------------------------------
     # Creating reaction if a variable has been specified
     if(!is.null(react_state)){
       # Here we list the ui inputs that will result in a state change:
       toListen <- reactive({
         list(
-             #react_state[[id_MB]],
+             react_state[[id_MB]],
              input$button_clk_new,
              input$button_clk_del,
              input$button_clk_copy,
@@ -2053,6 +2092,7 @@ CTS_Server <- function(id,
     remove_hold_listen  <- reactive({
         list(
              react_state[[id_ASM]],
+             react_state[[id_MB]],
            # input$button_clk_new,
            # input$button_clk_del,
            # input$button_clk_copy,
@@ -2146,6 +2186,51 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
   }
 
   #---------------------------------------------
+  # Detecting changes in the models avaliable
+  UPDATE_MDL = FALSE
+  if("checksum" %in% names(isolate(react_state[[id_MB]][["MB"]]))){
+    if(!is.null(isolate(react_state[[id_MB]][["MB"]][["checksum"]]))){
+      if(is.null(state[["CTS"]][["MDL"]][["modules"]][["MB"]][[id_MB]])){
+        # If the MB checksum isn't NULL but the stored value in MDL is then we
+        # need to update the dataset
+        UPDATE_MDL = TRUE
+      } else if(isolate(react_state[[id_MB]][["MB"]][["checksum"]]) !=
+               state[["CTS"]][["MDL"]][["modules"]][["MB"]][[id_MB]]){
+
+        # If the stored checksum in MDL is different than the currently
+        # models from MD then we force a reset as well:
+        UPDATE_MDL = TRUE
+      }
+    }
+  }
+
+  if(UPDATE_MDL){
+    FM_le(state, "Updating Models")
+    state[["CTS"]][["MDL"]]  = FM_fetch_mdl(state, session, ids = id_MB)
+
+    # forcing a rebuild of the model for the current element
+    current_ele = CTS_fetch_current_element(state)
+
+    # Current source model
+    csm = current_ele[["ui"]][["source_model"]]
+    if(!(csm %in% names(state[["CTS"]][["MDL"]][["mdl"]]))){
+      FM_le(state, "Source model for current cohort not found:")
+      FM_le(state, paste0(" -> ", current_ele[["model_label"]]))
+      FM_le(state, paste0(" -> ", csm))
+      csm = names(state[["CTS"]][["MDL"]][["mdl"]])[1]
+      FM_le(state, "Defaulting to: ")
+      FM_le(state, paste0(" -> ", state[["CTS"]][["MDL"]][["mdl"]][[csm]][["label"]]))
+      FM_le(state, paste0(" -> ", csm))
+    }
+
+    state[["CTS"]][["ui"]][["source_model"]] = csm
+    current_ele = CTS_change_source_model(state, current_ele )
+    state = CTS_set_current_element(
+      state   = state,
+      element = current_ele)
+  }
+
+  #---------------------------------------------
   # Here we update the state based on user input
   for(ui_name in state[["CTS"]][["ui_ids"]]){
     if(!is.null(isolate(input[[ui_name]]))){
@@ -2190,7 +2275,6 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
                       old_val = state[["CTS"]][["button_counters"]][[ui_name]])
 
         if(change_detected){
-          formods::FM_le(state, paste0("button click: ", ui_name, " = ", state[["CTS"]][["ui"]][[ui_name]]))
 
           # Saving the change:
           state[["CTS"]][["button_counters"]][[ui_name]] =
@@ -2249,6 +2333,7 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
   # save cohort
   if("button_clk_runsim" %in% changed_uis){
     FM_le(state, "run simulation")
+    #browser()
   }
   #---------------------------------------------
   # clip cohort
@@ -2433,6 +2518,7 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
   # to the user
   current_ele = CTS_fetch_current_element(state)
   msgs = c(msgs, current_ele[["msgs"]])
+
   #---------------------------------------------
   # Passing any messages back to the user
   # NOTE: this only occurs when ui changes have been detected you may need to
@@ -2933,11 +3019,11 @@ CTS_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
         if(element[["isgood"]]){
           hasrptele = TRUE
           # Adding the current simres object to the trycatch environment
-          tc_env[[element[["simres_object_name"]]]] = 
+          tc_env[[element[["simres_object_name"]]]] =
              element[["simres"]][["capture"]][[  element[["simres_object_name"]] ]]
 
           # Adding the rx_details
-          tc_env[[element[["rx_details_object_name"]]]] = 
+          tc_env[[element[["rx_details_object_name"]]]] =
             element[["rx_details"]]
 
           if(rpttype %in% c("xlsx")){
@@ -2964,7 +3050,7 @@ CTS_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
             # Depending on the output type we add figures in a different way
             if(rpttype == "pptx"){
               rptele_intro = c(
-                       '  # Adding timecourse-slide', 
+                       '  # Adding timecourse-slide',
                        '  rpt = onbrand::report_add_slide(rpt,                                                              ',
                        '          template = "content_list",                                                                ',
                        '          elements = list(                                                                          ',
@@ -2992,7 +3078,7 @@ CTS_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                 paste0('  tmp_sub_title = stringr::str_replace_all(tmp_sub_title, "===FIGNUM===",  as.character(fg_page))'),
                 paste0('  tmp_sub_title = stringr::str_replace_all(tmp_sub_title, "===FIGTOT===",  as.character(', element[["fgtc_object_name"]],'[["npages"]]))'),
                        '     ',
-                       '  # Adding timecourse-slide', 
+                       '  # Adding timecourse-slide',
                        '  rpt = onbrand::report_add_slide(rpt,                                                   ',
                        '          template = "content_list",                                                     ',
                        '          elements = list(                                                               ',
@@ -3019,7 +3105,7 @@ CTS_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                 paste0('  tmp_sub_title = stringr::str_replace_all(tmp_sub_title, "===FIGNUM===",  as.character(fg_page))'),
                 paste0('  tmp_sub_title = stringr::str_replace_all(tmp_sub_title, "===FIGTOT===",  as.character(', element[["fgev_object_name"]],'[["npages"]]))'),
                        '     ',
-                       '  # Adding timecourse-slide', 
+                       '  # Adding timecourse-slide',
                        '  rpt = onbrand::report_add_slide(rpt,                                                   ',
                        '          template = "content_list",                                                     ',
                        '          elements = list(                                                               ',
@@ -3085,7 +3171,7 @@ CTS_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                        )
             }
 
-            code = c(code, 
+            code = c(code,
                        rptele_intro,
                 paste0('# ', element[["ui"]][["element_name"]]),
                        'fg_page = 1',
@@ -3094,9 +3180,9 @@ CTS_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                        rptele_tc,
                        '  # When we reach the last page this will kick us out',
                 paste0('  if(fg_page == ',element[["fgtc_object_name"]],'[["npages"]]){'),
-                       '    fg_page = 0', 
+                       '    fg_page = 0',
                        '  }else{',
-                       '    fg_page = fg_page+1', 
+                       '    fg_page = fg_page+1',
                        '  }',
                        '}',
                        '',
@@ -3106,9 +3192,9 @@ CTS_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                        rptele_ev,
                        '  # When we reach the last page this will kick us out',
                 paste0('  if(fg_page == ',element[["fgtc_object_name"]],'[["npages"]]){'),
-                       '    fg_page = 0', 
+                       '    fg_page = 0',
                        '  }else{',
-                       '    fg_page = fg_page+1', 
+                       '    fg_page = fg_page+1',
                        '  }',
                        '}')
           }
@@ -3175,7 +3261,7 @@ CTS_fetch_ds = function(state){
   # This prevents returning a dataset if this is triggered before data has
   # been loaded
   if(state[["CTS"]][["isgood"]]){
- 
+
     # Fill in the DS creation stuff here
     isgood = FALSE
 
@@ -3188,10 +3274,10 @@ CTS_fetch_ds = function(state){
                  code       = NULL,
                  checksum   = NULL,
                  DSchecksum = NULL)
-    
+
     # Putting it all into the ds object to be returned
     for(ename in names(state[["CTS"]][["elements"]])){
-      current_ele = state[["CTS"]][["elements"]][[ename]] 
+      current_ele = state[["CTS"]][["elements"]][[ename]]
       if(current_ele[["isgood"]]){
         if("isgood" %in% names(current_ele[["simres"]])){
           if(current_ele[["simres"]][["isgood"]]){
@@ -3548,7 +3634,7 @@ CTS_test_mksession = function(session, id = "CTS", id_ASM="ASM", id_MB = "MB", f
 }
 
 #'@export
-#'@title New ===Module_Name=== cohort
+#'@title New Clinical Trial Simulation Cohort
 #'@description Appends a new empty cohort to the CTS state object
 #'and makes this new cohort the active cohort.
 #'@param state CTS state from \code{CTS_fetch_state()}
@@ -3561,21 +3647,6 @@ CTS_new_element = function(state){
   # Incrementing the element counter
   state[["CTS"]][["element_cntr"]] = state[["CTS"]][["element_cntr"]] + 1
 
-
-  # Figuring out the default source model:
-  source_model = ""
-  model_label = ""
-  if( !is.null(state[["CTS"]][["MDL"]][["hasmdl"]]) ){
-  if( state[["CTS"]][["MDL"]][["hasmdl"]] ){
-    # This just uses the first one
-    source_model = state[["CTS"]][["MDL"]][["catalog"]][["object"]][1]
-    model_label  = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["label"]]
-  }}
-
-  rx_details = NULL
-  if(source_model != ""){
-    rx_details = fetch_rxinfo(state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["rx_obj"]])
-  }
 
   # Creating a default element ID
   element_id = paste0("element_", state[["CTS"]][["element_cntr"]])
@@ -3603,11 +3674,10 @@ CTS_new_element = function(state){
            dvcols        = "",
            tc_dim        = state[["MC"]][["formatting"]][["tc_dim"]][["default"]],
            evplot        = def_evplot,
-           source_model  = source_model
+           source_model  = ""
            ),
          id                     = element_id,
          idx                    = state[["CTS"]][["element_cntr"]],
-         model_label            = model_label,
          element_object_name    = element_object_name,
          cov_object_name        = paste0(element_object_name, "_cov"),
          rules_object_name      = paste0(element_object_name, "_rules"),
@@ -3622,7 +3692,10 @@ CTS_new_element = function(state){
          fgev_object_name       = paste0(element_object_name, "_fgev"),
          code_previous          = NULL,
          # This is information about the source model from fetch_rxinfo()
-         rx_details             = rx_details,
+         rx_details             = NULL,
+         model_label            = "",
+         MDLchecksum            = "",
+         SIMchecksum            = "NOTRUN",
          # user facing
          # This is used if you build the element in a layering method sort of
          # like how the ggplot figures in the FG module builds using different
@@ -3658,15 +3731,34 @@ CTS_new_element = function(state){
   code_previous = ""
   element_def[["code_previous"]] = code_previous
 
-  # Dropping the new element into the state
-  state[["CTS"]][["elements"]][[element_id]] = element_def
 
 
-  # updating the checksum for the current element
-  state[["CTS"]][["elements"]][[element_id]][["checksum"]] = digest::digest(element_def, algo=c("md5"))
+  # Figuring out the default source model:
+  if( !is.null(state[["CTS"]][["MDL"]][["hasmdl"]]) ){
+  if( state[["CTS"]][["MDL"]][["hasmdl"]] ){
+    # This just uses the first one
+    state[["CTS"]][["ui"]][["source_model"]] =
+      state[["CTS"]][["MDL"]][["catalog"]][["object"]][1]
+    element_def = CTS_change_source_model(state, element_def)
+  }}
 
   # Setting the new element as current
   state[["CTS"]][["current_element"]]     = element_id
+
+
+# # Dropping the new element into the state
+# state[["CTS"]][["elements"]][[element_id]] = element_def
+#
+# # updating the checksum for the current element
+# state[["CTS"]][["elements"]][[element_id]][["checksum"]] = digest::digest(element_def, algo=c("md5"))
+#
+
+  # This will stick the new element back into the state object and also
+  # rebuild source, set the checksum, etc:
+  state = CTS_set_current_element(
+    state   = state,
+    element =element_def)
+
 
 state}
 
@@ -3888,7 +3980,7 @@ CTS_set_current_element    = function(state, element){
     code_model      = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["code"]]
     model_object    = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["rx_obj_name"]]
     code_rx_details = c(
-             "", 
+             "",
              "# Fetching the system information",
       paste0(rx_details_object_name, " = fetch_rxinfo(", model_object, ")" ))
   } else {
@@ -4136,7 +4228,7 @@ CTS_set_current_element    = function(state, element){
 
   # Code to make the element only assuming all the goodies it needs are
   # already defined
-  element[["code_ele_only"]] = paste0(c(code_rx_details, 
+  element[["code_ele_only"]] = paste0(c(code_rx_details,
                                         code_cov,
                                         code_mksubs,
                                         code_rules,
@@ -4253,6 +4345,38 @@ CTS_fetch_sc_meta = function(
     )
 res}
 
+#'@export
+#'@title Checks Simulation in Element for Goodness
+#'@description Takes the supplied element and determines if the underlying
+#'simulation is in a good state or not.
+#'@param state CTS state from \code{CTS_fetch_state()}
+#'@param element Element list from \code{CTS_fetch_current_element()}
+#'@return List with the following elements:
+#'\itemize{
+#'   \item{isgood:} Boolean object indicating if the file was successfully loaded.
+#'   \item{msgs:} Text description of failure.
+#'}
+CTS_sim_isgood = function(state, element){
+  msgs = c()
+  isgood = TRUE
+  if("isgood" %in% names(element[["simres"]])){
+    if(!element[["simres"]][["isgood"]]){
+      isgood = FALSE
+      msgs = c(msgs,
+        state[["MC"]][["errors"]][["bad_sim"]],
+        element[["simres"]][["msgs"]])
+    }
+  } else {
+    isgood = FALSE
+    msgs = c(msgs, state[["MC"]][["errors"]][["no_sim_found"]])
+  }
+
+
+  res = list(
+    isgood = isgood,
+    msgs = msgs)
+res}
+
 
 #'@export
 #'@title Change the Source Model
@@ -4285,5 +4409,8 @@ CTS_change_source_model   = function(state, element){
 
     # Upddating the model label
     element[["model_label"]] = state[["CTS"]][["MDL"]][["mdl"]][[tmp_source_model]][["label"]]
+
+    # Upddating the model checksum
+    element[["MDLchecksum"]] = state[["CTS"]][["MDL"]][["mdl"]][[tmp_source_model]][["MDLchecksum"]]
 
 element}

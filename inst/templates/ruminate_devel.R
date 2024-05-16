@@ -94,7 +94,7 @@ ui <- shinydashboard::dashboardPage(
        shinydashboard::menuItem("Transform Data",  tabName="wrangle", icon=icon("shuffle")),
        shinydashboard::menuItem("Visualize",       tabName="plot",    icon=icon("chart-line")),
        shinydashboard::menuItem("NCA",             tabName="nca",     icon=icon("chart-area")),
-       shinydashboard::menuItem("Models",          tabName="model",   icon=icon("trowel-bricks")),
+       shinydashboard::menuItem("Build Models",    tabName="model",   icon=icon("trowel-bricks")),
        shinydashboard::menuItem("Trial Simulator", tabName="trials",  icon=icon("laptop-medical")),
        shinydashboard::menuItem("App Info",        tabName="sysinfo", icon=icon("book-medical"))
      )
@@ -111,7 +111,7 @@ ui <- shinydashboard::dashboardPage(
                htmlOutput(NS("NCA",  "NCA_ui_compact")))))
                ),
        shinydashboard::tabItem(tabName="model",
-               shinydashboard::box(title="Build PK/PD Models", width=12,
+               shinydashboard::box(title="Build ODE-Based PK/PD Models", width=12,
                fluidRow( 
                column(width=12,
                htmlOutput(NS("MB",  "MB_ui_compact")))))
@@ -225,7 +225,7 @@ server <- function(input, output, session) {
       id_DW  = "DW",
       id_ASM = "ASM"
     )
-    MB_test_mksession(
+    CTS_test_mksession(
       session,
       full_session=TRUE
     )
