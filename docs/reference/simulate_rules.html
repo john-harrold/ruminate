@@ -97,6 +97,7 @@ points based on the last observation of the user.</p>
 <span>  <span class="va">rules</span>,</span>
 <span>  rx_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  preamble <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  pbm <span class="op">=</span> <span class="st">"Evaluation times"</span>,</span>
 <span>  smooth_sampling <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -133,6 +134,10 @@ included as well to ensure proper evaluation of the rules.</p></dd>
 <dt>preamble</dt>
 <dd><p>Character string of user-defined code to execute in
 rule-evaluation environment (e.g. you can put user-defined functions here).</p></dd>
+
+
+<dt>pbm</dt>
+<dd><p>Progress bar message, set to NULL to disable.</p></dd>
 
 
 <dt>smooth_sampling</dt>

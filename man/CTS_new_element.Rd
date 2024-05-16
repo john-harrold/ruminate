@@ -2,7 +2,7 @@
 % Please edit documentation in R/CTS_Server.R
 \name{CTS_new_element}
 \alias{CTS_new_element}
-\title{New ===Module_Name=== cohort}
+\title{New Clinical Trial Simulation Cohort}
 \usage{
 CTS_new_element(state)
 }
