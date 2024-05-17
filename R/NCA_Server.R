@@ -6291,7 +6291,6 @@ mk_figure_ind_obs = function(
   col_group   = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_vars"]]
   col_analyte = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_analyte"]]
 
-
   # Retaining only the needed columns
   cols_keep = unique(c(col_id, col_time, col_conc, col_group, col_analyte))
 
@@ -6304,7 +6303,7 @@ mk_figure_ind_obs = function(
     dplyr::select(dplyr::all_of(cols_keep))                               |>
     dplyr::rename(CONC = dplyr::all_of(col_conc))                         |>   # Renaming columns to standard values
     dplyr::rename(TIME = dplyr::all_of(col_time))                         |>
-    dplyr::rename(ID   = dplyr::all_of(col_id))                           |>
+#   dplyr::rename(ID   = dplyr::all_of(col_id))                           |>
     dplyr::group_by(!!as.name(col_group))                                 |>
     dplyr::mutate(NONOBS = min(.data[["CONC"]][.data[["CONC"]]>0 &
                                !is.na(.data[["CONC"]])]))                 |>   # Creating a concentration for non-observations (0 and NA below)
@@ -6326,7 +6325,7 @@ mk_figure_ind_obs = function(
 
 
   # Subjects remaining to plot
-  subs_left = unique(all_data[["ID"]])
+  subs_left = unique(all_data[[col_id]])
   # Number of subjects per plot:
   subs_pp   = nfrows*nfcols
 
@@ -6363,7 +6362,7 @@ mk_figure_ind_obs = function(
     subs_current = subs_left[c(1:last_sub)]
 
     # This dataset contains the subset of the current subjects for plotting.
-    plot_ds = dplyr::filter(all_data, .data[["ID"]] %in% subs_current)
+    plot_ds = dplyr::filter(all_data, .data[[col_id]] %in% subs_current)
 
 
     p = ggplot2::ggplot(data = plot_ds)
@@ -6387,7 +6386,7 @@ mk_figure_ind_obs = function(
                                                group = .data[["GROUP_ALL"]],
                                                color = .data[["PKNCA_DATA_TYPE"]]))
     }
-    p = p + ggplot2::facet_wrap(.~.data[["ID"]], ncol=nfcols, nrow=nfrows, scales=scales)
+    p = p + ggplot2::facet_wrap(.~.data[[col_id]], ncol=nfcols, nrow=nfrows, scales=scales)
     p = p + ggplot2::theme_light()
     if(log_scale){
       p = p + ggplot2::scale_y_log10()
@@ -6408,7 +6407,6 @@ mk_figure_ind_obs = function(
   res = list(
     figures = figures
   )
-
 
 res}
 
@@ -6695,7 +6693,7 @@ mk_table_nca_params = function(
   if(type == "indiviudal"){
     # NAs come from parameters that were not calculated for whatever reason.
     # Having NAs pop up in reports is kind of sloppy so here we replace them
-    # with the user value:
+    # with the user-specified value:
     nca_data = nca_data |>
       dplyr::mutate(PPORRES =as.character(.data[["PPORRES"]])) |>
       dplyr::mutate(PPORRES = ifelse(.data[["PPORRES"]] == "NA",
@@ -6782,6 +6780,17 @@ mk_table_nca_params = function(
 
   # Rows that are common for each table:
   row_common  = dplyr::select(tdata, dplyr::all_of(c(col_keep_id, rpt_name_group)))
+
+  # This is an edge case from sparse sampling where there is one profile. For
+  # sparse sampling there is no ID and if there is only one group then then
+  # there is no common row. In this instance we have to create one in case it
+  # spills over onto multiple pages. 
+  if(ncol(row_common) == 0){
+    ROW = "Row"
+    row_common = 
+       dplyr::tibble(!!ROW := 1:nrow(tdata))
+
+  }
 
   # The table body
   table_body  = dplyr::select(tdata, dplyr::all_of((nps_found[["pnames"]])))
