@@ -574,9 +574,9 @@ NCA_Server <- function(id,
         parameters_link = NULL
       }
 
-      picker_options = do.call(shinyWidgets::pickerOptions, 
+      picker_options = do.call(shinyWidgets::pickerOptions,
         state[["MC"]][["formatting"]][["select_ana_nca_parameters"]][["picker_options"]])
-      picker_options[["size"]] = state[["yaml"]][["FM"]][["ui"]][["select_size"]] 
+      picker_options[["size"]] = state[["yaml"]][["FM"]][["ui"]][["select_size"]]
 
       uiele =
       shinyWidgets::pickerInput(
@@ -3177,7 +3177,7 @@ NCA_fetch_state = function(id, input, session,
       }
     }
   }
-  
+
 
 # # This is changes in the wrangled data views
 # if("checksum" %in% names(isolate(react_state[[id_DW]][["DW"]]))){
@@ -6807,10 +6807,10 @@ mk_table_nca_params = function(
   # This is an edge case from sparse sampling where there is one profile. For
   # sparse sampling there is no ID and if there is only one group then then
   # there is no common row. In this instance we have to create one in case it
-  # spills over onto multiple pages. 
+  # spills over onto multiple pages.
   if(ncol(row_common) == 0){
     ROW = "Row"
-    row_common = 
+    row_common =
        dplyr::tibble(!!ROW := 1:nrow(tdata))
 
   }
