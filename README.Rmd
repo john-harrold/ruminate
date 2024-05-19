@@ -113,7 +113,26 @@ runApp(system.file(package="ruminate","templates", "ruminate_devel.R"))
 
 ## In a Docker container
 
-Note this uses an `x86` image. So it will only work on Intel or AMD cpus. This means that you wont get very far with an M1 mac.  If you want, you can download the Docker file [here](https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container). This will build the docker image from the repository on GitHub.
+This kind of assumes a basic familiarity with Docker. Keep in mind that these containers are built for 'x86' images. Essentially Intel/AMD cpus. This means that if you have a Mac with Apple Silicon (M1, M2,etc.) it may not work or the performance may not be that good. 
+
+### Pull a container from Docker
+
+This will pull container from docker and run it locally 
+
+```
+docker pull johnmharrold/ruminate:latest
+docker run -p 3838:3838   johnmharrold/ruminate:latest &
+```
+
+If that worked you can put the following into a web browser and then use ruminate there:
+
+```
+http://127.0.0.1:3838/
+```
+
+### Create your own container
+
+If you want to create your own container you can do the following: 
 
 ``` bash
 docker build -t ruminate --no-cache  https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container
@@ -146,4 +165,3 @@ docker pull <username>/ruminate:latest
 ## Deployment and Customization 
 
 If you want to deploy and customize ruminate, please see the [Deployment vignette](https://ruminate.ubiquity.tools/articles/deployment.html).
-

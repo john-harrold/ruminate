@@ -117,11 +117,21 @@ version off of github to make sure you have the latest version.**
 
 ## In a Docker container
 
-Note this uses an `x86` image. So it will only work on Intel or AMD
-cpus. This means that you wont get very far with an M1 mac. If you want,
-you can download the Docker file
-[here](https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container).
-This will build the docker image from the repository on GitHub.
+This kind of assumes a basic familiarity with Docker. Keep in mind that
+these containers are built for ‘x86’ images. Basically Intel/AMD cpus.
+This means that if you have a Mac with Apple Silicon (M1, M2,etc.) it
+may not work or the performance may not be that good.
+
+### Pull a container from Docker
+
+This will pull container from docker and run it locally
+
+    docker pull johnmharrold/ruminate:latest
+    docker run -p 3838:3838   johnmharrold/ruminate:latest &
+
+### Create your own container
+
+If you want to create your own container you can do the following:
 
 ``` bash
 docker build -t ruminate --no-cache  https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container

@@ -186,17 +186,29 @@
 <div class="section level2">
 <h2 id="in-a-docker-container">In a Docker container<a class="anchor" aria-label="anchor" href="#in-a-docker-container"></a>
 </h2>
-<p>Note this uses an <code>x86</code> image. So it will only work on Intel or AMD cpus. This means that you wont get very far with an M1 mac. If you want, you can download the Docker file <a href="https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container" class="external-link">here</a>. This will build the docker image from the repository on GitHub.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> ruminate <span class="at">--no-cache</span>  https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container</span></code></pre></div>
+<p>This kind of assumes a basic familiarity with Docker. Keep in mind that these containers are built for ‘x86’ images. Basically Intel/AMD cpus. This means that if you have a Mac with Apple Silicon (M1, M2,etc.) it may not work or the performance may not be that good.</p>
+<div class="section level3">
+<h3 id="pull-a-container-from-docker">Pull a container from Docker<a class="anchor" aria-label="anchor" href="#pull-a-container-from-docker"></a>
+</h3>
+<p>This will pull container from docker and run it locally</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>docker pull johnmharrold<span class="sc">/</span>ruminate<span class="sc">:</span>latest</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>docker run <span class="sc">-</span>p <span class="dv">3838</span><span class="sc">:</span><span class="dv">3838</span>   johnmharrold<span class="sc">/</span>ruminate<span class="sc">:</span>latest <span class="sc">&amp;</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="create-your-own-container">Create your own container<a class="anchor" aria-label="anchor" href="#create-your-own-container"></a>
+</h3>
+<p>If you want to create your own container you can do the following:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> ruminate <span class="at">--no-cache</span>  https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/local_container</span></code></pre></div>
 <p>This will run the Docker image locally:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--name</span> ruminate <span class="at">--rm</span> <span class="at">-p</span> 3838:3838 ruminate</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--name</span> ruminate <span class="at">--rm</span> <span class="at">-p</span> 3838:3838 ruminate</span></code></pre></div>
 <p>If everything worked you can then point your web browser to:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>http<span class="sc">:</span><span class="er">//</span><span class="dv">127</span>.<span class="dv">0</span>.<span class="fl">0.1</span><span class="sc">:</span><span class="dv">3838</span><span class="sc">/</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>http<span class="sc">:</span><span class="er">//</span><span class="dv">127</span>.<span class="dv">0</span>.<span class="fl">0.1</span><span class="sc">:</span><span class="dv">3838</span><span class="sc">/</span></span></code></pre></div>
 <p>This will push the image to DockerHub:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="ex">docker</span> tag ruminate <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="ex">docker</span> push <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">docker</span> tag ruminate <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="ex">docker</span> push <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
 <p>You can use this to pull the image from DockerHub:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">docker</span> pull <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="ex">docker</span> pull <span class="op">&lt;</span>username<span class="op">&gt;</span>/ruminate:latest</span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="deployment-and-customization">Deployment and Customization<a class="anchor" aria-label="anchor" href="#deployment-and-customization"></a>
