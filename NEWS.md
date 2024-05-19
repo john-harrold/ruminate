@@ -1,4 +1,10 @@
-# ruminate 0.2.2 (development version)
+# ruminate 0.2.4 (development version)
+
+- Fixed issue where changes in data views was leading to PH appearing in the 
+  NCA data source selection
+- Added sparse test dataset
+
+# ruminate 0.2.3 
 
 - Added default naming of NCA analysis from datasets
 - Added searching in selection of NCA parameters
