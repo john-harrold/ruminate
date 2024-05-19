@@ -205,20 +205,9 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA:   dest:   file.path("config","report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: State initialized</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: State initialized</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: loading analysis scenario: sd_iv</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: NCA_add_int: append</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: NCA_add_int: append</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:a577f5199fb9f7a2618514eede9a3d93</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (isolate(react_state[[id_DW]][["DW"]][["hasds"]])) {    if (is.null(state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]])) {        UPDATE_DS = TRUE    }    else if (isolate(react_state[[id_DW]][["DW"]][["checksum"]]) !=         state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]]) {        UPDATE_DS = TRUE    }} else {    if (!is.null(state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]])) {        UPDATE_DS = TRUE    }}:</span> argument is of length zero</span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">state</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'sess_res' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># here we need an empty report object for tabular data</span></span></span>
 <span class="r-in"><span><span class="va">rpt</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>summary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, sheets<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -229,27 +218,15 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-in"><span> rpt           <span class="op">=</span> <span class="va">rpt</span>,</span></span>
 <span class="r-in"><span> rpttype       <span class="op">=</span> <span class="st">"xlsx"</span>,</span></span>
 <span class="r-in"><span> gen_code_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_append_report(state, rpt = rpt, rpttype = "xlsx", gen_code_only = TRUE):</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Shows if report elements are present</span></span></span>
 <span class="r-in"><span><span class="va">rpt_res</span><span class="op">$</span><span class="va">hasrptele</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'rpt_res' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Code chunk to generate report element</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">rpt_res</span><span class="op">$</span><span class="va">code</span>, collapse<span class="op">=</span><span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_1_RES"]]=NCA_1_table_ind_params[["one_table"]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_1_RES",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK NCA Analysis Example (indiviudal results)"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_1_RAW"]]=as.data.frame(NCA_1_res)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_1_RAW",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK NCA Analysis Example (raw NCA results)"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in paste(rpt_res$code, collapse = "\n"):</span> object 'rpt_res' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

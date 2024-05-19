@@ -240,32 +240,24 @@ a also a list containing two elements:</p><ul><li><p>gg:    A ggplot object for 
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA:   dest:   file.path("config","report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: State initialized</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: State initialized</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: loading analysis scenario: sd_iv</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: NCA_add_int: append</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: NCA_add_int: append</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:77e3140261d5fa9fad5a97e9a16fec01</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (isolate(react_state[[id_DW]][["DW"]][["hasds"]])) {    if (is.null(state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]])) {        UPDATE_DS = TRUE    }    else if (isolate(react_state[[id_DW]][["DW"]][["checksum"]]) !=         state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]]) {        UPDATE_DS = TRUE    }} else {    if (!is.null(state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]])) {        UPDATE_DS = TRUE    }}:</span> argument is of length zero</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">state</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'sess_res' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Pulls out the active analysis</span></span></span>
 <span class="r-in"><span><span class="va">current_ana</span> <span class="op">=</span> <span class="fu"><a href="NCA_fetch_current_ana.html">NCA_fetch_current_ana</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_fetch_current_ana(state):</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This is the raw PKNCA output</span></span></span>
 <span class="r-in"><span><span class="va">pknca_res</span> <span class="op">=</span> <span class="fu"><a href="NCA_fetch_ana_pknca.html">NCA_fetch_ana_pknca</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ana</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_fetch_ana_pknca(state, current_ana):</span> object 'current_ana' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Building the figure</span></span></span>
 <span class="r-in"><span><span class="va">mk_res</span> <span class="op">=</span> <span class="fu">mk_figure_ind_obs</span><span class="op">(</span>nca_res <span class="op">=</span> <span class="va">pknca_res</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in mk_figure_ind_obs(nca_res = pknca_res):</span> object 'pknca_res' not found</span>
 <span class="r-in"><span><span class="va">mk_res</span><span class="op">$</span><span class="va">figures</span><span class="op">$</span><span class="va">Figure_1</span><span class="op">$</span><span class="va">gg</span></span></span>
-<span class="r-plt img"><img src="mk_figure_ind_obs-1.png" alt="" width="700" height="433"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'mk_res' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

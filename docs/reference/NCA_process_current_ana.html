@@ -191,23 +191,13 @@ any issues to make sure it's good to go.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA:   dest:   file.path("config","report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: State initialized</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: State initialized</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: loading analysis scenario: sd_iv</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: NCA_add_int: append</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: NCA_add_int: append</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:7fece7381072d3a8b7cb56ed2ed98f6e</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (isolate(react_state[[id_DW]][["DW"]][["hasds"]])) {    if (is.null(state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]])) {        UPDATE_DS = TRUE    }    else if (isolate(react_state[[id_DW]][["DW"]][["checksum"]]) !=         state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]]) {        UPDATE_DS = TRUE    }} else {    if (!is.null(state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]])) {        UPDATE_DS = TRUE    }}:</span> argument is of length zero</span>
 <span class="r-in"><span>                                                                               </span></span>
 <span class="r-in"><span><span class="co"># Extracting the session and input variables                                   </span></span></span>
 <span class="r-in"><span><span class="va">session</span>      <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span>                                                </span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'sess_res' not found</span>
 <span class="r-in"><span><span class="va">input</span>        <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">input</span>                                                  </span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'sess_res' not found</span>
 <span class="r-in"><span><span class="va">react_state</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>                                                          </span></span>
 <span class="r-in"><span>                                                                               </span></span>
 <span class="r-in"><span><span class="co"># We also need configuration files                                             </span></span></span>
@@ -224,35 +214,38 @@ any issues to make sure it's good to go.</p>
 <span class="r-in"><span>                       id_UD           <span class="op">=</span> <span class="va">id_UD</span>,                                </span></span>
 <span class="r-in"><span>                       id_DW           <span class="op">=</span> <span class="va">id_DW</span>,                                </span></span>
 <span class="r-in"><span>                       react_state     <span class="op">=</span> <span class="va">react_state</span><span class="op">)</span>                          </span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in formods::FM_fetch_mod_state(session, id):</span> object 'session' not found</span>
 <span class="r-in"><span>                                                                               </span></span>
 <span class="r-in"><span><span class="co"># Pulls out the active analysis                                                </span></span></span>
 <span class="r-in"><span><span class="va">current_ana</span> <span class="op">=</span> <span class="fu"><a href="NCA_fetch_current_ana.html">NCA_fetch_current_ana</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_fetch_current_ana(state):</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will get the dataset associated with this analysis</span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">=</span> <span class="fu"><a href="NCA_fetch_ana_ds.html">NCA_fetch_ana_ds</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ana</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_fetch_ana_ds(state, current_ana):</span> object 'current_ana' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># After making changes you can update those in the state</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="NCA_set_current_ana.html">NCA_set_current_ana</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ana</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_set_current_ana(state, current_ana):</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can use this to check the current analysis</span></span></span>
 <span class="r-in"><span><span class="va">current_ana</span> <span class="op">=</span> <span class="fu">NCA_process_current_ana</span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs introduced by coercion</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_fetch_current_ana(state):</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will pull out the code for the module</span></span></span>
 <span class="r-in"><span><span class="va">fc_res</span> <span class="op">=</span> <span class="fu"><a href="NCA_fetch_code.html">NCA_fetch_code</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_fetch_code(state):</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will use patterns defined for the site to detect</span></span></span>
 <span class="r-in"><span><span class="co"># columns. In this example we are detecting the id column:</span></span></span>
 <span class="r-in"><span><span class="va">id_col</span> <span class="op">=</span> <span class="fu"><a href="NCA_find_col.html">NCA_find_col</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  patterns <span class="op">=</span> <span class="va">state</span><span class="op">[[</span><span class="st">"MC"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"detect_col"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"id"</span><span class="op">]</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>  dscols   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="va">DS</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Unknown or uninitialised column: `DS`.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_find_col(patterns = state[["MC"]][["detect_col"]][["id"]],     dscols = names(ds$DS)):</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This creates a new analysis</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="NCA_new_ana.html">NCA_new_ana</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_new_ana(state):</span> object 'state' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
