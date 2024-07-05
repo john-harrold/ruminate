@@ -334,14 +334,20 @@ MC:
   # of fetch_rxinfo for the current source model (found in the rx_details
   # object).
   rule_env_content: |-
-    uiele = tagList(tags$b("Simulation environment"), tags$br(),
+    uiele = tagList(tags$b("Simulation environment"), 
+                    icon_link(href=state[["MC"]][["tooltips"]][["url_rule_env"]]),
+                    tags$br(),
                     "The condition and actions (e.g., dose times, amounts,
                     durations) that are triggered are all
                     evaluated in an environment with different objects that
-                    you can use. For details on this see the ", 
-                    tags$a(href=state[["MC"]][["tooltips"]][["url_rule_env"]],
-                     "Clinical Trial Simulation"), " vignette.")
-    uiele = tagList(uiele, "For the current system the following are available:", tags$br())
+                    you can use. For details on this see the Clinical Trial Simulation vignette ", 
+                    icon_link(href=state[["MC"]][["tooltips"]][["url_rule_env"]]), 
+                    " for more information.")
+    uiele = tagList(uiele, 
+                    tags$br(),
+                    tags$br(),
+                    "For the current system the following are available:", 
+                    tags$br())
     uiele = tagList(uiele, tags$br())
     uiele = tagList(uiele, rx_details[["ht_info"]])
   # For details on the simulation options see the help rxode2::rxSolve

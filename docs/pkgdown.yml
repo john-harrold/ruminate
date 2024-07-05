@@ -1,5 +1,5 @@
-pandoc: 3.1.1
-pkgdown: 2.0.6
+pandoc: 3.1.11
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
   clinical_trial_simulation: clinical_trial_simulation.html
@@ -7,5 +7,5 @@ articles:
   model_builder: model_builder.html
   noncompartmental_analysis: noncompartmental_analysis.html
   simulate_rules: rmdhunks/simulate_rules.html
-last_built: 2024-05-19T21:13Z
+last_built: 2024-07-05T03:22Z
 

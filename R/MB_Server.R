@@ -40,6 +40,7 @@ MB_Server <- function(id,
 
         # Extracting the model catalog:
         model_catalog = state[["MB"]][["model_catalog"]]
+
         current_ele = MB_fetch_current_element(state)
 
         if( model_catalog[["isgood"]]){
@@ -88,6 +89,7 @@ MB_Server <- function(id,
     # Generating the
     output$ui_select_time_scale    = renderUI({
         input[["element_name"]]
+        input[["ui_mb_model"]]
         state = MB_fetch_state(id              = id,
                                id_ASM          = id_ASM,
                                input           = input,
@@ -263,12 +265,70 @@ MB_Server <- function(id,
 
       uiele})
     #------------------------------------
+    # Create an empty UI for the append model. It will update based on the
+    # observe function below it.
+    output$ui_select_append_model = renderUI({
+      req(input[["element_selection"]])
+      input[["ui_mb_model"]]
+      state = MB_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+      choicesOpt = NULL
+      uiele =
+        shinyWidgets::pickerInput(
+          selected   = "PH",
+          inputId    = NS(id, "append_model"),
+          label      = state[["MC"]][["labels"]][["append_model"]],
+          choices    = c(state[["MC"]][["formatting"]][["append_model"]][["no_models"]]),
+          width      = state[["MC"]][["formatting"]][["append_model"]][["width"]],
+          choicesOpt = choicesOpt)
+
+      uiele})
+    #------------------------------------
+    # Updates append_model selection based on the current model
+    observe({
+      req(input[["element_selection"]])
+      req(input[["ui_mb_model"]])
+      state = MB_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      current_element = MB_fetch_current_element(state)
+
+      appendable_models = MB_fetch_appends(state, current_element)
+
+      if(appendable_models[["isgood"]]){
+        choices    = appendable_models[["select_plain"]]
+        choicesOpt = appendable_models[["choicesOpt"]]
+      } else {
+        choices    = c(state[["MC"]][["errors"]][["fetch_appends_failed"]])
+        choicesOpt = NULL
+        FM_le(state, appendable_models[["msgs"]])
+      }
+
+      shinyWidgets::updatePickerInput(
+        session    = session,
+        inputId    = "append_model",
+        choices    = choices,
+        choicesOpt = choicesOpt)
+
+    })
+    #------------------------------------
     # Generated model
     observe({
       req(input[["element_selection"]])
       input[["catalog_selection"]]
       input[["button_clk_save"]]
       input[["button_clk_del"]]
+      input[["button_clk_append_model"]]
       input[["uploaded_model"]]
 
       state = MB_fetch_state(id              = id,
@@ -315,7 +375,10 @@ MB_Server <- function(id,
       req(input[["element_selection"]])
       input[["catalog_selection"]]
       input[["button_clk_save"]]
-      input$uploaded_model
+      input[["button_clk_del"]]
+      input[["button_clk_append_model"]]
+      input[["uploaded_model"]]
+
 
       state = MB_fetch_state(id              = id,
                              id_ASM          = id_ASM,
@@ -475,8 +538,50 @@ MB_Server <- function(id,
                position    = state[["MC"]][["formatting"]][["button_clk_copy"]][["tooltip_position"]])
       uiele})
     #------------------------------------
+    # append model
+    output$ui_mb_append_model_btn   = renderUI({
+      req(input[["element_selection"]])
+      req(input[["ui_mb_model"]])
+      state = MB_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+
+      current_element   = MB_fetch_current_element(state)
+      appendable_models = MB_fetch_appends(state, current_element)
+
+      uiele = NULL
+
+      # Only when appendable models exist
+      if(appendable_models[["hasappends"]]){
+        uiele = shinyWidgets::actionBttn(
+                  inputId = NS(id, "button_clk_append_model"),
+                  label   = state[["MC"]][["labels"]][["append_model_btn"]],
+                  style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+                  size    = state[["MC"]][["formatting"]][["button_clk_append_model"]][["size"]],
+                  block   = state[["MC"]][["formatting"]][["button_clk_append_model"]][["block"]],
+                  color   = "primary",
+                  icon    = icon("paperclip"))
+       
+        # Optinally adding the tooltip:
+        uiele = formods::FM_add_ui_tooltip(state, uiele,
+                 tooltip             = state[["MC"]][["formatting"]][["append_model"]][["tooltip"]],
+                 position    = state[["MC"]][["formatting"]][["append_model"]][["tooltip_position"]])
+      }
+
+
+      uiele =    div(style=paste0("width:", state[["MC"]][["formatting"]][["append_model"]][["width"]]), 
+                     uiele)
+
+      uiele})
+    #------------------------------------
     # User messages:
     output$ui_mb_msg = renderText({
+      input[["button_clk_append_model"]]
       input[["element_name"]]
       input[["time_scale"]]
       input[["ui_mb_model"]]
@@ -592,6 +697,7 @@ MB_Server <- function(id,
 
         uiele = tagList( uiele,
           tags$br(),
+          fluidRow(
           column(7,
             tags$h3(state[["MC"]][["labels"]][["head_base_model"]]),
             div(style="display:inline-block", htmlOutput(NS(id, "ui_select_base_from"))),
@@ -603,7 +709,15 @@ MB_Server <- function(id,
           ),
           column(5,
           tags$h3(state[["MC"]][["labels"]][["head_time_scale"]]),
-          htmlOutput(NS("MB", "ui_select_time_scale"))
+          htmlOutput(NS(id, "ui_select_time_scale"))
+          )
+          ),
+          fluidRow(
+          column(4,
+            div(style="display:inline-block", 
+                htmlOutput(NS(id, "ui_select_append_model")),
+                htmlOutput(NS(id, "ui_mb_append_model_btn")))),
+          column(8,NULL)
           )
         )
       } else {
@@ -687,6 +801,7 @@ MB_Server <- function(id,
        input[["element_selection"]],
        input[["catalog_selection"]],
        input[["uploaded_model"]],
+       input[["button_clk_append_model"]],
        input[["button_clk_save"]],
        input[["button_clk_copy"]],
        input[["button_clk_del"]],
@@ -712,11 +827,12 @@ MB_Server <- function(id,
     remove_hold_listen  <- reactive({
         list(
              react_state[[id_ASM]],
-           # input$button_clk_new,
+             input$button_clk_new,
            # input$button_clk_del,
            # input$button_clk_copy,
            # input$button_clk_save,
              input$element_selection,
+             input$catalog_selection,
              input$current_element)
       })
     observeEvent(remove_hold_listen(), {
@@ -864,7 +980,7 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
           has_updated(ui_val  = state[["MB"]][["ui"]][[ui_name]],
                       old_val = state[["MB"]][["ui_old"]][[ui_name]])
         if(change_detected){
-          formods::FM_le(state, paste0("setting model : ", ui_name, " = ", paste(state[["MB"]][["ui"]][[ui_name]], collapse=", ")))
+          formods::FM_le(state, paste0("setting model: ", ui_name, " = ", paste(state[["MB"]][["ui"]][[ui_name]], collapse=", ")))
 
           # Saving the change:
           state[["MB"]][["ui_old"]][[ui_name]] = state[["MB"]][["ui"]][[ui_name]]
@@ -1056,6 +1172,79 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
     state = set_hold(state)
   }
   #---------------------------------------------
+  # Appending model
+  if("button_clk_append_model" %in% changed_uis){
+    FM_le(state, "append model")
+
+    # The counter is getting reset to zero and triggering a second append that
+    # fails. This will prevent that from happening
+    if(as.numeric(state[["MB"]][["ui"]][["button_clk_append_model"]]) > 0){
+      current_ele = MB_fetch_current_element(state)
+      component   = MB_fetch_component(state, current_ele)
+      
+      FM_pause_screen(
+          state   = state,
+          session = session,
+          message = state[["MC"]][["labels"]][["building_model"]])
+      
+      
+      # Getting the model to be appended:
+      mod_id    = state[["MB"]][["ui"]][["append_model"]]
+      mod_sum   = state[["MB"]][["model_catalog"]][["summary"]]
+      mod_sum   = mod_sum[mod_sum[["mod_id"]] == mod_id, ]
+      app_fun   = mod_sum[["Model"]][1]
+      app_obj   = mod_sum[["Object"]][1]
+      
+      fun_cmd = c(app_fun,
+                  paste0("rx_obj = rxAppendModel(rx_obj, ",  app_obj, ")"))
+      
+      tc_res = formods::FM_tc(
+        capture="rx_obj", 
+        cmd    = fun_cmd,
+        tc_env = list(rx_obj=component[["rx_obj"]]))
+      
+      if(tc_res[["isgood"]]){
+      
+        # Updating the model
+        current_ele = MB_update_model(
+          state       = state,
+          session     = session,
+          current_ele = current_ele,
+          rx_obj      = tc_res[["capture"]][["rx_obj"]],
+          note        = "Append sub-model",
+          reset       = FALSE)
+      
+        # Saving the updated element
+        state = MB_set_current_element(
+          state   = state,
+          element = current_ele)
+      
+      } else {
+      
+        # logging the error
+        formods::FM_le(state, state[["MC"]][["errors"]][["append_failed"]])
+        if(!is.null(tc_res[["msgs"]])){
+          formods::FM_le(state, tc_res[["msgs"]])
+        }
+      
+        # Notifying the user
+        msgs  = c(msgs,
+                  state[["MC"]][["errors"]][["append_failed"]],
+                  tc_res[["msgs"]]) 
+      
+        state = FM_set_notification(
+          state       = state,
+          notify_text = state[["MC"]][["errors"]][["append_failed"]],
+          notify_id   = "Append failed",
+          type        = "failure")
+      
+      }
+      FM_resume_screen(state, session)
+    }
+
+    
+  }
+  #---------------------------------------------
   # model catalog selection changed, new button selected
   if(any(c("button_clk_new", "catalog_selection") %in% changed_uis)){
 
@@ -1136,6 +1325,9 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
         # saving the base model information for the current model
         current_ele[["base_model"]]      =  current_ele[["ui"]][["catalog_selection"]]
         current_ele[["base_model_name"]] =  model_row[["Name"]]
+
+        # Holding elements to prevent update from current ui
+        state = set_hold(state)
 
         state = FM_set_notification(
           state       = state,
@@ -1301,7 +1493,9 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
                       "button_clk_clip",
                       "button_clk_del",
                       "button_clk_copy",
-                      "button_clk_new")
+                      "button_clk_new",
+                      "button_clk_append_model"
+                      )
   # These are the module ui elements that are associated with
   # the current element
   ui_ele          = c("catalog_selection",
@@ -1316,6 +1510,7 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
                       "ui_mb_model",
                       "model_type_selection",
                       "uploaded_model",
+                      "append_model",
                       "element_selection")
 
   # Making all the ui_ids holdable
@@ -1979,9 +2174,26 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
 
   if( Sys.getenv("ruminate_rxfamily_found")){
     if(isgood){
-      # If a reset is called then we zero out the components table:
+      # This will reset the current model 
       if(reset){
+        # Zeros out the components table
         current_ele[["components_table"]] = data.frame()
+        # Updating the default time units for the model
+        current_ele[["ui"]][["time_scale"]] = state[["MC"]][["formatting"]][["time_scales"]][["default"]]
+        if(!is.null(rx_obj$meta$units)){
+          if("time" %in% names(rx_obj$meta$units)){
+            # updating the timescale from the value specified in the models
+            # meta data. This will look at the time units and compare them to
+            # the valid matches for that timescale in the MB.yaml file. If
+            # it's there it will set the time scale to the current that short 
+            # name (ts_sn)
+            for(ts_sn in names(state[["MC"]][["formatting"]][["time_scales"]][["choices"]])){
+              if(rx_obj$meta$units$time %in% state[["MC"]][["formatting"]][["time_scales"]][["choices"]][[ts_sn]][["match"]]){
+                current_ele[["ui"]][["time_scale"]] = ts_sn
+              }
+            }
+          }
+        }
       }
 
       # String for creating model function in R
@@ -2108,9 +2320,6 @@ MB_fetch_component = function(state, current_ele, component_id = NULL){
     model_code_sa  = comp_row[["model_code_sa"]]
   }
 
-
-
-
   component = list(
     isgood         = isgood,
     rx_obj         = rx_obj,
@@ -2120,8 +2329,6 @@ MB_fetch_component = function(state, current_ele, component_id = NULL){
     model_code_sa  = model_code_sa,
     msgs           = msgs
   )
-
-
 
 component}
 
@@ -2223,31 +2430,43 @@ MB_fetch_catalog   = function(state){
                 mod_description = ""
               }
 
+              # This sets ana_sol to no for sysems that have ODEs and don't
+              # have linCmt() calls.
+              if(!model_row[["algebraic"]] & 
+                 !model_row[["linCmt"]]){
+                ana_sol = "no"
+              } else{
+                ana_sol = "yes"
+              }
+
+              # This flags any model dependencies
+              depends = model_row[["depends"]]
+
               # Appending to the summary table
               model_summary = rbind(model_summary,
               data.frame(
-                mod_id         = mod_id,
-                Name           = mod_name,
-                Object         = mod_name,
-                Type           = "rxode2",
-                Model          = paste(readLines(full_filename), collapse="\n"),
-                Description    = mod_description
+                ana_sol     = ana_sol,
+                depends     = depends,
+                mod_id      = mod_id,
+                Name        = mod_name,
+                Object      = mod_name,
+                Type        = "rxode2",
+                Model       = paste(readLines(full_filename), collapse="\n"),
+                Description = mod_description
               )
               )
 
               # Appending to the selector elements
-              #select_group[[mod_src[["name"]]]][[mod_id]] = mod_name
-              #select_plain[[mod_id]]            = mod_name
-
-              select_group[[mod_src[["group"]]]][[mod_name]] = mod_id
-              select_plain[[mod_name]]                      = mod_id
-              select_subtext                                = c(select_subtext, mod_description)
+              if(ana_sol == "no" & is.na(depends)){
+                select_group[[mod_src[["group"]]]][[mod_name]] = mod_id
+                select_plain[[mod_name]]                      = mod_id
+                select_subtext                                = c(select_subtext, mod_description)
+              }
 
               mod_idx  = mod_idx + 1
             } else {
               msgs = c(msgs, paste0("nlmixr2lib file not found: ", full_filename))
             }
-
           }
         } else {
           # This can return the missing package message back to the user so
@@ -2274,6 +2493,7 @@ MB_fetch_catalog   = function(state){
             mod_name         = mod_src[["name"]]
             model_summary = rbind(model_summary,
             data.frame(
+              ana_sol        = "no",
               mod_id         = mod_id,
               Name           = mod_name,
               Object         = mod_src[["obj"]],
@@ -2317,6 +2537,7 @@ MB_fetch_catalog   = function(state){
             mod_name         = mod_src[["name"]]
             model_summary = rbind(model_summary,
             data.frame(
+              ana_sol        = "no",
               mod_id         = mod_id,
               Name           = mod_name,
               Object         = "",
@@ -2365,6 +2586,95 @@ MB_fetch_catalog   = function(state){
     isgood         = isgood)
 
 catalog}
+
+
+#'@export
+#'@title Fetches List of Available Models
+#'@description Creates a catalog of the models available in the system file.
+#'@param state MB state from \code{MB_fetch_state()}
+#'@param current_ele MB model element from \code{MB_fetch_current_element()}
+#'@return List with the following attributes:
+#'\itemize{
+#'  \item{isgood:} Boolean variable indicating success or failure.
+#'  \item{msgs:} Messages to be passed back to the user.
+#'  \item{hasappends:} Boolean variable indicating if appendable models were found.
+#'  \item{select_plain:} Flat list with the models (ungrouped).
+#'  \item{choicesOpt} List witht he subtext filled out.
+#'}
+#'@example inst/test_apps/MB_funcs.R
+MB_fetch_appends   = function(state, current_ele){
+
+  isgood          = TRUE
+  hasappends      = FALSE
+  msgs            = c()
+  select_plain    = list()
+  select_subtext  = c()
+  choicesOpt      = NULL
+
+  component       = MB_fetch_component(state, current_ele)
+
+  model_catalog   = state[["MB"]][["model_catalog"]]
+  if(model_catalog[["isgood"]]){
+
+    # Getting all of the things the current component provides
+    provides = c(
+     component$rx_obj$params$output$primary,
+     component$rx_obj$params$output$secondary,
+     component$rx_obj$params$output$endpoint,
+     component$rx_obj$params$output$state)
+
+
+
+    # getting the models that are only ODEs and also have dependencies:
+    model_summary = state[["MB"]][["model_catalog"]][["summary"]]
+    model_summary = model_summary[model_summary[["ana_sol"]] == "no", ]   # Only ODEs
+    model_summary = model_summary[!is.na(model_summary[["depends"]]), ]   # Has dependencies 
+
+    for(mod_id in model_summary[["mod_id"]]){
+      # Pulling out the current row
+      model_summary_row = model_summary[model_summary$mod_id == mod_id, ]
+
+      # Taking the string dep1, dep2, dep3 and converting it into a vector
+      depends =  strsplit(model_summary_row[["depends"]][1], "\\W*,\\W*")[[1]]
+
+      # If all the dependencies are there, then we allow it to be appended
+      if(all(depends %in% provides)){
+         hasappends = TRUE
+         select_subtext = model_summary_row[["Description"]]
+         select_plain[[ model_summary_row[["Name"]] ]] = mod_id
+      }
+    }
+
+    if(!is.null(select_subtext)){
+      choicesOpt = list(
+        subtext = stringr::str_trunc(
+           select_subtext,
+           width= state[["MC"]][["formatting"]][["catalog_selection"]][["truncate"]]
+        )
+      )
+    }
+  } else {
+    isgood = FALSE
+    msgs   = c(state[["MC"]][["errors"]][["fetch_catalog_failed"]], model_catalog[["msgs"]])
+  }
+
+
+  # If there are no appendable elements we put a message in the pulldown.
+  if(!hasappends){
+    select_plain    = list()
+    select_plain[[state[["MC"]][["formatting"]][["append_model"]][["no_models"]] ]] = 
+      state[["MC"]][["formatting"]][["append_model"]][["no_models"]]
+    choicesOpt      = NULL
+  }
+
+  res = list(
+    isgood        = isgood,
+    msgs          = msgs,
+    hasappends    = hasappends,  
+    select_plain  = select_plain,
+    choicesOpt    = choicesOpt)
+
+res}
 
 #'@export
 #'@title Makes an rxode2 Object

@@ -14,7 +14,7 @@
 
 #'@import shiny
 
-.onLoad <- function(libname, pkgname){
+.onAttach <- function(libname, pkgname){
 
   #------------------------------------
   # Checking for rxpackages
@@ -38,6 +38,18 @@
   }
 
   Sys.setenv(ruminate_rxfamily_found = suggested_found)
+
+  packageStartupMessage("Loading ruminate")
+  rcres = ruminate_check(verbose = FALSE)
+  if(!rcres[["all_found"]]){
+    packageStartupMessage("Missing suggested packages")
+    for(pkg in rcres[["missing_pkgs"]]){
+      packageStartupMessage(paste0(" - ",pkg))
+    }
+    packageStartupMessage("")
+    packageStartupMessage("Install with the following:")
+    packageStartupMessage(paste0('install.packages(c("', paste0(rcres[["missing_pkgs"]], collapse='", "'), '"))'))
+  }
 }
 
 #'@export

@@ -103,6 +103,11 @@ MC:
       block: TRUE
       tooltip: "Make a copy of the current model."
       tooltip_position: "right"
+    button_clk_append_model:
+      size: "sm"
+      block: TRUE
+      tooltip: "Append to current model."
+      tooltip_position: "right"
     button_clk_new:
       size: "sm"
       block: TRUE
@@ -124,6 +129,11 @@ MC:
       default:   "rxode2"
     upload_model_file:
       width: "400px"
+    append_model:       
+      tooltip: "Append the selected sub-model to the current model."
+      tooltip_position: "bottom"
+      no_models:  "None available"
+      width: "200px"
     base_from:
       size:    "normal"
       status:  "primary"
@@ -135,12 +145,17 @@ MC:
       default: "catalog"
     # The timescales here can be altered manually. This is the general format:
     #   short_name:
-    #     conv: "10"
-    #     verb: "A more verbose name"
+    #     conv:  "10"
+    #     verb:  "A more verbose name"
+    #     match: ["sn"]
     # Generally you dont want to  change what is already here in terms of
     # these short name used. You can remove timescales you don't want to use
     # or add timescales that you need but are not present.
     #   -verb  You can change the verb field (what the user sees).
+    # The match field is a list of values that can be matched to the short
+    # name so if the short name is 'days' then you may want to match 'd',
+    # 'day', etc.
+    #   -match: ["day", "d"]
     # The order of Appearance is the same order seen here. The default
     # is the selected short name for the specified timescale
     time_scales:
@@ -152,21 +167,27 @@ MC:
         months:
           conv: "60*60*24*4"
           verb: "Months"
+          match: ["mo"]
         weeks:
           conv: "60*60*24*7"
           verb: "Weeks"
+          match: ["wk","weeks"]
         days:
           conv: "60*60*24"
           verb: "Days"
+          match: ["d", "day", "days"]
         hours:
           conv: "60*60"
           verb: "Hours"
+          match: ["hr", "hours", "hrs"]
         min:
           conv: "60"
           verb: "Minutes"
+          match: ["min", "minutes"]
         sec:
           conv: "1"
           verb: "Seconds"
+          match: ["sec", "seconds", "s"]
   labels:
     current_element: NULL # "Select model"
     element_name :   NULL # "model name"
@@ -181,7 +202,10 @@ MC:
     copy_btn:             "Copy"
     del_btn:              "Delete"
     new_btn:              "New"
+    append_model_btn:     "Append Model"
+    append_model:         "Available Sub-Models"
     building_model:       "Building model, be patient."
+    appending_model:      "Appending sub-model, be patient."
     element_name_diff:    "The model name has changed."
     model_code_diff:      "Manual changes have been made to the model."
     save_change_detected: "You need to click on the save button for these changes to take effect."
@@ -196,6 +220,9 @@ MC:
     nlmixr2lib_not_found:       "The nlmixr2lib package was not found. This library will not be available."
     selected_id_bad_list:       "Unable to find a list for the selected component."
     selected_id_bad_row:        "Selected component should have 1 row."
+    fetch_catalog_failed:       "Unable to fetch model catalog."
+    fetch_appends_failed:       "Unable to fetch appendable models"
+    append_failed:              "Unable to append sub-model"
   tooltips:
     # Set to FALSE to disable tool tips for this module
     include: TRUE

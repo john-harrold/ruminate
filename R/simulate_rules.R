@@ -353,7 +353,7 @@ simulate_rules <- function(object,
               sub_state       = simall[simall[["time"]] == eval_times[et_idx] & simall[["id"]] == sub_id, ]
               sub_sim_history = simall[                                         simall[["id"]] == sub_id, ]
 
-              # This should aways be one row, but just in case we check and throw
+              # This should always be one row, but just in case we check and throw
               # a flag if something went wrong.
               if(nrow(sub_state) == 1){
                 for(rule_id in names(rules)){

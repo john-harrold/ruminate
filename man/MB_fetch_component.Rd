@@ -98,6 +98,9 @@ state = MB_set_current_element(state, element)
 # This will fetch the current component
 component = MB_fetch_component(state, element)
 
+
+fares = MB_fetch_appends(state, element) 
+
 # You can use the component to build the code to generate the model:
 gen_code =
   MB_build_code(state        = state, session = session,

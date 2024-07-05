@@ -18,7 +18,6 @@ fileConn=file(nca_app)
 writeLines(ruminate_app_contents, fileConn)
 close(fileConn)
 #-----------------------------------
-
 # building documentation
 devtools::document(roclets = c('rd', 'collate', 'namespace', 'vignette'))
 

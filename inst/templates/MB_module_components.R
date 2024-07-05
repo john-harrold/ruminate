@@ -62,6 +62,14 @@ ui <- dashboardPage(
          )
          ),
        fluidRow(
+         box(title="Model building elements",
+           "ui_mb_append_model_btn",
+           htmlOutput(NS("MB", "ui_mb_append_model_btn")),
+           "ui_select_append_model",
+           htmlOutput(NS("MB", "ui_select_append_model"))
+         ),
+         ),
+       fluidRow(
          box(title="Generated Model",
            "ui_mb_model",
            shinyAce::aceEditor(NS("MB", "ui_mb_model")), width=12)),
@@ -84,7 +92,7 @@ ui <- dashboardPage(
 # Main app server
 server <- function(input, output, session) {
 
-   MB_test_mksession(session, full_session=TRUE)
+#  MB_test_mksession(session, full_session=TRUE)
 
   # Empty reactive object to track and react to
   # changes in the module state outside of the module

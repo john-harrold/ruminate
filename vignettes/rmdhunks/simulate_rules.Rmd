@@ -98,18 +98,21 @@ or elements of the action (e.g., the `values`, `times` and `durations` of a
 dose action type) are being evaluated, the following objects will be available
 at each evaluation point:
 
+* outputs:    The value of each model output. 
 * states:     The value of each named state or compartment.
 * covariates: The value of each named covariate.
 * subject-level parameters: The value of each named parameter.
 * rule value: The last value the rule evaluated as.
+* `id`: Current subject id.
+* `time`: Current evaluation time. 
 * `SI_SUB_HISTORY`: A data frame of the simulation history of the current subject up to the current evaluation point.
 * `SI_subjects`: The subjects data frame.
 * `SI_eval_times`: Vector of the evaluation times.
 * `SI_interval_ev`: The events table in it's current state for the given simulation interval.
 * `SI_ev_history`: This is the history of the event table containing all
   the events leading up to the current interval.
-* `SI_ud_history`: This is a free form object the user can define within
-  the "manual"action type. 
+* `SI_ud_history`: This is a free form object the user can define or alter within
+  the "manual"action type (ud-user defined, history). 
 
 ####  The following functions will be available:
 

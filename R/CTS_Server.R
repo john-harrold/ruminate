@@ -488,6 +488,7 @@ CTS_Server <- function(id,
       uiele_top_btn_row = NULL
       # We only build out the elements if the simulation is good:
       if(sim_isgood[["isgood"]]){
+        simres = current_ele[["simres"]][["capture"]][[ current_ele[["simres_object_name"]] ]]
         rx_details = current_ele[["rx_details"]]
 
         uiele_btn_update = shinyWidgets::actionBttn(
@@ -2333,7 +2334,7 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
   # save cohort
   if("button_clk_runsim" %in% changed_uis){
     FM_le(state, "run simulation")
-    #browser()
+    browser()
   }
   #---------------------------------------------
   # clip cohort

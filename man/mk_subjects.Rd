@@ -161,10 +161,13 @@ on the current or previous state of the system. For this reason, when a
 \code{durations} of a dose action type) are being evaluated, the following
 objects will be available at each evaluation point:
 \itemize{
+\item outputs: The value of each model output.
 \item states: The value of each named state or compartment.
 \item covariates: The value of each named covariate.
 \item subject-level parameters: The value of each named parameter.
 \item rule value: The last value the rule evaluated as.
+\item \code{id}: Current subject id.
+\item \code{time}: Current evaluation time.
 \item \code{SI_SUB_HISTORY}: A data frame of the simulation history of the
 current subject up to the current evaluation point.
 \item \code{SI_subjects}: The subjects data frame.
@@ -173,8 +176,8 @@ current subject up to the current evaluation point.
 simulation interval.
 \item \code{SI_ev_history}: This is the history of the event table containing all
 the events leading up to the current interval.
-\item \code{SI_ud_history}: This is a free form object the user can define within
-the “manual”action type.
+\item \code{SI_ud_history}: This is a free form object the user can define or
+alter within the “manual”action type (ud-user defined, history).
 }
 \subsection{The following functions will be available:}{
 \itemize{

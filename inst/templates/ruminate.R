@@ -38,7 +38,7 @@ if(file.exists(file.path(tempdir(), "RUMINTE_DEVELOPMENT"))){
   run_dev  = FALSE
 }
 
-# If the SETUP.R file exists we source it 
+# If the SETUP.R file exists we source it
 if(file.exists("SETUP.R")){
   source("SETUP.R")
 }
@@ -111,7 +111,7 @@ ui <- shinydashboard::dashboardPage(
   ),
     shinydashboard::tabItems(
        shinydashboard::tabItem(tabName="nca",
-               shinydashboard::box(title="Run Non-Compartmental Analysis", width=12,
+               shinydashboard::box(title="Non-Compartmental Analysis", width=12,
                fluidRow( prompter::use_prompt(),
                column(width=12,
                htmlOutput(NS("NCA",  "NCA_ui_compact")))))
