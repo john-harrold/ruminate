@@ -138,8 +138,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 87243e82d92ef599963d0b17953f455b</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:aa11cfd5cf1c1a804d0bbfc921d0643d</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: e3d3864b03da12963918ee33813d79f1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:60c799ff43a114e1902e179a5fb126c7</span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
 <span class="r-in"><span><span class="va">input</span>   <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">input</span></span></span>
 <span class="r-in"><span></span></span>
@@ -164,8 +164,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: source model change detected</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:  &gt; covariates reset</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 16fa527dacb9afbfc73f9c1cebe3f475</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 6376f8c66ace5789185cc610a1a18de2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 233aab1f5e72459b055dacafcbe5278c</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 63da2e00b718205a88363fdb1cd16889</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: State initialized</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">state</span></span></span>
@@ -684,6 +684,14 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$action_dosing_state$width</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 400</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$action_dosing_state$choices</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$action_dosing_state$choices$dosing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Dosing Compartments"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$action_dosing_state$choices$other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Other Compartments"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$action_dosing_values</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$action_dosing_values$width</span>
@@ -845,7 +853,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$nsub$tooltip</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Number of sujbects in the current cohort."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Number of sujbects in the current cohort. Set to 1 to simulate only the typical value."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$nsub$tooltip_position</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "bottom"</span>
@@ -876,10 +884,10 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 150</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$trial_end$placeholder</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "c(0, 7, 14, 21)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "100"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$trial_end$tooltip</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Study visit times."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Final simulation time point in simulation units."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$trial_end$tooltip_position</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "bottom"</span>
@@ -1073,6 +1081,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$runsim_btn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Simulate Cohort"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$running_sim</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Running simulation. Be patient!"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$labels$update_plot_btn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Update Plots"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1188,6 +1199,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$bad_sim</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "There was a problem with the simulation."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$bad_plot</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "There was a problem plotting the simulation results."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$errors$cts_no_fig</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "There are no figures to display. You must run the simulation first"</span>
@@ -1670,14 +1684,14 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   label      object MOD_TYPE id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 One compartment model MB_obj_1_rx       MB MB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           checksum                      MDLchecksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 aa11cfd5cf1c1a804d0bbfc921d0643d 87243e82d92ef599963d0b17953f455b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 60c799ff43a114e1902e179a5fb126c7 e3d3864b03da12963918ee33813d79f1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 code</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 MB_obj_1_fcn = function () \n{\n    description &lt;- "One compartment PK model with linear clearance using differential equations"\n    ini({\n        lka &lt;- 0.45\n        label("Absorption rate (Ka)")\n        lcl &lt;- 1\n        label("Clearance (CL)")\n        lvc &lt;- 3.45\n        label("Central volume of distribution (V)")\n        propSd &lt;- c(0, 0.5)\n        label("Proportional residual error (fraction)")\n        etalcl ~ 0.1\n    })\n    model({\n        ka &lt;- exp(lka)\n        cl &lt;- exp(lcl + etalcl)\n        vc &lt;- exp(lvc)\n        kel &lt;- cl/vc\n        d/dt(depot) &lt;- -ka * depot\n        d/dt(central) &lt;- ka * depot - kel * central\n        Cc &lt;- central/vc\n        Cc ~ prop(propSd)\n    })\n}\nMB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$modules</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$modules$MB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$modules$MB$MB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "aa11cfd5cf1c1a804d0bbfc921d0643d"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "60c799ff43a114e1902e179a5fb126c7"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1750,10 +1764,10 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB_obj_1_fcn = function () \n{\n    description &lt;- \"One compartment PK model with linear clearance using differential equations\"\n    ini({\n        lka &lt;- 0.45\n        label(\"Absorption rate (Ka)\")\n        lcl &lt;- 1\n        label(\"Clearance (CL)\")\n        lvc &lt;- 3.45\n        label(\"Central volume of distribution (V)\")\n        propSd &lt;- c(0, 0.5)\n        label(\"Proportional residual error (fraction)\")\n        etalcl ~ 0.1\n    })\n    model({\n        ka &lt;- exp(lka)\n        cl &lt;- exp(lcl + etalcl)\n        vc &lt;- exp(lvc)\n        kel &lt;- cl/vc\n        d/dt(depot) &lt;- -ka * depot\n        d/dt(central) &lt;- ka * depot - kel * central\n        Cc &lt;- central/vc\n        Cc ~ prop(propSd)\n    })\n}\nMB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_1_rx$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "aa11cfd5cf1c1a804d0bbfc921d0643d"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "60c799ff43a114e1902e179a5fb126c7"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_1_rx$MDLchecksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "87243e82d92ef599963d0b17953f455b"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "e3d3864b03da12963918ee33813d79f1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -2013,7 +2027,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$ui$dvcols</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Cc"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$ui$tc_dim</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "d2x4"</span>
@@ -2085,6 +2099,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$code_previous</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$dvcols_selection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$rx_details</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$rx_details$isgood</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
@@ -2093,6 +2110,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$rx_details$elements</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$rx_details$elements$dosing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$rx_details$elements$sys_units</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$rx_details$elements$covariates</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> character(0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -2186,7 +2209,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "One compartment model"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$MDLchecksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "87243e82d92ef599963d0b17953f455b"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "e3d3864b03da12963918ee33813d79f1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$SIMchecksum</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NOTRUN"</span>
@@ -2201,16 +2224,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "16fa527dacb9afbfc73f9c1cebe3f475"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "233aab1f5e72459b055dacafcbe5278c"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$code</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "library(rxode2)\nlibrary(nonmem2rx)\nlibrary(nlmixr2lib)\n\n# Creating the model\nMB_obj_1_fcn = function () \n{\n    description &lt;- \"One compartment PK model with linear clearance using differential equations\"\n    ini({\n        lka &lt;- 0.45\n        label(\"Absorption rate (Ka)\")\n        lcl &lt;- 1\n        label(\"Clearance (CL)\")\n        lvc &lt;- 3.45\n        label(\"Central volume of distribution (V)\")\n        propSd &lt;- c(0, 0.5)\n        label(\"Proportional residual error (fraction)\")\n        etalcl ~ 0.1\n    })\n    model({\n        ka &lt;- exp(lka)\n        cl &lt;- exp(lcl + etalcl)\n        vc &lt;- exp(lvc)\n        kel &lt;- cl/vc\n        d/dt(depot) &lt;- -ka * depot\n        d/dt(central) &lt;- ka * depot - kel * central\n        Cc &lt;- central/vc\n        Cc ~ prop(propSd)\n    })\n}\nMB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)\n\n# Fetching the system information\nCTS_obj_1_rx_details = fetch_rxinfo(MB_obj_1_rx)\n\n# Defining covariates\nCTS_obj_1_cov = list()\n\n# Generating the subjects\nCTS_obj_1_subs = mk_subjects(object = MB_obj_1_rx,\n  nsub   = 10,\n  covs   = CTS_obj_1_cov)\n\n# Creating rules\nCTS_obj_1_rules = list()\n\n# rxSolve options\nCTS_obj_1_rxopts = list(\n  atol = 1e-8,\n  rtol = 1e-6,\n  sigdig = NULL)\n\n# Output times\nCTS_obj_1_output_times = formods::linspace(0,100,200)\n\n# Running simulation\nCTS_obj_1_simres =                                 \n simulate_rules(object        = MB_obj_1_rx,\n                subjects      = CTS_obj_1_subs[[\"subjects\"]],\n                eval_times    = c(0),\n                output_times  = CTS_obj_1_output_times,\n                rules         = CTS_obj_1_rules,\n                rx_options    = CTS_obj_1_rxopts)\n# Collecting the simulation and event history values\nCTS_obj_1_sim_tc = CTS_obj_1_simres[[\"simall\"]]\nCTS_obj_1_sim_ev = CTS_obj_1_simres[[\"ev_history\"]]\n\n# Plotting timecourse\nCTS_obj_1_fgtc =                                 \n  plot_sr_tc(sro = CTS_obj_1_simres,\n    fncol        = 4,                       \n    fnrow        = 2,                       \n    dvcols       = \"\",\n    fpage        = 1)\n\n# Plotting events\nCTS_obj_1_fgev =                                 \n  plot_sr_ev(sro = CTS_obj_1_simres,\n    fncol        = 4,                       \n    fnrow        = 2,                       \n    evplot       = 1,\n    fpage        = 1)\n"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "library(rxode2)\nlibrary(nonmem2rx)\nlibrary(nlmixr2lib)\n\n# Creating the model\nMB_obj_1_fcn = function () \n{\n    description &lt;- \"One compartment PK model with linear clearance using differential equations\"\n    ini({\n        lka &lt;- 0.45\n        label(\"Absorption rate (Ka)\")\n        lcl &lt;- 1\n        label(\"Clearance (CL)\")\n        lvc &lt;- 3.45\n        label(\"Central volume of distribution (V)\")\n        propSd &lt;- c(0, 0.5)\n        label(\"Proportional residual error (fraction)\")\n        etalcl ~ 0.1\n    })\n    model({\n        ka &lt;- exp(lka)\n        cl &lt;- exp(lcl + etalcl)\n        vc &lt;- exp(lvc)\n        kel &lt;- cl/vc\n        d/dt(depot) &lt;- -ka * depot\n        d/dt(central) &lt;- ka * depot - kel * central\n        Cc &lt;- central/vc\n        Cc ~ prop(propSd)\n    })\n}\nMB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)\n\n# Fetching the system information\nCTS_obj_1_rx_details = fetch_rxinfo(MB_obj_1_rx)\n\n# Defining covariates\nCTS_obj_1_cov = list()\n\n# Generating the subjects\nCTS_obj_1_subs = mk_subjects(object = MB_obj_1_rx,\n  nsub   = 10,\n  covs   = CTS_obj_1_cov)\n\n# Creating rules\nCTS_obj_1_rules = list()\n\n# rxSolve options\nCTS_obj_1_rxopts = list(\n  atol = 1e-8,\n  rtol = 1e-6,\n  sigdig = NULL)\n\n# Output times\nCTS_obj_1_output_times = formods::linspace(0,100,200)\n\n# Running simulation\nCTS_obj_1_simres =                                 \n simulate_rules(object        = MB_obj_1_rx,\n                subjects      = CTS_obj_1_subs[[\"subjects\"]],\n                eval_times    = c(0),\n                output_times  = CTS_obj_1_output_times,\n                rules         = CTS_obj_1_rules,\n                rx_options    = CTS_obj_1_rxopts)\n# Collecting the simulation and event history values\nCTS_obj_1_sim_tc = CTS_obj_1_simres[[\"simall\"]]\nCTS_obj_1_sim_ev = CTS_obj_1_simres[[\"ev_history\"]]\n\n# Plotting timecourse\nCTS_obj_1_fgtc =                                 \n  plot_sr_tc(sro = CTS_obj_1_simres,\n    fncol        = 4,                       \n    fnrow        = 2,                       \n    dvcols       = \"Cc\",\n    fpage        = 1)\n\n# Plotting events\nCTS_obj_1_fgev =                                 \n  plot_sr_ev(sro = CTS_obj_1_simres,\n    fncol        = 4,                       \n    fnrow        = 2,                       \n    evplot       = 1,\n    fpage        = 1)\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$code_ele_only</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "\n# Fetching the system information\nCTS_obj_1_rx_details = fetch_rxinfo(MB_obj_1_rx)\n\n# Defining covariates\nCTS_obj_1_cov = list()\n\n# Generating the subjects\nCTS_obj_1_subs = mk_subjects(object = MB_obj_1_rx,\n  nsub   = 10,\n  covs   = CTS_obj_1_cov)\n\n# Creating rules\nCTS_obj_1_rules = list()\n\n# rxSolve options\nCTS_obj_1_rxopts = list(\n  atol = 1e-8,\n  rtol = 1e-6,\n  sigdig = NULL)\n\n# Output times\nCTS_obj_1_output_times = formods::linspace(0,100,200)\n\n# Running simulation\nCTS_obj_1_simres =                                 \n simulate_rules(object        = MB_obj_1_rx,\n                subjects      = CTS_obj_1_subs[[\"subjects\"]],\n                eval_times    = c(0),\n                output_times  = CTS_obj_1_output_times,\n                rules         = CTS_obj_1_rules,\n                rx_options    = CTS_obj_1_rxopts)\n# Collecting the simulation and event history values\nCTS_obj_1_sim_tc = CTS_obj_1_simres[[\"simall\"]]\nCTS_obj_1_sim_ev = CTS_obj_1_simres[[\"ev_history\"]]\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$code_figtcev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "# Plotting timecourse\nCTS_obj_1_fgtc =                                 \n  plot_sr_tc(sro = CTS_obj_1_simres,\n    fncol        = 4,                       \n    fnrow        = 2,                       \n    dvcols       = \"\",\n    fpage        = 1)\n\n# Plotting events\nCTS_obj_1_fgev =                                 \n  plot_sr_ev(sro = CTS_obj_1_simres,\n    fncol        = 4,                       \n    fnrow        = 2,                       \n    evplot       = 1,\n    fpage        = 1)\n"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "# Plotting timecourse\nCTS_obj_1_fgtc =                                 \n  plot_sr_tc(sro = CTS_obj_1_simres,\n    fncol        = 4,                       \n    fnrow        = 2,                       \n    dvcols       = \"Cc\",\n    fpage        = 1)\n\n# Plotting events\nCTS_obj_1_fgev =                                 \n  plot_sr_ev(sro = CTS_obj_1_simres,\n    fncol        = 4,                       \n    fnrow        = 2,                       \n    evplot       = 1,\n    fpage        = 1)\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$code_figtc_rpt</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "  # Plotting timecourse"                            </span>
@@ -2218,7 +2241,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3] "    plot_sr_tc(sro = CTS_obj_1_simres,"             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4] "      fncol        = 4,                       "     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "      fnrow        = 2,                       "     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6] "      dvcols       = \"\","                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6] "      dvcols       = \"Cc\","                       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [7] "      fpage        = fg_page)"                      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [8] ""                                                   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -2238,7 +2261,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "6376f8c66ace5789185cc610a1a18de2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "63da2e00b718205a88363fdb1cd16889"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MOD_TYPE</span>
@@ -2254,7 +2277,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/formods/templates/formods.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MOD_yaml_file</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/pq/7srbf_fx3rd3k706hgxkg61r0000gp/T/RtmphdPJkY/temp_libpath34832a5af067/ruminate/templates/CTS.yaml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/pq/7srbf_fx3rd3k706hgxkg61r0000gp/T/Rtmp5ymFEp/temp_libpath179d53238eeac/ruminate/templates/CTS.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $shiny_token</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "non_shiny"</span>

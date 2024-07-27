@@ -149,7 +149,9 @@ CTS_Server <- function(id,
               inputId    = NS(id, "action_set_state_state"),
               label      = state[["MC"]][["labels"]][["action_set_state_state"]],
               choices    = rx_details[["elements"]][["states"]],
-              width      = state[["MC"]][["formatting"]][["action_set_state_state"]][["width"]])
+              width      = state[["MC"]][["formatting"]][["action_set_state_state"]][["width"]],
+              options = list(`live-search` = TRUE))
+
         }else{
           uiele = paste0(rx_details[["msgs"]], collapse="\n")
         }
@@ -248,6 +250,10 @@ CTS_Server <- function(id,
       rx_details = current_ele[["rx_details"]]
 
 
+      # JMH updating dosing based on availablility of dosing compartments and
+      # units
+
+
       uiele =NULL
       if(input$rule_type == "dose"){
         if(rx_details[["isgood"]]){
@@ -257,13 +263,69 @@ CTS_Server <- function(id,
               value = NULL
             }
           }
+
+
+          dose_cmpts = c()
+          dose_units = NULL
+
+          sys_units =  rx_details[["elements"]][["sys_units"]]
+          if(!is.null(sys_units)){
+            if("dosing" %in% names(sys_units)){
+              dose_units = sys_units[["dosing"]]
+            }
+          }
+
+
+          # This identifies any dosing compartments. First explicit
+          # compartments:
+          if(!is.null(rx_details[["elements"]][["dosing"]])){
+            dose_cmpts = rx_details[["elements"]][["dosing"]]
+          }
+
+          # Next we infer based on names:
+          if("depot" %in% rx_details[["elements"]][["states"]]){
+            dose_cmpts = c(dose_cmpts, "depot") }
+          if("central" %in% rx_details[["elements"]][["states"]]){
+            dose_cmpts = c(dose_cmpts, "central") }
+
+          dose_cmpts = unique(dose_cmpts)
+
+          # we're altering how the selection is presented. If there are
+          # identified compartments then we put them up top and group them and
+          # then put the rest of the compartments below. Otherwise we just
+          # give all the compartments to the user.
+          if(!is.null(dose_cmpts)){
+
+            all_cmpts = rx_details[["elements"]][["states"]]
+            other_cmpts = setdiff(all_cmpts, dose_cmpts)
+
+
+            choices = list()
+            # If there are units then we include them
+            if(is.null(dose_units)){
+              choices[[ state[["MC"]][["formatting"]][["action_dosing_state"]][["choices"]][["dosing"]] ]] = sort(dose_cmpts)
+            } else {
+              choices[[ paste0( state[["MC"]][["formatting"]][["action_dosing_state"]][["choices"]][["dosing"]], "  (", dose_units, ")") ]] = dose_cmpts
+            }
+
+            # If there are other compartments then we create groupings
+            # otherwise we just return the dosing grouping as the choice
+            if(length(other_cmpts)){
+              choices[[ state[["MC"]][["formatting"]][["action_dosing_state"]][["choices"]][["other"]] ]] = sort(other_cmpts)
+            }
+          } else {
+            choices    = sort(rx_details[["elements"]][["states"]])
+          }
+
           uiele =
             shinyWidgets::pickerInput(
               selected   = NULL,
               inputId    = NS(id, "action_dosing_state"),
               label      = state[["MC"]][["labels"]][["action_dosing_state"]],
-              choices    = rx_details[["elements"]][["states"]],
-              width      = state[["MC"]][["formatting"]][["action_dosing_state"]][["width"]])
+              choices    = choices,
+              width      = state[["MC"]][["formatting"]][["action_dosing_state"]][["width"]],
+              options = list(`live-search` = TRUE)
+            )
         }else{
           uiele = paste0(rx_details[["msgs"]], collapse="\n")
         }
@@ -413,7 +475,9 @@ CTS_Server <- function(id,
     # Create an empty UI for the source model. It will update based on the
     # observe function below it.
     output$CTS_ui_source_model = renderUI({
-      input$element_selection
+      #input$element_selection
+
+      message("CTS_ui_source_model")
       state = CTS_fetch_state(id              = id,
                              id_ASM          = id_ASM,
                              id_MB           = id_MB,
@@ -528,6 +592,7 @@ CTS_Server <- function(id,
         # Figure page selection
         uiele_fpage = htmlOutput(NS(id, "CTS_ui_fpage"))
 
+
         # DV cols selection
         choices = list()
         all_values = c()
@@ -537,12 +602,18 @@ CTS_Server <- function(id,
           if(!is.null(values)){
             values = values[(values %in% names(simres[["simall"]]))]
             if(length(values) > 0){
+              # This accounts for groupings with only a single value:
+              if(length(values) ==1){
+                tmpvalues = list()
+                tmpvalues[[values]] = values
+                values = tmpvalues
+              }
+
               choices[[ verb ]] = values
               all_values = c(all_values, values)
             }
           }
         }
-
 
         selected = current_ele[["ui"]][["dvcols"]]
 
@@ -733,6 +804,12 @@ CTS_Server <- function(id,
       if(current_ele[["isgood"]]){
         plotres = current_ele[["plotres"]][["capture"]][[ current_ele[["fgtc_object_name"]] ]]
         npages = plotres[["npages"]]
+
+        # This prevents errors in the UI
+        if(is.null(npages)){
+          npages = 1
+        }
+
         # If there isn't a value in selected we select the first one
         if(is.null(current_ele[["ui"]][["fpage"]])){
           selected = 1
@@ -1521,6 +1598,7 @@ CTS_Server <- function(id,
     #------------------------------------
     # This forces the model selection to update
     observe({
+      message("observe CTS_ui_source_model")
       input$element_selection
       input$button_clk_save
       react_state[[id_MB]]
@@ -1555,6 +1633,9 @@ CTS_Server <- function(id,
 
         choices        = catalog[["object"]]
         names(choices) = catalog[["label"]]
+
+        message("chorices:")
+        message(str(choices))
 
         choicesOpt = NULL
         shinyWidgets::updatePickerInput(
@@ -2334,7 +2415,43 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
   # save cohort
   if("button_clk_runsim" %in% changed_uis){
     FM_le(state, "run simulation")
-    browser()
+    current_ele = CTS_fetch_current_element(state)
+
+
+    FM_pause_screen(
+        state   = state,
+        session = session,
+        message = state[["MC"]][["labels"]][["running_sim"]])
+
+    current_ele = CTS_simulate_element(state, current_ele)
+
+    if(current_ele[["simres"]][["isgood"]]){
+      current_ele = CTS_plot_element(state, current_ele)
+
+      if(!current_ele[["plotres"]][["isgood"]]){
+        msgs = c(msgs, current_ele[["plotres"]][["msgs"]])
+        state = FM_set_notification(
+          state       = state,
+          notify_text = state[["MC"]][["errors"]][["bad_plot"]],
+          notify_id   = "Element plotting failed",
+          type        = "failure")
+      }
+    } else {
+      msgs = c(msgs, current_ele[["simres"]][["msgs"]])
+        state = FM_set_notification(
+          state       = state,
+          notify_text = state[["MC"]][["errors"]][["bad_sim"]],
+          notify_id   = "Element simulation failed",
+          type        = "failure")
+    }
+
+    state = CTS_set_current_element(
+      state   = state,
+      element = current_ele)
+
+    FM_resume_screen(state, session)
+
+
   }
   #---------------------------------------------
   # clip cohort
@@ -2472,9 +2589,25 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
     }
   }
   #---------------------------------------------
+  # changing source model
+  if("source_model" %in% changed_uis){
+    FM_le(state, "changing source model")
+
+    # Pulling out the current element
+    current_ele = CTS_fetch_current_element(state)
+
+    # Reinitializing source model components
+    current_ele = CTS_init_element_model(state, current_ele)
+
+    # Putting the element back in the state
+    state = CTS_set_current_element(
+      state   = state,
+      element = current_ele)
+  }
+  #---------------------------------------------
   # add rule
   if("button_clk_add_rule" %in% changed_uis){
-
+    FM_le(state, "adding rule")
 
     #Pulling out the current element
     current_ele = CTS_fetch_current_element(state)
@@ -3692,6 +3825,9 @@ CTS_new_element = function(state){
          fgtc_object_name       = paste0(element_object_name, "_fgtc"),
          fgev_object_name       = paste0(element_object_name, "_fgev"),
          code_previous          = NULL,
+         # This contains the selection choices and is populated by 
+         # CTS_init_element_model()
+         dvcols_selection       = list(), 
          # This is information about the source model from fetch_rxinfo()
          rx_details             = NULL,
          model_label            = "",
@@ -3746,6 +3882,7 @@ CTS_new_element = function(state){
   # Setting the new element as current
   state[["CTS"]][["current_element"]]     = element_id
 
+  element_def = CTS_init_element_model(state, element_def)
 
 # # Dropping the new element into the state
 # state[["CTS"]][["elements"]][[element_id]] = element_def
@@ -3762,6 +3899,36 @@ CTS_new_element = function(state){
 
 
 state}
+
+#'@title Initializes Cohort When Model Changes
+#'@description When a source model changes this will update information about
+#'that model like the default dvcols and selection information about the
+#'dvcols
+#'@param state CTS state from \code{CTS_fetch_state()}
+#'@param element Element list from \code{CTS_fetch_current_element()}
+#'@return CTS state object with the current cohort ui elements initialized
+#'based on the current model selected
+CTS_init_element_model    = function(state, element){
+
+  # DV cols selection
+  rx_details = element[["rx_details"]]
+
+  if(rx_details[["isgood"]]){
+    all_values = c(
+      rx_details[["elements"]][["outputs"]],
+      rx_details[["elements"]][["states"]])
+
+     # Storing the details in the element
+     if(is.null(all_values)){
+      element[["ui"]][["dvcols"]]   = ""
+     } else {
+      element[["ui"]][["dvcols"]]   = all_values[1]
+     }
+  }
+
+element}
+
+
 
 
 #'@export

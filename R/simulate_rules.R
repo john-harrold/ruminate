@@ -420,7 +420,6 @@ simulate_rules <- function(object,
                                  capture = capture,
                                  cmd     = cmd)
 
-                          #browser()
                         if(tcres[["isgood"]]){
                           # Now we're going to process the dosing
                           dvals  = as.numeric(tcres[["capture"]][["SI_values"]])
@@ -963,6 +962,7 @@ plot_sr_tc <- function(
 
   error_msgs = list(
    char_bad         = "Should be character data.",
+   char_empty       = "Empty character data.",
    fpage_dne        = "The specified figure page does not exist using 1 instead.",
    num_bad          = "Should be numeric data.",
    sim_failed       = "The simulation failed.",
@@ -992,6 +992,9 @@ plot_sr_tc <- function(
   if(!is.character(dvcols)){
     isgood = FALSE
     msgs = c(msgs, paste0("dvcols: ", error_msgs[["char_bad"]]))
+  }else if("" %in% dvcols){
+    isgood = FALSE
+    msgs = c(msgs, paste0("dvcols: ", error_msgs[["char_empty"]]))
   }
   # This is optional
   if(!is.null(fcol)){
@@ -1159,7 +1162,11 @@ fetch_rxinfo <- function(object){
     outputs         = object$params$output$endpoint
     states          = object$params$cmt
     iiv             = object$params$group$id
+    dosing          = object$meta$dosing
+    sys_units       = object$meta$units
     elements = list(
+      dosing         = dosing,
+      sys_units      = sys_units ,
       covariates     = covariates,
       population     = population,
       parameters     = parameters,
@@ -1299,7 +1306,8 @@ res}
 #'@description This will provide information like parameter names, covriates,
 #'etc from an rxode2 object.
 #'@param object rxode2 model object  An ID string that corresponds with the ID used to call the modules UI elements.
-#'@param nsub Number of subjects to generate.
+#'@param nsub Number of subjects to generate. If set to 1 it will return the
+#'typical values (IIV set to zero).
 #'@param covs List describing how covariates should be generated.
 #'@return  List with the following elements.
 #' \itemize{
@@ -1402,7 +1410,7 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
                    rx_details[["elements"]][["iiv"]])
 
       # If only one subject is selected no id column is created. This creates
-      # one to make everything else work below.
+      # one to make everything else work below. 
       if(nsub == 1){
         params[["id"]] = 1
       }
@@ -1411,6 +1419,15 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
         dplyr::mutate("id" := as.factor(.data[["id"]]))
 
       subjects = dplyr::left_join(params, iCov, by="id")
+
+      # We also set iiv to 0 to get typical values when simulating 1 subject:
+      if(nsub == 1){
+        if(!is.null(rx_details[["elements"]][["iiv"]])){
+          for(tmpiiv in rx_details[["elements"]][["iiv"]]){
+            subjects[[tmpiiv]] = 0
+          }
+        }
+      }
       #-----------------------------------------------------------------
     }
 

@@ -9,7 +9,8 @@ mk_subjects(object, nsub = 10, covs = NULL)
 \arguments{
 \item{object}{rxode2 model object  An ID string that corresponds with the ID used to call the modules UI elements.}
 
-\item{nsub}{Number of subjects to generate.}
+\item{nsub}{Number of subjects to generate. If set to 1 it will return the
+typical values (IIV set to zero).}
 
 \item{covs}{List describing how covariates should be generated.}
 }

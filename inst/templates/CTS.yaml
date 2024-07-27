@@ -128,6 +128,9 @@ MC:
       placeholder: "examples: TRUE will run the action at at every visit or (time > 0) & (Ac < 10) will be more selective."
     action_dosing_state:
       width:  400
+      choices:
+        dosing: "Dosing Compartments"
+        other:  "Other Compartments"
     action_dosing_values:
       width:  400
       placeholder: "c(1, 1, 1)"
@@ -193,7 +196,7 @@ MC:
       value:  10
       width:  50  
       placeholder: 10
-      tooltip: "Number of sujbects in the current cohort."
+      tooltip: "Number of sujbects in the current cohort. Set to 1 to simulate only the typical value."
       tooltip_position: "bottom"
     visit_times:
       value:  0   
@@ -204,8 +207,8 @@ MC:
     trial_end:   
       value:  100   
       width:  150 
-      placeholder: "c(0, 7, 14, 21)"
-      tooltip: "Study visit times."
+      placeholder: "100"
+      tooltip: "Final simulation time point in simulation units."
       tooltip_position: "bottom"
     covariates:
       none_found: "There were no coviaraites found in this model"
@@ -277,6 +280,7 @@ MC:
     element_name :       NULL # "cohort name"
     save_btn:            "Save"
     runsim_btn:          "Simulate Cohort"
+    running_sim:         "Running simulation. Be patient!"
     update_plot_btn:     "Update Plots"
     clip_btn:            "Code" 
     copy_btn:            "Copy"
@@ -316,6 +320,7 @@ MC:
   errors:
     no_sim_found: "No simulation available, you need to run the simulation first."
     bad_sim:      "There was a problem with the simulation."
+    bad_plot:     "There was a problem plotting the simulation results."
     cts_no_fig:   "There are no figures to display. You must run the simulation first"
     no_mdl_found: "There are no source models to use. You need to create a model to use this module."
 #   mdl_missing:  "The source model ===MDLLABEL=== (===MDLID===) for ===CHTLABEL=== (===CHTID===) \nwas not found, choose a new source model and simulate."
