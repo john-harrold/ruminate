@@ -123,3 +123,20 @@ at each evaluation point:
 ```{r, eval=FALSE}
 SI_fpd(id=id, state="Ac")
 ```
+
+### Time scales
+
+You can include columns in your output for different time scales if you wish.
+You need to create a list in the format below. One element should be `system`
+with a short name for the system timescale. The next should be `details` which
+is a list containing short names for each timescale you want to include. Each
+of these is a list with a verbose name for the time scale (`verb`) and a
+numerical conversion indicating how that timescale relates to the others. Here
+we define weeks and days on the basis of seconds.
+
+```{r, eval=FALSE}
+time_scales = list(system="days", 
+                details= list(
+                  weeks = list(verb="Weeks",    conv=60*60*24*7),
+                  days  = list(verb="Days",     conv=60*60*24)))
+```

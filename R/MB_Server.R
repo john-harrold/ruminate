@@ -325,6 +325,7 @@ MB_Server <- function(id,
     # Generated model
     observe({
       req(input[["element_selection"]])
+      input[["time_scale"]]
       input[["catalog_selection"]]
       input[["button_clk_save"]]
       input[["button_clk_del"]]
@@ -373,6 +374,8 @@ MB_Server <- function(id,
     # Generated model building code
     observe({
       req(input[["element_selection"]])
+      input[["ui_mb_model"]]
+      input[["time_scale"]]
       input[["catalog_selection"]]
       input[["button_clk_save"]]
       input[["button_clk_del"]]
@@ -744,6 +747,7 @@ MB_Server <- function(id,
         list(
            # react_state[[id_ASM]])
              input[["element_selection"]],
+             input[["time_scale"]],
              input[["catalog_selection"]],
              input[["button_clk_new"]],
              input[["button_clk_del"]],
@@ -1082,6 +1086,32 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
     FM_le(state, "clip model")
   }
   #---------------------------------------------
+  # time scale changes
+  if("time_scale" %in% changed_uis){
+
+    # Pulling out the current element and corresponding component
+    current_ele = MB_fetch_current_element(state)
+    component   = MB_fetch_component(state, current_ele)
+
+    # We only update the model if there is an object. This prevents updates
+    # during initialization. 
+    if(!is.null(component[["rx_obj"]])){
+      FM_le(state, "time scale changed")
+      current_ele = MB_update_model(
+        state       = state,
+        session     = session,
+        current_ele = current_ele,
+        rx_obj      = component[["rx_obj"]],
+        note        = "Updated time scale",
+        reset       = FALSE)
+    }
+    
+    # Saving the updated element
+    state = MB_set_current_element(
+      state   = state,
+      element = current_ele)
+  }
+  #---------------------------------------------
   # copy model
   if("button_clk_copy" %in% changed_uis){
     FM_le(state, "copy model")
@@ -1135,8 +1165,10 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
         state        = state,
         session      = session,
         fcn_def      = tmp_fcn_def,
-        fcn_obj_name =  new_ele[["fcn_obj_name"]] ,
-        rx_obj_name  =  new_ele[["rx_obj_name"]]  )
+        time_scale   = new_ele[["ui"]][["time_scale"]],
+        fcn_obj_name = new_ele[["fcn_obj_name"]] ,
+        rx_obj_name  = new_ele[["rx_obj_name"]]  ,
+        ts_obj_name  = new_ele[["ts_obj_name"]]  )
 
       new_ele[["components_table"]][new_ele[["components_table"]][["id_str"]] == tmp_id_str][["model_code"]] =
         paste0(bcres[["model_code"]], collapse="\n")
@@ -1570,9 +1602,14 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
   # Pulling out the model sources
   state[["MB"]][["model_catalog"]]        =  MB_fetch_catalog(state)
 
-  # Creating the timescales
-  # JMH
-  #browser()
+  # Creating the time scales details
+  ts_details = list()
+  for(tmpts in names(state[["MC"]][["formatting"]][["time_scales"]][["choices"]])){
+    tmp_conv = eval(parse(text=state[["MC"]][["formatting"]][["time_scales"]][["choices"]][[tmpts]][["conv"]]))
+    tmp_verb = state[["MC"]][["formatting"]][["time_scales"]][["choices"]][[tmpts]][["verb"]]
+    ts_details[[tmpts]] = list(verb = tmp_verb, conv=tmp_conv)
+  }
+  state[["MB"]][["ts_details"]] = ts_details
 
   # Creating a default element:
   state = MB_new_element(state)
@@ -1712,14 +1749,16 @@ res}
 #'  \item{mdl:}       List with models. Each list element has the name of
 #'  the R-object for that dataset. Each element has the following structure:
 #'  \itemize{
-#'    \item{label:}      Text label for the model (e.g. one-compartment model).
-#'    \item{MOD_TYPE:}   Type of module.
-#'    \item{id:}         Module ID.
-#'    \item{rx_obj:}     The rxode2 object name that holds the model.
-#'    \item{fcn_def:}    Text to define the model
-#'    \item{MDLMETA:}    Notes about the model.
-#'    \item{code:}       Code to generate the model.
-#'    \item{checksum:}   Module checksum.
+#'    \item{label:}       Text label for the model (e.g. one-compartment model).
+#'    \item{MOD_TYPE:}    Type of module.
+#'    \item{id:}          Module ID.
+#'    \item{rx_obj:}      The rxode2 object.
+#'    \item{rx_obj_name:} The rxode2 object name that holds the model.
+#'    \item{ts_obj_name:} The object name that holds the model time scale information.
+#'    \item{fcn_def:}     Text to define the model
+#'    \item{MDLMETA:}     Notes about the model.
+#'    \item{code:}        Code to generate the model.
+#'    \item{checksum:}    Module checksum.
 #'    \item{MDLchecksum:} Model checksum.
 #'  }
 #'}
@@ -1764,6 +1803,7 @@ MB_fetch_mdl = function(state){
                id          = state[["id"]],
                rx_obj      = cc[["rx_obj"]],
                rx_obj_name = ce[["rx_obj_name"]],
+               ts_obj_name = ce[["ts_obj_name"]],
                fcn_def     = cc[["fcn_def"]],
                MDLMETA     = cc[["note"]],
                code        = cc[["model_code"]],
@@ -1981,6 +2021,8 @@ MB_new_element = function(state){
                     "_", state[["MB"]][["element_cntr"]], "_fcn")
   rx_obj_name   = paste0(state[["MC"]][["element_object_name"]],
                     "_", state[["MB"]][["element_cntr"]], "_rx")
+  ts_obj_name   = paste0(state[["MC"]][["element_object_name"]],
+                    "_", state[["MB"]][["element_cntr"]], "_ts")
   # Extracting the model catalog:
   model_catalog = state[["MB"]][["model_catalog"]]
 
@@ -2001,6 +2043,7 @@ MB_new_element = function(state){
          idx                    = state[["MB"]][["element_cntr"]],
          fcn_obj_name           = fcn_obj_name,
          rx_obj_name            = rx_obj_name,
+         ts_obj_name            = ts_obj_name,
          msgs                   = c(),
          code_previous          = NULL,
          update_model_code      = FALSE,
@@ -2218,8 +2261,10 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
           MB_build_code(state        = state,
                         session      = session,
                         fcn_def      = fcn_def,
+                        time_scale   = current_ele[["ui"]][["time_scale"]],
                         fcn_obj_name = current_ele[["fcn_obj_name"]],
-                        rx_obj_name  = current_ele[["rx_obj_name"]])
+                        rx_obj_name  = current_ele[["rx_obj_name"]],
+                        ts_obj_name  = current_ele[["ts_obj_name"]])
 
         tmpdf =
         data.frame(id            = component_id,
@@ -2341,8 +2386,10 @@ component}
 #'@param session Shiny session variable
 #'@param fcn_def Character string containing the function definition for the
 #'model
+#'@param time_scale  Short name for the model timescale (see names of state$MC$formatting$time_scales$choices).
 #'@param fcn_obj_name Object name of the function to create.
 #'@param rx_obj_name Object name of the rxode2 object to create.
+#'@param ts_obj_name Object name of the tiemscale object to create.
 #'@return List with the following elements
 #'\itemize{
 #'  \item{model_code} Block of code to create the model in the context of a
@@ -2351,11 +2398,23 @@ component}
 #'  stand alone.
 #'}
 #'@example inst/test_apps/MB_funcs.R
-MB_build_code  = function(state, session, fcn_def, fcn_obj_name, rx_obj_name){
+MB_build_code  = function(state, session, fcn_def, time_scale, fcn_obj_name, rx_obj_name, ts_obj_name){
 
   if( Sys.getenv("ruminate_rxode2_found")){
+
+    # Creating the time scale details
+    ts_details = state[["MB"]][["ts_details"]]
+
     model_code = c(paste0(fcn_obj_name, " = ", fcn_def),
-                   paste0(rx_obj_name,  " =  rxode2::rxode2(", fcn_obj_name,")"))
+                   "",
+                   paste0(rx_obj_name,  " =  rxode2::rxode2(", fcn_obj_name,")"),
+                   "",
+                   paste0(ts_obj_name,  " = list("),
+                   paste0("  system  = ", deparse(time_scale), ","),
+                   paste0("  details = "),
+                   paste0("    ", deparse(ts_details), collapse="\n"),
+                   ")"
+                   )
   } else {
     model_code  = "# rxode2 package was not found."
   }

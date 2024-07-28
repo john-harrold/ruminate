@@ -1634,9 +1634,6 @@ CTS_Server <- function(id,
         choices        = catalog[["object"]]
         names(choices) = catalog[["label"]]
 
-        message("chorices:")
-        message(str(choices))
-
         choicesOpt = NULL
         shinyWidgets::updatePickerInput(
           session    = session,

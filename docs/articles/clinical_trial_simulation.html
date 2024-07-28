@@ -334,6 +334,25 @@ following:</li>
 <code class="sourceCode R"><span><span class="fu">SI_fpd</span><span class="op">(</span>id<span class="op">=</span><span class="va">id</span>, state<span class="op">=</span><span class="st">"Ac"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
+<div class="section level4">
+<h4 id="timescales">Timescales<a class="anchor" aria-label="anchor" href="#timescales"></a>
+</h4>
+<p>You can include columns in your output for different timescales if
+you wish. You need to create a list in the format below. One element
+should be <code>system</code> with a short name for the system
+timescale. The next should be <code>details</code> which is a list
+containing short names for each timescale you want to include. Each of
+these is a list with a verbose name for the time scale
+(<code>verb</code>) and a numerical conversion indicating how that
+timescale realates to the others.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">time_scales</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>system<span class="op">=</span><span class="st">"days"</span>, </span>
+<span>                details<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>                  weeks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Weeks"</span>,    conv<span class="op">=</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">*</span><span class="fl">7</span><span class="op">)</span>,</span>
+<span>                  days  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Days"</span>,     conv<span class="op">=</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">)</span>,</span>
+<span>                  sec   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Seconds"</span>,  conv<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span>                <span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 </div>
 <div class="section level2">
@@ -344,7 +363,7 @@ driving a change in a biomarker through an indirect response will be
 used. The timescale of this model is days and the system is shown at the
 bottom if you want to look through it. You can also find it in the
 <code>{rumiante}</code> package here:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"ruminate"</span>, <span class="st">"test_apps"</span>, <span class="st">"test_rxode2_system.R"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="creating-the-rxode2-object">Creating the <code>rxode2</code> object<a class="anchor" aria-label="anchor" href="#creating-the-rxode2-object"></a>
@@ -352,7 +371,7 @@ bottom if you want to look through it. You can also find it in the
 <p>If you source the example file above it will create the function
 <code>my_model</code>. We can then we convert it into an
 <code>rxode2</code> object:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"ruminate"</span>, <span class="st">"test_apps"</span>, <span class="st">"test_rxode2_system.R"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">object</span> <span class="op">=</span> <span class="fu"><a href="https://nlmixr2.github.io/rxode2/reference/rxode2.html" class="external-link">rxode2</a></span><span class="op">(</span><span class="va">my_model</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -366,7 +385,7 @@ there are three covariates that are needed. This list will create those
 by sampling <code>SEX_ID</code> randomly from a discrete distribution,
 fixing the <code>SUBTYPE_ID</code> at 0, and sampling the
 <code>WT</code> from a log-normal distribution.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">covs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  SEX_ID     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type     <span class="op">=</span> <span class="st">"discrete"</span>, </span>
 <span>                    values   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -376,7 +395,7 @@ fixing the <code>SUBTYPE_ID</code> at 0, and sampling the
 <span>                    sampling <span class="op">=</span> <span class="st">"log-normal"</span>,</span>
 <span>                    values   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">70</span>, <span class="fl">.15</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span>
 <span><span class="fu">rxode2</span><span class="fu">::</span><span class="fu"><a href="https://nlmixr2.github.io/rxode2random/reference/rxSetSeed.html" class="external-link">rxSetSeed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span>
 <span><span class="va">subs</span> <span class="op">=</span> <span class="fu"><a href="../reference/mk_subjects.html">mk_subjects</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">object</span>,</span>
@@ -416,7 +435,7 @@ when evaluated results in either <code>TRUE</code> or
 <code>type</code> and other list elements based on that
 <code>type</code>. Shown below is the <code>"dose"</code> type of
 action:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  low_dose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    condition <span class="op">=</span> <span class="st">"TRUE"</span>,</span>
@@ -448,7 +467,7 @@ the following when providing a dose type of action:</p>
 <p>With the subjects and rules defined we need to define the timepoints
 where the rules will be evaluated. In this case we are considering 7
 cycles (0 to 6) of 8 weeks (2*28) each.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eval_times</span> <span class="op">=</span>  <span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">*</span><span class="fl">28</span><span class="op">*</span><span class="fl">2</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -458,19 +477,19 @@ cycles (0 to 6) of 8 weeks (2*28) each.</p>
 that the last evlation point is on day 336 (<code>6*2*8</code>), so we
 follow the timecourse out for one more cycle to day 392
 (<code>7*2*8</code>).</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">output_times</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">7</span><span class="op">*</span><span class="fl">28</span><span class="op">*</span><span class="fl">2</span>, <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p>If we want to pass any options to <code>rxode2</code> we can do that
 by creating a named list with the option name and value paired
 together:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rx_options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>   covsInterpolation <span class="op">=</span> <span class="st">"locf"</span>,</span>
 <span>   addCov<span class="op">=</span><span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Lastly all of these can be passed to
 <code><a href="../reference/simulate_rules.html">simulate_rules()</a></code>:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">simres</span> <span class="op">=</span> </span>
 <span><span class="fu"><a href="../reference/simulate_rules.html">simulate_rules</a></span><span class="op">(</span>object        <span class="op">=</span> <span class="va">object</span>,</span>
 <span>               subjects      <span class="op">=</span> <span class="va">subs</span><span class="op">[[</span><span class="st">"subjects"</span><span class="op">]</span><span class="op">]</span>,</span>
@@ -489,7 +508,7 @@ set the value of any state in the system. Below we are setting the
 central compartment to a value of 10 at time zero. Then at time 56 we
 increase the value in the peripheral compartment <code>Cp</code> by a
 factor of 5.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  reset_Ac    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>   condition <span class="op">=</span> <span class="st">"time == 0"</span>,</span>
@@ -529,7 +548,7 @@ Alternatively you can create your own code and use the
 <code>"manual"</code> rule type to modify the event table using the
 objects in the rule evaluation environment above. In the code below we
 are simply setting a state for the current subject id to a value.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">code</span><span class="op">=</span><span class="st">"</span></span>
 <span><span class="st">SI_interval_ev = etRbind(SI_interval_ev,</span></span>
 <span><span class="st">et(cmt  = 'Ac',</span></span>
@@ -577,7 +596,7 @@ new dose as a fraction of the previous. If you need to you can create
 your own functions to use in the action fields. You just need to create
 a character string with the function definitions and pass those as the
 <code>preamble</code> input to <code><a href="../reference/simulate_rules.html">simulate_rules()</a></code>.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span> first_cycle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>   condition <span class="op">=</span> <span class="st">"time == 0"</span>,</span>

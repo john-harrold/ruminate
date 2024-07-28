@@ -16,6 +16,7 @@
 #'time units of the system).
 #'@param output_times  Specific output times to include. Other times will be
 #'included as well to ensure proper evaluation of the rules.
+#'@param time_scales  Optional list with timescale information to include in the output.
 #'@param rules  List of rules, see below for a description of the format.
 #'@param rx_options List of options to pass through to `rxSolve()`.
 #'@param preamble Character string of user-defined code to execute in
@@ -39,6 +40,7 @@ simulate_rules <- function(object,
                            subjects,
                            eval_times,
                            output_times,
+                           times_cales = list(),
                            rules, rx_options=list(),
                            preamble = "",
                            pbm = "Evaluation times",
@@ -208,6 +210,9 @@ simulate_rules <- function(object,
     isgod = FALSE
     msgs = c(msgs, "One or more packages from the rxode2 family are missing")
   }
+
+
+  # JMH check time_scales here
 
   # Tracking errors found to prevent repeated reporting. As errors are
   # encountered a key is created in this list. If that key exists then
@@ -671,6 +676,8 @@ simulate_rules <- function(object,
   if(isgood){
     # sorting by id then time:
     simall = simall[ with(simall, order(id, time)), ]
+
+    # JMH add time_scales here:
 
     if(smooth_sampling){
       # trimming things down to the desired time interval:

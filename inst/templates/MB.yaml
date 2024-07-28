@@ -148,14 +148,19 @@ MC:
     #     conv:  "10"
     #     verb:  "A more verbose name"
     #     match: ["sn"]
+    #
     # Generally you dont want to  change what is already here in terms of
     # these short name used. You can remove timescales you don't want to use
     # or add timescales that you need but are not present.
+    #
     #   -verb  You can change the verb field (what the user sees).
+    #
     # The match field is a list of values that can be matched to the short
-    # name so if the short name is 'days' then you may want to match 'd',
-    # 'day', etc.
+    # name so if the short name is 'days' when reading in the metadata from
+    # nlmixr2 models. You you may want to match 'd', 'day', etc. 
+    #
     #   -match: ["day", "d"]
+    #
     # The order of Appearance is the same order seen here. The default
     # is the selected short name for the specified timescale
     time_scales:
@@ -180,14 +185,14 @@ MC:
           conv: "60*60"
           verb: "Hours"
           match: ["hr", "hours", "hrs"]
-        min:
-          conv: "60"
-          verb: "Minutes"
-          match: ["min", "minutes"]
-        sec:
-          conv: "1"
-          verb: "Seconds"
-          match: ["sec", "seconds", "s"]
+#       min:
+#         conv: "60"
+#         verb: "Minutes"
+#         match: ["min", "minutes"]
+#       sec:
+#         conv: "1"
+#         verb: "Seconds"
+#         match: ["sec", "seconds", "s"]
   labels:
     current_element: NULL # "Select model"
     element_name :   NULL # "model name"
