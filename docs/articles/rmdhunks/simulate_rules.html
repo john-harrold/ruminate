@@ -314,23 +314,22 @@ following:</li>
 </div>
 </div>
 <div class="section level3">
-<h3 id="timescales">Timescales<a class="anchor" aria-label="anchor" href="#timescales"></a>
+<h3 id="time-scales">Time scales<a class="anchor" aria-label="anchor" href="#time-scales"></a>
 </h3>
-<p>You can include columns in your output for different timescales if
+<p>You can include columns in your output for different time scales if
 you wish. You need to create a list in the format below. One element
 should be <code>system</code> with a short name for the system
 timescale. The next should be <code>details</code> which is a list
 containing short names for each timescale you want to include. Each of
 these is a list with a verbose name for the time scale
 (<code>verb</code>) and a numerical conversion indicating how that
-timescale realates to the others.</p>
+timescale relates to the others. Here we define weeks and days on the
+basis of seconds.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">time_scales</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>system<span class="op">=</span><span class="st">"days"</span>, </span>
 <span>                details<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>                  weeks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Weeks"</span>,    conv<span class="op">=</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">*</span><span class="fl">7</span><span class="op">)</span>,</span>
-<span>                  days  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Days"</span>,     conv<span class="op">=</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">)</span>,</span>
-<span>                  sec   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Seconds"</span>,  conv<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span>                <span class="op">)</span></span></code></pre></div>
+<span>                  days  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Days"</span>,     conv<span class="op">=</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

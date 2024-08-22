@@ -94,7 +94,7 @@ points based on the last observation of the user.</p>
 <span>  <span class="va">subjects</span>,</span>
 <span>  <span class="va">eval_times</span>,</span>
 <span>  <span class="va">output_times</span>,</span>
-<span>  times_cales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  time_scales <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">rules</span>,</span>
 <span>  rx_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  preamble <span class="op">=</span> <span class="st">""</span>,</span>
@@ -124,6 +124,10 @@ time units of the system).</p></dd>
 included as well to ensure proper evaluation of the rules.</p></dd>
 
 
+<dt>time_scales</dt>
+<dd><p>Optional list with timescale information to include in the output.</p></dd>
+
+
 <dt>rules</dt>
 <dd><p>List of rules, see below for a description of the format.</p></dd>
 
@@ -144,10 +148,6 @@ rule-evaluation environment (e.g. you can put user-defined functions here).</p><
 <dt>smooth_sampling</dt>
 <dd><p>Boolean when TRUE will insert sampling just before
 dosing to make sampling smooth.</p></dd>
-
-
-<dt>time_scales</dt>
-<dd><p>List with  Specific output times to include. Other times will be</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -294,22 +294,21 @@ given id and state. For example for the current <code>id</code> and the state
 </div>
 
 <div class="section">
-<h4 id="timescales">Timescales<a class="anchor" aria-label="anchor" href="#timescales"></a></h4>
+<h4 id="time-scales">Time scales<a class="anchor" aria-label="anchor" href="#time-scales"></a></h4>
 
 
-<p>You can include columns in your output for different timescales if you
+<p>You can include columns in your output for different time scales if you
 wish. You need to create a list in the format below. One element should
 be <code>system</code> with a short name for the system timescale. The next should
 be <code>details</code> which is a list containing short names for each timescale
 you want to include. Each of these is a list with a verbose name for the
 time scale (<code>verb</code>) and a numerical conversion indicating how that
-timescale realates to the others.</p>
+timescale relates to the others. Here we define weeks and days on the
+basis of seconds.</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">time_scales</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>system<span class="op">=</span><span class="st">"days"</span>, </span>
 <span>                details<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>                  weeks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Weeks"</span>,    conv<span class="op">=</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">*</span><span class="fl">7</span><span class="op">)</span>,</span>
-<span>                  days  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Days"</span>,     conv<span class="op">=</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">)</span>,</span>
-<span>                  sec   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Seconds"</span>,  conv<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span>                <span class="op">)</span></span></code></pre><p></p></div>
+<span>                  days  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Days"</span>,     conv<span class="op">=</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre><p></p></div>
 </div>
 
 
@@ -329,7 +328,7 @@ timescale realates to the others.</p>
 <span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://formods.ubiquity.tools/reference/is_installed.html" class="external-link">is_installed</a></span><span class="op">(</span><span class="st">"rxode2"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nlmixr2.github.io/rxode2/" class="external-link">rxode2</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://nlmixr2.github.io/rxode2random/reference/rxSetSeed.html" class="external-link">rxSetSeed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://nlmixr2.github.io/rxode2/reference/rxSetSeed.html" class="external-link">rxSetSeed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">my_model</span> <span class="op">=</span> <span class="kw">function</span> <span class="op">(</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="op">{</span></span></span>

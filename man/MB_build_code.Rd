@@ -4,7 +4,15 @@
 \alias{MB_build_code}
 \title{Build Code to Generate Model}
 \usage{
-MB_build_code(state, session, fcn_def, fcn_obj_name, rx_obj_name)
+MB_build_code(
+  state,
+  session,
+  fcn_def,
+  time_scale,
+  fcn_obj_name,
+  rx_obj_name,
+  ts_obj_name
+)
 }
 \arguments{
 \item{state}{MB state from \code{MB_fetch_state()}}
@@ -14,9 +22,13 @@ MB_build_code(state, session, fcn_def, fcn_obj_name, rx_obj_name)
 \item{fcn_def}{Character string containing the function definition for the
 model}
 
+\item{time_scale}{Short name for the model timescale (see names of state$MC$formatting$time_scales$choices).}
+
 \item{fcn_obj_name}{Object name of the function to create.}
 
 \item{rx_obj_name}{Object name of the rxode2 object to create.}
+
+\item{ts_obj_name}{Object name of the tiemscale object to create.}
 }
 \value{
 List with the following elements

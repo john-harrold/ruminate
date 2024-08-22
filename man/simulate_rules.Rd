@@ -9,7 +9,7 @@ simulate_rules(
   subjects,
   eval_times,
   output_times,
-  times_cales = list(),
+  time_scales = NULL,
   rules,
   rx_options = list(),
   preamble = "",
@@ -29,6 +29,8 @@ time units of the system).}
 \item{output_times}{Specific output times to include. Other times will be
 included as well to ensure proper evaluation of the rules.}
 
+\item{time_scales}{Optional list with timescale information to include in the output.}
+
 \item{rules}{List of rules, see below for a description of the format.}
 
 \item{rx_options}{List of options to pass through to \code{rxSolve()}.}
@@ -40,8 +42,6 @@ rule-evaluation environment (e.g. you can put user-defined functions here).}
 
 \item{smooth_sampling}{Boolean when TRUE will insert sampling just before
 dosing to make sampling smooth.}
-
-\item{time_scales}{List with  Specific output times to include. Other times will be}
 }
 \value{
 List with the following elements:
@@ -224,22 +224,21 @@ given id and state. For example for the current \code{id} and the state
 
 }
 
-\subsection{Timescales}{
+\subsection{Time scales}{
 
-You can include columns in your output for different timescales if you
+You can include columns in your output for different time scales if you
 wish. You need to create a list in the format below. One element should
 be \code{system} with a short name for the system timescale. The next should
 be \code{details} which is a list containing short names for each timescale
 you want to include. Each of these is a list with a verbose name for the
 time scale (\code{verb}) and a numerical conversion indicating how that
-timescale realates to the others.
+timescale relates to the others. Here we define weeks and days on the
+basis of seconds.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{time_scales = list(system="days", 
                 details= list(
                   weeks = list(verb="Weeks",    conv=60*60*24*7),
-                  days  = list(verb="Days",     conv=60*60*24),
-                  sec   = list(verb="Seconds",  conv=1))
-                )
+                  days  = list(verb="Days",     conv=60*60*24)))
 }\if{html}{\out{</div>}}
 }
 

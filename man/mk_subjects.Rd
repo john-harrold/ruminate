@@ -193,22 +193,21 @@ given id and state. For example for the current \code{id} and the state
 
 }
 
-\subsection{Timescales}{
+\subsection{Time scales}{
 
-You can include columns in your output for different timescales if you
+You can include columns in your output for different time scales if you
 wish. You need to create a list in the format below. One element should
 be \code{system} with a short name for the system timescale. The next should
 be \code{details} which is a list containing short names for each timescale
 you want to include. Each of these is a list with a verbose name for the
 time scale (\code{verb}) and a numerical conversion indicating how that
-timescale realates to the others.
+timescale relates to the others. Here we define weeks and days on the
+basis of seconds.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{time_scales = list(system="days", 
                 details= list(
                   weeks = list(verb="Weeks",    conv=60*60*24*7),
-                  days  = list(verb="Days",     conv=60*60*24),
-                  sec   = list(verb="Seconds",  conv=1))
-                )
+                  days  = list(verb="Days",     conv=60*60*24)))
 }\if{html}{\out{</div>}}
 }
 

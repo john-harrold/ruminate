@@ -19,6 +19,7 @@ list with the current component with the following attributes
 \itemize{
 \item{isgood:} Boolean object indicating success.
 \item{rx_obj:} rxode2 object for the model.
+\item{ts_obj:} timescale object for the model.
 \item{fcn_def:} Just the model function definition.
 \item{note:} Note field from the components_table
 \item{model_code:} Code to generate model.

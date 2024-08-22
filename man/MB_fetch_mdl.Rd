@@ -18,14 +18,16 @@ list containing the following elements
 \item{mdl:}       List with models. Each list element has the name of
 the R-object for that dataset. Each element has the following structure:
 \itemize{
-\item{label:}      Text label for the model (e.g. one-compartment model).
-\item{MOD_TYPE:}   Type of module.
-\item{id:}         Module ID.
-\item{rx_obj:}     The rxode2 object name that holds the model.
-\item{fcn_def:}    Text to define the model
-\item{MDLMETA:}    Notes about the model.
-\item{code:}       Code to generate the model.
-\item{checksum:}   Module checksum.
+\item{label:}       Text label for the model (e.g. one-compartment model).
+\item{MOD_TYPE:}    Type of module.
+\item{id:}          Module ID.
+\item{rx_obj:}      The rxode2 object.
+\item{rx_obj_name:} The rxode2 object name that holds the model.
+\item{ts_obj_name:} The object name that holds the model time scale information.
+\item{fcn_def:}     Text to define the model
+\item{MDLMETA:}     Notes about the model.
+\item{code:}        Code to generate the model.
+\item{checksum:}    Module checksum.
 \item{MDLchecksum:} Model checksum.
 }
 }

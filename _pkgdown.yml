@@ -30,6 +30,7 @@ reference:
      - mk_subjects
      - plot_sr_ev
      - plot_sr_tc
+     - rx2other
      - simulate_rules
    - title: "MB Module functions"
    - contents:
