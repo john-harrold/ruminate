@@ -10,7 +10,7 @@ if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
     rxdetails = ruminate::fetch_rxinfo(mobj)
 
     # Making sure there is iiv
-    if(is.null(rxdetails[["elements"]][["iiv"]])){
+    if(length(rxdetails[["elements"]][["iiv"]])==0){
       mobj  = suppressMessages(addEta(mobj, c( rxdetails[["elements"]][["population"]][1])))
     }
 

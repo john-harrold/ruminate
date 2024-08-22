@@ -1,20 +1,59 @@
-suppressMessages(suppressWarnings(library(formods)))
-suppressMessages(suppressWarnings(library(ruminate)))
+Sys.setenv(`_R_S3_METHOD_REGISTRATION_NOTE_OVERWRITES_` = "false")
+
+suppressMessages(library(formods))
+suppressMessages(library(ruminate))
 library(stringr)
 
+
 if( Sys.getenv("ruminate_rxfamily_found")){
-  suppressMessages(suppressWarnings(library(rxode2)))
+  suppressMessages(library(rxode2))
   sess_res = suppressMessages(suppressWarnings(MB_test_mksession(session=list(), full_session=FALSE)))
 
   current_dir = getwd()
   on.exit( setwd(current_dir))
-
   setwd(tempdir())
-    test_that("Building model catalog", {
-      state = sess_res$state
-      mtres = suppressMessages(suppressWarnings(MB_test_catalog(state, as_cran=FALSE)))
-      expect_true(mtres[["isgood"]])
-    })
+
+  test_that("Testing NONMEM conversion", {
+    state   = sess_res$state
+    catalog = suppressMessages(suppressWarnings(MB_fetch_catalog(state)))
+    for(ridx in 1:nrow(catalog$summary)){
+      tmp_ana_sol = catalog$summary[ridx, ]$ana_sol
+      # We're only testing ODE models here
+      if(tmp_ana_sol == "no"){
+        # Walking through each model and building it
+        tmp_obj = catalog$summary[ridx, ]$Object
+        tmp_mod = catalog$summary[ridx, ]$Model
+
+        # This is used as a general flag for the current model to determine
+        # if it should be used for conversion
+        model_isgood = TRUE
+
+        # This will define and build the rxode2 model object
+        cmd = paste0(tmp_mod, "\n", "tmp_rx = suppressMessages(suppressWarnings(rxode2::rxode2(", tmp_obj,")))")
+        tcres =
+          FM_tc(cmd     = cmd,
+                tc_env  = list(),
+                capture = "tmp_rx")
+
+        expect_true(tcres[["isgood"]])
+        if(tcres[["isgood"]]){
+          tmp_rx = tcres[["capture"]][["tmp_rx"]]
+          rxdetails  = fetch_rxinfo(tmp_rx)
+
+          # If everything is good up to this point then we try to export in
+          # different formats:
+          covres = suppressMessages(suppressWarnings(rx2other(tmp_rx, out_type="nonmem")))
+          expect_true(covres[["isgood"]])
+
+         #if(tmp_obj == "Kovalenko_2020_dupilumab"){
+         #browser()
+         #}
+          covres = suppressMessages(suppressWarnings(rx2other(tmp_rx, out_type="monolix")))
+          expect_true(covres[["isgood"]])
+        }
+      }
+    }
+  })
   setwd(current_dir)
 }
 

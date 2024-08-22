@@ -1,5 +1,6 @@
 #'@import dplyr
 #'@import rxode2
+#'@import nlmixr2
 #'@import ggplot2
 #'@importFrom stats rnorm  runif
 
@@ -40,7 +41,7 @@ simulate_rules <- function(object,
                            subjects,
                            eval_times,
                            output_times,
-                           times_cales = list(),
+                           time_scales = NULL,
                            rules, rx_options=list(),
                            preamble = "",
                            pbm = "Evaluation times",
@@ -207,12 +208,45 @@ simulate_rules <- function(object,
       }
     }
   } else {
-    isgod = FALSE
+    isgood = FALSE
     msgs = c(msgs, "One or more packages from the rxode2 family are missing")
   }
 
 
-  # JMH check time_scales here
+
+  # Checking the format of time scaling information
+  if(!is.null(time_scales)){
+    if(!("details" %in% names(time_scales))){
+      msgs = c(msgs, "time_scales: details element not found")
+      isgood = FALSE
+    }
+    if(!("system" %in% names(time_scales))){
+      msgs = c(msgs, "time_scales: system element not found")
+      isgood = FALSE
+    }
+
+    if(time_scales[["system"]] %in% names(time_scales[["details"]])){
+      for(tmp_ts in names(time_scales[["details"]])){
+        if(!"verb" %in% names(time_scales[["details"]][[tmp_ts]])){
+          isgood = FALSE
+          msgs = c(msgs, paste0("time_scales->details->", tmp_ts, ": verb field missing."))
+        }
+        if("conv" %in% names(time_scales[["details"]][[tmp_ts]])){
+          if(!is.numeric(time_scales[["details"]][[tmp_ts]][["conv"]])){
+            isgood = FALSE
+            msgs = c(msgs, paste0("time_scales->details->", tmp_ts, ": conv field should be numeric."))
+          }
+        } else {
+          isgood = FALSE
+          msgs = c(msgs, paste0("time_scales->details->", tmp_ts, ": conv field missing."))
+        }
+      }
+    } else {
+      msgs = c(msgs, "time_scales: the system time scale was not found in details")
+      isgood = FALSE
+    }
+
+  }
 
   # Tracking errors found to prevent repeated reporting. As errors are
   # encountered a key is created in this list. If that key exists then
@@ -677,7 +711,17 @@ simulate_rules <- function(object,
     # sorting by id then time:
     simall = simall[ with(simall, order(id, time)), ]
 
-    # JMH add time_scales here:
+    # Adding timescale columns ts.short_name
+    if(!is.null(output_times)){
+       for(tmp_ts in names(time_scales[["details"]])){
+
+         conv_fact = time_scales[["details"]][[ tmp_ts ]][["conv"]]/
+                     time_scales[["details"]][[ time_scales[["system"]] ]][["conv"]]
+
+         simall[[paste0("ts.", tmp_ts)]]     =     simall[["time"]]*conv_fact
+         ev_history[[paste0("ts.", tmp_ts)]] = ev_history[["time"]]*conv_fact
+       }
+    }
 
     if(smooth_sampling){
       # trimming things down to the desired time interval:
@@ -1162,13 +1206,13 @@ fetch_rxinfo <- function(object){
   if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
     # use str(object) to get the names of the list elements
     covariates      = object$allCovs
-    population      = object$params$pop
-    residual_error  = object$params$resid
-    parameters      = object$params$output$primary
-    secondary       = object$params$output$secondary
-    outputs         = object$params$output$endpoint
-    states          = object$params$cmt
-    iiv             = object$params$group$id
+    population      = object$props$pop
+    residual_error  = object$props$resid
+    parameters      = object$props$output$primary
+    secondary       = object$props$output$secondary
+    outputs         = object$props$output$endpoint
+    states          = object$props$cmt
+    iiv             = object$props$group$id
     dosing          = object$meta$dosing
     sys_units       = object$meta$units
     elements = list(
@@ -1182,6 +1226,13 @@ fetch_rxinfo <- function(object){
       iiv            = iiv,
       outputs        = outputs,    
       states         = states)
+
+    # Making sure that any empty element has a length of zero for testing.
+    for(ename in names(elements)){
+      if(is.null(elements[[ename]])){
+        elements[[ename]] = character()
+      }
+    }
 
 
     # Output details
@@ -1289,7 +1340,7 @@ fetch_rxinfo <- function(object){
   } else {
     isgood   = FALSE
     elements = NULL
-    msgs = c(msgs, "rxode2 not installed")
+    msgs = c(msgs, "rxode2 family of tools not installed")
   }
 
   if(is.null(txt_info)){
@@ -1332,6 +1383,8 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
 
   isgood       = TRUE
   msgs         = c()
+  params       = NULL
+  iCov         = NULL
   subjects     = NULL
   missing_covs = c()
 
@@ -1363,7 +1416,7 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
     # If we made it here then we've checked everything successfully
     if(isgood){
       iCov = data.frame(
-                id         = as.factor(c(1:nsub)))
+                id         = as.integer(c(1:nsub)))
 
       for(covname in names(covs)){
         # Discrete and continuous distributions are treated differently
@@ -1423,13 +1476,13 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
       }
 
       params   = dplyr::select(params, dplyr::all_of(col_keep)) |>
-        dplyr::mutate("id" := as.factor(.data[["id"]]))
+        dplyr::mutate("id" := as.integer(.data[["id"]]))
 
       subjects = dplyr::left_join(params, iCov, by="id")
 
       # We also set iiv to 0 to get typical values when simulating 1 subject:
       if(nsub == 1){
-        if(!is.null(rx_details[["elements"]][["iiv"]])){
+        if(length(rx_details[["elements"]][["iiv"]])>0){
           for(tmpiiv in rx_details[["elements"]][["iiv"]]){
             subjects[[tmpiiv]] = 0
           }
@@ -1441,7 +1494,7 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
 
   } else {
     isgood   = FALSE
-    msgs = c(msgs, "rxode2 not installed")
+    msgs = c(msgs, "rxode2 family of tools not installed")
   }
 
   res = list(subjects   = subjects,
@@ -1487,3 +1540,260 @@ fetch_rxtc <- function(rx_details, sim){
 
 
 rxtc}
+
+
+#'@export
+#'@title Converts an rxode2 Object Into Specified Model Format
+#'@description If you have an rxode2 or nlmixr2 model object you can use this
+#'function to translate that object into other formats. See output_type below
+#'for the allowed formats. 
+#'
+#'In order to do this you need at least one between-subject variability term
+#'and one endpoint. If these are missing then dummy values will be added. The
+#'dummy values for between-subject variablitiy are IIV will be
+#'\code{POP_RUMINATE}, \code{TV_RUMINATE}, and \code{ETA.RUMINATE}. The dummy
+#'terms for endpoints are \code{OUT_RUMINATE} and \code{add.OUT_RUMINATE}. 
+#'
+#'@param object rxode2 model object  
+#'@param out_type Output type (either "nonmem", "monolix")
+#'@param dataset Optional dataset
+#'@param export_name Basename for models used
+#'@param export_path Location to place output files (default \code{tempdir()})
+#'@return List with the following elements:
+#' \itemize{
+#'  \item{isgood:}     Return status of the function.
+#'  \item{msgs:}       Error or warning messages if any issues were encountered.
+#'  \item{files:}      If succesful this will contain a list with an entry for
+#'                     each file generated to support the requested format.
+#'                     the current file format. For example if "nonmem" was
+#'                     selected this will include elements for "ctl" and
+#'                     "csv". Each of these are lists with the following
+#'                     format:
+#'  \itemize{
+#'    \item{fn:}       Exported file name
+#'    \item{fn_full:}  Exported file name with the full path.
+#'    \item{contents:} Contents of the file.
+#'  }
+#'}
+rx2other <- function(object,
+                     out_type     = "nonmem", 
+                     dataset      = NULL,  
+                     export_name  = "my_model",
+                     export_path  = tempdir()){
+
+  isgood    = TRUE
+  msgs      = c()
+  files     = list()
+
+  if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
+    allowed_out_types = c("nonmem", "monolix")
+    if(out_type %in% allowed_out_types){
+      # Checks here to determine if object is a valid nlmxir2 object:
+      tcres = FM_tc(
+        cmd     = "rx_obj = rxode2::assertRxUi(object)",
+        capture = c("rx_obj"),
+        tc_env  = list(object   = object))
+
+      if(tcres[["isgood"]]){
+        rx_obj      = tcres[["capture"]][["rx_obj"]]
+        rx_details  = fetch_rxinfo(rx_obj)
+
+        #-----------------------------------------------------------------
+        # This checks if there is at least one IIV term. If not we add one
+        if(length(rx_details[["elements"]][["iiv"]])==0){
+          cmds = c(
+            paste0("rx_obj = rx_obj |>"),
+            paste0("  model({POP_RUMINATE <- exp(TV_RUMINATE+ ETA.RUMINATE)}, append=TRUE)  |>"),
+            paste0("    ini(TV_RUMINATE <-.1)"))
+
+          tcres = FM_tc(
+            cmd     = paste0(cmds, collapse="\n"),
+            capture = c("rx_obj"),
+            tc_env  = list(rx_obj   = rx_obj))
+         
+          if(tcres[["isgood"]]){
+            rx_obj = tcres[["capture"]][["rx_obj"]]
+            msgs   = c(msgs, 
+              "At least one between-subject varaibility term should be defined.",
+              "Adding the following dummy parameters:",
+              "  POP_RUMINATE",
+              "  TV_RUMINATE",
+              "  ETA.RUMINATE")
+          } else {
+            isgood = FALSE
+            msgs   = c(msgs, 
+                       "Unable to add IIV.",
+                       tcres[["msgs"]])
+          }
+        }
+        #-----------------------------------------------------------------
+        # This checks if there is at least one output term. If not we add one
+        if(length(rx_details[["elements"]][["outputs"]]) == 0){
+          cmds = c(
+            paste0("rx_obj = rx_obj |>"),
+            paste0("    model({OUT_RUMINATE <- ", rx_details[["elements"]][["states"]][1]),
+            paste0("           OUT_RUMINATE ~  add(add.OUT_RUMINTE)"),
+            paste0("           }, append=TRUE)  |>"),
+            paste0("    ini(add.OUT_RUMINTE <-.1)")
+          )
+          tcres = FM_tc(
+            cmd     = paste0(cmds, collapse="\n"),
+            capture = c("rx_obj"),
+            tc_env  = list(rx_obj   = rx_obj))
+
+          if(tcres[["isgood"]]){
+            rx_obj = tcres[["capture"]][["rx_obj"]]
+            msgs   = c(msgs, 
+              "At least one between-subject varaibility term should be defined.",
+              "Adding the following dummy output/endpoint and parameter:",
+              "  OUT_RUMINATE",
+              "  add.OUT_RUMINATE")
+          } else {
+            isgood = FALSE
+            msgs   = c(msgs, 
+                       "Unable to add model output/endpoint.",
+                       tcres[["msgs"]])
+          }
+        }
+      } else {
+          isgood   = FALSE
+          msgs = c(msgs, 
+                   paste0("The object input does not appear to be an rxode2 compatable object"),
+                   tcres[["msgs"]])
+      }
+
+
+      # If we made it this far then the object is an rxode2 object, the output
+      # type specified is correct and now we can start doing the good stuff.
+      if(isgood){
+        # We update the details in case we had to add anything above.
+        rx_details  = fetch_rxinfo(rx_obj)
+        # If no dataset has been specified we create a dummy dataset
+        if(is.null(dataset)){
+          dataset = eventTable()
+
+          # Adding observations for each output
+          for(tmp_output in  rx_details[["elements"]][["outputs"]]){
+            dataset = dataset |> et(id=c(1,2), time=c(0,1), evid=0, cmt=tmp_output)
+          }
+
+          # Adding default values for covariates
+          if(length(rx_details[["elements"]][["covariates"]]) > 0){
+            for(tmp_cov in rx_obj$allCovs){
+              dataset[[tmp_cov]] = 1
+            }
+          }
+          dataset[["dv"]]  = 0
+        }
+
+        oldwd = getwd()
+        on.exit(setwd(oldwd))     
+        # we store everything in an temp subdir so that 
+        # file naming will be consistent
+        export_wd = tempfile(tmpdir=export_path)
+        if(!dir.exists(export_wd)){
+          dir.create(export_wd, recursive=TRUE)
+        }
+        setwd(export_wd)
+
+        if(out_type == "nonmem"){
+          res = nlmixr2::nlmixr2(rx_obj, dataset, "nonmem",  babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))
+
+          cmd = 'res = suppressMessages(suppressWarnings(nlmixr2::nlmixr2(rx_obj, dataset, "nonmem", babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))))'
+          tcres = FM_tc(
+            cmd     = cmd,
+            capture = c("res"),
+            tc_env  = list(export_name   = export_name,
+                           rx_obj        = rx_obj,
+                           dataset       = dataset))
+
+          # Only if successful do we package up the output files
+          if(tcres[["isgood"]]){
+            files = list(
+              ctl = list(fn       = paste0(export_name,".nmctl"),
+                         fn_full  = file.path(export_wd, paste0(export_name,"-nonmem"), paste0(export_name,".nmctl")),
+                         contents = c()),
+              csv = list(fn       = paste0(export_name,".csv"),
+                         fn_full  = file.path(export_wd, paste0(export_name,"-nonmem"), paste0(export_name,".csv")),
+                         contents = c())
+            )
+          }
+        }
+
+        if(out_type == "monolix"){
+          cmd = 'res = suppressMessages(suppressWarnings(nlmixr2::nlmixr2(rx_obj, dataset, "monolix", babelmixr2::monolixControl(modelName=export_name, runCommand=NA))))'
+          tcres = FM_tc(
+            cmd     = cmd,
+            capture = c("res"),
+            tc_env  = list(export_name   = export_name,
+                           rx_obj        = rx_obj,
+                           dataset       = dataset))
+
+          # Only if successful do we package up the output files
+          if(tcres[["isgood"]]){
+            files = list(
+              mlxtran = list(
+                         fn       = paste0(export_name,"-monolix.mlxtran"),
+                         fn_full  = file.path(export_wd, paste0(export_name,"-monolix.mlxtran")),
+                         contents = c()),
+              txt     = list(
+                         fn       = paste0(export_name,"-monolix.txt"),
+                         fn_full  = file.path(export_wd, paste0(export_name,"-monolix.txt")),
+                         contents = c()),
+              csv = list(fn       = paste0(export_name,"-monolix.csv"),
+                         fn_full  = file.path(export_wd, paste0(export_name,"-monolix.csv")),
+                         contents = c())
+            )
+          }
+
+          # If either failed we want to package that failure up as well. 
+          if(!tcres[["isgood"]]){
+            isgood = FALSE
+            msgs = c(msgs, tcres[["msgs"]])
+
+            # Creating a text file with the errors that were encountered:
+            fn_full = file.path(export_wd, paste0(export_name,"-error.txt"))
+
+            fileConn<-file(fn_full)
+            writeLines(c(paste0("Error generating ",out_type ," output."),
+                         "See below for details: ",
+                         tcres[["msgs"]]), fileConn)
+            close(fileConn)
+
+
+            files = list(
+              txt = list(fn       = paste0(export_name,"-error.txt"),
+                         fn_full  = fn_full,
+                         contents = c()))
+          
+          }
+          
+          # Reading in any contents
+          for(tmp_file in names(files)){
+           if(file.exists(files[[tmp_file]][["fn_full"]])){
+              files[[tmp_file]][["contents"]] = paste0(readLines( files[[tmp_file]][["fn_full"]]), collapse="\n")
+            } else {
+              isgood = FALSE
+              msgs   = c(msgs, paste0(out_type, ": ",files[[tmp_file]][["fn_full"]], "file not found"))
+            }
+          }
+        }
+        setwd(oldwd)
+      }
+    } else {
+      isgood   = FALSE
+      msgs = c(msgs, paste0("invalide output type: ", out_type))
+      msgs = c(msgs, paste0("allowed types are:    ", paste0(allowed_out_types, collapse=", ")))
+    }
+  } else {
+    isgood   = FALSE
+    msgs = c(msgs, "rxode2 family of tools not installed")
+  }
+
+
+  res = list(
+    isgood    = isgood,
+    msgs      = msgs,
+    files     = files)
+res}
+

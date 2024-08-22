@@ -1170,6 +1170,8 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
         rx_obj_name  = new_ele[["rx_obj_name"]]  ,
         ts_obj_name  = new_ele[["ts_obj_name"]]  )
 
+      new_ele[["components_table"]][new_ele[["components_table"]][["id_str"]] == tmp_id_str][["ts_code"]] =
+        paste0(bcres[["ts_code"]], collapse="\n")
       new_ele[["components_table"]][new_ele[["components_table"]][["id_str"]] == tmp_id_str][["model_code"]] =
         paste0(bcres[["model_code"]], collapse="\n")
       new_ele[["components_table"]][new_ele[["components_table"]][["id_str"]] == tmp_id_str][["model_code_sa"]] =
@@ -1803,6 +1805,7 @@ MB_fetch_mdl = function(state){
                id          = state[["id"]],
                rx_obj      = cc[["rx_obj"]],
                rx_obj_name = ce[["rx_obj_name"]],
+               ts_obj      = cc[["ts_obj"]],
                ts_obj_name = ce[["ts_obj_name"]],
                fcn_def     = cc[["fcn_def"]],
                MDLMETA     = cc[["note"]],
@@ -2266,10 +2269,18 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
                         rx_obj_name  = current_ele[["rx_obj_name"]],
                         ts_obj_name  = current_ele[["ts_obj_name"]])
 
+        # Pulling out the time scale code and building the object
+        tcres_ts = 
+          FM_tc(cmd     = bcres[["ts_code"]],
+                tc_env  = list(),
+                capture = c( current_ele[["ts_obj_name"]]))
+        ts_obj = tcres_ts[["capture"]][[ current_ele[["ts_obj_name"]] ]]
+        
         tmpdf =
         data.frame(id            = component_id,
                    id_str        = component_id_str,
                    note          = note,
+                   ts_code       = paste0(bcres[["ts_code"]],    collapse="\n"),
                    model_code    = paste0(bcres[["model_code"]],    collapse="\n"),
                    model_code_sa = paste0(bcres[["model_code_sa"]], collapse="\n"),
                    fcn_def       = fcn_def)
@@ -2286,6 +2297,7 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
         # Saving the rxode2 object. The component ID is saved as a string
         # "component_N":
         current_ele[["components_list"]][[component_id_str]][["rx_obj"]] = rx_obj
+        current_ele[["components_list"]][[component_id_str]][["ts_obj"]] = ts_obj
 
         # Setting the added component as the selected id:
         current_ele[["selected_component_id"]]  = component_id
@@ -2317,6 +2329,7 @@ current_ele}
 #'\itemize{
 #'  \item{isgood:} Boolean object indicating success.
 #'  \item{rx_obj:} rxode2 object for the model.
+#'  \item{ts_obj:} timescale object for the model.
 #'  \item{fcn_def:} Just the model function definition.
 #'  \item{note:} Note field from the components_table
 #'  \item{model_code:} Code to generate model.
@@ -2330,6 +2343,7 @@ MB_fetch_component = function(state, current_ele, component_id = NULL){
   isgood        = TRUE
   msgs          = c()
   rx_obj        = NULL
+  ts_obj        = NULL
   fcn_def       = ""
   note          = ""
   model_code    = ""
@@ -2359,6 +2373,7 @@ MB_fetch_component = function(state, current_ele, component_id = NULL){
 
   if(isgood){
     rx_obj         = comp_list[["rx_obj"]]
+    ts_obj         = comp_list[["ts_obj"]]
     fcn_def        = comp_row[["fcn_def"]]
     note           = comp_row[["note"]]
     model_code     = comp_row[["model_code"]]
@@ -2368,6 +2383,7 @@ MB_fetch_component = function(state, current_ele, component_id = NULL){
   component = list(
     isgood         = isgood,
     rx_obj         = rx_obj,
+    ts_obj         = ts_obj,
     fcn_def        = fcn_def,
     note           = note,
     model_code     = model_code,
@@ -2405,15 +2421,21 @@ MB_build_code  = function(state, session, fcn_def, time_scale, fcn_obj_name, rx_
     # Creating the time scale details
     ts_details = state[["MB"]][["ts_details"]]
 
+    ts_code = c(
+      paste0(ts_obj_name,  " = list("),
+      paste0("  system  = ", deparse(time_scale), ","),
+      paste0("  details = "),
+      paste0("    ", deparse(ts_details), collapse="\n"),
+      ")"
+      )
+
+
+
     model_code = c(paste0(fcn_obj_name, " = ", fcn_def),
                    "",
                    paste0(rx_obj_name,  " =  rxode2::rxode2(", fcn_obj_name,")"),
                    "",
-                   paste0(ts_obj_name,  " = list("),
-                   paste0("  system  = ", deparse(time_scale), ","),
-                   paste0("  details = "),
-                   paste0("    ", deparse(ts_details), collapse="\n"),
-                   ")"
+                   ts_code
                    )
   } else {
     model_code  = "# rxode2 package was not found."
@@ -2424,7 +2446,8 @@ MB_build_code  = function(state, session, fcn_def, time_scale, fcn_obj_name, rx_
                    "",
                    model_code)
   mc = list(
-    model_code   = model_code,
+    model_code    = model_code,
+    ts_code       = ts_code,
     model_code_sa = model_code_sa)
 
 mc}
@@ -2510,7 +2533,7 @@ MB_fetch_catalog   = function(state){
                 Name        = mod_name,
                 Object      = mod_name,
                 Type        = "rxode2",
-                Model       = paste(readLines(full_filename), collapse="\n"),
+                Model       = paste(readLines(full_filename, warn=FALSE), collapse="\n"),
                 Description = mod_description
               )
               )

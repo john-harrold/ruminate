@@ -170,7 +170,7 @@ MC:
       tooltip_position: "top"
       choices:
         months:
-          conv: "60*60*24*4"
+          conv: "60*60*24*7*4"
           verb: "Months"
           match: ["mo"]
         weeks:

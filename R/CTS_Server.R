@@ -3981,6 +3981,8 @@ CTS_simulate_element    = function(state, element){
       code_model        = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["code"]]
       rx_obj_name       = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["rx_obj_name"]]
       rx_obj            = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["rx_obj"]]
+      ts_obj_name       = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["ts_obj_name"]]
+      ts_obj            = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["ts_obj"]]
 
       # These are all the objects to collect after the simulation
       capture  = c(
@@ -3988,12 +3990,13 @@ CTS_simulate_element    = function(state, element){
         element[["subs_object_name"]],
         element[["sim_tc_object_name"]],
         element[["sim_ev_object_name"]],
-        element[["simres_object_name"]])
+        element[["simres_object_name"]],
+        ts_obj_name)
 
-
-      # THis is the current simulation object in use
+      # This is the current simulation object in use
       tc_env  = list()
       tc_env[[rx_obj_name]] = rx_obj
+      tc_env[[ts_obj_name]] = ts_obj
 
       # This will run the simulation only:
       cmd = element[["code_sim_only"]]
@@ -4109,6 +4112,7 @@ CTS_set_current_element    = function(state, element){
 
   # These are the objects names used in the code
   model_object            = "not_found"
+  ts_object               = "not_found"
   cov_object_name         = element[["cov_object_name"]]
   subs_object_name        = element[["subs_object_name"]]
   rxopts_object_name      = element[["rxopts_object_name"]]
@@ -4144,6 +4148,7 @@ CTS_set_current_element    = function(state, element){
   if(source_model %in% names(state[["CTS"]][["MDL"]][["mdl"]])){
     code_model      = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["code"]]
     model_object    = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["rx_obj_name"]]
+    ts_object       = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["ts_obj_name"]]
     code_rx_details = c(
              "",
              "# Fetching the system information",
@@ -4294,12 +4299,13 @@ CTS_set_current_element    = function(state, element){
   c(
     paste0('# Running simulation'),
     paste0(simres_object_name, ' =                                 '  ),
-    paste0(' simulate_rules(object        = ', model_object,       ','),
-    paste0('                subjects      = ', subs_object_name,   '[["subjects"]],'),
-    paste0('                eval_times    = ', visit_str,          ','),
-    paste0('                output_times  = ', ot_object_name,     ','),
-    paste0('                rules         = ', rules_object_name,  ','),
-    paste0('                rx_options    = ', rxopts_object_name, ')'),
+    paste0(' simulate_rules(object            = ', model_object,       ','),
+    paste0('                subjects          = ', subs_object_name,   '[["subjects"]],'),
+    paste0('                eval_times        = ', visit_str,          ','),
+    paste0('                output_times      = ', ot_object_name,     ','),
+    paste0('                time_scales       = ', ts_object,          ','),
+    paste0('                rules             = ', rules_object_name,  ','),
+    paste0('                rx_options        = ', rxopts_object_name, ')'),
     "# Collecting the simulation and event history values",
     paste0(sim_tc_object_name, ' = ', simres_object_name, '[["simall"]]'),
     paste0(sim_ev_object_name, ' = ', simres_object_name, '[["ev_history"]]'),
