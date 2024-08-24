@@ -86,7 +86,7 @@ MB_Server <- function(id,
 
       uiele})
     #------------------------------------
-    # Generating the
+    # Generating the timescale selection UI
     output$ui_select_time_scale    = renderUI({
         input[["element_name"]]
         input[["ui_mb_model"]]
@@ -168,7 +168,10 @@ MB_Server <- function(id,
       }
     uiele})
     #------------------------------------
+    # Generating the UI to select model from catalog or user-defined model
     output$ui_select_base_from = renderUI({
+      input[["element_name"]]
+      input[["ui_mb_model"]]
       state = MB_fetch_state(id              = id,
                              id_ASM          = id_ASM,
                              input           = input,

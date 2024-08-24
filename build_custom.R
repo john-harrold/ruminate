@@ -1,6 +1,5 @@
-#repo_root = here::here()
-#setwd(repo_root)
-repo_root = file.path("~", "projects", "ruminate", "github", "ruminate")
+repo_root = here::here()
+setwd(repo_root)
 
 devtools::document(roclets = c('rd', 'collate', 'namespace'))
 

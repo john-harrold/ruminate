@@ -53,6 +53,8 @@ install.packages("ubiquity")
 install.packages("nlmixr2lib")
 install.packages("nonmem2rx")
 install.packages("rxode2")
+install.packages("rxode2et")
+install.packages("nlmixr2")
 
 # Actual package
 install.packages("ruminate")

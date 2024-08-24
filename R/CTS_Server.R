@@ -4306,6 +4306,7 @@ CTS_set_current_element    = function(state, element){
     paste0('                time_scales       = ', ts_object,          ','),
     paste0('                rules             = ', rules_object_name,  ','),
     paste0('                rx_options        = ', rxopts_object_name, ')'),
+    "",
     "# Collecting the simulation and event history values",
     paste0(sim_tc_object_name, ' = ', simres_object_name, '[["simall"]]'),
     paste0(sim_ev_object_name, ' = ', simres_object_name, '[["ev_history"]]'),
