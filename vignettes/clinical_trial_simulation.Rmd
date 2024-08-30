@@ -11,9 +11,9 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, eval=TRUE, warning = FALSE)
 library(ggplot2)
 library(formods)
-library(ruminate)
 #library(devtools)
 #devtools::load_all()
+library(ruminate)
 
 # Determining if ubiquity is installed
 if(is_installed("rxode2")){
@@ -75,6 +75,8 @@ object = rxode2(my_model)
 
 ```{r echo=FALSE, results=FALSE}
 if(rxode2_found){
+set.seed(8675309)
+rxode2::rxSetSeed(8675309)
 source(system.file(package="ruminate", "test_apps", "test_rxode2_system.R"))
 object = rxode2(my_model)
 }
@@ -97,8 +99,6 @@ covs = list(
 ```
 
 ```{r echo=TRUE,  results=FALSE, eval=FALSE}
-set.seed(8675309)
-rxode2::rxSetSeed(8675309)
 subs = mk_subjects(object = object,
                    nsub   = 6,
                    covs   = covs)

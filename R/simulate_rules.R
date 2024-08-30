@@ -114,7 +114,14 @@ simulate_rules <- function(object,
         evall = as.data.frame(SI_ev_history)
 
         # Just the dosing records for the current subject/state
-        drecs =  evall[evall[["id"]] == id & evall[["cmt"]] == state & evall[["evid"]] == 1, ]
+        # When tehre is only one subject the event history table wont have an
+        # id column, so we have to add some logic for that here:
+        if("id" %in% names(evall)){
+          drecs =  evall[evall[["id"]] == id & evall[["cmt"]] == state & evall[["evid"]] == 1, ]
+        } else {
+          drecs =  evall[                      evall[["cmt"]] == state & evall[["evid"]] == 1, ]
+        }
+
         if(nrow(drecs) > 0){
           # Making sure everything is sorted correctly:
           drecs = drecs[with(drecs, order(time)),]
@@ -314,16 +321,10 @@ simulate_rules <- function(object,
   
 
     if(tcres[["isgood"]]){
-      #sim_pre = as.data.frame(tcres[["capture"]][["sim"]])
-      # JMH
       sim_pre =
       fetch_rxtc(rx_details = rx_details,
                  sim        = tcres[["capture"]][["sim"]])
 
-      # Catching the case where there is 1 subject
-      if(nsub == 1){
-        sim_pre[["id"]] = 1
-      }
       # Setting the rule flag for the presimulation
       for(rule_id in names(rules)){
         sim_pre[[rule_id]] = rules[[rule_id]][["false_flag"]]
@@ -366,6 +367,8 @@ simulate_rules <- function(object,
             t_max = max(ot_sim)
           }
 
+          message(paste0("et_idx: ", et_idx, " eval_time: ",  eval_times[et_idx]))
+
           # We start with an event table that has only the output times
           tmp_ot      =  ot_sim[ t_min <= ot_sim & ot_sim <= t_max]
           interval_ev = NULL
@@ -396,7 +399,7 @@ simulate_rules <- function(object,
               # a flag if something went wrong.
               if(nrow(sub_state) == 1){
                 for(rule_id in names(rules)){
-                  # THis is the snapshot of the current users simulation state at
+                  # This is the snapshot of the current users simulation state at
                   # the evaluation point
                   tc_env = as.list(sub_state)
 
@@ -453,11 +456,14 @@ simulate_rules <- function(object,
                         tc_env[["SI_interval_ev"]] = interval_ev
                         tc_env[["SI_ud_history"]]  = ud_history
 
-
                         tcres =
                            FM_tc(tc_env  = tc_env,
                                  capture = capture,
                                  cmd     = cmd)
+
+                       #if(et_idx == 2){
+                       #  browser()
+                       #}
 
                         if(tcres[["isgood"]]){
                           # Now we're going to process the dosing
@@ -497,6 +503,8 @@ simulate_rules <- function(object,
                             sub_ot = sub_ot[sub_ot >= t_min & sub_ot <=t_max]
                           }
 
+                          # Note when there is only one subject this will not
+                          # retain the id column
                           interval_ev = rxode2et::etRbind(interval_ev,
                                            rxode2et::et(
                                               cmt  = tmp_cmt,
@@ -657,6 +665,10 @@ simulate_rules <- function(object,
                              ev       = interval_ev))
             
             # Storing all of the events in a single table to return to the user
+           #if(nsub == 1){
+           #browser()
+           #}
+
             ev_history  = rxode2et::etRbind(ev_history , interval_ev)
             
             if(tcres[["isgood"]]){
