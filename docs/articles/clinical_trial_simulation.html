@@ -395,9 +395,7 @@ fixing the <code>SUBTYPE_ID</code> at 0, and sampling the
 <span>                    values   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">70</span>, <span class="fl">.15</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span>
-<span><span class="fu">rxode2</span><span class="fu">::</span><span class="fu"><a href="https://nlmixr2.github.io/rxode2/reference/rxSetSeed.html" class="external-link">rxSetSeed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span>
-<span><span class="va">subs</span> <span class="op">=</span> <span class="fu"><a href="../reference/mk_subjects.html">mk_subjects</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">object</span>,</span>
+<code class="sourceCode R"><span><span class="va">subs</span> <span class="op">=</span> <span class="fu"><a href="../reference/mk_subjects.html">mk_subjects</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">object</span>,</span>
 <span>                   nsub   <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>                   covs   <span class="op">=</span> <span class="va">covs</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   id TV_F1 TV_ka     TV_CL    TV_Vc    TV_Vp       TV_Q TV_MW TV_BM_IC</span></span>
@@ -407,20 +405,20 @@ fixing the <code>SUBTYPE_ID</code> at 0, and sampling the
 <span><span class="co">## 4  4 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">## 5  5 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">## 6  6 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
-<span><span class="co">##   TV_kdeg_BM TV_Emax TV_EC50        ETAka       ETACL       ETAVc       ETAVp</span></span>
-<span><span class="co">## 1        0.1     100     300 -0.769405619 0.666792003  0.29010462  0.05702564</span></span>
-<span><span class="co">## 2        0.1     100     300 -0.861272266 0.061514564  0.41320301 -0.04889380</span></span>
-<span><span class="co">## 3        0.1     100     300  0.447205906 0.269715570  0.07623875  0.40619296</span></span>
-<span><span class="co">## 4        0.1     100     300 -0.234909369 0.431892280  0.30919642  0.23008741</span></span>
-<span><span class="co">## 5        0.1     100     300 -0.001239753 0.004328144 -0.32061603  0.37584400</span></span>
-<span><span class="co">## 6        0.1     100     300  0.565665341 0.371102042  0.11609776 -0.44811793</span></span>
-<span><span class="co">##           ETAQ     ETABM_IC     ETAEmax SEX_ID SUBTYPE_ID       WT</span></span>
-<span><span class="co">## 1  0.383101892  0.358211985 -0.16468093      0          0 69.94153</span></span>
-<span><span class="co">## 2  0.642048865 -0.119851376  0.20676736      0          0 76.84022</span></span>
-<span><span class="co">## 3 -1.609737008 -0.014681913 -0.28288689      1          0 83.15921</span></span>
-<span><span class="co">## 4 -1.791318984  0.009919901 -0.18832074      0          0 53.26197</span></span>
-<span><span class="co">## 5  0.444011208 -0.160296648  0.02711265      0          0 67.45067</span></span>
-<span><span class="co">## 6 -0.009426016 -0.153006262 -0.62329432      1          0 67.48230</span></span></code></pre>
+<span><span class="co">##   TV_kdeg_BM TV_Emax TV_EC50      ETAka       ETACL      ETAVc       ETAVp</span></span>
+<span><span class="co">## 1        0.1     100     300  0.9044657  0.24238102  0.1209701 -0.24895116</span></span>
+<span><span class="co">## 2        0.1     100     300  0.8757452 -0.55434370 -0.7304518 -0.38660408</span></span>
+<span><span class="co">## 3        0.1     100     300  0.1389536 -0.42511205 -0.1506225  0.08823230</span></span>
+<span><span class="co">## 4        0.1     100     300  0.6223749 -0.67240876 -0.8431248 -0.73966961</span></span>
+<span><span class="co">## 5        0.1     100     300 -0.8574580 -0.03841029  0.1186399 -0.12697290</span></span>
+<span><span class="co">## 6        0.1     100     300 -0.5265866  0.21489323  0.6130934 -0.08519572</span></span>
+<span><span class="co">##         ETAQ    ETABM_IC     ETAEmax SEX_ID SUBTYPE_ID       WT</span></span>
+<span><span class="co">## 1  0.3517671  0.05463528  0.05084666      1          0 94.90762</span></span>
+<span><span class="co">## 2  0.8980292  0.20836261 -0.16915141      0          0 82.13035</span></span>
+<span><span class="co">## 3  0.3044285 -0.12202560  0.49560260      1          0 81.17264</span></span>
+<span><span class="co">## 4 -1.4269198  0.08116667  0.16787228      0          0 70.28886</span></span>
+<span><span class="co">## 5 -0.1352771 -0.21369187 -0.11178468      1          0 77.43401</span></span>
+<span><span class="co">## 6 -0.3138869  0.13800639 -0.59973861      0          0 76.27195</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="creating-rules">Creating rules<a class="anchor" aria-label="anchor" href="#creating-rules"></a>

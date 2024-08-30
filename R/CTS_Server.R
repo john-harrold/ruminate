@@ -4128,6 +4128,11 @@ CTS_set_current_element    = function(state, element){
   # These are the little code chunks that will be stacked to create the final
   # pieces of code for the element
   code_packages       =  paste0("library(", state[["MC"]][["code"]][["packages"]],")")
+  code_seed           = c( 
+                          "# Setting the random seeds",
+                          paste0("set.seed(",element[["ui"]][["cts_config_seed"]],")"),
+                          paste0("rxSetSeed(",element[["ui"]][["cts_config_seed"]],")"), 
+                          "")
   code_model          = c()
   code_rx_details     = c()
   code_cov            = c("",
@@ -4376,6 +4381,7 @@ CTS_set_current_element    = function(state, element){
                                         "",
                                         "# Creating the model",
                                         code_model,
+                                        code_seed,
                                         code_rx_details,
                                         code_cov,
                                         code_mksubs,
@@ -4388,7 +4394,8 @@ CTS_set_current_element    = function(state, element){
 
 
   # code to do everything upto the simulation
-  element[["code_sim_only"]] = paste0(c(code_rx_details,
+  element[["code_sim_only"]] = paste0(c(code_seed,
+                                        code_rx_details,
                                         code_cov,
                                         code_mksubs,
                                         code_rules,

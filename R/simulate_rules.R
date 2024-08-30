@@ -109,12 +109,11 @@ simulate_rules <- function(object,
       if(is.null(id) | is.null(state) | is.null(SI_ev_history)){
         fpd = -1
       }else{
-
         # All of the events as a data frame:
         evall = as.data.frame(SI_ev_history)
 
         # Just the dosing records for the current subject/state
-        # When tehre is only one subject the event history table wont have an
+        # When there is only one subject the event history table wont have an
         # id column, so we have to add some logic for that here:
         if("id" %in% names(evall)){
           drecs =  evall[evall[["id"]] == id & evall[["cmt"]] == state & evall[["evid"]] == 1, ]
@@ -461,10 +460,6 @@ simulate_rules <- function(object,
                                  capture = capture,
                                  cmd     = cmd)
 
-                       #if(et_idx == 2){
-                       #  browser()
-                       #}
-
                         if(tcres[["isgood"]]){
                           # Now we're going to process the dosing
                           dvals  = as.numeric(tcres[["capture"]][["SI_values"]])
@@ -665,10 +660,6 @@ simulate_rules <- function(object,
                              ev       = interval_ev))
             
             # Storing all of the events in a single table to return to the user
-           #if(nsub == 1){
-           #browser()
-           #}
-
             ev_history  = rxode2et::etRbind(ev_history , interval_ev)
             
             if(tcres[["isgood"]]){
