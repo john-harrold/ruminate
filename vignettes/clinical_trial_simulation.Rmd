@@ -75,10 +75,10 @@ object = rxode2(my_model)
 
 ```{r echo=FALSE, results=FALSE}
 if(rxode2_found){
-set.seed(8675309)
-rxode2::rxSetSeed(8675309)
 source(system.file(package="ruminate", "test_apps", "test_rxode2_system.R"))
 object = rxode2(my_model)
+set.seed(8675309)
+rxode2::rxSetSeed(8675309)
 }
 ```
 
