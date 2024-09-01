@@ -967,8 +967,10 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
       if(ui_name %in% names(state[["MB"]][["button_counters"]])){
         # Button changes are compared to the button click tracking values
         change_detected =
-          has_updated(ui_val  = state[["MB"]][["ui"]][[ui_name]],
-                      old_val = state[["MB"]][["button_counters"]][[ui_name]])
+          has_updated(ui_val    = state[["MB"]][["ui"]][[ui_name]],
+                      old_val   = state[["MB"]][["button_counters"]][[ui_name]],
+                      init_val  = c("", "0"))
+
         if(change_detected){
           formods::FM_le(state, paste0("button click: ", ui_name, " = ", state[["MB"]][["ui"]][[ui_name]]))
 
@@ -984,8 +986,10 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
         }
       }else{
         change_detected =
-          has_updated(ui_val  = state[["MB"]][["ui"]][[ui_name]],
-                      old_val = state[["MB"]][["ui_old"]][[ui_name]])
+          has_updated(ui_val    = state[["MB"]][["ui"]][[ui_name]],
+                      old_val   = state[["MB"]][["ui_old"]][[ui_name]],
+                      init_val  = c(""))
+
         if(change_detected){
           formods::FM_le(state, paste0("setting model: ", ui_name, " = ", paste(state[["MB"]][["ui"]][[ui_name]], collapse=", ")))
 

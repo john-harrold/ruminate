@@ -366,8 +366,6 @@ simulate_rules <- function(object,
             t_max = max(ot_sim)
           }
 
-          message(paste0("et_idx: ", et_idx, " eval_time: ",  eval_times[et_idx]))
-
           # We start with an event table that has only the output times
           tmp_ot      =  ot_sim[ t_min <= ot_sim & ot_sim <= t_max]
           interval_ev = NULL

@@ -476,8 +476,6 @@ CTS_Server <- function(id,
     # observe function below it.
     output$CTS_ui_source_model = renderUI({
       #input$element_selection
-
-      message("CTS_ui_source_model")
       state = CTS_fetch_state(id              = id,
                              id_ASM          = id_ASM,
                              id_MB           = id_MB,
@@ -2350,8 +2348,9 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
       if(ui_name %in% names(state[["CTS"]][["button_counters"]])){
         # Button changes are compared to the button click tracking values
         change_detected =
-          has_changed(ui_val  = state[["CTS"]][["ui"]][[ui_name]],
-                      old_val = state[["CTS"]][["button_counters"]][[ui_name]])
+          has_updated(ui_val    = state[["CTS"]][["ui"]][[ui_name]],
+                      old_val   = state[["CTS"]][["button_counters"]][[ui_name]], 
+                      init_val  = c("", "0"))
 
         if(change_detected){
 
@@ -2364,8 +2363,9 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
         }
       }else{
         change_detected =
-          has_changed(ui_val  = state[["CTS"]][["ui"]][[ui_name]],
-                      old_val = state[["CTS"]][["ui_old"]][[ui_name]])
+          has_updated(ui_val    = state[["CTS"]][["ui"]][[ui_name]],
+                      old_val   = state[["CTS"]][["ui_old"]][[ui_name]],
+                      init_val  = c(""))
 
         if(change_detected){
           formods::FM_le(state, paste0("setting cohort: ", ui_name, " = ", paste(state[["CTS"]][["ui"]][[ui_name]], collapse=", ")))

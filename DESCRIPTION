@@ -17,7 +17,7 @@ Imports:
   dplyr,
   DT,
   flextable,
-  formods (>= 0.1.6),
+  formods (>= 0.1.7),
   ggplot2,
   onbrand (>= 1.0.3),
   PKNCA (>= 0.10.2),

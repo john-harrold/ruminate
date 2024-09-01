@@ -3247,6 +3247,8 @@ NCA_fetch_state = function(id, input, session,
         # Messaging detected change
         if(has_changed(ui_val  = state[["NCA"]][["ui"]][[ui_name]],
                        old_val = current_ana[[ana_name]])){
+
+
           formods::FM_le(state, paste0("setting analysis: ", ana_name, " = ", paste(state[["NCA"]][["ui"]][[ui_name]], collapse=", ")))
         }
 
@@ -3461,6 +3463,7 @@ NCA_fetch_state = function(id, input, session,
   # Here we react to changes between the UI and the current state
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["select_current_ana"]],
                  old_val  = state[["NCA"]][["current_ana"]]) &
+
       (!fetch_hold(state, "select_current_ana"))){
 
     # Changing the current view to the one selected in the UI
