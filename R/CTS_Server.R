@@ -1596,7 +1596,7 @@ CTS_Server <- function(id,
     #------------------------------------
     # This forces the model selection to update
     observe({
-      message("observe CTS_ui_source_model")
+      req(input$source_model)
       input$element_selection
       input$button_clk_save
       react_state[[id_MB]]
