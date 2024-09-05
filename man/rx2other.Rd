@@ -52,3 +52,35 @@ dummy values for between-subject variablitiy are IIV will be
 \code{POP_RUMINATE}, \code{TV_RUMINATE}, and \code{ETA.RUMINATE}. The dummy
 terms for endpoints are \code{OUT_RUMINATE} and \code{add.OUT_RUMINATE}.
 }
+\examples{
+
+library(ruminate)
+if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
+ # First create an rxode2 model:
+ library(rxode2)
+ one.compartment <- function() {
+   ini({
+     tka <- log(1.57); label("Ka")
+     tcl <- log(2.72); label("Cl")
+     tv <- log(31.5); label("V")
+     eta.ka ~ 0.6
+     eta.cl ~ 0.3
+     eta.v ~ 0.1
+     add.sd <- 0.7
+   })
+   # and a model block with the error specification and model specification
+   model({
+     ka <- exp(tka + eta.ka)
+     cl <- exp(tcl + eta.cl)
+     v <- exp(tv + eta.v)
+     d/dt(depot) <- -ka * depot
+     d/dt(center) <- ka * depot - cl / v * center
+     cp <- center / v
+     cp ~ add(add.sd)
+   })
+ }
+ 
+ nmout = rx2other(one.compartment, out_type="nonmem")
+ 
+}
+}

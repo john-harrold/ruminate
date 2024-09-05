@@ -222,7 +222,7 @@ MC:
       tooltip: "This is a unique identifier for the current rule. It should start with a letter and can contain letters, numbers and underscores."
       tooltip_position: "bottom"
     tc_dim:
-      width:  100 
+      width:  75  
       default: "d2x4"
       tooltip: "rows x cols for figures"
       tooltip_position: "top"
