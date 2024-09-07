@@ -1,10 +1,10 @@
 ---
 title: 'Clinical Trial Simulation'
 output: rmarkdown::html_document 
-vignette: >
-  %\VignetteIndexEntry{Clinical Trial Simulation}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+#vignette: >
+#  %\VignetteIndexEntry{Clinical Trial Simulation}
+#  %\VignetteEngine{knitr::rmarkdown}
+#  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

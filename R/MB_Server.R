@@ -272,7 +272,7 @@ MB_Server <- function(id,
     # observe function below it.
     output$ui_select_append_model = renderUI({
       req(input[["element_selection"]])
-      input[["ui_mb_model"]]
+      #input[["ui_mb_model"]]
       state = MB_fetch_state(id              = id,
                              id_ASM          = id_ASM,
                              input           = input,
@@ -294,6 +294,7 @@ MB_Server <- function(id,
     #------------------------------------
     # Updates append_model selection based on the current model
     observe({
+      req(input[["append_model"]])
       req(input[["element_selection"]])
       req(input[["ui_mb_model"]])
       state = MB_fetch_state(id              = id,
@@ -2706,13 +2707,11 @@ MB_fetch_appends   = function(state, current_ele){
   if(model_catalog[["isgood"]]){
 
     # Getting all of the things the current component provides
+    rxinfo = fetch_rxinfo(component[["rx_obj"]])
     provides = c(
-     component$rx_obj$params$output$primary,
-     component$rx_obj$params$output$secondary,
-     component$rx_obj$params$output$endpoint,
-     component$rx_obj$params$output$state)
-
-
+     rxinfo[["elements"]][["states"]],
+     rxinfo[["elements"]][["parameters"]],
+     rxinfo[["elements"]][["secondary"]])
 
     # getting the models that are only ODEs and also have dependencies:
     model_summary = state[["MB"]][["model_catalog"]][["summary"]]
