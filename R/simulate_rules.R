@@ -1611,7 +1611,7 @@ rx2other <- function(object,
                      out_type     = "nonmem", 
                      dataset      = NULL,  
                      export_name  = "my_model",
-                     export_path  = tempdir()){
+                     export_path  = tempfile(pattern="dir")){
 
   isgood    = TRUE
   msgs      = c()
@@ -1722,7 +1722,7 @@ rx2other <- function(object,
         on.exit(setwd(oldwd))     
         # we store everything in an temp subdir so that 
         # file naming will be consistent
-        export_wd = tempfile(tmpdir=export_path)
+        export_wd = export_path
         if(!dir.exists(export_wd)){
           dir.create(export_wd, recursive=TRUE)
         }

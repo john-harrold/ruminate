@@ -68,6 +68,12 @@ ui <- dashboardPage(
            "ui_select_append_model",
            htmlOutput(NS("MB", "ui_select_append_model"))
          ),
+         box(title="Export/download buttons",
+           "ui_mb_export_nonmem",
+           htmlOutput(NS("MB", "ui_mb_export_nonmem")),
+           "ui_mb_export_monolix",
+           htmlOutput(NS("MB", "ui_mb_export_monolix"))
+         ),
          ),
        fluidRow(
          box(title="Generated Model",

@@ -291,6 +291,229 @@ MB_Server <- function(id,
           choicesOpt = choicesOpt)
 
       uiele})
+
+    #------------------------------------
+    # Model export buttons
+    # NONMEM
+    output$ui_mb_export_nonmem = renderUI({
+      req(input[["element_selection"]])
+      #input[["ui_mb_model"]]
+      state = MB_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+      choicesOpt = NULL
+      uiele = NULL
+      if(state[["MB"]][["isgood"]]){
+        uiele = shinyWidgets::downloadBttn(
+                  outputId = NS(id, "export_nonmem"),
+                  label    = state[["MC"]][["labels"]][["export_nonmem"]],
+                  style    = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+                  size     = state[["MC"]][["formatting"]][["export_nonmem"]][["size"]],
+                  block    = state[["MC"]][["formatting"]][["export_nonmem"]][["block"]],
+                  color    = state[["MC"]][["formatting"]][["export_nonmem"]][["color"]],
+                  icon     = icon("arrow-down"))
+
+          uiele = formods::FM_add_ui_tooltip(state, uiele,
+            tooltip     = state[["MC"]][["formatting"]][["export_nonmem"]][["tooltip"]],
+            position    = state[["MC"]][["formatting"]][["export_nonmem"]][["tooltip_position"]])
+
+      
+      }
+
+      uiele})
+    output$export_nonmem     = downloadHandler(
+      filename = function() {
+        # This is the default filename the user is prompted with when the
+        # download starts:
+        state = MB_fetch_state(id              = id,
+                               id_ASM          = id_ASM,
+                               input           = input,
+                               session         = session,
+                               FM_yaml_file    = FM_yaml_file,
+                               MOD_yaml_file   = MOD_yaml_file,
+                               react_state     = react_state)
+        current_element = MB_fetch_current_element(state)
+        dlfn = paste0(state[["MC"]][["element_object_name"]], "_", current_element[["idx"]], "-nonmem.zip")
+        FM_le(state, paste0("pushing export: ", dlfn))
+       dlfn},
+      content = function(file) {
+        state = MB_fetch_state(id              = id,
+                               id_ASM          = id_ASM,
+                               input           = input,
+                               session         = session,
+                               FM_yaml_file    = FM_yaml_file,
+                               MOD_yaml_file   = MOD_yaml_file,
+                               react_state     = react_state)
+        current_element = MB_fetch_current_element(state)
+        component   = MB_fetch_component(state, current_element)
+
+        FM_pause_screen(state   = state,
+                        message = state[["MC"]][["labels"]][["export_pause"]],
+                        session = session)
+
+
+        ex_sub_dir = paste0(state[["MC"]][["element_object_name"]], "_", current_element[["idx"]])
+        export_dir =  file.path(tempfile(pattern="dir"))
+        if(!dir.exists(file.path(export_dir, ex_sub_dir))){
+          dir.create(path=file.path(export_dir, ex_sub_dir), recursive = TRUE)
+        }
+
+        rtores = rx2other(object=component[["rx_obj"]],
+                          out_type="nonmem",
+                          export_path=file.path(export_dir, ex_sub_dir))
+
+        # If there are any messages we dump those as well to be visible to the
+        # user:
+        if(!is.null(rtores[["msgs"]])){
+          msgs_file = file.path(export_dir, ex_sub_dir, "export_messages.txt")
+          file.create(msgs_file)
+          write(rtores[["msgs"]], file=msgs_file)
+
+          # Defining the notification type
+          if(rtores[["isgood"]]){
+            notification_type = "warning"
+          } else {
+            notification_type = "failure"
+          }
+
+          # Logging messages
+          FM_le(state, rtores[["msgs"]])
+
+          # Setting notification and saving the state.
+          state = FM_set_notification(
+            state       = state,
+            notify_text = rtores[["msgs"]],
+            notify_id   = "NONMEM export messages",
+            type        = notification_type)
+          FM_set_mod_state(session, id, state)
+        }
+
+        zip::zip(zipfile=file,
+                 files               = dir(export_dir),
+                 recurse             = TRUE,
+                 root                = export_dir,
+                 include_directories = TRUE)
+
+
+        FM_resume_screen(state   = state,
+                         session = session)
+        }
+    )
+    # Monolix
+    output$ui_mb_export_monolix = renderUI({
+      req(input[["element_selection"]])
+      #input[["ui_mb_model"]]
+      state = MB_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+      choicesOpt = NULL
+      uiele = NULL
+      if(state[["MB"]][["isgood"]]){
+        uiele = shinyWidgets::downloadBttn(
+                  outputId = NS(id, "export_monolix"),
+                  label    = state[["MC"]][["labels"]][["export_monolix"]],
+                  style    = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+                  size     = state[["MC"]][["formatting"]][["export_monolix"]][["size"]],
+                  block    = state[["MC"]][["formatting"]][["export_monolix"]][["block"]],
+                  color    = state[["MC"]][["formatting"]][["export_monolix"]][["color"]],
+                  icon     = icon("arrow-down"))
+
+          uiele = formods::FM_add_ui_tooltip(state, uiele,
+            tooltip     = state[["MC"]][["formatting"]][["export_monolix"]][["tooltip"]],
+            position    = state[["MC"]][["formatting"]][["export_monolix"]][["tooltip_position"]])
+
+      
+      }
+
+      uiele})
+    output$export_monolix    = downloadHandler(
+      filename = function() {
+        # This is the default filename the user is prompted with when the
+        # download starts:
+        state = MB_fetch_state(id              = id,
+                               id_ASM          = id_ASM,
+                               input           = input,
+                               session         = session,
+                               FM_yaml_file    = FM_yaml_file,
+                               MOD_yaml_file   = MOD_yaml_file,
+                               react_state     = react_state)
+        current_element = MB_fetch_current_element(state)
+        dlfn = paste0(state[["MC"]][["element_object_name"]], "_", current_element[["idx"]], "-monolix.zip")
+        FM_le(state, paste0("pushing export: ", dlfn))
+       dlfn},
+      content = function(file) {
+        state = MB_fetch_state(id              = id,
+                               id_ASM          = id_ASM,
+                               input           = input,
+                               session         = session,
+                               FM_yaml_file    = FM_yaml_file,
+                               MOD_yaml_file   = MOD_yaml_file,
+                               react_state     = react_state)
+        current_element = MB_fetch_current_element(state)
+        component   = MB_fetch_component(state, current_element)
+
+        FM_pause_screen(state   = state,
+                        message = state[["MC"]][["labels"]][["export_pause"]],
+                        session = session)
+
+
+        ex_sub_dir = paste0(state[["MC"]][["element_object_name"]], "_", current_element[["idx"]])
+        export_dir =  file.path(tempfile(pattern="dir"))
+        if(!dir.exists(file.path(export_dir, ex_sub_dir))){
+          dir.create(path=file.path(export_dir, ex_sub_dir), recursive = TRUE)
+        }
+
+        rtores = rx2other(object=component[["rx_obj"]],
+                          out_type="monolix",
+                          export_path=file.path(export_dir, ex_sub_dir))
+
+        # If there are any messages we dump those as well to be visible to the
+        # user:
+        if(!is.null(rtores[["msgs"]])){
+          msgs_file = file.path(export_dir, ex_sub_dir, "export_messages.txt")
+          file.create(msgs_file)
+          write(rtores[["msgs"]], file=msgs_file)
+
+          # Defining the notification type
+          if(rtores[["isgood"]]){
+            notification_type = "warning"
+          } else {
+            notification_type = "failure"
+          }
+
+          # Logging messages
+          FM_le(state, rtores[["msgs"]])
+
+          # Setting notification and saving the state.
+          state = FM_set_notification(
+            state       = state,
+            notify_text = rtores[["msgs"]],
+            notify_id   = "Monolix export messages",
+            type        = notification_type)
+          FM_set_mod_state(session, id, state)
+        }
+
+        zip::zip(zipfile=file,
+                 files               = dir(export_dir),
+                 recurse             = TRUE,
+                 root                = export_dir,
+                 include_directories = TRUE)
+
+
+        FM_resume_screen(state   = state,
+                         session = session)
+        }
+    )
+
+
     #------------------------------------
     # Updates append_model selection based on the current model
     observe({
@@ -682,7 +905,9 @@ MB_Server <- function(id,
                  htmlOutput(NS(id, "ui_mb_save_btn")),
                  htmlOutput(NS(id, "ui_mb_copy_btn")),
                  htmlOutput(NS(id, "ui_mb_del_btn")),
-                 htmlOutput(NS(id, "ui_mb_new_btn"))
+                 htmlOutput(NS(id, "ui_mb_new_btn")),
+                 htmlOutput(NS(id, "ui_mb_export_nonmem")),
+                 htmlOutput(NS(id, "ui_mb_export_monolix"))
                  ))
 
         # Appending the preview
@@ -806,6 +1031,9 @@ MB_Server <- function(id,
     # This can be used to trigger notifications
     toNotify <- reactive({
       list(
+       # JMH figure out how to trigger when the export buttons are clicked
+       input[["export_nonmem"]],
+       input[["export_monolix"]],
        input[["element_selection"]],
        input[["catalog_selection"]],
        input[["uploaded_model"]],
@@ -824,6 +1052,7 @@ MB_Server <- function(id,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
+
 
       # Triggering optional notifications
       notify_res = formods::FM_notify(
@@ -2710,6 +2939,7 @@ MB_fetch_appends   = function(state, current_ele){
     rxinfo = fetch_rxinfo(component[["rx_obj"]])
     provides = c(
      rxinfo[["elements"]][["states"]],
+     rxinfo[["elements"]][["outputs"]],
      rxinfo[["elements"]][["parameters"]],
      rxinfo[["elements"]][["secondary"]])
 
