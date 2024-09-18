@@ -31,7 +31,9 @@ Imports:
   stringr,
   tidyr,
   utils,
-  yaml
+  yaml,
+  rxode2 (>= 3.0.0),
+  nlmixr2
 Suggests:
   cli,
   clipr,
@@ -39,11 +41,9 @@ Suggests:
   knitr,
   nlmixr2lib,
   nonmem2rx,
-  nlmixr2,
   prompter,
   rmarkdown,
   readxl,
-  rxode2 (>= 3.0.0),
   shinydashboard,
   testthat (>= 3.0.0),
   ubiquity
