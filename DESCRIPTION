@@ -46,7 +46,9 @@ Suggests:
   readxl,
   shinydashboard,
   testthat (>= 3.0.0),
-  ubiquity
+  ubiquity,
+  babelmixr2,
+  zip
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Config/testthat/edition: 3
