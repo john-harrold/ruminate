@@ -1,7 +1,7 @@
 Package: ruminate
 Title: A Pharmacometrics Data Transformation and Analysis Tool
 Version: 0.2.4
-Authors@R: 
+Authors@R:
     person("John", "Harrold", , "john.m.harrold@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2052-4373"))
 Description: Exploration of pharmacometrics data involves both general tools (transformation and plotting) and specific techniques (non-compartmental analysis). This kind of exploration is generally accomplished by utilizing different packages. The purpose of 'ruminate' is to create a 'shiny' interface to make these tools more broadly available while creating reproducible results.
@@ -31,7 +31,9 @@ Imports:
   stringr,
   tidyr,
   utils,
-  yaml
+  yaml,
+  rxode2 (>= 3.0.0),
+  nlmixr2
 Suggests:
   cli,
   clipr,
@@ -39,16 +41,15 @@ Suggests:
   knitr,
   nlmixr2lib,
   nonmem2rx,
-  nlmixr2,
   prompter,
   rmarkdown,
   readxl,
-  rxode2 (>= 2.1.2),
-  rxode2et,
   shinydashboard,
   testthat (>= 3.0.0),
-  ubiquity
+  ubiquity,
+  babelmixr2,
+  zip
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Config/testthat/edition: 3
 VignetteBuilder: knitr
