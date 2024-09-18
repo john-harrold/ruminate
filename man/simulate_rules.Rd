@@ -95,10 +95,10 @@ type and can be either “random”, “normal” or “log-normal”.
 \itemize{
 \item fixed: A single value.
 \item discrete: A vector of possible discrete elements.
-\item continuous, random: Two values the first is the lower bound and the
-second is the upper bound.
-\item continuous, normal: Two values the first is the mean and the second
-is the variance.
+\item continuous, random: Two values the first is the lower bound and
+the second is the upper bound.
+\item continuous, normal: Two values the first is the mean and the
+second is the variance.
 \item continuous, log-normal: Two values the first is the mean and the
 second is the variance.
 }
@@ -133,8 +133,8 @@ label used to remember what the rule does. These names will be returned
 as columns in the simulated data frame.
 \itemize{
 \item \code{condition}: Character string that evaluates to either \code{TRUE} or
-\code{FALSE}. When true the \code{action} portion will be triggered. For a list
-of objects available see the Rule-evaluation environment below.
+\code{FALSE}. When true the \code{action} portion will be triggered. For a
+list of objects available see the Rule-evaluation environment below.
 \item \code{fail_flag}: Flag set in the \code{rule_id} column when the condition is
 not met (set to \code{"false"} if not specified).
 \item \code{true_flag}: Flag set in the \code{rule_id} column when the condition is
@@ -154,12 +154,12 @@ Dosing:
 \item \code{action}
 \itemize{
 \item \code{type}: \code{"dose"}
-\item \code{values}: Character string that evaluates as a numeric vector dosing
-amounts (e.g. \code{"c(3,  3,  3,  3)"})
+\item \code{values}: Character string that evaluates as a numeric vector
+dosing amounts (e.g. \code{"c(3, 3, 3, 3)"})
 \item \code{times}: Character string that evaluates as a numeric vector of
 times (e.g. \code{"c(0, 14, 28, 42)"})
-\item \code{durations}: Character string that evaluates as a numeric vector of
-durations (e.g. \code{"c(0, 0, 0, 0)"}, zero for bolus dosing)
+\item \code{durations}: Character string that evaluates as a numeric vector
+of durations (e.g. \code{"c(0, 0, 0, 0)"}, zero for bolus dosing)
 }
 }
 
@@ -168,10 +168,11 @@ Changing a state value:
 \item \code{action}
 \itemize{
 \item \code{type}: \code{"set state"}
-\item \code{state}: Character string with the name of the state to set (\code{"Ac"})
+\item \code{state}: Character string with the name of the state to set
+(\code{"Ac"})
 \item \code{value}: Character string that evaluates as a numeric value for
-state (e.g. \code{"Ac/2"} would set the state to half the value of Ac at
-the evaluation point)
+state (e.g. \code{"Ac/2"} would set the state to half the value of Ac
+at the evaluation point)
 }
 }
 
@@ -204,10 +205,10 @@ objects will be available at each evaluation point:
 current subject up to the current evaluation point.
 \item \code{SI_subjects}: The subjects data frame.
 \item \code{SI_eval_times}: Vector of the evaluation times.
-\item \code{SI_interval_ev}: The events table in it’s current state for the given
-simulation interval.
-\item \code{SI_ev_history}: This is the history of the event table containing all
-the events leading up to the current interval.
+\item \code{SI_interval_ev}: The events table in it’s current state for the
+given simulation interval.
+\item \code{SI_ev_history}: This is the history of the event table containing
+all the events leading up to the current interval.
 \item \code{SI_ud_history}: This is a free form object the user can define or
 alter within the “manual”action type (ud-user defined, history).
 }
@@ -216,7 +217,10 @@ alter within the “manual”action type (ud-user defined, history).
 \item \code{SI_fpd}: This function will fetch the previous dose (fpd) for the
 given id and state. For example for the current \code{id} and the state
 \code{Ac} you would do the following:
-}
+}\if{html}{\out{
+<!-- end list -->
+}}
+
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{SI_fpd(id=id, state="Ac")
 }\if{html}{\out{</div>}}

@@ -9,7 +9,7 @@ rx2other(
   out_type = "nonmem",
   dataset = NULL,
   export_name = "my_model",
-  export_path = tempdir()
+  export_path = tempfile(pattern = "dir")
 )
 }
 \arguments{
@@ -79,8 +79,8 @@ if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
      cp ~ add(add.sd)
    })
  }
- 
+
  nmout = rx2other(one.compartment, out_type="nonmem")
- 
+
 }
 }
