@@ -23,7 +23,7 @@
   #mr = FM_message("Loading ruminate", entry_type="h1")
   #mr = FM_message("Checking for required nlmixr2 family of tools", entry_type="h2")
 
-  pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib", "rxode2et")
+  pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib")
   for(pkg in pkgs){
     pkg_var = paste0("ruminate_", pkg, "_found")
     if(!requireNamespace(pkg, quietly=TRUE)){
@@ -84,7 +84,6 @@ ruminate_check <- function(verbose=TRUE){
    "prompter",
    "rmarkdown",
    "readxl",
-   "rxode2et",
    "shinydashboard",
    "testthat",
    "ubiquity")
@@ -161,6 +160,3 @@ ruminate = function(host        = "127.0.0.1",
                 port  = port)
 
 }
-
-
-
