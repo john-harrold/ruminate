@@ -529,6 +529,7 @@ CTS_Server <- function(id,
       uiele})
     #------------------------------------
     #  Row of controls above the simulation results
+    # JMH move the reaction here to the 
     output$CTS_ui_top_btn_row  = renderUI({
       react_state[[id_MB]]
       react_state[[id_ASM]]
@@ -586,6 +587,19 @@ CTS_Server <- function(id,
           formods::FM_add_ui_tooltip(state, uiele_tc_dim,
                  tooltip     = state[["MC"]][["formatting"]][["tc_dim"]][["tooltip"]],
                  position    = state[["MC"]][["formatting"]][["tc_dim"]][["tooltip_position"]])
+
+        uiele_time_scale = 
+          shinyWidgets::pickerInput(
+            selected   = "PH",
+            inputId    = NS(id, "time_scale"),
+            label      = state[["MC"]][["labels"]][["time_scale"]],
+            choices    = c("PH"),
+            width      = state[["MC"]][["formatting"]][["time_scale"]][["width"]])
+
+        uiele_time_scale = 
+          formods::FM_add_ui_tooltip(state, uiele_time_scale,
+                 tooltip     = state[["MC"]][["formatting"]][["time_scale"]][["tooltip"]],
+                 position    = state[["MC"]][["formatting"]][["time_scale"]][["tooltip_position"]])
 
         # Figure page selection
         uiele_fpage = htmlOutput(NS(id, "CTS_ui_fpage"))
@@ -665,6 +679,7 @@ CTS_Server <- function(id,
         div_style ="display:inline-block;vertical-align:top;align-items:center"
         uiele_btn_update = div(style=div_style,     uiele_btn_update)
         uiele_tc_dim     = div(style=div_style,     uiele_tc_dim)
+        uiele_time_scale = div(style=div_style,     uiele_time_scale)
         uiele_fpage      = div(style=div_style,     uiele_fpage)
         uiele_dvcols     = div(style=div_style,     uiele_dvcols)
         uiele_evplot     = div(style=div_style,     uiele_evplot)
@@ -677,12 +692,12 @@ CTS_Server <- function(id,
             HTML('&nbsp;'),
             uiele_fpage,
             HTML('&nbsp;'),
+            uiele_time_scale,
+            HTML('&nbsp;'),
             uiele_dvcols,
             HTML('&nbsp;'),
             uiele_evplot)
       }
-
-
     uiele_top_btn_row})
     #------------------------------------
     #  Simulation results
@@ -896,6 +911,7 @@ CTS_Server <- function(id,
     #------------------------------------
     # timecourse plotly
     output$ui_res_tc_figure_plotly  = plotly::renderPlotly({
+      req(input$time_scale)
       input$element_selection
       input$button_clk_runsim
       input$button_clk_update_plot
@@ -931,6 +947,7 @@ CTS_Server <- function(id,
       uiele})
     # timecourse ggplot
     output$ui_res_tc_figure_ggplot             = renderPlot({
+      req(input$time_scale)
       input$element_selection
       input$button_clk_runsim
       input$button_clk_update_plot
@@ -1641,6 +1658,70 @@ CTS_Server <- function(id,
           choicesOpt = choicesOpt)
       }
       }
+    })
+    #------------------------------------
+    # Timescale 
+    observe({
+      req(input$source_model)
+      req(input$time_scale)
+      input$element_selection
+      react_state[[id_MB]]
+      react_state[[id_ASM]]
+      # Forcing a reaction to changes in other modules
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      current_cht = CTS_fetch_current_element(state)
+
+      browser()
+
+      # Current source model
+      source_model = current_cht[["ui"]][["source_model"]]
+
+      if(source_model %in% names(state[["CTS"]][["MDL"]][["mdl"]])){
+
+         # Model timescales
+         ts_details = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["ts_obj"]][["details"]]
+
+         # Current selected timescale
+         current_cht[["ui"]][["time_scale"]]
+
+      }
+
+      # This only updates if there are models
+    # if( !is.null(state[["CTS"]][["MDL"]][["hasmdl"]]) ){
+    # if( state[["CTS"]][["MDL"]][["hasmdl"]] ){
+    #
+    #   catalog = state[["CTS"]][["MDL"]][["catalog"]]
+    #
+    #   if(current_cht[["ui"]][["source_model"]] %in% catalog[["object"]]){
+    #     current_source_model =  current_cht[["ui"]][["source_model"]]
+    #   } else {
+    #     current_source_model = catalog[["object"]][1]
+    #     FM_le(state, paste0("source_model: model missing missing."   ))
+    #     FM_le(state, paste0("key: ",            current_cht[["id"]]       ))
+    #     FM_le(state, paste0("source_model: ",   current_cht[["ui"]][["source_model"]]))
+    #     FM_le(state, paste0("switching model:", current_source_model ))
+    #   }
+    #
+    #   choices        = catalog[["object"]]
+    #   names(choices) = catalog[["label"]]
+    #
+    #   choicesOpt = NULL
+    #   shinyWidgets::updatePickerInput(
+    #     session    = session,
+    #     selected   = current_source_model,
+    #     inputId    = "time_scale",
+    #     choices    = choices,
+    #     choicesOpt = choicesOpt)
+    # }
+    # }
     })
     #------------------------------------
     # Generated data reading code
@@ -2714,6 +2795,7 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
                       "nsub",
                       "fpage",
                       "dvcols",
+                      "time_course",
                       "tc_dim",
                       "evplot",
                       "visit_times",
@@ -3803,6 +3885,7 @@ CTS_new_element = function(state){
            trial_end     =  state[["MC"]][["formatting"]][["trial_end"]][["value"]],
            fpage         = "1",
            dvcols        = "",
+           time_scale    = "",
            tc_dim        = state[["MC"]][["formatting"]][["tc_dim"]][["default"]],
            evplot        = def_evplot,
            source_model  = ""

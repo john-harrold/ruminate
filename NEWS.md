@@ -1,4 +1,9 @@
-# ruminate 0.2.4 (development version)
+# ruminate 0.2.5 (development version)
+
+- Fix for rxode 3.0 release.
+
+
+# ruminate 0.2.4 
 
 - Fixed issue where changes in data views was leading to PH appearing in the 
   NCA data source selection

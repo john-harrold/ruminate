@@ -12,10 +12,10 @@ MB_fetch_mdl(state)
 \value{
 list containing the following elements
 \itemize{
-\item{isgood:}    Return status of the function.
-\item{hasmdl:}    Boolean indicator if the module has any models
-\item{msgs:}      Messages to be passed back to the user.
-\item{mdl:}       List with models. Each list element has the name of
+\item{isgood:}      Return status of the function.
+\item{hasmdl:}      Boolean indicator if the module has any models
+\item{msgs:}        Messages to be passed back to the user.
+\item{mdl:}         List with models. Each list element has the name of
 the R-object for that dataset. Each element has the following structure:
 \itemize{
 \item{label:}       Text label for the model (e.g. one-compartment model).
@@ -23,6 +23,7 @@ the R-object for that dataset. Each element has the following structure:
 \item{id:}          Module ID.
 \item{rx_obj:}      The rxode2 object.
 \item{rx_obj_name:} The rxode2 object name that holds the model.
+\item{ts_obj}       List with elements system and details
 \item{ts_obj_name:} The object name that holds the model time scale information.
 \item{fcn_def:}     Text to define the model
 \item{MDLMETA:}     Notes about the model.

@@ -9,7 +9,7 @@ rx2other(
   out_type = "nonmem",
   dataset = NULL,
   export_name = "my_model",
-  export_path = tempdir()
+  export_path = tempfile(pattern = "dir")
 )
 }
 \arguments{

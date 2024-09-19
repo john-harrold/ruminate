@@ -1,11 +1,13 @@
-pandoc: 3.1.11
-pkgdown: 2.0.9
+pandoc: '3.4'
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   clinical_trial_simulation: clinical_trial_simulation.html
   deployment: deployment.html
   model_builder: model_builder.html
   noncompartmental_analysis: noncompartmental_analysis.html
-  simulate_rules: rmdhunks/simulate_rules.html
-last_built: 2024-09-07T14:14Z
-
+  rmdhunks/simulate_rules: rmdhunks/simulate_rules.html
+last_built: 2024-09-19T04:09Z
+urls:
+  reference: https://ruminate.ubiquity.tools/reference
+  article: https://ruminate.ubiquity.tools/articles

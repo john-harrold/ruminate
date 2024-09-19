@@ -162,7 +162,7 @@ ui <- dashboardPage(
 server <- function(input, output, session) {
 
   #CTS_test_mksession(session, full_session=TRUE)
-  #CTS_test_mksession(session, full_session=FALSE)
+   CTS_test_mksession(session, full_session=FALSE)
 
   # Empty reactive object to track and react to
   # changes in the module state outside of the module

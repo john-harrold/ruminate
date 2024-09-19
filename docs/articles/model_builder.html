@@ -276,6 +276,20 @@ MC:
       tooltip: "Create a new model."
       tooltip_position: "right"
       width: 100
+    export_nonmem: 
+      size: "sm"
+      block: TRUE
+      color: "primary"
+      tooltip: "Download the current model in NONMEM format."
+      tooltip_position: "right"
+      width: 100
+    export_monolix:
+      size: "sm"
+      block: TRUE
+      color: "primary"
+      tooltip: "Download the current model in Monolix format."
+      tooltip_position: "right"
+      width: 100
     catalog_selection:
       width:   "200px"
       truncate: 65
@@ -361,6 +375,9 @@ MC:
     upload_model_file:    NULL
     base_from:            NULL
     catalog_selection:    NULL
+    export_nonmem:        "NONMEM"
+    export_monolix:       "Monolix"
+    export_pause:         "Exporting model."
     model_type_selection: NULL
     time_scale:           NULL
     catalog_empty:        "No models were found, the catalog is empty"

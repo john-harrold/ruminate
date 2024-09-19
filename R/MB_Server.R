@@ -1982,10 +1982,10 @@ res}
 #'@param state MB state from \code{MB_fetch_state()}
 #'@return list containing the following elements
 #'\itemize{
-#'  \item{isgood:}    Return status of the function.
-#'  \item{hasmdl:}    Boolean indicator if the module has any models
-#'  \item{msgs:}      Messages to be passed back to the user.
-#'  \item{mdl:}       List with models. Each list element has the name of
+#'  \item{isgood:}      Return status of the function.
+#'  \item{hasmdl:}      Boolean indicator if the module has any models
+#'  \item{msgs:}        Messages to be passed back to the user.
+#'  \item{mdl:}         List with models. Each list element has the name of
 #'  the R-object for that dataset. Each element has the following structure:
 #'  \itemize{
 #'    \item{label:}       Text label for the model (e.g. one-compartment model).
@@ -1993,6 +1993,7 @@ res}
 #'    \item{id:}          Module ID.
 #'    \item{rx_obj:}      The rxode2 object.
 #'    \item{rx_obj_name:} The rxode2 object name that holds the model.
+#'    \item{ts_obj}       List with elements system and details 
 #'    \item{ts_obj_name:} The object name that holds the model time scale information.
 #'    \item{fcn_def:}     Text to define the model
 #'    \item{MDLMETA:}     Notes about the model.
@@ -2011,14 +2012,16 @@ res}
 #'names(mdls)
 MB_fetch_mdl = function(state){
 
-  hasmdl  = FALSE
-  isgood = TRUE
-  msgs   = c()
-  mdl    = list()
+  hasmdl      = FALSE
+  isgood      = TRUE
+  msgs        = c()
+  mdl         = list()
+
+  # General timescale information 
+  ts_details = state[["MB"]][["ts_details"]]
 
   # This prevents returning a dataset if this is triggered before data has
   # been loaded
-
   if(state[["MB"]][["isgood"]]){
 
     # Checksum for the module
@@ -2040,6 +2043,7 @@ MB_fetch_mdl = function(state){
           list(label       = ce[["ui"]][["element_name"]],
                MOD_TYPE    = "MB",
                id          = state[["id"]],
+               ts_details  = ts_details,
                rx_obj      = cc[["rx_obj"]],
                rx_obj_name = ce[["rx_obj_name"]],
                ts_obj      = cc[["ts_obj"]],
@@ -2051,16 +2055,16 @@ MB_fetch_mdl = function(state){
                MDLchecksum = ce_checksum)
       }
     }
-
   } else {
     isgood = FALSE
     msgs = c(msgs, "Bad MB state")
   }
 
-  res = list(hasmdl  = hasmdl,
-             isgood = isgood,
-             msgs   = msgs,
-             mdl    = mdl)
+  res = list(hasmdl      = hasmdl,
+             isgood      = isgood,
+             ts_details  = ts_details,
+             msgs        = msgs,
+             mdl         = mdl)
 res}
 
 #'@export

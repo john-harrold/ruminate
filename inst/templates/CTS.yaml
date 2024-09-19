@@ -221,6 +221,10 @@ MC:
       placeholder: "first_dose"
       tooltip: "This is a unique identifier for the current rule. It should start with a letter and can contain letters, numbers and underscores."
       tooltip_position: "bottom"
+    time_scale:
+      width:  75  
+      tooltip: "Select the timescale to plot."
+      tooltip_position: "top"
     tc_dim:
       width:  75  
       default: "d2x4"
@@ -291,6 +295,7 @@ MC:
     source_model:        "Select Model"
     dvcols:              NULL
     evplot:              NULL
+    time_scale:          NULL
     rule_type:           "Type of rule"
     rule_condition:      "Condition to trigger rule"
     action_dosing_state: "Dosing into"
