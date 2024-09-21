@@ -1,8 +1,9 @@
 #'@import dplyr
-#'@import rxode2
-#'@import nlmixr2
 #'@import ggplot2
 #'@importFrom stats rnorm  runif
+
+# #'@import rxode2
+# #'@import nlmixr2
 
 #'@export
 #'@title Rule-Based simulates
