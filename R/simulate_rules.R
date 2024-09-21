@@ -300,7 +300,7 @@ simulate_rules <- function(object,
     # Simulating before the fist eval_time to get
     # a snapshot of the simulation:
     tmp_ot  = sort(unique(c(ot_sim[ot_sim < min(eval_times)], min(eval_times))))
-    init_ev  = rxode2et::et(time=tmp_ot, id=sub_ids, cmt=rx_details[["elements"]][["outputs"]][1])
+    init_ev  = rxode2::et(time=tmp_ot, id=sub_ids, cmt=rx_details[["elements"]][["outputs"]][1])
 
     #rxdetails[["elements"]][["outputs"]][1]
     sim_cmd = paste0(c(preamble,
@@ -499,8 +499,8 @@ simulate_rules <- function(object,
 
                           # Note when there is only one subject this will not
                           # retain the id column
-                          interval_ev = rxode2et::etRbind(interval_ev,
-                                           rxode2et::et(
+                          interval_ev = rxode2::etRbind(interval_ev,
+                                           rxode2::et(
                                               cmt  = tmp_cmt,
                                               id   = sub_id,
                                               amt  = dvals,
@@ -623,8 +623,8 @@ simulate_rules <- function(object,
                 } else {
                  new_state_amt  = sub_state[[state]]
                 }
-                interval_ev = rxode2et::etRbind(interval_ev,
-                                 rxode2et::et(
+                interval_ev = rxode2::etRbind(interval_ev,
+                                 rxode2::et(
                                     cmt  = state,
                                     id   = sub_id,
                                     amt  = new_state_amt,
@@ -635,8 +635,8 @@ simulate_rules <- function(object,
               # Combining the subject specific sampling with
               # the interval samples:
               sub_ot       = sort(unique(c(sub_ot, tmp_ot)))
-              interval_ev  = rxode2et::etRbind(interval_ev,
-                             rxode2et::et(time=sub_ot, id=sub_id,
+              interval_ev  = rxode2::etRbind(interval_ev,
+                             rxode2::et(time=sub_ot, id=sub_id,
                              cmt=rx_details[["elements"]][["outputs"]][1]))
 
             }
@@ -659,7 +659,7 @@ simulate_rules <- function(object,
                              ev       = interval_ev))
             
             # Storing all of the events in a single table to return to the user
-            ev_history  = rxode2et::etRbind(ev_history , interval_ev)
+            ev_history  = rxode2::etRbind(ev_history , interval_ev)
             
             if(tcres[["isgood"]]){
             
@@ -1459,9 +1459,9 @@ mk_subjects <- function(object, nsub = 10, covs=NULL){
       #-----------------------------------------------------------------
       # JMH figure out a better way to do this using low level functions
       tmp_cmt = rx_details[["elements"]][["states"]][1]
-      ev <-rxode2et::et(amt=0, cmt=force(tmp_cmt), id=c(1:nsub)) 
+      ev <-rxode2::et(amt=0, cmt=force(tmp_cmt), id=c(1:nsub)) 
 
-     #ev <-rxode2et::et(amt=0, cmt=1, id=c(1:nsub)) |>
+     #ev <-rxode2::et(amt=0, cmt=1, id=c(1:nsub)) |>
      #     add.sampling(c(0,1))
       sim  <- rxode2::rxSolve(object, ev, nSub=nsub, iCov = iCov)
       params = as.data.frame(sim$params)

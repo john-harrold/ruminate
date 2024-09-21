@@ -33,13 +33,14 @@ Imports:
   utils,
   yaml
 Suggests:
+  babelmixr2,
   cli,
   clipr,
   gridExtra,
   knitr,
   nlmixr2lib,
   nonmem2rx,
-  nlmixr2,
+  nlmixr2(>=3.0.0),
   prompter,
   rmarkdown,
   readxl,
