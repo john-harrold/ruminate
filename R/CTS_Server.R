@@ -588,13 +588,13 @@ CTS_Server <- function(id,
                  tooltip     = state[["MC"]][["formatting"]][["tc_dim"]][["tooltip"]],
                  position    = state[["MC"]][["formatting"]][["tc_dim"]][["tooltip_position"]])
 
-        uiele_time_scale = 
-          shinyWidgets::pickerInput(
-            selected   = "PH",
-            inputId    = NS(id, "time_scale"),
-            label      = state[["MC"]][["labels"]][["time_scale"]],
-            choices    = c("PH"),
-            width      = state[["MC"]][["formatting"]][["time_scale"]][["width"]])
+        uiele_time_scale = htmlOutput(NS(id, "CTS_time_scale_PH"))
+#         shinyWidgets::pickerInput(
+#           selected   = "PH",
+#           inputId    = NS(id, "time_scale"),
+#           label      = state[["MC"]][["labels"]][["time_scale"]],
+#           choices    = c("PH"),
+#           width      = state[["MC"]][["formatting"]][["time_scale"]][["width"]])
 
         uiele_time_scale = 
           formods::FM_add_ui_tooltip(state, uiele_time_scale,
@@ -1660,7 +1660,29 @@ CTS_Server <- function(id,
       }
     })
     #------------------------------------
-    # Timescale 
+    # Time scale 
+    # Creates the time scale picker input witha  placeholder
+    output$CTS_time_scale_PH = renderUI({
+      state = CTS_fetch_state(id              = id,
+                             id_ASM          = id_ASM,
+                             id_MB           = id_MB,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      res = 
+          shinyWidgets::pickerInput(
+            selected   = "PH",
+            inputId    = NS(id, "time_scale"),
+            label      = state[["MC"]][["labels"]][["time_scale"]],
+            choices    = c("PH"),
+            width      = state[["MC"]][["formatting"]][["time_scale"]][["width"]])
+
+    })
+    #------------------------------------
+    # Creating the actual picker input options
     observe({
       req(input$source_model)
       req(input$time_scale)
@@ -1679,8 +1701,6 @@ CTS_Server <- function(id,
 
       current_cht = CTS_fetch_current_element(state)
 
-      browser()
-
       # Current source model
       source_model = current_cht[["ui"]][["source_model"]]
 
@@ -1689,39 +1709,37 @@ CTS_Server <- function(id,
          # Model timescales
          ts_details = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["ts_obj"]][["details"]]
 
-         # Current selected timescale
-         current_cht[["ui"]][["time_scale"]]
+         # Current timescale defaults to the system timescale
+         current_time_scale    = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["ts_obj"]][["system"]]
 
+         # Now we see if the current cohort has a value defined
+         ts_cht = current_cht[["ui"]][["time_scale"]]
+         if(!is.null(ts_cht)){
+           if(ts_cht != ""){
+             if(ts_cht %in% names(ts_details)){
+               current_time_scale = ts_cht
+             }
+           }
+         }
+
+         # Defining the choices
+         choices = list()
+         for(curr_ts_value in names(ts_details)){
+           choices[[ ts_details[[curr_ts_value]][["verb"]] ]] = curr_ts_value 
+         }
+
+         choicesOpt = NULL
+         shinyWidgets::updatePickerInput(
+           session    = session,
+           selected   = current_time_scale,   
+           inputId    = "time_scale",
+           choices    = choices,
+           choicesOpt = choicesOpt)
+      } else {
+        FM_le(state, paste0("source_model: model missing missing."   ))
+        FM_le(state, paste0("key: ",            current_cht[["id"]]       ))
+        FM_le(state, paste0("source_model: ",   current_cht[["ui"]][["source_model"]]))
       }
-
-      # This only updates if there are models
-    # if( !is.null(state[["CTS"]][["MDL"]][["hasmdl"]]) ){
-    # if( state[["CTS"]][["MDL"]][["hasmdl"]] ){
-    #
-    #   catalog = state[["CTS"]][["MDL"]][["catalog"]]
-    #
-    #   if(current_cht[["ui"]][["source_model"]] %in% catalog[["object"]]){
-    #     current_source_model =  current_cht[["ui"]][["source_model"]]
-    #   } else {
-    #     current_source_model = catalog[["object"]][1]
-    #     FM_le(state, paste0("source_model: model missing missing."   ))
-    #     FM_le(state, paste0("key: ",            current_cht[["id"]]       ))
-    #     FM_le(state, paste0("source_model: ",   current_cht[["ui"]][["source_model"]]))
-    #     FM_le(state, paste0("switching model:", current_source_model ))
-    #   }
-    #
-    #   choices        = catalog[["object"]]
-    #   names(choices) = catalog[["label"]]
-    #
-    #   choicesOpt = NULL
-    #   shinyWidgets::updatePickerInput(
-    #     session    = session,
-    #     selected   = current_source_model,
-    #     inputId    = "time_scale",
-    #     choices    = choices,
-    #     choicesOpt = choicesOpt)
-    # }
-    # }
     })
     #------------------------------------
     # Generated data reading code
@@ -1739,6 +1757,7 @@ CTS_Server <- function(id,
       input$button_clk_update_plot
       input$hot_current_rules
       input$nsub
+      input$time_scale
       input$visit_times
       input$button_clk_add_cov
       input$fpage
@@ -2255,7 +2274,8 @@ CTS_Server <- function(id,
            # input$button_clk_del,
            # input$button_clk_copy,
            # input$button_clk_save,
-             input$element_selection
+             input$element_selection,
+             input$time_scale
            # input$current_element
            )
       })
@@ -2466,10 +2486,12 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
       }
     }
   }
+
   # Updating the element with any changes:
   state = CTS_set_current_element(
     state   = state,
     element = current_ele)
+
   #---------------------------------------------
   # Here we react to changes between the UI and the current state
   # save cohort
@@ -2724,6 +2746,12 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
     FM_le(state, "covariate type changed")
     state = set_hold(state)
   }
+  #---------------------------------------------
+  # time scale updated
+  if("time_scale" %in% changed_uis){
+    FM_le(state, "time_scale changed")
+    state = set_hold(state, "time_scale")
+  }
 
   # Appending any messages in the current element (these are errors and
   # whatnot that are generated on save) to the general messages returned
@@ -2795,7 +2823,7 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
                       "nsub",
                       "fpage",
                       "dvcols",
-                      "time_course",
+                      "time_scale",
                       "tc_dim",
                       "evplot",
                       "visit_times",
@@ -4208,6 +4236,21 @@ CTS_set_current_element    = function(state, element){
   fgtc_object_name        = element[["fgtc_object_name"]]
   fgev_object_name        = element[["fgev_object_name"]]
 
+  time_scale              = "time"
+  time_label              = "Time"
+  if(!is.null(element[["ui"]][["time_scale"]])){
+    if((element[["ui"]][["time_scale"]] != ""  ) & 
+       (element[["ui"]][["time_scale"]] != "PH")){
+      time_scale = paste0("ts.", element[["ui"]][["time_scale"]])
+
+      source_model = element[["ui"]][["source_model"]]
+      ts_details   = state[["CTS"]][["MDL"]][["mdl"]][[source_model]][["ts_obj"]][["details"]]
+
+      time_label   = paste0("Time (", ts_details[[ element[["ui"]][["time_scale"]] ]][["verb"]], ")")
+
+    }
+  }
+
   # These are the little code chunks that will be stacked to create the final
   # pieces of code for the element
   code_packages       =  paste0("library(", state[["MC"]][["code"]][["packages"]],")")
@@ -4415,6 +4458,8 @@ CTS_set_current_element    = function(state, element){
     paste0('# Plotting timecourse'),
     paste0(fgtc_object_name, ' =                                 '),
     paste0('  plot_sr_tc(sro = ', simres_object_name, ','         ),
+    paste0('    xcol         = ', deparse(time_scale),',         '),
+    paste0('    xlab_str     = ', deparse(time_label),',         '),
     paste0('    fncol        = ', fncol,',                       '),
     paste0('    fnrow        = ', fnrow,',                       '),
     paste0('    dvcols       = ', deparse(dvcols),','          ),
@@ -4423,6 +4468,8 @@ CTS_set_current_element    = function(state, element){
     paste0('# Plotting events'),
     paste0(fgev_object_name, ' =                                 '),
     paste0('  plot_sr_ev(sro = ', simres_object_name, ','         ),
+    paste0('    xcol         = ', deparse(time_scale),',         '),
+    paste0('    xlab_str     = ', deparse(time_label),',         '),
     paste0('    fncol        = ', fncol,',                       '),
     paste0('    fnrow        = ', fnrow,',                       '),
     paste0('    evplot       = ', deparse(evplot),','             ),
@@ -4433,24 +4480,28 @@ CTS_set_current_element    = function(state, element){
   # Code to make the timecourse and event figures used in reporting
   code_figtc_rpt =
   c(
-    paste0('  # Plotting timecourse'),
-    paste0('  ', fgtc_object_name, ' =                                 '),
-    paste0('    plot_sr_tc(sro = ', simres_object_name, ','         ),
-    paste0('      fncol        = ', fncol,',                       '),
-    paste0('      fnrow        = ', fnrow,',                       '),
-    paste0('      dvcols       = ', deparse(dvcols),','          ),
-    paste0('      fpage        = fg_page)'),
+    paste0('# Plotting timecourse'),
+    paste0('', fgtc_object_name, ' =                             '),
+    paste0('  plot_sr_tc(sro = ', simres_object_name, ','         ),
+    paste0('    xcol         = ', deparse(time_scale),',         '),
+    paste0('    xlab_str     = ', deparse(time_label),',         '),
+    paste0('    fncol        = ', fncol,',                       '),
+    paste0('    fnrow        = ', fnrow,',                       '),
+    paste0('    dvcols       = ', deparse(dvcols),','             ),
+    paste0('    fpage        = fg_page)'),
     ""
    )
   code_figev_rpt =
   c(
-    paste0('  # Plotting events'),
-    paste0('  ', fgev_object_name, ' =                                 '),
-    paste0('    plot_sr_ev(sro = ', simres_object_name, ','         ),
-    paste0('      fncol        = ', fncol,',                       '),
-    paste0('      fnrow        = ', fnrow,',                       '),
-    paste0('      evplot       = ', deparse(evplot),','             ),
-    paste0('      fpage        = fg_page)'),
+    paste0('# Plotting events'),
+    paste0('', fgev_object_name, ' =                                 '),
+    paste0('  plot_sr_ev(sro = ', simres_object_name, ','         ),
+    paste0('    xcol         = ', deparse(time_scale),',         '),
+    paste0('    xlab_str     = ', deparse(time_label),',         '),
+    paste0('    fncol        = ', fncol,',                       '),
+    paste0('    fnrow        = ', fnrow,',                       '),
+    paste0('    evplot       = ', deparse(evplot),','             ),
+    paste0('    fpage        = fg_page)'),
     ""
    )
 

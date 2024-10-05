@@ -50,7 +50,10 @@ List with the following elements:
 \item{msgs:}       Error or warning messages if any issues were encountered.
 \item{simall:}     Simulation results.
 \item{ev_history:} The event table for the entire simulation history.
-\item{eval_times:} Evaluation time points
+\item{eval_times:} Evaluation time points at the system time scale
+\item{eval_times_df:} Data frame of the evaluation time points with a
+column for the system time scale and then columns for named time scales.
+
 }
 }
 \description{

@@ -2216,10 +2216,6 @@ MB_test_mksession = function(session, id = "MB", id_ASM="ASM", full_session=TRUE
         state   = state,
         element = current_ele)
     }
-
-    # JMH when loading ruminate with the session populated it the Model code
-    # isn't switching correctly between the elements
-
     # This functions works both in a shiny app and outside of one
     # if we're in a shiny app then the 'session' then the class of
     # session will be a ShinySession. Otherwise it'll be a list if

@@ -163,6 +163,15 @@ MC:
     #     verb:  "A more verbose name"
     #     match: ["sn"]
     #
+    # The conv filed is the mathematical conversion between different
+    # timescales. Below everything is relative to seconds. So the conv for
+    # seconds is 1. The conv fields for days is 
+    #
+    #                     1                      1       day
+    # conv =  ------------------------- = -------------- ---
+    #            sec      min   24 hr       60 x 60 x 24 sec
+    #         60 --- x 60 --- x ------ 
+    #            min      hr     day
     # Generally you dont want to  change what is already here in terms of
     # these short name used. You can remove timescales you don't want to use
     # or add timescales that you need but are not present.
@@ -184,23 +193,23 @@ MC:
       tooltip_position: "top"
       choices:
         months:
-          conv: "60*60*24*7*4"
+          conv: "1/(60*60*24*7*4)"
           verb: "Months"
           match: ["mo"]
         weeks:
-          conv: "60*60*24*7"
+          conv: "1/(60*60*24*7)"
           verb: "Weeks"
           match: ["wk","weeks"]
         days:
-          conv: "60*60*24"
+          conv: "1/(60*60*24)"
           verb: "Days"
           match: ["d", "day", "days"]
         hours:
-          conv: "60*60"
+          conv: "1/(60*60)"
           verb: "Hours"
           match: ["hr", "hours", "hrs"]
 #       min:
-#         conv: "60"
+#         conv: "1/60"
 #         verb: "Minutes"
 #         match: ["min", "minutes"]
 #       sec:

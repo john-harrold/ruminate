@@ -93,6 +93,14 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:24933f86b657b9503f22440e8c4d3cac</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 01fea07d01b01ca0145f25157e5706bd</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:18a7b766407ad45992a322f09424413c</span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
 <span class="r-in"><span><span class="va">input</span>   <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">input</span></span></span>
 <span class="r-in"><span></span></span>
@@ -743,7 +751,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$months</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$months$conv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "60*60*24*7*4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1/(60*60*24*7*4)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$months$verb</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Months"</span>
@@ -754,7 +762,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$weeks</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$weeks$conv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "60*60*24*7"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1/(60*60*24*7)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$weeks$verb</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Weeks"</span>
@@ -765,7 +773,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$days</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$days$conv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "60*60*24"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1/(60*60*24)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$days$verb</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Days"</span>
@@ -776,7 +784,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$hours</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$hours$conv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "60*60"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1/(60*60)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$formatting$time_scales$choices$hours$verb</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Hours"</span>
@@ -1260,7 +1268,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Months"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ts_details$months$conv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2419200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4.133598e-07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ts_details$weeks</span>
@@ -1268,7 +1276,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Weeks"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ts_details$weeks$conv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 604800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.653439e-06</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ts_details$days</span>
@@ -1276,7 +1284,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Days"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ts_details$days$conv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 86400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.157407e-05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ts_details$hours</span>
@@ -1284,7 +1292,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Hours"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MB$ts_details$hours$conv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.0002777778</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1371,7 +1379,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/formods/templates/formods.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MOD_yaml_file</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/pq/7srbf_fx3rd3k706hgxkg61r0000gp/T/RtmpM9g6VO/temp_libpath102f661d5da9d/ruminate/templates/MB.yaml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/pq/7srbf_fx3rd3k706hgxkg61r0000gp/T/RtmpZZgc7N/temp_libpath10a5626d58699/ruminate/templates/MB.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $shiny_token</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "non_shiny"</span>

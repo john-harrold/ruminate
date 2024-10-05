@@ -9,6 +9,7 @@ plot_sr_tc(
   dvcols = NULL,
   fpage = 1,
   fcol = "id",
+  xcol = "time",
   error_msgs = NULL,
   ylog = TRUE,
   ylab_str = "Output",
@@ -27,6 +28,8 @@ plot_sr_tc(
 this indcates       the page to return.}
 
 \item{fcol}{Name of column to facet by or \code{NULL} to disable faceting (\code{"id"}).}
+
+\item{xcol}{Name of column to take x-data from (\code{"time"}).}
 
 \item{error_msgs}{Named list with error messages to overwrite (\code{NULL}}
 

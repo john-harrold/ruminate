@@ -1,288 +1,98 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/articles/clinical_trial_simulation.html</loc>
-  </url>
-  <url>
-    <loc>/articles/deployment.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/model_builder.html</loc>
-  </url>
-  <url>
-    <loc>/articles/noncompartmental_analysis.html</loc>
-  </url>
-  <url>
-    <loc>/articles/rmdhunks/simulate_rules.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_Server.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_add_covariate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_add_rule.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_append_report.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_change_source_model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_del_current_element.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_fetch_code.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_fetch_current_element.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_fetch_ds.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_fetch_mdl.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_fetch_sc_meta.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_fetch_state.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_init_element_model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_init_state.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_new_element.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_plot_element.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_set_current_element.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_sim_isgood.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_simulate_element.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_test_mksession.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CTS_update_checksum.html</loc>
-  </url>
-  <url>
-    <loc>/reference/FM_fetch_mdl.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_Server.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_append_report.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_build_code.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_del_current_element.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_fetch_appends.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_fetch_catalog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_fetch_code.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_fetch_component.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_fetch_current_element.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_fetch_ds.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_fetch_mdl.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_fetch_state.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_init_state.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_mod_ok.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_new_element.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_set_current_element.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_test_catalog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_test_mksession.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_update_checksum.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MB_update_model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_Server.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_add_int.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_append_report.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_fetch_PKNCA_meta.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_fetch_ana_ds.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_fetch_ana_pknca.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_fetch_code.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_fetch_current_ana.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_fetch_current_obj.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_fetch_data_format.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_fetch_ds.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_fetch_np_meta.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_fetch_state.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_find_col.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_init_state.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_load_scenario.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_mkactive_ana.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_new_ana.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_process_current_ana.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_set_current_ana.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NCA_test_mksession.html</loc>
-  </url>
-  <url>
-    <loc>/reference/apply_route_map.html</loc>
-  </url>
-  <url>
-    <loc>/reference/build_span.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dose_records_builder.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fetch_rxinfo.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fetch_rxtc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ft_apply_md.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mk_figure_ind_obs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mk_rx_obj.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mk_subjects.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mk_table_ind_obs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mk_table_nca_params.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nca_builder.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_sr_ev.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_sr_tc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ruminate.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ruminate_check.html</loc>
-  </url>
-  <url>
-    <loc>/reference/run_nca_components.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rx2other.html</loc>
-  </url>
-  <url>
-    <loc>/reference/simulate_rules.html</loc>
-  </url>
-  <url>
-    <loc>/reference/span_table.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://ruminate.ubiquity.tools/404.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/LICENSE-text.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/articles/deployment.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/articles/index.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/articles/model_builder.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/articles/rmdhunks/simulate_rules.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/authors.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/index.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/news/index.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_Server.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_add_covariate.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_add_rule.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_append_report.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_change_source_model.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_del_current_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_fetch_code.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_fetch_current_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_fetch_ds.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_fetch_mdl.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_fetch_sc_meta.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_fetch_state.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_init_element_model.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_init_state.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_new_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_plot_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_set_current_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_sim_isgood.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_simulate_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_test_mksession.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_update_checksum.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/FM_fetch_mdl.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_Server.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_append_report.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_build_code.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_del_current_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_fetch_appends.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_fetch_catalog.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_fetch_code.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_fetch_component.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_fetch_current_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_fetch_ds.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_fetch_mdl.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_fetch_state.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_init_state.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_mod_ok.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_new_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_set_current_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_test_catalog.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_test_mksession.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_update_checksum.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_update_model.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_Server.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_add_int.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_append_report.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_PKNCA_meta.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_ana_ds.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_ana_pknca.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_code.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_current_ana.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_current_obj.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_data_format.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_ds.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_np_meta.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_state.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_find_col.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_init_state.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_load_scenario.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_mkactive_ana.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_new_ana.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_process_current_ana.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_set_current_ana.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_test_mksession.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/apply_route_map.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/build_span.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/dose_records_builder.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/fetch_rxinfo.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/fetch_rxtc.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/ft_apply_md.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/index.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/mk_figure_ind_obs.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/mk_rx_obj.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/mk_subjects.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/mk_table_ind_obs.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/mk_table_nca_params.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/nca_builder.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/plot_sr_ev.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/plot_sr_tc.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/ruminate.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/ruminate_check.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/run_nca_components.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/rx2other.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/simulate_rules.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/span_table.html</loc></url>
 </urlset>
+

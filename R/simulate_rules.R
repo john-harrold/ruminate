@@ -32,7 +32,10 @@
 #'  \item{msgs:}       Error or warning messages if any issues were encountered.
 #'  \item{simall:}     Simulation results.
 #'  \item{ev_history:} The event table for the entire simulation history.
-#'  \item{eval_times:} Evaluation time points
+#'  \item{eval_times:} Evaluation time points at the system time scale
+#'  \item{eval_times_df:} Data frame of the evaluation time points with a
+#'  column for the system time scale and then columns for named time scales.
+#' 
 #'}
 #'@details
 #' For a detailed examples see \code{vignette("clinical_trial_simulation", package = "ruminate")}
@@ -50,6 +53,9 @@ simulate_rules <- function(object,
 
 
   eval_times = unique(sort(eval_times))
+  # Creating the eval_times data frame with columns for the system timescale
+  # and any other time scale columns will be added below
+  eval_times_df = data.frame(time = eval_times)
 
   # Number of evaluation times:
   nevt = length(eval_times) + 1
@@ -720,8 +726,9 @@ simulate_rules <- function(object,
          conv_fact = time_scales[["details"]][[ tmp_ts ]][["conv"]]/
                      time_scales[["details"]][[ time_scales[["system"]] ]][["conv"]]
 
-         simall[[paste0("ts.", tmp_ts)]]     =     simall[["time"]]*conv_fact
-         ev_history[[paste0("ts.", tmp_ts)]] = ev_history[["time"]]*conv_fact
+         simall[[paste0("ts.", tmp_ts)]]        =     simall[["time"]]*conv_fact
+         ev_history[[paste0("ts.", tmp_ts)]]    = ev_history[["time"]]*conv_fact
+         eval_times_df[[paste0("ts.", tmp_ts)]] =           eval_times*conv_fact
        }
     }
 
@@ -740,11 +747,12 @@ simulate_rules <- function(object,
   }
 
   res = list(
-    simall      = simall,
-    ev_history  = ev_history,
-    msgs        = msgs,
-    eval_times  = eval_times,
-    isgood      = isgood
+    simall         = simall,
+    ev_history     = ev_history,
+    msgs           = msgs,
+    eval_times     = eval_times,
+    eval_times_df  = eval_times_df,
+    isgood         = isgood
   )
 res}
 
@@ -755,6 +763,7 @@ res}
 #'@param fpage        If facets are selected and multiple pages are generated then
 #'this indcates       the page to return.
 #'@param fcol         Name of column to facet by or \code{NULL} to disable faceting (\code{"id"}).
+#'@param xcol         Name of column to take x-data from (\code{"time"}). 
 #'@param error_msgs   Named list with error messages to overwrite (\code{NULL}
 #'@param ylog         Boolean to enable log10 scaling of the y-axis (\code{TRUE}
 #'@param ylab_str     Label for the y-axis (\code{"Output"}
@@ -779,6 +788,7 @@ plot_sr_ev <- function(
   sro        = NULL,
   fpage      = 1,
   fcol       = "id",
+  xcol       = "time",
   error_msgs = NULL,
   ylog       = TRUE,
   ylab_str   = "Amount",
@@ -851,7 +861,7 @@ plot_sr_ev <- function(
   # Now we inspect the datasets
   if(isgood){
 
-    col_keep = c("id", "time", "cmt", "amt", "evid", 
+    col_keep = c("id", xcol, "cmt", "amt", "evid", 
                  "Event", "Group")
     
     dsp = sro[["ev_history"]]                            |>
@@ -923,16 +933,16 @@ plot_sr_ev <- function(
 
     fig = ggplot2::ggplot(data=dsp)+
       ggplot2::geom_vline(
-        xintercept = sro[["eval_times"]],
+        xintercept = sro[["eval_times_df"]][[xcol]],
         color      = "grey",
         linetype   = "dashed")       +
       ggplot2::geom_point(
-        aes(x    = .data[["time"]], 
+        aes(x    = .data[[xcol]], 
            y     = .data[["amt"]], 
            group = .data[["Group"]], 
            color = .data[["Group"]]))  +
       ggplot2::geom_line(
-        aes(x     = .data[["time"]], 
+        aes(x     = .data[[xcol]], 
             y     = .data[["amt"]], 
             group = .data[["Group"]], 
             color = .data[["Group"]])) 
@@ -981,6 +991,7 @@ res}
 #'@param fpage        If facets are selected and multiple pages are generated then
 #'this indcates       the page to return.
 #'@param fcol         Name of column to facet by or \code{NULL} to disable faceting (\code{"id"}).
+#'@param xcol         Name of column to take x-data from (\code{"time"}). 
 #'@param error_msgs   Named list with error messages to overwrite (\code{NULL}
 #'@param ylog         Boolean to enable log10 scaling of the y-axis (\code{TRUE}
 #'@param ylab_str     Label for the y-axis (\code{"Output"}
@@ -1005,6 +1016,7 @@ plot_sr_tc <- function(
   dvcols     = NULL,
   fpage      = 1,
   fcol       = "id",
+  xcol       = "time",
   error_msgs = NULL,
   ylog       = TRUE,
   ylab_str   = "Output",
@@ -1122,7 +1134,7 @@ plot_sr_tc <- function(
   # dsp - should be defined with subset of the data for the current figure
   if(isgood){
     # These are the columns we keep for plotting
-    col_keep = c("time", "id", dvcols, fcol) 
+    col_keep = c(xcol, "id", dvcols, fcol) 
     dsp = dplyr::select(dsp, dplyr::all_of(col_keep))
 
     # This puts the dependent variables into standard columns
@@ -1134,7 +1146,7 @@ plot_sr_tc <- function(
               pgroup = paste0(.data[["id"]], ":", .data[["output_names"]]))
 
     fig = ggplot(data=dsp)+
-      geom_line(aes(x     = .data[["time"]], 
+      geom_line(aes(x     = .data[[xcol]], 
                     y     = .data[["output"]], 
                     group = .data[["pgroup"]], 
                     color = .data[["output_names"]]))
@@ -1577,6 +1589,9 @@ rxtc}
 #'    \item{contents:} Contents of the file.
 #'  }
 #'}
+#'@details
+#' Known issues: If you have specified bioavailability in the model, it will
+#' fail on the Monolix conversion.
 #'@examples
 #' 
 #' library(ruminate)
@@ -1730,7 +1745,7 @@ rx2other <- function(object,
         setwd(export_wd)
 
         if(out_type == "nonmem"){
-          res = nlmixr2::nlmixr2(rx_obj, dataset, "nonmem",  babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))
+          #res = nlmixr2::nlmixr2(rx_obj, dataset, "nonmem",  babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))
 
           cmd = 'res = suppressMessages(suppressWarnings(nlmixr2::nlmixr2(rx_obj, dataset, "nonmem", babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))))'
           tcres = FM_tc(

@@ -52,6 +52,10 @@ dummy values for between-subject variablitiy are IIV will be
 \code{POP_RUMINATE}, \code{TV_RUMINATE}, and \code{ETA.RUMINATE}. The dummy
 terms for endpoints are \code{OUT_RUMINATE} and \code{add.OUT_RUMINATE}.
 }
+\details{
+Known issues: If you have specified bioavailability in the model, it will
+fail on the Monolix conversion.
+}
 \examples{
 
 library(ruminate)

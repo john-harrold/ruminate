@@ -106,6 +106,14 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:24933f86b657b9503f22440e8c4d3cac</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 01fea07d01b01ca0145f25157e5706bd</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:18a7b766407ad45992a322f09424413c</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.docx")</span>
@@ -115,7 +123,87 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.yaml")</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in if (rx_details[["isgood"]]) {    all_values = c(rx_details[["elements"]][["outputs"]], rx_details[["elements"]][["states"]])    if (is.null(all_values)) {        element[["ui"]][["dvcols"]] = ""    }    else {        element[["ui"]][["dvcols"]] = all_values[1]    }}:</span> argument is of length zero</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: source model change detected</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:  &gt; covariates reset</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: abd8e5662e9cbce34582e6accf29dcaa</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 257a39c66cb0dcb081454e6df3effe5d</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 053809089b54bf1c18cb23b2bbbd0214</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: b249bbe9c19ee5c65b0c037c3ed8161b</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_simulate_element()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Setting the random seeds</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: set.seed(86753090)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rxSetSeed(86753090)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Fetching the system information</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_rx_details = fetch_rxinfo(MB_obj_1_rx)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Defining covariates</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_cov = list()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Generating the subjects</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_subs = mk_subjects(object = MB_obj_1_rx,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   nsub   = 2,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   covs   = CTS_obj_1_cov)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Creating rules</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_rules = list()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_rules[["Single_Dose"]] = </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: list(condition = "time == 0", action = list(type = "dose", state = "central", </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     values = "c(1)", times = "c(0)", durations = "c(0)"))</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # rxSolve options</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_rxopts = list(</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   atol = 1e-8,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   rtol = 1e-6,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   sigdig = NULL)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Output times</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_output_times = formods::linspace(0,100,5)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Running simulation</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_simres =                                 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:  simulate_rules(object            = MB_obj_1_rx,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:                 subjects          = CTS_obj_1_subs[["subjects"]],</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:                 eval_times        = c(0),</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:                 output_times      = CTS_obj_1_output_times,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:                 time_scales       = MB_obj_1_ts,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:                 rules             = CTS_obj_1_rules,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:                 rx_options        = CTS_obj_1_rxopts)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Collecting the simulation and event history values</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_sim_tc = CTS_obj_1_simres[["simall"]]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_sim_ev = CTS_obj_1_simres[["ev_history"]]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: message: could not find function "rxSetSeed"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: call:    rxSetSeed</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: call:    86753090</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_plot_element()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Plotting timecourse</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_fgtc =                                 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   plot_sr_tc(sro = CTS_obj_1_simres,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     xcol         = "time",         </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     xlab_str     = "Time",         </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fncol        = 4,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fnrow        = 2,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     dvcols       = "Cc",</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fpage        = 1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Plotting events</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_fgev =                                 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   plot_sr_ev(sro = CTS_obj_1_simres,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     xcol         = "time",         </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     xlab_str     = "Time",         </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fncol        = 4,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fnrow        = 2,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     evplot       = 1,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fpage        = 1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: There was a problem with the simulation.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 04d458f8034feaea6e82802f760fb56f</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 0f4631848eeb40e61d6f284630b214f0</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
