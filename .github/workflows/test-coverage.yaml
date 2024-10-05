@@ -25,6 +25,7 @@ jobs:
         with:
           extra-packages: |
             any::covr
+            nlmixr2/nlmixr2lib
             john-harrold/onbrand
             john-harrold/formods
           needs: coverage

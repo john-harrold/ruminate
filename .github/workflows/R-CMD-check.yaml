@@ -46,6 +46,7 @@ jobs:
           pak-version: devel
           extra-packages: |
             any::rcmdcheck
+            nlmixr2/nlmixr2lib
             john-harrold/onbrand
             john-harrold/formods
           needs: check
