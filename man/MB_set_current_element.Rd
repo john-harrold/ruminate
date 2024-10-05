@@ -94,9 +94,11 @@ fares = MB_fetch_appends(state, element)
 # You can use the component to build the code to generate the model:
 gen_code =
   MB_build_code(state        = state, session = session,
-              fcn_def      = component[["fcn_def"]],
-              fcn_obj_name = "my_fcn_obj",
-              rx_obj_name  = "my_obj_name")
+              fcn_def        = component[["fcn_def"]],
+              time_scale     = element[["ui"]][["time_scale"]],
+              fcn_obj_name   = "my_fcn_obj",
+              rx_obj_name    = "my_obj_name",
+              ts_obj_name    = "my_ts_name")
 
 # Model code to be included in a larger script
 message(paste0(gen_code$model_code, collapse="\n"))

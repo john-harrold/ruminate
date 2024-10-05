@@ -1,13 +1,15 @@
 ---
 title: 'Clinical Trial Simulation'
 output: rmarkdown::html_document 
-#vignette: >
-#  %\VignetteIndexEntry{Clinical Trial Simulation}
-#  %\VignetteEngine{knitr::rmarkdown}
-#  %\VignetteEncoding{UTF-8}
+#output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Clinical Trial Simulation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, eval=TRUE, warning = FALSE)
 library(ggplot2)
 library(formods)

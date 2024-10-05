@@ -2813,6 +2813,7 @@ MB_fetch_catalog   = function(state){
             model_summary = rbind(model_summary,
             data.frame(
               ana_sol        = "no",
+              depends        = NA,
               mod_id         = mod_id,
               Name           = mod_name,
               Object         = mod_src[["obj"]],
@@ -2857,6 +2858,7 @@ MB_fetch_catalog   = function(state){
             model_summary = rbind(model_summary,
             data.frame(
               ana_sol        = "no",
+              depends        = NA,
               mod_id         = mod_id,
               Name           = mod_name,
               Object         = "",

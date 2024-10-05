@@ -97,14 +97,14 @@ passed the test.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 01fea07d01b01ca0145f25157e5706bd</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:18a7b766407ad45992a322f09424413c</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: f0210a96e6fe6bd49c461570fd37dc7b</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:b0157900176080edb5d6ace99fc70407</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 712a86ed6ceaad2f8748c4fbd8bd4636</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:6ac6e7cb3c0678db460fe337c4ab6393</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 6dd88374ca3e9f1efc0a99a505ecb630</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:46dac0594f92675ec0783f1a3fe299f1</span>
 <span class="r-in"><span><span class="co"># This is just for CRAN</span></span></span>
 <span class="r-in"><span><span class="co">#sess_res = MB_test_mksession(session=list())</span></span></span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
@@ -252,8 +252,8 @@ passed the test.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can now place element back in the state</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="MB_set_current_element.html">MB_set_current_element</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">element</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 5b906bba7daea470f1163957b1f4cbd4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:3b8a67dcec353645d4f2252891eb9327</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 2cd4d75470c2f28b323a50789b949c96</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:75d2a579036ebfc8738bae47249a407e</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will fetch the current component</span></span></span>
 <span class="r-in"><span><span class="va">component</span> <span class="op">=</span> <span class="fu"><a href="MB_fetch_component.html">MB_fetch_component</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">element</span><span class="op">)</span></span></span>
@@ -264,18 +264,85 @@ passed the test.</p></li>
 <span class="r-in"><span><span class="co"># You can use the component to build the code to generate the model:</span></span></span>
 <span class="r-in"><span><span class="va">gen_code</span> <span class="op">=</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="MB_build_code.html">MB_build_code</a></span><span class="op">(</span>state        <span class="op">=</span> <span class="va">state</span>, session <span class="op">=</span> <span class="va">session</span>,</span></span>
-<span class="r-in"><span>              fcn_def      <span class="op">=</span> <span class="va">component</span><span class="op">[[</span><span class="st">"fcn_def"</span><span class="op">]</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>              fcn_obj_name <span class="op">=</span> <span class="st">"my_fcn_obj"</span>,</span></span>
-<span class="r-in"><span>              rx_obj_name  <span class="op">=</span> <span class="st">"my_obj_name"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in MB_build_code(state = state, session = session, fcn_def = component[["fcn_def"]],     fcn_obj_name = "my_fcn_obj", rx_obj_name = "my_obj_name"):</span> argument "ts_obj_name" is missing, with no default</span>
+<span class="r-in"><span>              fcn_def        <span class="op">=</span> <span class="va">component</span><span class="op">[[</span><span class="st">"fcn_def"</span><span class="op">]</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>              time_scale     <span class="op">=</span> <span class="va">element</span><span class="op">[[</span><span class="st">"ui"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"time_scale"</span><span class="op">]</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>              fcn_obj_name   <span class="op">=</span> <span class="st">"my_fcn_obj"</span>,</span></span>
+<span class="r-in"><span>              rx_obj_name    <span class="op">=</span> <span class="st">"my_obj_name"</span>,</span></span>
+<span class="r-in"><span>              ts_obj_name    <span class="op">=</span> <span class="st">"my_ts_name"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Model code to be included in a larger script</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">gen_code</span><span class="op">$</span><span class="va">model_code</span>, collapse<span class="op">=</span><span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'gen_code' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> my_fcn_obj = function () </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     description &lt;- "One compartment PK model with linear clearance"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     ini({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lka &lt;- 0.45</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Absorption rate (Ka)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lcl &lt;- 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Clearance (CL)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lvc &lt;- 3.45</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Central volume of distribution (V)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         propSd &lt;- c(0, 0.5)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Proportional residual error (fraction)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     model({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         ka &lt;- exp(lka)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         cl &lt;- exp(lcl)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         vc &lt;- exp(lvc)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc &lt;- linCmt()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc ~ prop(propSd)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> my_obj_name =  rxode2::rxode2(my_fcn_obj)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> my_ts_name = list(</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   system  = "weeks",</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   details = </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     list(months = list(verb = "Months", conv = 4.13359788359788e-07), </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         weeks = list(verb = "Weeks", conv = 1.65343915343915e-06), </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         days = list(verb = "Days", conv = 1.15740740740741e-05), </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         hours = list(verb = "Hours", conv = 0.000277777777777778))</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Stand-alone model code</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">gen_code</span><span class="op">$</span><span class="va">model_code_sa</span>, collapse<span class="op">=</span><span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'gen_code' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> library("nlmixr2lib")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> library("nonmem2rx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> library("rxode2")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> my_fcn_obj = function () </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     description &lt;- "One compartment PK model with linear clearance"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     ini({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lka &lt;- 0.45</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Absorption rate (Ka)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lcl &lt;- 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Clearance (CL)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         lvc &lt;- 3.45</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Central volume of distribution (V)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         propSd &lt;- c(0, 0.5)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         label("Proportional residual error (fraction)")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     model({</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         ka &lt;- exp(lka)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         cl &lt;- exp(lcl)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         vc &lt;- exp(lvc)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc &lt;- linCmt()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         Cc ~ prop(propSd)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> my_obj_name =  rxode2::rxode2(my_fcn_obj)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> my_ts_name = list(</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   system  = "weeks",</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   details = </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     list(months = list(verb = "Months", conv = 4.13359788359788e-07), </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         weeks = list(verb = "Weeks", conv = 1.65343915343915e-06), </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         days = list(verb = "Days", conv = 1.15740740740741e-05), </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>         hours = list(verb = "Hours", conv = 0.000277777777777778))</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will fetch the code to regenerate all of the components of this module</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="MB_fetch_code.html">MB_fetch_code</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span><span class="op">)</span></span></span>
