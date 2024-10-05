@@ -7,8 +7,9 @@
 ^.github$
 build_custom.R
 ^tmp$
+R\notes.txt
 README.RMD
-
+.here
 ^codecov\.yml$
 ^\.github$
 vignettes/transient/*

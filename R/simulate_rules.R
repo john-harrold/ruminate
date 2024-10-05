@@ -301,7 +301,7 @@ simulate_rules <- function(object,
     # This will force the simulation to initialize at the
     # first observed time. This will be important as wel
     # step through the different eval_time intervals:
-    rxSetIni0(FALSE)
+    rxode2::rxSetIni0(FALSE)
 
     # Simulating before the fist eval_time to get
     # a snapshot of the simulation:
@@ -1718,11 +1718,11 @@ rx2other <- function(object,
         rx_details  = fetch_rxinfo(rx_obj)
         # If no dataset has been specified we create a dummy dataset
         if(is.null(dataset)){
-          dataset = eventTable()
+          dataset = rxode2::eventTable()
 
           # Adding observations for each output
           for(tmp_output in  rx_details[["elements"]][["outputs"]]){
-            dataset = dataset |> et(id=c(1,2), time=c(0,1), evid=0, cmt=tmp_output)
+            dataset = dataset |> rxode2::et(id=c(1,2), time=c(0,1), evid=0, cmt=tmp_output)
           }
 
           # Adding default values for covariates

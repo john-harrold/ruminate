@@ -13,20 +13,6 @@ vignette: >
 # require(rhandsontable)
 # require(flextable)
 # require(ruminate)
-# # Determining if ubiquity is installed
-# if(system.file(package="ubiquity") == ""){
-#   ubiquity_found = FALSE
-# } else {
-#   require(ubiquity)
-#   ubiquity_found = TRUE
-# }
-# if(system.file(package="gridExtra") == ""){
-#   gridExtra_found = FALSE
-# } else {
-#   require(gridExtra)
-#   gridExtra_found = TRUE
-# }
-# 
 # # The presim variable will contain presimulated data when eval is set to true
 # presim_loaded = FALSE
 ```

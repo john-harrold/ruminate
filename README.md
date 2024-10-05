@@ -5,6 +5,7 @@
 
 <!-- 
 -->
+
 <!-- badges: start -->
 
 [![Codecov test
@@ -38,7 +39,7 @@ instance and if many people are using it at once it can be slow.
 
 ## From CRAN
 
-You can install the released version of `rumiante` from
+You can install the released version of `ruminate` from
 [CRAN](https://cran.r-project.org/package=ruminate) with:
 
 ``` r
@@ -54,6 +55,8 @@ install.packages("ubiquity")
 install.packages("nlmixr2lib")
 install.packages("nonmem2rx")
 install.packages("rxode2")
+install.packages("rxode2et")
+install.packages("nlmixr2")
 
 # Actual package
 install.packages("ruminate")
@@ -92,11 +95,11 @@ Note that because `{ruminate}` depends on `{formods}` and `{onbrand}`
 you will need to first install the development versions of `{onbrand}`
 and `{formods}`.
 
-# Running in ruminate
+# Running ruminate
 
 ## In RStudio
 
-This will run the default/stable version of rumiante:
+This will run the default/stable version of ruminate:
 
 ``` r
 library(ruminate)
@@ -118,7 +121,7 @@ version off of github to make sure you have the latest version.**
 ## In a Docker container
 
 This kind of assumes a basic familiarity with Docker. Keep in mind that
-these containers are built for ‘x86’ images. Basically Intel/AMD cpus.
+these containers are built for ‘x86’ images. Essentially Intel/AMD cpus.
 This means that if you have a Mac with Apple Silicon (M1, M2,etc.) it
 may not work or the performance may not be that good.
 
@@ -128,6 +131,11 @@ This will pull container from docker and run it locally
 
     docker pull johnmharrold/ruminate:latest
     docker run -p 3838:3838   johnmharrold/ruminate:latest &
+
+If that worked you can put the following into a web browser and then use
+ruminate there:
+
+    http://127.0.0.1:3838/
 
 ### Create your own container
 
