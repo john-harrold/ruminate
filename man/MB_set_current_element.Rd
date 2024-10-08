@@ -22,90 +22,93 @@ model
 \examples{
 #library(ruminate)
 # This will get the full session:
-sess_res = MB_test_mksession(session=list(), full_session=TRUE)
-# This is just for CRAN
-#sess_res = MB_test_mksession(session=list())
-session = sess_res$session
-input   = sess_res$input
-
-# Configuration files
-FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
-MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
-
-# Creating an empty state object
-state = MB_fetch_state(id              = "MB",
-                       input           = input,
-                       session         = session,
-                       FM_yaml_file    = FM_yaml_file,
-                       MOD_yaml_file   = MOD_yaml_file,
-                       react_state     = NULL)
-
-# This will provide a list of the available models
-models = MB_fetch_catalog(state)
-# This is a summary of the tables in the model:
-models$summary
-
-# This will test the models in the catalog, set as_cran
-# to FALSE to test all the models.
-mtres = MB_test_catalog(state, as_cran=TRUE)
-mtres$isgood
-
-
-# Creates a new empty element
-state = MB_new_element(state)
-
-# Delete the current element
-state = MB_del_current_element(state)
-
-# Fetch a list of the current element
-element = MB_fetch_current_element(state)
-
-# This will attach a model to it:
-# Pulling the first model from the catalog
-fcn_def  = models[["summary"]][1, ][["Model"]]
-fcn_obj  = models[["summary"]][1, ][["Object"]]
-mdl_type = models[["summary"]][1, ][["Type"]]
-fcn_desc = models[["summary"]][1, ][["Description"]]
-
-# This will build the rxode2 object from the model
-mk_rx_res = mk_rx_obj(
-  type  = mdl_type,
-  model = list(fcn_def = fcn_def,
-               fcn_obj = fcn_obj))
-
-# This will attach the model to the current element
-element = MB_update_model(
-  state       = state,
-  session     = session,
-  current_ele = element,
-  rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
-  note        = fcn_desc,
-  reset       = TRUE)
-
-# You can now place element back in the state
-state = MB_set_current_element(state, element)
-
-# This will fetch the current component
-component = MB_fetch_component(state, element)
-
-
-fares = MB_fetch_appends(state, element) 
-
-# You can use the component to build the code to generate the model:
-gen_code =
-  MB_build_code(state        = state, session = session,
-              fcn_def        = component[["fcn_def"]],
-              time_scale     = element[["ui"]][["time_scale"]],
-              fcn_obj_name   = "my_fcn_obj",
-              rx_obj_name    = "my_obj_name",
-              ts_obj_name    = "my_ts_name")
-
-# Model code to be included in a larger script
-message(paste0(gen_code$model_code, collapse="\n"))
-
-# Stand-alone model code
-message(paste0(gen_code$model_code_sa, collapse="\n"))
-
-# This will fetch the code to regenerate all of the components of this module
-message(MB_fetch_code(state))
+library(formods)
+if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
+  sess_res = MB_test_mksession(session=list(), full_session=TRUE)
+  # This is just for CRAN
+  #sess_res = MB_test_mksession(session=list())
+  session = sess_res$session
+  input   = sess_res$input
+  
+  # Configuration files
+  FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
+  MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
+  
+  # Creating an empty state object
+  state = MB_fetch_state(id              = "MB",
+                         input           = input,
+                         session         = session,
+                         FM_yaml_file    = FM_yaml_file,
+                         MOD_yaml_file   = MOD_yaml_file,
+                         react_state     = NULL)
+  
+  # This will provide a list of the available models
+  models = MB_fetch_catalog(state)
+  # This is a summary of the tables in the model:
+  models$summary
+  
+  # This will test the models in the catalog, set as_cran
+  # to FALSE to test all the models.
+  mtres = MB_test_catalog(state, as_cran=TRUE)
+  mtres$isgood
+  
+  
+  # Creates a new empty element
+  state = MB_new_element(state)
+  
+  # Delete the current element
+  state = MB_del_current_element(state)
+  
+  # Fetch a list of the current element
+  element = MB_fetch_current_element(state)
+  
+  # This will attach a model to it:
+  # Pulling the first model from the catalog
+  fcn_def  = models[["summary"]][1, ][["Model"]]
+  fcn_obj  = models[["summary"]][1, ][["Object"]]
+  mdl_type = models[["summary"]][1, ][["Type"]]
+  fcn_desc = models[["summary"]][1, ][["Description"]]
+  
+  # This will build the rxode2 object from the model
+  mk_rx_res = mk_rx_obj(
+    type  = mdl_type,
+    model = list(fcn_def = fcn_def,
+                 fcn_obj = fcn_obj))
+  
+  # This will attach the model to the current element
+  element = MB_update_model(
+    state       = state,
+    session     = session,
+    current_ele = element,
+    rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
+    note        = fcn_desc,
+    reset       = TRUE)
+  
+  # You can now place element back in the state
+  state = MB_set_current_element(state, element)
+  
+  # This will fetch the current component
+  component = MB_fetch_component(state, element)
+  
+  
+  fares = MB_fetch_appends(state, element) 
+  
+  # You can use the component to build the code to generate the model:
+  gen_code =
+    MB_build_code(state        = state, session = session,
+                fcn_def        = component[["fcn_def"]],
+                time_scale     = element[["ui"]][["time_scale"]],
+                fcn_obj_name   = "my_fcn_obj",
+                rx_obj_name    = "my_obj_name",
+                ts_obj_name    = "my_ts_name")
+  
+  # Model code to be included in a larger script
+  message(paste0(gen_code$model_code, collapse="\n"))
+  
+  # Stand-alone model code
+  message(paste0(gen_code$model_code_sa, collapse="\n"))
+  
+  # This will fetch the code to regenerate all of the components of this module
+  message(MB_fetch_code(state))
+}
 }

@@ -29,7 +29,7 @@ rules.
 
 # None of this will work if rxode2 isn't installed:
 library(formods)
-if(is_installed("rxode2")){
+if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
 
 # This will populate the session variable with the model building (MB) module
 sess_res = MB_test_mksession(session=list(), full_session=FALSE)
