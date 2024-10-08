@@ -117,8 +117,8 @@ headers:</p>
 section of the <code>rxode2</code> function specification</li>
 <li>Names of covariates used in the model.</li>
 </ul>
-<p><code><a href="../reference/mk_subjects.html">mk_subjects()</a></code> — Creates subjects for simulation sampling
-based on between-subject variability and generating covariate
+<p><code><a href="../reference/mk_subjects.html">mk_subjects()</a></code> — Creates subjects for simulation by
+sampling based on between-subject variability and generating covariate
 information based on user specifications.</p>
 <div class="section level4">
 <h4 id="covariates">Covariates<a class="anchor" aria-label="anchor" href="#covariates"></a>
@@ -304,18 +304,18 @@ following:</li>
 </h4>
 <p>You can include columns in your output for different time scales if
 you wish. You need to create a list in the format below. One element
-should be <code>system</code> with a short name for the system
-timescale. The next should be <code>details</code> which is a list
-containing short names for each timescale you want to include. Each of
+should be <code>system</code> with a short name for the system time
+scale. The next should be <code>details</code> which is a list
+containing short names for each time scale you want to include. Each of
 these is a list with a verbose name for the time scale
-(<code>verb</code>) and a numerical conversion indicating how that
-timescale relates to the others. Here we define weeks and days on the
-basis of seconds.</p>
+(<code>verb</code>) and a numerical conversion indicating how that time
+scale relates to the others. Here we define weeks and days on the basis
+of seconds.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">time_scales</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>system<span class="op">=</span><span class="st">"days"</span>, </span>
 <span>                details<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>                  weeks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Weeks"</span>,    conv<span class="op">=</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">*</span><span class="fl">7</span><span class="op">)</span>,</span>
-<span>                  days  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Days"</span>,     conv<span class="op">=</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>                  weeks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Weeks"</span>,    conv<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="op">(</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">*</span><span class="fl">7</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                  days  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verb<span class="op">=</span><span class="st">"Days"</span>,     conv<span class="op">=</span><span class="fl">1</span><span class="op">/</span><span class="op">(</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">24</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -324,8 +324,8 @@ basis of seconds.</p>
 </h2>
 <p>To explore this framework a simple system describing antibody PK
 driving a change in a biomarker through an indirect response will be
-used. The timescale of this model is days and the system is shown at the
-bottom if you want to look through it. You can also find it in the
+used. The time scale of this model is days and the system is shown at
+the bottom if you want to look through it. You can also find it in the
 <code>{rumiante}</code> package here:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"ruminate"</span>, <span class="st">"test_apps"</span>, <span class="st">"test_rxode2_system.R"</span><span class="op">)</span></span></code></pre></div>
@@ -370,20 +370,20 @@ fixing the <code>SUBTYPE_ID</code> at 0, and sampling the
 <span><span class="co">## 4  4 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">## 5  5 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
 <span><span class="co">## 6  6 0.744 0.282 -1.609438 1.283708 1.011601 -0.2916901   140     1000</span></span>
-<span><span class="co">##   TV_kdeg_BM TV_Emax TV_EC50       ETAka       ETACL       ETAVc        ETAVp</span></span>
-<span><span class="co">## 1        0.1     100     300 -0.19357432  0.38936415  0.46014721  0.211512034</span></span>
-<span><span class="co">## 2        0.1     100     300 -0.12481176 -0.26069027  0.03093095 -0.562082313</span></span>
-<span><span class="co">## 3        0.1     100     300  0.72603778  0.32154910  0.18932572 -0.265698835</span></span>
-<span><span class="co">## 4        0.1     100     300 -0.93612336  0.33691790  0.18385424  0.183493095</span></span>
-<span><span class="co">## 5        0.1     100     300 -0.93137451  0.06976848  0.27478060  0.161097589</span></span>
-<span><span class="co">## 6        0.1     100     300  0.08727895 -0.11149484 -0.14515352  0.007487264</span></span>
-<span><span class="co">##         ETAQ   ETABM_IC     ETAEmax SEX_ID SUBTYPE_ID       WT</span></span>
-<span><span class="co">## 1  0.6577058 -0.1792686  0.18142300      1          0 94.90762</span></span>
-<span><span class="co">## 2  0.4120407  0.4072034  0.17730104      0          0 82.13035</span></span>
-<span><span class="co">## 3  0.2253648  0.1666116  0.08346949      1          0 81.17264</span></span>
-<span><span class="co">## 4  1.3043011 -0.2244907  0.22157102      0          0 70.28886</span></span>
-<span><span class="co">## 5 -0.3238756  0.3960003  0.13862034      1          0 77.43401</span></span>
-<span><span class="co">## 6 -0.2270909 -0.1885246 -0.18038806      0          0 76.27195</span></span></code></pre>
+<span><span class="co">##   TV_kdeg_BM TV_Emax TV_EC50       ETAka       ETACL       ETAVc       ETAVp</span></span>
+<span><span class="co">## 1        0.1     100     300 -0.06502712 -0.03374875 -0.29360237  0.18318315</span></span>
+<span><span class="co">## 2        0.1     100     300 -0.91950087  0.21719197 -0.07600775  0.11721364</span></span>
+<span><span class="co">## 3        0.1     100     300 -0.54876273 -0.38299472 -0.42219488  0.02543533</span></span>
+<span><span class="co">## 4        0.1     100     300 -0.05907706  0.23752569  0.01166484  0.02450331</span></span>
+<span><span class="co">## 5        0.1     100     300 -0.50282444 -0.27998464 -0.26548086 -0.33995745</span></span>
+<span><span class="co">## 6        0.1     100     300 -0.63718821 -0.62728988 -0.59757486 -0.12833066</span></span>
+<span><span class="co">##         ETAQ    ETABM_IC      ETAEmax SEX_ID SUBTYPE_ID       WT</span></span>
+<span><span class="co">## 1  0.6674704 -0.03311960  0.058217838      1          0 77.83891</span></span>
+<span><span class="co">## 2 -1.4290817 -0.09637395 -0.469456427      0          0 72.11971</span></span>
+<span><span class="co">## 3 -0.4469244 -0.20538254 -0.558499454      1          0 61.23125</span></span>
+<span><span class="co">## 4 -0.3581637 -0.08295268 -0.002047025      0          0 78.62028</span></span>
+<span><span class="co">## 5 -0.8159133  0.06642836 -0.045310592      1          0 66.47021</span></span>
+<span><span class="co">## 6  1.4513064  0.24280136  0.205796418      1          0 82.88065</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="creating-rules">Creating rules<a class="anchor" aria-label="anchor" href="#creating-rules"></a>

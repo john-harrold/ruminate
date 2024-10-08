@@ -50,7 +50,7 @@ Subjects are expected in a data frame with the following column headers:
 \item Names of covariates used in the model.
 }
 
-\code{mk_subjects()} — Creates subjects for simulation sampling based on
+\code{mk_subjects()} — Creates subjects for simulation by sampling based on
 between-subject variability and generating covariate information based
 on user specifications.
 \subsection{Covariates}{
@@ -197,17 +197,17 @@ given id and state. For example for the current \code{id} and the state
 
 You can include columns in your output for different time scales if you
 wish. You need to create a list in the format below. One element should
-be \code{system} with a short name for the system timescale. The next should
-be \code{details} which is a list containing short names for each timescale
+be \code{system} with a short name for the system time scale. The next should
+be \code{details} which is a list containing short names for each time scale
 you want to include. Each of these is a list with a verbose name for the
-time scale (\code{verb}) and a numerical conversion indicating how that
-timescale relates to the others. Here we define weeks and days on the
-basis of seconds.
+time scale (\code{verb}) and a numerical conversion indicating how that time
+scale relates to the others. Here we define weeks and days on the basis
+of seconds.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{time_scales = list(system="days", 
                 details= list(
-                  weeks = list(verb="Weeks",    conv=60*60*24*7),
-                  days  = list(verb="Days",     conv=60*60*24)))
+                  weeks = list(verb="Weeks",    conv=1/(60*60*24*7)),
+                  days  = list(verb="Days",     conv=1/(60*60*24))))
 }\if{html}{\out{</div>}}
 }
 

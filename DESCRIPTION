@@ -39,7 +39,7 @@ Suggests:
   clipr,
   gridExtra,
   knitr,
-  nlmixr2lib,
+  nlmixr2lib(>= 0.3.0),
   nonmem2rx,
   nlmixr2(>= 3.0.0),
   prompter,

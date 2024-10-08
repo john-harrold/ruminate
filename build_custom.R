@@ -21,9 +21,9 @@ writeLines(ruminate_app_contents, fileConn)
 close(fileConn)
 #-----------------------------------
 # backing up vigneets and changing the headers
-rmd_files = dir(file.path(repo_root,"vignettes"))
-rmd_files = rmd_files[str_detect(string=rmd_files, "\\.Rmd$")]
-rmd_backup_dir = file.path(repo_root, "..", "vignette_hold")
+#rmd_files = dir(file.path(repo_root,"vignettes"))
+#rmd_files = rmd_files[str_detect(string=rmd_files, "\\.Rmd$")]
+#rmd_backup_dir = file.path(repo_root, "..", "vignette_hold")
 
 #-----------------------------------
 # building documentation

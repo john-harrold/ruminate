@@ -435,10 +435,10 @@ MC:
       tooltip:       'Integer value to set the seed for the random number generator'
       uitype:        "text"
       type:          "numeric"
-      value:         "86753090"
+      value:         "5447"     
       options:       NULL
       use:           "Misc"
-      placeholder:   "8675309"
+      placeholder:   "5447"     
     nsteps:    
       group:         "Misc"
       label:         "Time Steps"

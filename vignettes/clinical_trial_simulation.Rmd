@@ -1,7 +1,7 @@
 ---
 title: 'Clinical Trial Simulation'
-output: rmarkdown::html_document 
-#output: rmarkdown::html_vignette
+#output: rmarkdown::html_document 
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Clinical Trial Simulation}
   %\VignetteEngine{knitr::rmarkdown}
@@ -60,7 +60,7 @@ Normally when we want to simulate a patients response we define a regimen and ju
 
 # Example: Fixed dosing
 
-To explore this framework a simple system describing antibody PK driving a change in a biomarker through an indirect response will be used. The timescale of this model is days and the system is shown at the bottom if you want to look through it. You can also find it in the `{rumiante}` package here:
+To explore this framework a simple system describing antibody PK driving a change in a biomarker through an indirect response will be used. The time scale of this model is days and the system is shown at the bottom if you want to look through it. You can also find it in the `{rumiante}` package here:
 
 ```{r echo=TRUE, results=FALSE}
 system.file(package="ruminate", "test_apps", "test_rxode2_system.R")
@@ -79,8 +79,8 @@ object = rxode2(my_model)
 if(rxode2_found){
 source(system.file(package="ruminate", "test_apps", "test_rxode2_system.R"))
 object = rxode2(my_model)
-set.seed(8675309)
-rxode2::rxSetSeed(8675309)
+set.seed(5446)
+rxode2::rxSetSeed(5446)
 }
 ```
 
