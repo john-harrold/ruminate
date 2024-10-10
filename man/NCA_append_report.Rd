@@ -10,7 +10,8 @@ NCA_append_report(state, rpt, rpttype, gen_code_only = FALSE)
 \item{state}{NCA state from \code{NCA_fetch_state()}}
 
 \item{rpt}{Report with the current content of the report which will be appended to in
-this function. For details on the structure see the documentation for \code{\link[formods]{FM_generate_report}}.}
+this function. For details on the structure see the documentation for
+\code{\link[formods:FM_generate_report]{formods::FM_generate_report()}}}
 
 \item{rpttype}{Type of report to generate (supported "xlsx", "pptx", "docx").}
 
@@ -54,5 +55,5 @@ rpt_res$hasrptele
 cat(paste(rpt_res$code, collapse="\n"))
 }
 \seealso{
-\code{\link{FM_generate_report}}
+\code{\link[formods:FM_generate_report]{formods::FM_generate_report()}}
 }

@@ -3226,7 +3226,7 @@ element}
 #'@param state CTS state from \code{CTS_fetch_state()}
 #'@param rpt Report with the current content of the report which will be appended to in
 #'this function. For details on the structure see the documentation for
-#' \code{\link[onbrand]{template_details}}
+#' \code{\link[onbrand:template_details]{onbrand::template_details()}}
 #'@param rpttype Type of report to generate (supported "xlsx", "pptx", "docx").
 #'@param gen_code_only Boolean value indicating that only code should be
 #'generated (\code{FALSE}).
@@ -3238,7 +3238,9 @@ element}
 #'  \item{msgs:}      Messages to be passed back to the user.
 #'  \item{rpt:}       Report with any additions passed back to the user.
 #'}
-#'@seealso \code{\link[formods]{FM_generate_report}}
+#'@seealso 
+#'\code{\link[formods:FM_generate_report]{formods::FM_generate_report()}} and
+#'\code{\link[onbrand:template_details]{onbrand::template_details()}}
 CTS_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 
   isgood    = TRUE
