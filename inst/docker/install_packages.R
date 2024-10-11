@@ -13,7 +13,7 @@ install.packages(c("dparser", "nlmixr2data", "lotri",        "rxode2ll",
                  repos = c('https://nlmixr2.r-universe.dev',
                            'https://cloud.r-project.org'))
 install.packages(c('dparser',     'nlmixr2data',  'lotri',       'rxode2ll',
-                   'rxode2parse', 'rxode2random', 'rxode2et',    'rxode2',
+                   'rxode2parse', 'rxode2random', 'rxode2',
                    'nlmixr2est',  'nlmixr2extra', 'nlmixr2plot', 'nlmixr2',
                    'nlmixr2lib',   'babelmixr2',  'nonmem2rx',   'monolix2rx'),
                  repos = c('https://nlmixr2.r-universe.dev',
