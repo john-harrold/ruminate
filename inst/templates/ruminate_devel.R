@@ -28,7 +28,7 @@ if(!exists("deployed")){
   deployed = FALSE
 }
 
-# If the SETUP.R file exists we source it 
+# If the SETUP.R file exists we source it
 if(file.exists("SETUP.R")){
   source("SETUP.R")
 }
@@ -112,14 +112,20 @@ ui <- shinydashboard::dashboardPage(
                ),
        shinydashboard::tabItem(tabName="model",
                shinydashboard::box(title="Build ODE-Based PK/PD Models", width=12,
-               fluidRow( 
+               fluidRow(
                column(width=12,
+               tagList(tags$b("This module is currently under development. Due to the experimental nature some portions may change. If you run into any issues please report them on the ", tags$a("ruminate issues", href=issue_url), "page.")),
+               tags$br(),
+               tags$br(),
                htmlOutput(NS("MB",  "MB_ui_compact")))))
                ),
        shinydashboard::tabItem(tabName="trials",
                shinydashboard::box(title="Define and Simulate Cohorts", width=12,
-               fluidRow( 
+               fluidRow(
                column(width=12,
+               tagList(tags$b("This module is currently under development. Due to the experimental nature some portions may change. If you run into any issues please report them on the ", tags$a("ruminate issues", href=issue_url), "page.")),
+               tags$br(),
+               tags$br(),
                htmlOutput(NS("CTS",  "CTS_ui_compact")))))
                ),
        shinydashboard::tabItem(tabName="loadsave",
@@ -262,13 +268,13 @@ server <- function(input, output, session) {
                        MOD_yaml_file    = NCA.yaml,
                        FM_yaml_file     = formods.yaml)
 
-  ruminate::MB_Server(id="MB", id_ASM = "ASM", 
+  ruminate::MB_Server(id="MB", id_ASM = "ASM",
                       deployed         = deployed,
                       react_state      = react_FM,
                       MOD_yaml_file    = MB.yaml,
                       FM_yaml_file     = formods.yaml)
 
-  ruminate::CTS_Server(id="CTS", id_ASM = "ASM", 
+  ruminate::CTS_Server(id="CTS", id_ASM = "ASM",
                       deployed         = deployed,
                       react_state      = react_FM,
                       MOD_yaml_file    = CTS.yaml,

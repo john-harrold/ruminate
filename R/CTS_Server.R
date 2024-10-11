@@ -742,6 +742,12 @@ CTS_Server <- function(id,
          choiceValues  = choiceValues,
          choiceNames   = choiceNames ,
          status        = "primary")
+
+
+      # This disables the report/interactive switch. Delete this line when the
+      # the interactive bugs have been worked out:
+      uiele_switch = NULL
+
       #------------------------------------
       uiele_res_tabs =
           shinydashboard::tabBox(
@@ -2199,6 +2205,7 @@ CTS_Server <- function(id,
           tags$br(),
           uiele_preview,
           uiele_buttons_right,
+          tags$br(),
           tags$br(),
           uiele_chrt_ele
         )

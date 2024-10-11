@@ -10,6 +10,7 @@ ruminate(
   host = "127.0.0.1",
   port = 3838,
   server_opts = list(shiny.maxRequestSize = 30 * 1024^2),
+  devmode = FALSE,
   mksession = FALSE
 )
 }
@@ -21,8 +22,11 @@ ruminate(
 \item{server_opts}{List of options (names) and their vlues (value) e.g.
 \code{list(shiny.maxRequestSize = 30 * 1024^2)}.}
 
+\item{devmode}{Boolean value, when TRUE will run ruminate with development
+modules.}
+
 \item{mksession}{Boolean value, when TRUE will load test session data
-for app testing}
+for app testing.}
 }
 \value{
 Nothing is returned, this function just runs the built-in ruminate

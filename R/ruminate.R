@@ -122,8 +122,10 @@ res}
 #'@param port Port number for the app (3838)
 #'@param server_opts List of options (names) and their vlues (value) e.g.
 #'\code{list(shiny.maxRequestSize = 30 * 1024^2)}.
+#'@param devmode   Boolean value, when TRUE will run ruminate with development
+#'modules.
 #'@param mksession Boolean value, when TRUE will load test session data
-#'for app testing
+#'for app testing.
 #'@return Nothing is returned, this function just runs the built-in ruminate
 #'app.
 #'@examples
@@ -133,6 +135,7 @@ res}
 ruminate = function(host        = "127.0.0.1",
                     port        = 3838,
                     server_opts = list(shiny.maxRequestSize = 30 * 1024^2),
+                    devmode     = FALSE,
                     mksession   = FALSE){
 
 
@@ -156,9 +159,15 @@ ruminate = function(host        = "127.0.0.1",
     file.create(ftmptest)
   }
 
-  shiny::runApp(system.file(package="ruminate", "templates","ruminate.R"),
-                host  = host,
-                port  = port)
+  if(devmode){
+    shiny::runApp(system.file(package="ruminate", "templates","ruminate_devel.R"),
+                  host  = host,
+                  port  = port)
+  } else {
+    shiny::runApp(system.file(package="ruminate", "templates","ruminate.R"),
+                  host  = host,
+                  port  = port)
+  }
 
 }
 
