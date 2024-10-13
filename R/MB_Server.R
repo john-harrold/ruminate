@@ -975,6 +975,7 @@ MB_Server <- function(id,
       toListen <- reactive({
         list(
            # react_state[[id_ASM]])
+             input[["ui_mb_model"]],
              input[["element_selection"]],
              input[["time_scale"]],
              input[["catalog_selection"]],

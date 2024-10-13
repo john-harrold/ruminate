@@ -10,6 +10,10 @@ library(shinydashboard)
 library(prompter)
 #library(utils)
 
+if(is_installed("rxode2")){
+  library(rxode2)
+}
+
 tags$style("@import url(https://use.fontawesome.com/releases/v6.4.0/css/all.css);")
 
 # You can copy these locally and customize them for your own needs. Simply

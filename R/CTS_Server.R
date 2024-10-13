@@ -4266,7 +4266,7 @@ CTS_set_current_element    = function(state, element){
   code_seed           = c( 
                           "# Setting the random seeds",
                           paste0("set.seed(",element[["ui"]][["cts_config_seed"]],")"),
-                          paste0("rxSetSeed(",element[["ui"]][["cts_config_seed"]],")"), 
+                          paste0("rxode2::rxSetSeed(",element[["ui"]][["cts_config_seed"]],")"), 
                           "")
   code_model          = c()
   code_rx_details     = c()
