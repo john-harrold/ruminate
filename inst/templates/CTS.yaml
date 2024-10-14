@@ -308,6 +308,7 @@ MC:
     nsub:                    "N Subs"
     visit_times:             "Visit Times"
     trial_end:               "End of Trial"
+    covariate_values:        "Current values"
     selected_covariate:      "Covariate"
     covariate_type:          "Type/Distribution"
     covariate_value:         "Values"

@@ -744,9 +744,10 @@ CTS_Server <- function(id,
          status        = "primary")
 
 
+      # JMH
       # This disables the report/interactive switch. Delete this line when the
       # the interactive bugs have been worked out:
-      uiele_switch = NULL
+      # uiele_switch = NULL
 
       #------------------------------------
       uiele_res_tabs =
@@ -891,24 +892,28 @@ CTS_Server <- function(id,
            }
         }
 
+        output_type = state[["CTS"]][["ui"]][["switch_output"]]
+        FM_le(state, "Updating timecourse")
+        FM_le(state, paste0("  output_type: ", output_type))
+        FM_le(state, paste0("  figs_found: ", figs_found))
+
         if(figs_found){
 
           pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
           pvh          = state[["MC"]][["formatting"]][["preview"]][["height"]]
           pv_div_style = paste0("height:",pvh,";width:",pvw,";display:inline-block;vertical-align:top")
 
-          output_type = state[["CTS"]][["ui"]][["switch_output"]]
-          if(output_type == "report"){
+          if(output_type == "interactive"){
             uiele =
                div(style=pv_div_style,
-                   plotOutput(
-                     NS(id, "ui_res_tc_figure_ggplot"),
+                   plotly::plotlyOutput(
+                     NS(id, "ui_res_tc_figure_plotly"),
                      width=pvw, height=pvh))
           } else {
             uiele =
                div(style=pv_div_style,
-                   plotly::plotlyOutput(
-                     NS(id, "ui_rec_tc_figure_plotly"),
+                   plotOutput(
+                     NS(id, "ui_res_tc_figure_ggplot"),
                      width=pvw, height=pvh))
           }
         }
@@ -1019,23 +1024,27 @@ CTS_Server <- function(id,
            }
         }
 
+        output_type = state[["CTS"]][["ui"]][["switch_output"]]
+        FM_le(state, "Updating timecourse")
+        FM_le(state, paste0("  output_type: ", output_type))
+        FM_le(state, paste0("  figs_found: ", figs_found))
+
         if(figs_found){
           pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
           pvh          = state[["MC"]][["formatting"]][["preview"]][["height"]]
           pv_div_style = paste0("height:",pvh,";width:",pvw,";display:inline-block;vertical-align:top")
 
-          output_type = state[["CTS"]][["ui"]][["switch_output"]]
-          if(output_type == "report"){
+          if(output_type == "interactive"){
             uiele =
                div(style=pv_div_style,
-                   plotOutput(
-                     NS(id, "ui_res_events_figure_ggplot"),
+                   plotly::plotlyOutput(
+                     NS(id, "ui_res_events_figure_plotly"),
                      width=pvw, height=pvh))
           } else {
             uiele =
                div(style=pv_div_style,
-                   plotly::plotlyOutput(
-                     NS(id, "ui_rec_events_figure_plotly"),
+                   plotOutput(
+                     NS(id, "ui_res_events_figure_ggplot"),
                      width=pvw, height=pvh))
           }
         }
@@ -1265,57 +1274,63 @@ CTS_Server <- function(id,
        rowHeaders = NULL
        )
     uiele })
-    #------------------------------------
-    output$hot_current_covariates =  rhandsontable::renderRHandsontable({
-      input$element_selection
-      input$button_clk_save
-      input$button_clk_add_cov
-      state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
-                             input           = input,
-                             session         = session,
-                             FM_yaml_file    = FM_yaml_file,
-                             MOD_yaml_file   = MOD_yaml_file,
-                             react_state     = react_state)
-
-      current_ele = CTS_fetch_current_element(state)
-
-
-    if(length(current_ele[["rx_details"]][["elements"]][["covariates"]]) > 0){
-      ccdf = NULL
-      for(tmp_cov in current_ele[["rx_details"]][["elements"]][["covariates"]]){
-        tmp_details = state[["MC"]][["formatting"]][["hot_current_covariates"]][["no_covariates"]]
-
-        if(tmp_cov %in% names(current_ele[["covariates"]])){
-          type     = current_ele[["covariates"]][[tmp_cov]][["type"]]
-          sampling = current_ele[["covariates"]][[tmp_cov]][["sampling"]]
-          values   = current_ele[["covariates"]][[tmp_cov]][["values"]]
-          if(is.null(sampling)){
-            tmp_details = paste0(type, ": ", paste0(values, collapse=", "))
-          } else {
-            tmp_details = paste0(type, ", ", sampling, ": ", paste0(values, collapse=", "))
-          }
-        }
-
-
-        ccdf = rbind(ccdf,
-          data.frame(Covariate = tmp_cov,
-                     Details   = tmp_details))
-
-      }
-
-      uiele = rhandsontable::rhandsontable(
-        ccdf,
-        width      = state[["MC"]][["formatting"]][["hot_current_covariates"]][["width"]],
-        height     = state[["MC"]][["formatting"]][["hot_current_covariates"]][["height"]],
-        rowHeaders = NULL
-        )
-    } else{
-      uiele = NULL
-    }
-
-    uiele })
+  # JMH this was breaking with the folowing error under devtools:
+  # Duplicate input/output IDs found
+  # The following ID was repeated:
+  # - "HandsontableCopyPaste": 2 inputs
+  #
+  #
+  # #------------------------------------
+  # output$hot_current_covariates =  rhandsontable::renderRHandsontable({
+  #   input$element_selection
+  #   input$button_clk_save
+  #   input$button_clk_add_cov
+  #   state = CTS_fetch_state(id              = id,
+  #                          id_ASM          = id_ASM,
+  #                          id_MB           = id_MB,
+  #                          input           = input,
+  #                          session         = session,
+  #                          FM_yaml_file    = FM_yaml_file,
+  #                          MOD_yaml_file   = MOD_yaml_file,
+  #                          react_state     = react_state)
+  #
+  #   current_ele = CTS_fetch_current_element(state)
+  #
+  #
+  # if(length(current_ele[["rx_details"]][["elements"]][["covariates"]]) > 0){
+  #   ccdf = NULL
+  #   for(tmp_cov in current_ele[["rx_details"]][["elements"]][["covariates"]]){
+  #     tmp_details = state[["MC"]][["formatting"]][["hot_current_covariates"]][["no_covariates"]]
+  #
+  #     if(tmp_cov %in% names(current_ele[["covariates"]])){
+  #       type     = current_ele[["covariates"]][[tmp_cov]][["type"]]
+  #       sampling = current_ele[["covariates"]][[tmp_cov]][["sampling"]]
+  #       values   = current_ele[["covariates"]][[tmp_cov]][["values"]]
+  #       if(is.null(sampling)){
+  #         tmp_details = paste0(type, ": ", paste0(values, collapse=", "))
+  #       } else {
+  #         tmp_details = paste0(type, ", ", sampling, ": ", paste0(values, collapse=", "))
+  #       }
+  #     }
+  #
+  #
+  #     ccdf = rbind(ccdf,
+  #       data.frame(Covariate = tmp_cov,
+  #                  Details   = tmp_details))
+  #
+  #   }
+  #
+  #   uiele = rhandsontable::rhandsontable(
+  #     ccdf,
+  #     width      = state[["MC"]][["formatting"]][["hot_current_covariates"]][["width"]],
+  #     height     = state[["MC"]][["formatting"]][["hot_current_covariates"]][["height"]],
+  #     rowHeaders = NULL
+  #     )
+  # } else{
+  #   uiele = NULL
+  # }
+  #
+  # uiele })
     #------------------------------------
     output$CTS_ui_trial_end =  renderUI({
       input$element_selection
@@ -1571,10 +1586,25 @@ CTS_Server <- function(id,
 
       uiele = NULL
       if(length(current_ele[["rx_details"]][["elements"]][["covariates"]]) > 0){
-        uiele =
-          rhandsontable::rHandsontableOutput(NS(id, "hot_current_covariates"),
-             width  = state[["MC"]][["formatting"]][["hot_current_covariates"]][["width"]],
-             height = state[["MC"]][["formatting"]][["hot_current_covariates"]][["height"]])
+        for(tmp_cov in current_ele[["rx_details"]][["elements"]][["covariates"]]){
+          #tmp_details = state[["MC"]][["formatting"]][["hot_current_covariates"]][["no_covariates"]]
+          tmp_details = tags$span(style="color:red", state[["MC"]][["formatting"]][["hot_current_covariates"]][["no_covariates"]])
+
+          if(tmp_cov %in% names(current_ele[["covariates"]])){
+            type     = current_ele[["covariates"]][[tmp_cov]][["type"]]
+            sampling = current_ele[["covariates"]][[tmp_cov]][["sampling"]]
+            values   = current_ele[["covariates"]][[tmp_cov]][["values"]]
+            if(is.null(sampling)){
+              tmp_details = tags$span(style="color:green", paste0(type, ": ", paste0(values, collapse=", ")))
+            } else {
+              tmp_details = tags$span(style="color:green", paste0(type, ", ", sampling, ": ", paste0(values, collapse=", ")))
+            }
+          }
+          uiele = tagList(uiele, 
+            tmp_cov,": ",  tmp_details, tags$br())
+        }
+        uiele = tagList(tags$h3(state[["MC"]][["labels"]][["covariate_values"]]), 
+                        uiele)
       }
     uiele })
     #------------------------------------
@@ -2139,6 +2169,7 @@ CTS_Server <- function(id,
                 ),
                 tags$td(HTML('&nbsp;'),HTML('&nbsp;'),HTML('&nbsp;')),
                 tags$td(style=td_style,
+                  # "JMH Covariates table"
                   htmlOutput(NS(id, "CTS_ui_covariates_table"))
                 )
               )

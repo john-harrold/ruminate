@@ -63,7 +63,7 @@ if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
  # First create an rxode2 model:
  library(rxode2)
  one.compartment <- function() {
-   ini({
+   rxode2::ini({
      tka <- log(1.57); label("Ka")
      tcl <- log(2.72); label("Cl")
      tv <- log(31.5); label("V")
@@ -73,7 +73,7 @@ if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
      add.sd <- 0.7
    })
    # and a model block with the error specification and model specification
-   model({
+   rxode2::model({
      ka <- exp(tka + eta.ka)
      cl <- exp(tcl + eta.cl)
      v <- exp(tv + eta.v)
@@ -83,8 +83,8 @@ if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
      cp ~ add(add.sd)
    })
  }
- 
+
  nmout = rx2other(one.compartment, out_type="nonmem")
- 
+
 }
 }
