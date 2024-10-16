@@ -1914,7 +1914,6 @@ MB_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
   code      = c()
   msgs      = c()
 
-
   # The MB module only supports the following report types:
   supported_rpttypes = c("docx")
 

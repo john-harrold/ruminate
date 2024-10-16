@@ -862,8 +862,6 @@ CTS_Server <- function(id,
       uiele_fpage})
     #------------------------------------
     output$ui_res_tc_figure      = renderUI({
-      input$element_selection
-      input$button_clk_runsim
       input$switch_output
       state = CTS_fetch_state(id              = id,
                              id_ASM          = id_ASM,
@@ -922,7 +920,6 @@ CTS_Server <- function(id,
     #------------------------------------
     # timecourse plotly
     output$ui_res_tc_figure_plotly  = plotly::renderPlotly({
-      req(input$time_scale)
       input$element_selection
       input$button_clk_runsim
       input$button_clk_update_plot
@@ -958,7 +955,6 @@ CTS_Server <- function(id,
       uiele})
     # timecourse ggplot
     output$ui_res_tc_figure_ggplot             = renderPlot({
-      req(input$time_scale)
       input$element_selection
       input$button_clk_runsim
       input$button_clk_update_plot
@@ -993,8 +989,6 @@ CTS_Server <- function(id,
     #------------------------------------
     # Events figure
     output$ui_res_events_figure      = renderUI({
-      input$element_selection
-      input$button_clk_runsim
       input$switch_output
       state = CTS_fetch_state(id              = id,
                              id_ASM          = id_ASM,
@@ -1603,8 +1597,7 @@ CTS_Server <- function(id,
           uiele = tagList(uiele, 
             tmp_cov,": ",  tmp_details, tags$br())
         }
-        uiele = tagList(tags$h3(state[["MC"]][["labels"]][["covariate_values"]]), 
-                        uiele)
+        uiele = tagList(tags$h3(state[["MC"]][["labels"]][["covariate_values"]]), uiele)
       }
     uiele })
     #------------------------------------
