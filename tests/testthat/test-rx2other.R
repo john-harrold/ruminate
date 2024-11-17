@@ -7,7 +7,7 @@ library(stringr)
 
 if( Sys.getenv("ruminate_rxfamily_found")){
   suppressMessages(library(rxode2))
-  sess_res = suppressMessages(suppressWarnings(MB_test_mksession(session=list(), full_session=FALSE)))
+  sess_res = suppressMessages(suppressWarnings(MB_test_mksession()))
 
   current_dir = getwd()
   on.exit( setwd(current_dir))

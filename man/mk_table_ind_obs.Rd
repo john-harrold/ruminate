@@ -64,18 +64,8 @@ individual observation data. This can be spread out of over several tables
 (pages) if necessary.
 }
 \examples{
-id     = "NCA"
-id_UD  = "UD"
-id_DW  = "DW"
-id_ASM = "ASM"
-
 # We need a state variable to be define
-sess_res = NCA_test_mksession(session=list(),
-     id     = id,
-     id_UD  = id_UD,
-     id_DW  = id_DW,
-     id_ASM = id_ASM,
-     full_session=FALSE)
+sess_res = NCA_test_mksession()
 
 state = sess_res$state
 

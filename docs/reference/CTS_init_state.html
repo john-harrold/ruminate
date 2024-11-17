@@ -83,7 +83,18 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Within shiny both session and input variables will exist,</span></span></span>
 <span class="r-in"><span><span class="co"># this creates examples here for testing purposes:</span></span></span>
-<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="MB_test_mksession.html">MB_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="MB_test_mksession.html">MB_test_mksession</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: module isgood: TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   dest:   file.path("config","report.docx")</span>
@@ -97,14 +108,51 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:24933f86b657b9503f22440e8c4d3cac</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: State initialized</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: loading model idx: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: cc37b764ee3c117dfce1f1d7bd0e6e12</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:2ae8d3386b5fee38596e0104e04bc151</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 8911fc506ba3bf2824e9ff1da1379aac</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:5095d65c2f257d705855a6ddbc6dc7a7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting name: One compartment model</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting time scale: hours</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base from: user</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting catalog selection: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model id: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model name: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: a9377216084868217a1496c27e249347</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:d81158159bd5323e1e73f01f41e5cdd7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: added element idx: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: loading model idx: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: a2705583c39f533700b82e27229faaf5</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:ad958a4d17feaeeba51248cd2625870d</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting name: PK Biomarker</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting time scale: days</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base from: user</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting catalog selection: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model id: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model name: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 9e566c4f2ecefda905229bfcaa28cf71</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:0a5d8f6a73a7b85b9e966de1594b3865</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: added element idx: 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: MB_preload(session = session, src_list = src_list, yaml_res = yaml_res, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     mod_ID = mod_ID, react_state = react_state, quickload = quickload)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: formods::FM_le(state, paste0("module isgood: ", isgood))</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module isgood: TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (("ShinySession" %in% class(session))) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> } else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     session = FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: session = FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: res = list(isgood = isgood, msgs = msgs, session = session, input = input, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     react_state = react_state, state = state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: res</span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
 <span class="r-in"><span><span class="va">input</span>   <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">input</span></span></span>
 <span class="r-in"><span></span></span>
@@ -129,8 +177,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: source model change detected</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:  &gt; covariates reset</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 98890dc17c3d5a8008f5fd879ab1368c</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 875396d76b918e9df1255e19976d2034</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: bc1de16244650329a4c97a63637aa965</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 170f83727acd417f0374620f03dc4316</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: State initialized</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">state</span></span></span>
@@ -337,7 +385,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "===LABEL===: ===RANGE==="</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $yaml$FM$data_meta$many_sep</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ",⋅⋅⋅,"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ",...,"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $yaml$FM$data_meta$data_types</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $yaml$FM$data_meta$data_types$character</span>
@@ -404,6 +452,19 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$module</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$module$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "CTS"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$module$depends</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$module$depends$id_ASM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ASM"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $MC$module$depends$id_MB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$element_object_name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "CTS_obj"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -428,7 +489,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$reporting</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$reporting$enabled</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$reporting$priority</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
@@ -1337,7 +1398,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "numeric"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sim_config$seed$value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5447"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5446"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sim_config$seed$options</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
@@ -1346,7 +1407,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Misc"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sim_config$seed$placeholder</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5447"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5446"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MC$sim_config$nsteps</span>
@@ -1679,6 +1740,62 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$isgood</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$dose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$dose$name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rule_name"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$dose$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rule_type"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$dose$condition</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rule_condition"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$dose$state</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "action_dosing_state"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$dose$values</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "action_dosing_values"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$dose$times</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "action_dosing_times"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$dose$durations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "action_dosing_durations"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$`set state`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$`set state`$name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rule_name"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$`set state`$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rule_type"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$`set state`$condition</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rule_condition"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$`set state`$state</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "action_set_state"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$`set state`$value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "action_state_values"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$manual</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$manual$name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rule_name"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$manual$type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rule_type"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$manual$condition</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rule_condition"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$rule_ui_map$manual$code</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "action_manual_code"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$isgood</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
@@ -1687,17 +1804,20 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$catalog</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   label      object MOD_TYPE id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 One compartment model MB_obj_1_rx       MB MB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   label      object MOD_TYPE id idx</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 One compartment model MB_obj_1_rx       MB MB   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          PK Biomarker MB_obj_2_rx       MB MB   2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           checksum                      MDLchecksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2ae8d3386b5fee38596e0104e04bc151 cc37b764ee3c117dfce1f1d7bd0e6e12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     code</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 MB_obj_1_fcn = function () \n{\n    description &lt;- "One compartment PK model with linear clearance using differential equations"\n    ini({\n        lka &lt;- 0.45\n        label("Absorption rate (Ka)")\n        lcl &lt;- 1\n        label("Clearance (CL)")\n        lvc &lt;- 3.45\n        label("Central volume of distribution (V)")\n        propSd &lt;- c(0, 0.5)\n        label("Proportional residual error (fraction)")\n        etalcl ~ 0.1\n    })\n    model({\n        ka &lt;- exp(lka)\n        cl &lt;- exp(lcl + etalcl)\n        vc &lt;- exp(lvc)\n        kel &lt;- cl/vc\n        d/dt(depot) &lt;- -ka * depot\n        d/dt(central) &lt;- ka * depot - kel * central\n        Cc &lt;- central/vc\n        Cc ~ prop(propSd)\n    })\n}\n\nMB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)\n\nMB_obj_1_ts = list(\n  system  = "weeks",\n  details = \n    list(months = list(verb = "Months", conv = 4.13359788359788e-07), \n        weeks = list(verb = "Weeks", conv = 1.65343915343915e-06), \n        days = list(verb = "Days", conv = 1.15740740740741e-05), \n        hours = list(verb = "Hours", conv = 0.000277777777777778))\n)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0a5d8f6a73a7b85b9e966de1594b3865 a9377216084868217a1496c27e249347</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0a5d8f6a73a7b85b9e966de1594b3865 9e566c4f2ecefda905229bfcaa28cf71</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             code</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         MB_obj_1_fcn = function () \n{\n    description &lt;- "One compartment PK model with linear clearance using differential equations"\n    ini({\n        lka &lt;- 0.45\n        label("Absorption rate (Ka)")\n        lcl &lt;- 1\n        label("Clearance (CL)")\n        lvc &lt;- 3.45\n        label("Central volume of distribution (V)")\n        propSd &lt;- c(0, 0.5)\n        label("Proportional residual error (fraction)")\n        etalcl ~ 0.1\n    })\n    model({\n        ka &lt;- exp(lka)\n        cl &lt;- exp(lcl + etalcl)\n        vc &lt;- exp(lvc)\n        kel &lt;- cl/vc\n        d/dt(depot) &lt;- -ka * depot\n        d/dt(central) &lt;- ka * depot - kel * central\n        Cc &lt;- central/vc\n        Cc ~ prop(propSd)\n    })\n}\n\nMB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)\n\nMB_obj_1_ts = list(\n  system  = "weeks",\n  details = \n    list(months = list(verb = "Months", conv = 4.13359788359788e-07), \n        weeks = list(verb = "Weeks", conv = 1.65343915343915e-06), \n        days = list(verb = "Days", conv = 1.15740740740741e-05), \n        hours = list(verb = "Hours", conv = 0.000277777777777778))\n)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 MB_obj_2_fcn = function () \n{\n    ini({\n        TV_F1 &lt;- fix(2.22044604925031e-16, 0.744, Inf)\n        TV_ka &lt;- c(2.22044604925031e-16, 0.282, Inf)\n        TV_CL &lt;- c(-36.0436533891172, -1.6094379124341, 709.782712893384)\n        TV_Vc &lt;- c(-36.0436533891172, 1.28370777234479, 709.782712893384)\n        TV_Vp &lt;- c(-36.0436533891172, 1.01160091167848, 709.782712893384)\n        TV_Q &lt;- c(-36.0436533891172, -0.29169009384932, 709.782712893384)\n        TV_MW &lt;- fix(2.22044604925031e-16, 140, Inf)\n        TV_BM_IC &lt;- c(2.22044604925031e-16, 1000, Inf)\n        TV_kdeg_BM &lt;- fix(2.22044604925031e-16, 0.1, Inf)\n        TV_Emax &lt;- c(2.22044604925031e-16, 100, Inf)\n        TV_EC50 &lt;- fix(2.22044604925031e-16, 300, Inf)\n        prop_err_PK &lt;- c(2.22044604925031e-16, 0.1, Inf)\n        add_err_PK &lt;- c(2.22044604925031e-16, 0.1, Inf)\n        add_err_BM &lt;- c(2.22044604925031e-16, 0.1, Inf)\n        ETAka ~ 0.416\n        ETACL ~ 0.09875\n        ETAVc ~ c(0.0786, 0.116)\n        ETAVp ~ c(0.0619, 0.0377, 0.0789)\n        ETAQ ~ 0.699\n        ETABM_IC ~ 0.05\n        ETAEmax ~ 0.1\n    })\n    model({\n        F1 = TV_F1\n        ka = TV_ka * exp(ETAka)\n        CL = exp(TV_CL) * exp(ETACL)\n        Vc = exp(TV_Vc) * exp(ETAVc)\n        Cc = Ac/(Vc)\n        Vp = exp(TV_Vp) * exp(ETAVp)\n        Q = exp(TV_Q) * exp(ETAQ)\n        MW = TV_MW\n        BM_IC = TV_BM_IC * exp(ETABM_IC)\n        kdeg_BM = TV_kdeg_BM\n        Emax = TV_Emax * exp(ETAEmax)\n        EC50 = TV_EC50\n        Dinf = 0\n        WTTV = 70\n        CL_IND = CL * (1 + SEX_ID * 0.1) * (1 + SUBTYPE_ID * \n            0.1)\n        kel = CL_IND/Vc * ((WT/WTTV))^(-0.35)\n        kcp = Q/Vc * ((WT/WTTV))^(-0.35)\n        kpc = Q/Vp * ((WT/WTTV))^(-0.35)\n        ksyn_BM = kdeg_BM * BM_IC\n        STIM = 1 + Emax * Cc/(EC50 + Cc)\n        BM(0) = BM_IC\n        d/dt(At) = (-ka * At)\n        d/dt(Ac) = ((ka * At * F1/Vc - kel * Cc - kcp * Cc + \n            kpc * Cp * Vp/Vc + Dinf/Vc)) * Vc\n        d/dt(Cp) = (kcp * Cc * Vc/Vp - kpc * Cp)\n        d/dt(BM) = ksyn_BM * STIM - (kdeg_BM * BM)\n        C_ng_ml = Cc * MW\n        C_ng_ml ~ add(add_err_PK) + prop(prop_err_PK)\n        BM_obs = BM\n        BM_obs ~ add(add_err_BM)\n    })\n}\n\nMB_obj_2_rx =  rxode2::rxode2(MB_obj_2_fcn)\n\nMB_obj_2_ts = list(\n  system  = "weeks",\n  details = \n    list(months = list(verb = "Months", conv = 4.13359788359788e-07), \n        weeks = list(verb = "Weeks", conv = 1.65343915343915e-06), \n        days = list(verb = "Days", conv = 1.15740740740741e-05), \n        hours = list(verb = "Hours", conv = 0.000277777777777778))\n)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$modules</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$modules$MB</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$modules$MB$MB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2ae8d3386b5fee38596e0104e04bc151"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0a5d8f6a73a7b85b9e966de1594b3865"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1711,6 +1831,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_1_rx$id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_1_rx$idx</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_1_rx$ts_details</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_1_rx$ts_details$months</span>
@@ -1846,10 +1969,211 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB_obj_1_fcn = function () \n{\n    description &lt;- \"One compartment PK model with linear clearance using differential equations\"\n    ini({\n        lka &lt;- 0.45\n        label(\"Absorption rate (Ka)\")\n        lcl &lt;- 1\n        label(\"Clearance (CL)\")\n        lvc &lt;- 3.45\n        label(\"Central volume of distribution (V)\")\n        propSd &lt;- c(0, 0.5)\n        label(\"Proportional residual error (fraction)\")\n        etalcl ~ 0.1\n    })\n    model({\n        ka &lt;- exp(lka)\n        cl &lt;- exp(lcl + etalcl)\n        vc &lt;- exp(lvc)\n        kel &lt;- cl/vc\n        d/dt(depot) &lt;- -ka * depot\n        d/dt(central) &lt;- ka * depot - kel * central\n        Cc &lt;- central/vc\n        Cc ~ prop(propSd)\n    })\n}\n\nMB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)\n\nMB_obj_1_ts = list(\n  system  = \"weeks\",\n  details = \n    list(months = list(verb = \"Months\", conv = 4.13359788359788e-07), \n        weeks = list(verb = \"Weeks\", conv = 1.65343915343915e-06), \n        days = list(verb = \"Days\", conv = 1.15740740740741e-05), \n        hours = list(verb = \"Hours\", conv = 0.000277777777777778))\n)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_1_rx$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2ae8d3386b5fee38596e0104e04bc151"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0a5d8f6a73a7b85b9e966de1594b3865"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_1_rx$MDLchecksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cc37b764ee3c117dfce1f1d7bd0e6e12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a9377216084868217a1496c27e249347"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$label</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PK Biomarker"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$MOD_TYPE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$idx</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$months</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$months$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Months"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$months$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4.133598e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$weeks</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$weeks$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Weeks"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$weeks$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.653439e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$days</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$days$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Days"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$days$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.157407e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$hours</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$hours$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Hours"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_details$hours$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.0002777778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$rx_obj</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">rxode2-based free-form 4-cmt ODE model</span> <span style="color: #00BBBB;">──────────────────────────────────────</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ── <span style="font-weight: bold;">Initalization:</span> ──  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Fixed Effects</span> (<span style="color: #0000BB; font-weight: bold;">$theta</span>): </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        TV_F1        TV_ka        TV_CL        TV_Vc        TV_Vp         TV_Q </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    0.7440000    0.2820000   -1.6094379    1.2837078    1.0116009   -0.2916901 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        TV_MW     TV_BM_IC   TV_kdeg_BM      TV_Emax      TV_EC50  prop_err_PK </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  140.0000000 1000.0000000    0.1000000  100.0000000  300.0000000    0.1000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   add_err_PK   add_err_BM </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    0.1000000    0.1000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Omega</span> (<span style="color: #0000BB; font-weight: bold;">$omega</span>): </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          ETAka   ETACL  ETAVc  ETAVp  ETAQ ETABM_IC ETAEmax</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ETAka    0.416 0.00000 0.0000 0.0000 0.000     0.00     0.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ETACL    0.000 0.09875 0.0786 0.0619 0.000     0.00     0.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ETAVc    0.000 0.07860 0.1160 0.0377 0.000     0.00     0.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ETAVp    0.000 0.06190 0.0377 0.0789 0.000     0.00     0.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ETAQ     0.000 0.00000 0.0000 0.0000 0.699     0.00     0.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ETABM_IC 0.000 0.00000 0.0000 0.0000 0.000     0.05     0.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ETAEmax  0.000 0.00000 0.0000 0.0000 0.000     0.00     0.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">States</span> (<span style="color: #0000BB; font-weight: bold;">$state</span> or <span style="color: #0000BB; font-weight: bold;">$stateDf</span>): </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Compartment Number Compartment Name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                  1               At</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                  2               Ac</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                  3               Cp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                  4               BM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ── <span style="font-weight: bold;">Multiple Endpoint Model (</span><span style="color: #0000BB; font-weight: bold;">$multipleEndpoint</span><span style="font-weight: bold;">):</span> ──  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      variable                    cmt                    dvid*</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 C_ng_ml ~ … cmt='C_ng_ml' or cmt=5 dvid='C_ng_ml' or dvid=1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  BM_obs ~ …  cmt='BM_obs' or cmt=6  dvid='BM_obs' or dvid=2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   * If dvids are outside this range, all dvids are re-numered sequentially, ie 1,7, 10 becomes 1,2,3 etc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ── <span style="font-weight: bold;">Model (Normalized Syntax):</span> ── </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function() {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ini({</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TV_F1 &lt;- fix(2.22044604925031e-16, 0.744, Inf)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TV_ka &lt;- c(2.22044604925031e-16, 0.282, Inf)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TV_CL &lt;- c(-36.0436533891172, -1.6094379124341, 709.782712893384)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TV_Vc &lt;- c(-36.0436533891172, 1.28370777234479, 709.782712893384)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TV_Vp &lt;- c(-36.0436533891172, 1.01160091167848, 709.782712893384)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TV_Q &lt;- c(-36.0436533891172, -0.29169009384932, 709.782712893384)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TV_MW &lt;- fix(2.22044604925031e-16, 140, Inf)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TV_BM_IC &lt;- c(2.22044604925031e-16, 1000, Inf)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TV_kdeg_BM &lt;- fix(2.22044604925031e-16, 0.1, Inf)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TV_Emax &lt;- c(2.22044604925031e-16, 100, Inf)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TV_EC50 &lt;- fix(2.22044604925031e-16, 300, Inf)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         prop_err_PK &lt;- c(2.22044604925031e-16, 0.1, Inf)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         add_err_PK &lt;- c(2.22044604925031e-16, 0.1, Inf)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         add_err_BM &lt;- c(2.22044604925031e-16, 0.1, Inf)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ETAka ~ 0.416</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ETACL ~ 0.09875</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ETAVc ~ c(0.0786, 0.116)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ETAVp ~ c(0.0619, 0.0377, 0.0789)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ETAQ ~ 0.699</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ETABM_IC ~ 0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ETAEmax ~ 0.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     model({</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         F1 = TV_F1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ka = TV_ka * exp(ETAka)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CL = exp(TV_CL) * exp(ETACL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Vc = exp(TV_Vc) * exp(ETAVc)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Cc = Ac/(Vc)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Vp = exp(TV_Vp) * exp(ETAVp)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Q = exp(TV_Q) * exp(ETAQ)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         MW = TV_MW</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         BM_IC = TV_BM_IC * exp(ETABM_IC)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         kdeg_BM = TV_kdeg_BM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Emax = TV_Emax * exp(ETAEmax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         EC50 = TV_EC50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         Dinf = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         WTTV = 70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         CL_IND = CL * (1 + SEX_ID * 0.1) * (1 + SUBTYPE_ID * </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             0.1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         kel = CL_IND/Vc * ((WT/WTTV))^(-0.35)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         kcp = Q/Vc * ((WT/WTTV))^(-0.35)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         kpc = Q/Vp * ((WT/WTTV))^(-0.35)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         ksyn_BM = kdeg_BM * BM_IC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         STIM = 1 + Emax * Cc/(EC50 + Cc)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         BM(0) = BM_IC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         d/dt(At) = (-ka * At)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         d/dt(Ac) = ((ka * At * F1/Vc - kel * Cc - kcp * Cc + </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             kpc * Cp * Vp/Vc + Dinf/Vc)) * Vc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         d/dt(Cp) = (kcp * Cc * Vc/Vp - kpc * Cp)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         d/dt(BM) = ksyn_BM * STIM - (kdeg_BM * BM)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         C_ng_ml = Cc * MW</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         C_ng_ml ~ add(add_err_PK) + prop(prop_err_PK)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         BM_obs = BM</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         BM_obs ~ add(add_err_BM)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     })</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$rx_obj_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB_obj_2_rx"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$system</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "weeks"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$months</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$months$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Months"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$months$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4.133598e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$weeks</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$weeks$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Weeks"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$weeks$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.653439e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$days</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$days$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Days"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$days$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.157407e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$hours</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$hours$verb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Hours"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj$details$hours$conv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.0002777778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$ts_obj_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB_obj_2_ts"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$fcn_def</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "function () \n{\n    ini({\n        TV_F1 &lt;- fix(2.22044604925031e-16, 0.744, Inf)\n        TV_ka &lt;- c(2.22044604925031e-16, 0.282, Inf)\n        TV_CL &lt;- c(-36.0436533891172, -1.6094379124341, 709.782712893384)\n        TV_Vc &lt;- c(-36.0436533891172, 1.28370777234479, 709.782712893384)\n        TV_Vp &lt;- c(-36.0436533891172, 1.01160091167848, 709.782712893384)\n        TV_Q &lt;- c(-36.0436533891172, -0.29169009384932, 709.782712893384)\n        TV_MW &lt;- fix(2.22044604925031e-16, 140, Inf)\n        TV_BM_IC &lt;- c(2.22044604925031e-16, 1000, Inf)\n        TV_kdeg_BM &lt;- fix(2.22044604925031e-16, 0.1, Inf)\n        TV_Emax &lt;- c(2.22044604925031e-16, 100, Inf)\n        TV_EC50 &lt;- fix(2.22044604925031e-16, 300, Inf)\n        prop_err_PK &lt;- c(2.22044604925031e-16, 0.1, Inf)\n        add_err_PK &lt;- c(2.22044604925031e-16, 0.1, Inf)\n        add_err_BM &lt;- c(2.22044604925031e-16, 0.1, Inf)\n        ETAka ~ 0.416\n        ETACL ~ 0.09875\n        ETAVc ~ c(0.0786, 0.116)\n        ETAVp ~ c(0.0619, 0.0377, 0.0789)\n        ETAQ ~ 0.699\n        ETABM_IC ~ 0.05\n        ETAEmax ~ 0.1\n    })\n    model({\n        F1 = TV_F1\n        ka = TV_ka * exp(ETAka)\n        CL = exp(TV_CL) * exp(ETACL)\n        Vc = exp(TV_Vc) * exp(ETAVc)\n        Cc = Ac/(Vc)\n        Vp = exp(TV_Vp) * exp(ETAVp)\n        Q = exp(TV_Q) * exp(ETAQ)\n        MW = TV_MW\n        BM_IC = TV_BM_IC * exp(ETABM_IC)\n        kdeg_BM = TV_kdeg_BM\n        Emax = TV_Emax * exp(ETAEmax)\n        EC50 = TV_EC50\n        Dinf = 0\n        WTTV = 70\n        CL_IND = CL * (1 + SEX_ID * 0.1) * (1 + SUBTYPE_ID * \n            0.1)\n        kel = CL_IND/Vc * ((WT/WTTV))^(-0.35)\n        kcp = Q/Vc * ((WT/WTTV))^(-0.35)\n        kpc = Q/Vp * ((WT/WTTV))^(-0.35)\n        ksyn_BM = kdeg_BM * BM_IC\n        STIM = 1 + Emax * Cc/(EC50 + Cc)\n        BM(0) = BM_IC\n        d/dt(At) = (-ka * At)\n        d/dt(Ac) = ((ka * At * F1/Vc - kel * Cc - kcp * Cc + \n            kpc * Cp * Vp/Vc + Dinf/Vc)) * Vc\n        d/dt(Cp) = (kcp * Cc * Vc/Vp - kpc * Cp)\n        d/dt(BM) = ksyn_BM * STIM - (kdeg_BM * BM)\n        C_ng_ml = Cc * MW\n        C_ng_ml ~ add(add_err_PK) + prop(prop_err_PK)\n        BM_obs = BM\n        BM_obs ~ add(add_err_BM)\n    })\n}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$MDLMETA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "base model"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$code</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MB_obj_2_fcn = function () \n{\n    ini({\n        TV_F1 &lt;- fix(2.22044604925031e-16, 0.744, Inf)\n        TV_ka &lt;- c(2.22044604925031e-16, 0.282, Inf)\n        TV_CL &lt;- c(-36.0436533891172, -1.6094379124341, 709.782712893384)\n        TV_Vc &lt;- c(-36.0436533891172, 1.28370777234479, 709.782712893384)\n        TV_Vp &lt;- c(-36.0436533891172, 1.01160091167848, 709.782712893384)\n        TV_Q &lt;- c(-36.0436533891172, -0.29169009384932, 709.782712893384)\n        TV_MW &lt;- fix(2.22044604925031e-16, 140, Inf)\n        TV_BM_IC &lt;- c(2.22044604925031e-16, 1000, Inf)\n        TV_kdeg_BM &lt;- fix(2.22044604925031e-16, 0.1, Inf)\n        TV_Emax &lt;- c(2.22044604925031e-16, 100, Inf)\n        TV_EC50 &lt;- fix(2.22044604925031e-16, 300, Inf)\n        prop_err_PK &lt;- c(2.22044604925031e-16, 0.1, Inf)\n        add_err_PK &lt;- c(2.22044604925031e-16, 0.1, Inf)\n        add_err_BM &lt;- c(2.22044604925031e-16, 0.1, Inf)\n        ETAka ~ 0.416\n        ETACL ~ 0.09875\n        ETAVc ~ c(0.0786, 0.116)\n        ETAVp ~ c(0.0619, 0.0377, 0.0789)\n        ETAQ ~ 0.699\n        ETABM_IC ~ 0.05\n        ETAEmax ~ 0.1\n    })\n    model({\n        F1 = TV_F1\n        ka = TV_ka * exp(ETAka)\n        CL = exp(TV_CL) * exp(ETACL)\n        Vc = exp(TV_Vc) * exp(ETAVc)\n        Cc = Ac/(Vc)\n        Vp = exp(TV_Vp) * exp(ETAVp)\n        Q = exp(TV_Q) * exp(ETAQ)\n        MW = TV_MW\n        BM_IC = TV_BM_IC * exp(ETABM_IC)\n        kdeg_BM = TV_kdeg_BM\n        Emax = TV_Emax * exp(ETAEmax)\n        EC50 = TV_EC50\n        Dinf = 0\n        WTTV = 70\n        CL_IND = CL * (1 + SEX_ID * 0.1) * (1 + SUBTYPE_ID * \n            0.1)\n        kel = CL_IND/Vc * ((WT/WTTV))^(-0.35)\n        kcp = Q/Vc * ((WT/WTTV))^(-0.35)\n        kpc = Q/Vp * ((WT/WTTV))^(-0.35)\n        ksyn_BM = kdeg_BM * BM_IC\n        STIM = 1 + Emax * Cc/(EC50 + Cc)\n        BM(0) = BM_IC\n        d/dt(At) = (-ka * At)\n        d/dt(Ac) = ((ka * At * F1/Vc - kel * Cc - kcp * Cc + \n            kpc * Cp * Vp/Vc + Dinf/Vc)) * Vc\n        d/dt(Cp) = (kcp * Cc * Vc/Vp - kpc * Cp)\n        d/dt(BM) = ksyn_BM * STIM - (kdeg_BM * BM)\n        C_ng_ml = Cc * MW\n        C_ng_ml ~ add(add_err_PK) + prop(prop_err_PK)\n        BM_obs = BM\n        BM_obs ~ add(add_err_BM)\n    })\n}\n\nMB_obj_2_rx =  rxode2::rxode2(MB_obj_2_fcn)\n\nMB_obj_2_ts = list(\n  system  = \"weeks\",\n  details = \n    list(months = list(verb = \"Months\", conv = 4.13359788359788e-07), \n        weeks = list(verb = \"Weeks\", conv = 1.65343915343915e-06), \n        days = list(verb = \"Days\", conv = 1.15740740740741e-05), \n        hours = list(verb = \"Hours\", conv = 0.000277777777777778))\n)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$checksum</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0a5d8f6a73a7b85b9e966de1594b3865"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$MDL$mdl$MB_obj_2_rx$MDLchecksum</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "9e566c4f2ecefda905229bfcaa28cf71"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1986,7 +2310,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "numeric"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$sc_meta$config$seed$value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5447"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5446"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$sc_meta$config$seed$options</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
@@ -1995,7 +2319,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Misc"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$sc_meta$config$seed$placeholder</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5447"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5446"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$sc_meta$config$seed$ui</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cts_config_seed"</span>
@@ -2134,7 +2458,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NULL"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$ui$cts_config_seed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5447"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5446"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$ui$cts_config_nsteps</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "200"</span>
@@ -2295,7 +2619,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "One compartment model"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$MDLchecksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cc37b764ee3c117dfce1f1d7bd0e6e12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a9377216084868217a1496c27e249347"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$SIMchecksum</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NOTRUN"</span>
@@ -2310,10 +2634,10 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "98890dc17c3d5a8008f5fd879ab1368c"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "bc1de16244650329a4c97a63637aa965"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$code</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "library(rxode2)\nlibrary(nonmem2rx)\nlibrary(nlmixr2lib)\n\n# Creating the model\nMB_obj_1_fcn = function () \n{\n    description &lt;- \"One compartment PK model with linear clearance using differential equations\"\n    ini({\n        lka &lt;- 0.45\n        label(\"Absorption rate (Ka)\")\n        lcl &lt;- 1\n        label(\"Clearance (CL)\")\n        lvc &lt;- 3.45\n        label(\"Central volume of distribution (V)\")\n        propSd &lt;- c(0, 0.5)\n        label(\"Proportional residual error (fraction)\")\n        etalcl ~ 0.1\n    })\n    model({\n        ka &lt;- exp(lka)\n        cl &lt;- exp(lcl + etalcl)\n        vc &lt;- exp(lvc)\n        kel &lt;- cl/vc\n        d/dt(depot) &lt;- -ka * depot\n        d/dt(central) &lt;- ka * depot - kel * central\n        Cc &lt;- central/vc\n        Cc ~ prop(propSd)\n    })\n}\n\nMB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)\n\nMB_obj_1_ts = list(\n  system  = \"weeks\",\n  details = \n    list(months = list(verb = \"Months\", conv = 4.13359788359788e-07), \n        weeks = list(verb = \"Weeks\", conv = 1.65343915343915e-06), \n        days = list(verb = \"Days\", conv = 1.15740740740741e-05), \n        hours = list(verb = \"Hours\", conv = 0.000277777777777778))\n)\n# Setting the random seeds\nset.seed(5447)\nrxode2::rxSetSeed(5447)\n\n\n# Fetching the system information\nCTS_obj_1_rx_details = fetch_rxinfo(MB_obj_1_rx)\n\n# Defining covariates\nCTS_obj_1_cov = list()\n\n# Generating the subjects\nCTS_obj_1_subs = mk_subjects(object = MB_obj_1_rx,\n  nsub   = 10,\n  covs   = CTS_obj_1_cov)\n\n# Creating rules\nCTS_obj_1_rules = list()\n\n# rxSolve options\nCTS_obj_1_rxopts = list(\n  atol = 1e-8,\n  rtol = 1e-6,\n  sigdig = NULL)\n\n# Output times\nCTS_obj_1_output_times = formods::linspace(0,100,200)\n\n# Running simulation\nCTS_obj_1_simres =                                 \n simulate_rules(object            = MB_obj_1_rx,\n                subjects          = CTS_obj_1_subs[[\"subjects\"]],\n                eval_times        = c(0),\n                output_times      = CTS_obj_1_output_times,\n                time_scales       = MB_obj_1_ts,\n                rules             = CTS_obj_1_rules,\n                rx_options        = CTS_obj_1_rxopts)\n\n# Collecting the simulation and event history values\nCTS_obj_1_sim_tc = CTS_obj_1_simres[[\"simall\"]]\nCTS_obj_1_sim_ev = CTS_obj_1_simres[[\"ev_history\"]]\n\n# Plotting timecourse\nCTS_obj_1_fgtc =                                 \n  plot_sr_tc(sro = CTS_obj_1_simres,\n    xcol         = \"time\",         \n    xlab_str     = \"Time\",         \n    fncol        = 4,                       \n    fnrow        = 2,                       \n    dvcols       = \"Cc\",\n    fpage        = 1)\n\n# Plotting events\nCTS_obj_1_fgev =                                 \n  plot_sr_ev(sro = CTS_obj_1_simres,\n    xcol         = \"time\",         \n    xlab_str     = \"Time\",         \n    fncol        = 4,                       \n    fnrow        = 2,                       \n    evplot       = 1,\n    fpage        = 1)\n"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "library(rxode2)\nlibrary(nonmem2rx)\nlibrary(nlmixr2lib)\n\n# Creating the model\nMB_obj_1_fcn = function () \n{\n    description &lt;- \"One compartment PK model with linear clearance using differential equations\"\n    ini({\n        lka &lt;- 0.45\n        label(\"Absorption rate (Ka)\")\n        lcl &lt;- 1\n        label(\"Clearance (CL)\")\n        lvc &lt;- 3.45\n        label(\"Central volume of distribution (V)\")\n        propSd &lt;- c(0, 0.5)\n        label(\"Proportional residual error (fraction)\")\n        etalcl ~ 0.1\n    })\n    model({\n        ka &lt;- exp(lka)\n        cl &lt;- exp(lcl + etalcl)\n        vc &lt;- exp(lvc)\n        kel &lt;- cl/vc\n        d/dt(depot) &lt;- -ka * depot\n        d/dt(central) &lt;- ka * depot - kel * central\n        Cc &lt;- central/vc\n        Cc ~ prop(propSd)\n    })\n}\n\nMB_obj_1_rx =  rxode2::rxode2(MB_obj_1_fcn)\n\nMB_obj_1_ts = list(\n  system  = \"weeks\",\n  details = \n    list(months = list(verb = \"Months\", conv = 4.13359788359788e-07), \n        weeks = list(verb = \"Weeks\", conv = 1.65343915343915e-06), \n        days = list(verb = \"Days\", conv = 1.15740740740741e-05), \n        hours = list(verb = \"Hours\", conv = 0.000277777777777778))\n)\n# Setting the random seeds\nset.seed(5446)\nrxode2::rxSetSeed(5446)\n\n\n# Fetching the system information\nCTS_obj_1_rx_details = fetch_rxinfo(MB_obj_1_rx)\n\n# Defining covariates\nCTS_obj_1_cov = list()\n\n# Generating the subjects\nCTS_obj_1_subs = mk_subjects(object = MB_obj_1_rx,\n  nsub   = 10,\n  covs   = CTS_obj_1_cov)\n\n# Creating rules\nCTS_obj_1_rules = list()\n\n# rxSolve options\nCTS_obj_1_rxopts = list(\n  atol = 1e-8,\n  rtol = 1e-6,\n  sigdig = NULL)\n\n# Output times\nCTS_obj_1_output_times = formods::linspace(0,100,200)\n\n# Running simulation\nCTS_obj_1_simres =                                 \n simulate_rules(object            = MB_obj_1_rx,\n                subjects          = CTS_obj_1_subs[[\"subjects\"]],\n                eval_times        = c(0),\n                output_times      = CTS_obj_1_output_times,\n                time_scales       = MB_obj_1_ts,\n                rules             = CTS_obj_1_rules,\n                rx_options        = CTS_obj_1_rxopts)\n\n# Collecting the simulation and event history values\nCTS_obj_1_sim_tc = CTS_obj_1_simres[[\"simall\"]]\nCTS_obj_1_sim_ev = CTS_obj_1_simres[[\"ev_history\"]]\n\n# Plotting timecourse\nCTS_obj_1_fgtc =                                 \n  plot_sr_tc(sro = CTS_obj_1_simres,\n    xcol         = \"time\",         \n    xlab_str     = \"Time\",         \n    fncol        = 4,                       \n    fnrow        = 2,                       \n    dvcols       = \"Cc\",\n    fpage        = 1)\n\n# Plotting events\nCTS_obj_1_fgev =                                 \n  plot_sr_ev(sro = CTS_obj_1_simres,\n    xcol         = \"time\",         \n    xlab_str     = \"Time\",         \n    fncol        = 4,                       \n    fnrow        = 2,                       \n    evplot       = 1,\n    fpage        = 1)\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$code_ele_only</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "\n# Fetching the system information\nCTS_obj_1_rx_details = fetch_rxinfo(MB_obj_1_rx)\n\n# Defining covariates\nCTS_obj_1_cov = list()\n\n# Generating the subjects\nCTS_obj_1_subs = mk_subjects(object = MB_obj_1_rx,\n  nsub   = 10,\n  covs   = CTS_obj_1_cov)\n\n# Creating rules\nCTS_obj_1_rules = list()\n\n# rxSolve options\nCTS_obj_1_rxopts = list(\n  atol = 1e-8,\n  rtol = 1e-6,\n  sigdig = NULL)\n\n# Output times\nCTS_obj_1_output_times = formods::linspace(0,100,200)\n\n# Running simulation\nCTS_obj_1_simres =                                 \n simulate_rules(object            = MB_obj_1_rx,\n                subjects          = CTS_obj_1_subs[[\"subjects\"]],\n                eval_times        = c(0),\n                output_times      = CTS_obj_1_output_times,\n                time_scales       = MB_obj_1_ts,\n                rules             = CTS_obj_1_rules,\n                rx_options        = CTS_obj_1_rxopts)\n\n# Collecting the simulation and event history values\nCTS_obj_1_sim_tc = CTS_obj_1_simres[[\"simall\"]]\nCTS_obj_1_sim_ev = CTS_obj_1_simres[[\"ev_history\"]]\n"</span>
@@ -2346,12 +2670,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10] ""                                                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$elements$element_1$code_sim_only</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "# Setting the random seeds\nset.seed(5447)\nrxode2::rxSetSeed(5447)\n\n\n# Fetching the system information\nCTS_obj_1_rx_details = fetch_rxinfo(MB_obj_1_rx)\n\n# Defining covariates\nCTS_obj_1_cov = list()\n\n# Generating the subjects\nCTS_obj_1_subs = mk_subjects(object = MB_obj_1_rx,\n  nsub   = 10,\n  covs   = CTS_obj_1_cov)\n\n# Creating rules\nCTS_obj_1_rules = list()\n\n# rxSolve options\nCTS_obj_1_rxopts = list(\n  atol = 1e-8,\n  rtol = 1e-6,\n  sigdig = NULL)\n\n# Output times\nCTS_obj_1_output_times = formods::linspace(0,100,200)\n\n# Running simulation\nCTS_obj_1_simres =                                 \n simulate_rules(object            = MB_obj_1_rx,\n                subjects          = CTS_obj_1_subs[[\"subjects\"]],\n                eval_times        = c(0),\n                output_times      = CTS_obj_1_output_times,\n                time_scales       = MB_obj_1_ts,\n                rules             = CTS_obj_1_rules,\n                rx_options        = CTS_obj_1_rxopts)\n\n# Collecting the simulation and event history values\nCTS_obj_1_sim_tc = CTS_obj_1_simres[[\"simall\"]]\nCTS_obj_1_sim_ev = CTS_obj_1_simres[[\"ev_history\"]]\n"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "# Setting the random seeds\nset.seed(5446)\nrxode2::rxSetSeed(5446)\n\n\n# Fetching the system information\nCTS_obj_1_rx_details = fetch_rxinfo(MB_obj_1_rx)\n\n# Defining covariates\nCTS_obj_1_cov = list()\n\n# Generating the subjects\nCTS_obj_1_subs = mk_subjects(object = MB_obj_1_rx,\n  nsub   = 10,\n  covs   = CTS_obj_1_cov)\n\n# Creating rules\nCTS_obj_1_rules = list()\n\n# rxSolve options\nCTS_obj_1_rxopts = list(\n  atol = 1e-8,\n  rtol = 1e-6,\n  sigdig = NULL)\n\n# Output times\nCTS_obj_1_output_times = formods::linspace(0,100,200)\n\n# Running simulation\nCTS_obj_1_simres =                                 \n simulate_rules(object            = MB_obj_1_rx,\n                subjects          = CTS_obj_1_subs[[\"subjects\"]],\n                eval_times        = c(0),\n                output_times      = CTS_obj_1_output_times,\n                time_scales       = MB_obj_1_ts,\n                rules             = CTS_obj_1_rules,\n                rx_options        = CTS_obj_1_rxopts)\n\n# Collecting the simulation and event history values\nCTS_obj_1_sim_tc = CTS_obj_1_simres[[\"simall\"]]\nCTS_obj_1_sim_ev = CTS_obj_1_simres[[\"ev_history\"]]\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CTS$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "875396d76b918e9df1255e19976d2034"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "170f83727acd417f0374620f03dc4316"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MOD_TYPE</span>
@@ -2367,7 +2691,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/formods/templates/formods.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $MOD_yaml_file</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/pq/7srbf_fx3rd3k706hgxkg61r0000gp/T/RtmpTSKJRX/temp_libpathe1e4781caad7/ruminate/templates/CTS.yaml"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/pq/7srbf_fx3rd3k706hgxkg61r0000gp/T/RtmpqOrQqV/temp_libpathc5942846cf79/ruminate/templates/CTS.yaml"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $shiny_token</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "non_shiny"</span>

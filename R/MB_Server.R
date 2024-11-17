@@ -1126,7 +1126,7 @@ MB_Server <- function(id,
 #'@examples
 #' # Within shiny both session and input variables will exist,
 #' # this creates examples here for testing purposes:
-#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
+#' sess_res = MB_test_mksession()
 #' session = sess_res$session
 #' input   = sess_res$input
 #'
@@ -1743,7 +1743,7 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
 #'@examples
 #' # Within shiny both session and input variables will exist,
 #' # this creates examples here for testing purposes:
-#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
+#' sess_res = MB_test_mksession()
 #' session = sess_res$session
 #' input   = sess_res$input
 #'
@@ -2004,11 +2004,11 @@ res}
 #'  }
 #'}
 #'@examples
-#'# We need a module state:
-#'sess_res = MB_test_mksession(session=list(), full_session=FALSE)
-#'state = sess_res$state
+#' # We need a module state:
+#' sess_res = MB_test_mksession()
+#' state = sess_res$state
 #'
-#'mdls = MB_fetch_mdl(state)
+#' mdls = MB_fetch_mdl(state)
 #'
 #'names(mdls)
 MB_fetch_mdl = function(state){
@@ -2044,6 +2044,7 @@ MB_fetch_mdl = function(state){
           list(label       = ce[["ui"]][["element_name"]],
                MOD_TYPE    = "MB",
                id          = state[["id"]],
+               idx         = ce[["idx"]],
                ts_details  = ts_details,
                rx_obj      = cc[["rx_obj"]],
                rx_obj_name = ce[["rx_obj_name"]],
@@ -2072,173 +2073,172 @@ res}
 #'@title Populate Session Data for Module Testing
 #'@description Populates the supplied session variable for testing.
 #'@param session Shiny session variable (in app) or a list (outside of app)
-#'@param id An ID string that corresponds with the ID used to call the modules UI elements
-#'@param id_ASM An ID string that corresponds with the ID used to call the ASM module
-#'@param full_session  Boolean to indicate if the full test session should be created (default \code{TRUE}).
-#'@return list with the following elements
-#' \itemize{
-#'   \item{isgood:} Boolean indicating the exit status of the function.
-#'   \item{session:} The value Shiny session variable (in app) or a list (outside of app) after initialization.
-#'   \item{input:} The value of the shiny input at the end of the session initialization.
-#'   \item{state:} App state.
-#'   \item{rsc:} The \code{react_state} components.
-#'}
+#'@return The MB portion of the `all_sess_res` returned from \code{\link{ASM_set_app_state}} 
 #'@examples
-#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
-MB_test_mksession = function(session, id = "MB", id_ASM="ASM", full_session=TRUE){
+#' sess_res = MB_test_mksession()
+MB_test_mksession = function(session=list()){
 
 
   isgood = TRUE
-  rsc    = list()
+  rsc    = NULL
   input  = list()
-  state  = list()
 
-  # Configuration files
-  FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
-  MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
+  sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
+              system.file(package="ruminate", "preload", "MB_preload.yaml"))
 
-  # Creating an empty state object
-  state = MB_fetch_state(id              = id,
-                         id_ASM          = id_ASM,
-                         input           = input,
-                         session         = session,
-                         FM_yaml_file    = FM_yaml_file,
-                         MOD_yaml_file   = MOD_yaml_file,
-                         react_state     = NULL)
-
-  if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
-    # This will provide a list of the available models
-    models = MB_fetch_catalog(state)
-
-    #-------------------------------------------------------
-    # Simplest model:
-   #ridx = which(models[["summary"]][["Name"]] == "PK_1cmt_des")
-   #model_row  = models[["summary"]][ridx, ]
-
-
-    tmp_Object          = "my_model"
-    tmp_base_model      = "manual"
-    tmp_base_model_name = "manual"
-    tmp_Model =  ' my_model = function () 
-     {
-         description <- "One compartment PK model with linear clearance using differential equations"
-         ini({
-             lka <- 0.45
-             label("Absorption rate (Ka)")
-             lcl <- 1
-             label("Clearance (CL)")
-             lvc <- 3.45
-             label("Central volume of distribution (V)")
-             propSd <- c(0, 0.5)
-             label("Proportional residual error (fraction)")
-             etalcl ~ 0.1
-         })
-         model({
-             ka <- exp(lka)
-             cl <- exp(lcl + etalcl)
-             vc <- exp(lvc)
-             kel <- cl/vc
-             d/dt(depot) <- -ka * depot
-             d/dt(central) <- ka * depot - kel * central
-             Cc <- central/vc
-             Cc ~ prop(propSd)
-         })
-     }'
-
-    mk_rx_res = mk_rx_obj(
-      type="rxode2",
-      model = list(fcn_def = tmp_Model,       # model_row[["Model"]][1],
-                   fcn_obj = tmp_Object))     # model_row[["Object"]][1]))
-
-    current_ele = MB_fetch_current_element(state)
-    current_ele = MB_update_model(
-      state       = state,
-      session     = session,
-      current_ele = current_ele,
-      rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
-      note        = "base model",
-      reset       = TRUE)
-
-    current_ele[["ui"]][["element_name"]] = "One compartment model"
-    current_ele[["ui"]][["base_from"]]    = "user"
-
-    current_ele[["base_model"]]      =  tmp_base_model      # model_row[["mod_id"]][1]
-    current_ele[["base_model_name"]] =  tmp_base_model_name # model_row[["Name"]][1]
-
-    # Synching the catlog selection with the base model
-    current_ele[["ui"]][["catalog_selection"]] = tmp_base_model # model_row[["mod_id"]][1]
-
-    current_ele[["ui"]][["time_scale"]] = "hours"
-
-    # Timescales are found here:
-    # state[["MC"]][["formatting"]][["time_scales"]][["choices"]]
-
-    state = MB_set_current_element(
-      state   = state,
-      element = current_ele)
-
-    #-------------------------------------------------------
-    if(full_session){
-      # New element
-      state = MB_new_element(state)
-
-      # Building the element around the PK/biomarker test system in the
-      # package
-      example_file =  system.file(package="ruminate", "test_apps", "test_rxode2_system.R")
-
-      fcn_def = readChar(example_file, file.info(example_file)$size)
-      fcn_obj = "my_model"
-
-      mk_rx_res = mk_rx_obj(
-        type="rxode2",
-        model = list(fcn_def = fcn_def,
-                     fcn_obj = fcn_obj))
-
-      current_ele = MB_fetch_current_element(state)
-      current_ele = MB_update_model(
-        state       = state,
-        session     = session,
-        current_ele = current_ele,
-        rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
-        note        = "base model",
-        reset       = TRUE)
-
-      current_ele[["base_model"]]           =  "user" #model_row[["mod_id"]][1]
-      current_ele[["base_model_name"]]      =  "user" # model_row[["Name"]][1]
-      current_ele[["ui"]][["element_name"]] = "PK Biomarker"
-      current_ele[["ui"]][["base_from"]]    = "user"
-
-      # Synching the catlog selection with the base model
-      current_ele[["ui"]][["catalog_selection"]] =  "mod_1" # model_row[["mod_id"]][1]
-
-      current_ele[["ui"]][["time_scale"]] = 'days'
-
-      state = MB_set_current_element(
-        state   = state,
-        element = current_ele)
-    }
-    # This functions works both in a shiny app and outside of one
-    # if we're in a shiny app then the 'session' then the class of
-    # session will be a ShinySession. Otherwise it'll be a list if
-    # we're not in the app (ie just running test examples) then
-    # we need to set the state manually
-    if(("ShinySession" %in% class(session))){
-      FM_set_mod_state(session, id, state)
-    } else {
-      session = FM_set_mod_state(session, id, state)
-    }
-  } else {
-    isgood = FALSE
-  }
-
-  res = list(
-    isgood  = isgood,
-    session = session,
-    input   = input,
-    state   = state,
-    rsc     = rsc
-  )
-}
+  res = ASM_set_app_state(session=session, sources=sources)
+  res = res[["all_sess_res"]][["MB"]]
+# isgood = TRUE
+# rsc    = list()
+# input  = list()
+# state  = list()
+#
+# # Configuration files
+# FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
+# MOD_yaml_file = system.file(package = "ruminate", "templates", "MB.yaml")
+#
+# # Creating an empty state object
+# state = MB_fetch_state(id              = id,
+#                        id_ASM          = id_ASM,
+#                        input           = input,
+#                        session         = session,
+#                        FM_yaml_file    = FM_yaml_file,
+#                        MOD_yaml_file   = MOD_yaml_file,
+#                        react_state     = NULL)
+#
+# if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
+#   # This will provide a list of the available models
+#   models = MB_fetch_catalog(state)
+#
+#   #-------------------------------------------------------
+#   # Simplest model:
+#  #ridx = which(models[["summary"]][["Name"]] == "PK_1cmt_des")
+#  #model_row  = models[["summary"]][ridx, ]
+#
+#
+#   tmp_Object          = "my_model"
+#   tmp_base_model      = "manual"
+#   tmp_base_model_name = "manual"
+#   tmp_Model =  ' my_model = function () 
+#    {
+#        description <- "One compartment PK model with linear clearance using differential equations"
+#        ini({
+#            lka <- 0.45
+#            label("Absorption rate (Ka)")
+#            lcl <- 1
+#            label("Clearance (CL)")
+#            lvc <- 3.45
+#            label("Central volume of distribution (V)")
+#            propSd <- c(0, 0.5)
+#            label("Proportional residual error (fraction)")
+#            etalcl ~ 0.1
+#        })
+#        model({
+#            ka <- exp(lka)
+#            cl <- exp(lcl + etalcl)
+#            vc <- exp(lvc)
+#            kel <- cl/vc
+#            d/dt(depot) <- -ka * depot
+#            d/dt(central) <- ka * depot - kel * central
+#            Cc <- central/vc
+#            Cc ~ prop(propSd)
+#        })
+#    }'
+#
+#   mk_rx_res = mk_rx_obj(
+#     type="rxode2",
+#     model = list(fcn_def = tmp_Model,       # model_row[["Model"]][1],
+#                  fcn_obj = tmp_Object))     # model_row[["Object"]][1]))
+#
+#   current_ele = MB_fetch_current_element(state)
+#   current_ele = MB_update_model(
+#     state       = state,
+#     session     = session,
+#     current_ele = current_ele,
+#     rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
+#     note        = "base model",
+#     reset       = TRUE)
+#
+#   current_ele[["ui"]][["element_name"]] = "One compartment model"
+#   current_ele[["ui"]][["base_from"]]    = "user"
+#
+#   current_ele[["base_model"]]      =  tmp_base_model      # model_row[["mod_id"]][1]
+#   current_ele[["base_model_name"]] =  tmp_base_model_name # model_row[["Name"]][1]
+#
+#   # Synching the catlog selection with the base model
+#   current_ele[["ui"]][["catalog_selection"]] = tmp_base_model # model_row[["mod_id"]][1]
+#
+#   current_ele[["ui"]][["time_scale"]] = "hours"
+#
+#   # Timescales are found here:
+#   # state[["MC"]][["formatting"]][["time_scales"]][["choices"]]
+#
+#   state = MB_set_current_element(
+#     state   = state,
+#     element = current_ele)
+#
+#   #-------------------------------------------------------
+#   if(full_session){
+#     # New element
+#     state = MB_new_element(state)
+#
+#     # Building the element around the PK/biomarker test system in the
+#     # package
+#     example_file =  system.file(package="ruminate", "test_apps", "test_rxode2_system.R")
+#
+#     fcn_def = readChar(example_file, file.info(example_file)$size)
+#     fcn_obj = "my_model"
+#
+#     mk_rx_res = mk_rx_obj(
+#       type="rxode2",
+#       model = list(fcn_def = fcn_def,
+#                    fcn_obj = fcn_obj))
+#
+#     current_ele = MB_fetch_current_element(state)
+#     current_ele = MB_update_model(
+#       state       = state,
+#       session     = session,
+#       current_ele = current_ele,
+#       rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
+#       note        = "base model",
+#       reset       = TRUE)
+#
+#     current_ele[["base_model"]]           =  "user" #model_row[["mod_id"]][1]
+#     current_ele[["base_model_name"]]      =  "user" # model_row[["Name"]][1]
+#     current_ele[["ui"]][["element_name"]] = "PK Biomarker"
+#     current_ele[["ui"]][["base_from"]]    = "user"
+#
+#     # Synching the catlog selection with the base model
+#     current_ele[["ui"]][["catalog_selection"]] =  "mod_1" # model_row[["mod_id"]][1]
+#
+#     current_ele[["ui"]][["time_scale"]] = 'days'
+#
+#     state = MB_set_current_element(
+#       state   = state,
+#       element = current_ele)
+#   }
+#   # This functions works both in a shiny app and outside of one
+#   # if we're in a shiny app then the 'session' then the class of
+#   # session will be a ShinySession. Otherwise it'll be a list if
+#   # we're not in the app (ie just running test examples) then
+#   # we need to set the state manually
+#   if(("ShinySession" %in% class(session))){
+#     FM_set_mod_state(session, id, state)
+#   } else {
+#     session = FM_set_mod_state(session, id, state)
+#   }
+# } else {
+#   isgood = FALSE
+# }
+#
+# res = list(
+#   isgood  = isgood,
+#   session = session,
+#   input   = input,
+#   state   = state,
+#   rsc     = rsc
+# )
+res}
 
 #'@export
 #'@title New Model Building Model
@@ -2325,7 +2325,7 @@ state}
 #'@examples
 #' # Within shiny both session and input variables will exist,
 #' # this creates examples here for testing purposes:
-#' sess_res = MB_test_mksession(session=list())
+#' sess_res = MB_test_mksession()
 #' session = sess_res$session
 #' input   = sess_res$input
 #'
@@ -3184,5 +3184,229 @@ MB_test_catalog   = function(state, as_cran=FALSE, verbose=TRUE){
    isgood = isgood,
    msgs   = msgs
   )
+
+res}
+
+#'@export
+#'@title Preload Data for MB Module
+#'@description Populates the supplied session variable with information from
+#'list of sources.
+#'@param session     Shiny session variable (in app) or a list (outside of app)
+#'@param src_list    List of preload data (all read together with module IDs at the top level) 
+#'@param yaml_res    List data from module yaml config
+#'@param mod_ID      Module ID of the module being loaded. 
+#'@param react_state Reactive shiny object (in app) or a list (outside of app) used to trigger reactions. 
+#'@param quickload   Logical \code{TRUE} to load reduced analysis \code{FALSE} to load the full analysis
+#'@return list with the following elements
+#' \itemize{
+#'   \item{isgood:}      Boolean indicating the exit status of the function.
+#'   \item{msgs:}        Messages to be passed back to the user.
+#'   \item{session:}     Session object
+#'   \item{input:}       The value of the shiny input at the end of the session initialization.
+#'   \item{state:}       App state.
+#'   \item{react_state:} The \code{react_state} components.
+#'}
+MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = list(), quickload=FALSE){
+  isgood  = TRUE
+  input   = list()
+  msgs    = c()
+  res     = c()
+  err_msg = c()
+        
+
+  FM_yaml_file  = render_str(src_list[[mod_ID]][["fm_yaml"]])
+  MOD_yaml_file = render_str(src_list[[mod_ID]][["mod_yaml"]])
+  id_ASM        = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_ASM"]]
+
+  state = MB_fetch_state(id              = mod_ID,
+                         id_ASM          = id_ASM,
+                         input           = input,
+                         session         = session,
+                         FM_yaml_file    = FM_yaml_file,
+                         MOD_yaml_file   = MOD_yaml_file,
+                         react_state     = react_state)
+
+  elements = src_list[[mod_ID]][["elements"]]
+
+  # Checks to see if we can add elements
+  ADD_ELEMENTS = TRUE
+  if(is.null(elements)){
+    ADD_ELEMENTS = FALSE
+  }
+
+  if(ADD_ELEMENTS){
+    # All of the numeric IDs in the preload
+    enumeric    = c()
+
+    # Map between list index and internal figure ID
+    element_map = list()
+    for(ele_idx in 1:length(elements)){
+      enumeric = c(enumeric, elements[[ele_idx]][["idx"]])
+      element_map[[ paste0("element_",elements[[ele_idx]][["idx"]] )]] = ele_idx
+    }
+
+    # Creating empty element placeholders
+    while(state[["MB"]][["element_cntr"]] < max(enumeric)){
+      state = MB_new_element(state)
+    }
+
+    # culling any unneeded views 
+    for(ele_id  in names(state[["MB"]][["elements"]])){
+      # This is a view that doesn't exist in elements so 
+      # we need to cull it
+      if(!(ele_id  %in% names(element_map))){
+        # Setting the view to be deleted as the current view
+        state[["MB"]][["elements"]][[ ele_id  ]] = NULL
+      }
+    }
+
+    # Now we have empty elements defined
+    for(element_id in names(element_map)){
+      # Making the current element id active
+      state[["MB"]][["current_element"]]  =  element_id
+
+      # Getting the numeric position in the list corresponding 
+      # to the current element id
+      ele_idx = element_map[[element_id]]
+      ele_isgood = TRUE
+
+      #-------------------------------------------------------
+      # Defining general options
+      FM_le(state, paste0("loading model idx: ", ele_idx ))
+
+      req_ele_opts =c("name", "time_scale", "base_from", "base_model_id", "base_model_name")
+      if(!all(req_ele_opts    %in% names( elements[[ele_idx]]))){
+        ele_isgood      = FALSE
+        missing_opts    = req_ele_opts[!(req_ele_opts %in% names(elements[[ele_idx]]))]
+        err_msg = c(err_msg,
+          paste0("element idx:  ",ele_idx, " missing option(s):" ),
+          paste0("  -> ", paste0(missing_opts, collapse=", "))
+          )
+      }
+
+
+      if(!("components" %in% names(elements[[ele_idx]]))){
+        ele_isgood = FALSE
+        err_msg = c(err_msg, 
+            paste0("element idx: ",ele_idx, " no models defined"))
+
+      }
+
+
+      # Next we process the components (models)
+      if(ele_isgood){
+
+        # Creating element components
+        for(comp_idx in 1:length(elements[[ele_idx]][["components"]])){
+
+          req_comp_opts =c("object", "model")
+          tmp_component = elements[[ele_idx]][["components"]][[comp_idx]][["component"]]
+          add_component = TRUE
+
+          if(!all(req_comp_opts    %in% names(tmp_component))){
+            ele_isgood      = FALSE
+            add_component   = FALSE
+            missing_opts    = 
+              req_comp_opts[!(req_comp_opts %in% names(tmp_component))]
+            err_msg = c(err_msg,
+              paste0("element idx:  ",ele_idx, ", model idx: ", comp_idx, ", missing option(s):" ),
+              paste0("  -> ", paste0(missing_opts, collapse=", "))
+              )
+          }
+
+          if(add_component && ele_isgood){
+            if(comp_idx == 1){
+              model_reset = TRUE
+            } else {
+              model_reset = FALSE
+            }
+            mk_rx_res = mk_rx_obj(
+              type="rxode2",
+              model = list(fcn_def = tmp_component[["model"]],     
+                           fcn_obj = tmp_component[["object"]]))
+                
+            if(mk_rx_res[["isgood"]]){
+              tmp_note = "import"
+              if(!is.null(tmp_component[["note"]])){
+                tmp_note = tmp_component[["note"]]
+              }
+
+              current_ele = MB_fetch_current_element(state)
+
+              current_ele = MB_update_model(
+                state       = state,
+                session     = session,
+                current_ele = current_ele,
+                rx_obj      = mk_rx_res[["capture"]][["rx_obj"]],
+                note        = tmp_note,
+                reset       = model_reset)
+
+              state = MB_set_current_element(
+                state   = state,
+                element = current_ele)
+
+
+            } else {
+              err_msg = c(err_msg, "mk_rx_obj() failed", mk_rx_res[["msgs"]])
+              ele_isgood = FALSE
+            }
+          }
+        }
+
+        # Setting element options:
+        current_ele = MB_fetch_current_element(state)
+        FM_le(state, paste0("setting name: ", elements[[ele_idx]][["name"]]))
+        current_ele[["ui"]][["element_name"]] = elements[[ele_idx]][["name"]]
+
+        FM_le(state, paste0("setting time scale: ", elements[[ele_idx]][["time_scale"]]))
+        current_ele[["ui"]][["time_scale"]] = elements[[ele_idx]][["time_scale"]]
+
+        FM_le(state, paste0("setting base from: ", elements[[ele_idx]][["base_from"]]))
+        current_ele[["ui"]][["base_from"]]    = elements[[ele_idx]][["base_from"]]
+
+        FM_le(state, paste0("setting catalog selection: ", elements[[ele_idx]][["catalog_selection"]]))
+        current_ele[["ui"]][["catalog_selection"]]    = elements[[ele_idx]][["catalog_selection"]]
+
+        FM_le(state, paste0("setting base model id: ", elements[[ele_idx]][["base_model_id"]]))
+        current_ele[["base_model"]]           = elements[[ele_idx]][["base_model_id"]]
+
+        FM_le(state, paste0("setting base model name: ", elements[[ele_idx]][["base_model_name"]]))
+        current_ele[["base_model_name"]]      = elements[[ele_idx]][["base_model_name"]]
+        state = MB_set_current_element(state, current_ele)
+
+
+
+      }
+
+      if(ele_isgood){
+        formods::FM_le(state,paste0("added element idx: ",ele_idx))
+      } else {
+        err_msg = c(
+          paste0("failed to add element idx: ",ele_idx),
+          err_msg)
+        msgs = c(msgs, err_msg)
+        #formods::FM_le(state,err_msg,entry_type="danger")
+        isgood = FALSE
+      }
+    }
+  }
+
+  current_ele = MB_fetch_current_element(state)
+  browser()
+
+  formods::FM_le(state,paste0("module isgood: ",isgood))
+
+  if(("ShinySession" %in% class(session))){
+    FM_set_mod_state(session, mod_ID, state)
+  } else {
+    session = FM_set_mod_state(session, mod_ID, state)
+  }
+
+  res = list(isgood      = isgood, 
+             msgs        = msgs,
+             session     = session,
+             input       = input,
+             react_state = react_state,
+             state       = state)
 
 res}

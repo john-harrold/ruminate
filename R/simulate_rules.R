@@ -1662,7 +1662,7 @@ rx2other <- function(object,
           if(tcres[["isgood"]]){
             rx_obj = tcres[["capture"]][["rx_obj"]]
             msgs   = c(msgs,
-              "At least one between-subject varaibility term should be defined.",
+              "At least one between-subject variability term should be defined.",
               "Adding the following dummy parameters:",
               "  POP_RUMINATE",
               "  TV_RUMINATE",
@@ -1692,7 +1692,7 @@ rx2other <- function(object,
           if(tcres[["isgood"]]){
             rx_obj = tcres[["capture"]][["rx_obj"]]
             msgs   = c(msgs,
-              "At least one between-subject varaibility term should be defined.",
+              "At least one between-subject variability term should be defined.",
               "Adding the following dummy output/endpoint and parameter:",
               "  OUT_RUMINATE",
               "  add.OUT_RUMINATE")

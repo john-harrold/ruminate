@@ -228,17 +228,15 @@ server <- function(input, output, session) {
 
   # If the ftmptest file is present we load test data
   if(file.exists(ftmptest)){
-    NCA_test_mksession(
-      session,
-      id     = "NCA",
-      id_UD  = "UD",
-      id_DW  = "DW",
-      id_ASM = "ASM"
-    )
-    CTS_test_mksession(
-      session,
-      full_session=TRUE
-    )
+    sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
+                system.file(package="formods",  "preload", "UD_preload.yaml"),
+                system.file(package="formods",  "preload", "FG_preload.yaml"),
+                system.file(package="formods",  "preload", "DW_preload.yaml"),
+                system.file(package="ruminate", "preload", "NCA_preload.yaml"),
+                system.file(package="ruminate", "preload", "MB_preload.yaml"),
+                system.file(package="ruminate", "preload", "CTS_preload.yaml"))
+    
+    res = ASM_set_app_state(session=session, sources=sources, react_state=react_FM)
   }
 
   # Module servers

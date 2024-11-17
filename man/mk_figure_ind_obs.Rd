@@ -52,18 +52,8 @@ Takes the output of PKNCA and creates \code{ggplot} figures faceted
 by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
 }
 \examples{
-id     = "NCA"
-id_UD  = "UD"
-id_DW  = "DW"
-id_ASM = "ASM"
-
 # We need a state variable to be define
-sess_res = NCA_test_mksession(session=list(),
-     id     = id,
-     id_UD  = id_UD,
-     id_DW  = id_DW,
-     id_ASM = id_ASM,
-     full_session=FALSE)
+sess_res = NCA_test_mksession()
 
 state = sess_res$state
 

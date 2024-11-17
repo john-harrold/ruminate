@@ -115,7 +115,18 @@ used to detect changes in the state.</p></li>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Within shiny both session and input variables will exist,</span></span></span>
 <span class="r-in"><span><span class="co"># this creates examples here for testing purposes:</span></span></span>
-<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="MB_test_mksession.html">MB_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="MB_test_mksession.html">MB_test_mksession</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: module isgood: TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   dest:   file.path("config","report.docx")</span>
@@ -129,14 +140,51 @@ used to detect changes in the state.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:24933f86b657b9503f22440e8c4d3cac</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: State initialized</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: loading model idx: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: cc37b764ee3c117dfce1f1d7bd0e6e12</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:2ae8d3386b5fee38596e0104e04bc151</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 8911fc506ba3bf2824e9ff1da1379aac</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:5095d65c2f257d705855a6ddbc6dc7a7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting name: One compartment model</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting time scale: hours</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base from: user</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting catalog selection: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model id: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model name: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: a9377216084868217a1496c27e249347</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:d81158159bd5323e1e73f01f41e5cdd7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: added element idx: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: loading model idx: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: a2705583c39f533700b82e27229faaf5</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:ad958a4d17feaeeba51248cd2625870d</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting name: PK Biomarker</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting time scale: days</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base from: user</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting catalog selection: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model id: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model name: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 9e566c4f2ecefda905229bfcaa28cf71</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:0a5d8f6a73a7b85b9e966de1594b3865</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: added element idx: 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: MB_preload(session = session, src_list = src_list, yaml_res = yaml_res, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     mod_ID = mod_ID, react_state = react_state, quickload = quickload)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: formods::FM_le(state, paste0("module isgood: ", isgood))</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module isgood: TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (("ShinySession" %in% class(session))) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> } else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     session = FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: session = FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: res = list(isgood = isgood, msgs = msgs, session = session, input = input, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     react_state = react_state, state = state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: res</span>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
 <span class="r-in"><span><span class="va">input</span>   <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">input</span></span></span>
 <span class="r-in"><span></span></span>
@@ -164,8 +212,8 @@ used to detect changes in the state.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: source model change detected</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:  &gt; covariates reset</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 98890dc17c3d5a8008f5fd879ab1368c</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 875396d76b918e9df1255e19976d2034</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: bc1de16244650329a4c97a63637aa965</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 170f83727acd417f0374620f03dc4316</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: State initialized</span>
 </code></pre></div>
     </div>

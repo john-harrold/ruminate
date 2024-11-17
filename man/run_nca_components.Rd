@@ -6,7 +6,8 @@
 \usage{
 run_nca_components(
   state,
-  components = c("nca", "fg_ind_obs", "tb_ind_obs", "tb_ind_params")
+  components = c("nca", "fg_ind_obs", "tb_ind_obs", "tb_ind_params"),
+  verbose = TRUE
 )
 }
 \arguments{
@@ -14,7 +15,9 @@ run_nca_components(
 
 \item{components}{List of components to run. By default it will run all of
 the following. If you just need to regenerate a figure based on the current
-nca results you can just specify that component. These are the valid
+nca results you can just specify that component. These are the valid}
+
+\item{verbose}{Logical to enable or disable messaging
 components:
 \itemize{
 \item{nca:}               Run NCA analysis
@@ -37,7 +40,7 @@ state.
 }
 \examples{
 # We need a state object to use below
-sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
+sess_res = NCA_test_mksession()
 state = sess_res$state
 
 state = run_nca_components(state, components="tb_ind_params")

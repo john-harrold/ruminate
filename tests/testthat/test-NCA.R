@@ -7,12 +7,10 @@ if(system.file(package="readxl") !=""){
 } else {
   readxl_found = FALSE
 }
-# Creating an NCA state object:
-#sessres = NCA_test_mksession(session=list())
-#state   = sessres[["state"]]
 
-sess_res = suppressMessages(suppressWarnings(NCA_test_mksession(session=list())))
+sess_res = suppressMessages(suppressWarnings(NCA_test_mksession()))
 
+expect_true(sess_res[["isgood"]])
 
 if(system.file(package="readxl") != ""){
 

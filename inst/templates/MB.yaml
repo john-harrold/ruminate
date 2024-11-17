@@ -1,5 +1,11 @@
 # The MC field is a skeleton for constructing new modules
 MC:
+  # Module informaiton
+  module:
+    type: "MB"
+    # internal R Object: module ID used in deployment
+    depends: 
+      id_ASM: "ASM"
   # The prefix of object names created in the generated code
   element_object_name: "MB_obj"
   # This is a list of model sources. In the app the sources will be listed in

@@ -47,13 +47,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">CTS_test_mksession</span><span class="op">(</span></span>
-<span>  <span class="va">session</span>,</span>
-<span>  id <span class="op">=</span> <span class="st">"CTS"</span>,</span>
-<span>  id_ASM <span class="op">=</span> <span class="st">"ASM"</span>,</span>
-<span>  id_MB <span class="op">=</span> <span class="st">"MB"</span>,</span>
-<span>  full_session <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">CTS_test_mksession</span><span class="op">(</span>session <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -63,36 +57,31 @@
 <dl><dt id="arg-session">session<a class="anchor" aria-label="anchor" href="#arg-session"></a></dt>
 <dd><p>Shiny session variable (in app) or a list (outside of app)</p></dd>
 
-
-<dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
-<dd><p>An ID string that corresponds with the ID used to call the modules UI elements</p></dd>
-
-
-<dt id="arg-id-asm">id_ASM<a class="anchor" aria-label="anchor" href="#arg-id-asm"></a></dt>
-<dd><p>An ID string that corresponds with the ID used to call the ASM module</p></dd>
-
-
-<dt id="arg-id-mb">id_MB<a class="anchor" aria-label="anchor" href="#arg-id-mb"></a></dt>
-<dd><p>An ID string that corresponds with the ID used to call the MB module</p></dd>
-
-
-<dt id="arg-full-session">full_session<a class="anchor" aria-label="anchor" href="#arg-full-session"></a></dt>
-<dd><p>Boolean to indicate if the full test session should be created (default <code>TRUE</code>).</p></dd>
-
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>list with the following elements</p><ul><li><p>isgood: Boolean indicating the exit status of the function.</p></li>
-<li><p>session: The value Shiny session variable (in app) or a list (outside of app) after initialization.</p></li>
-<li><p>input: The value of the shiny input at the end of the session initialization.</p></li>
-<li><p>state: App state.</p></li>
-<li><p>rsc: The <code>react_state</code> components.</p></li>
-</ul></div>
+    <p>The CTS portion of the <code>all_sess_res</code> returned from <code><a href="https://formods.ubiquity.tools/reference/ASM_set_app_state.html" class="external-link">ASM_set_app_state</a></code></p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="https://formods.ubiquity.tools/reference/ASM_set_app_state.html" class="external-link">ASM_set_app_state</a></code></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu">CTS_test_mksession</span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sess_res</span> <span class="op">=</span> <span class="fu">CTS_test_mksession</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: module isgood: TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   dest:   file.path("config","report.docx")</span>
@@ -106,14 +95,51 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:24933f86b657b9503f22440e8c4d3cac</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: State initialized</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: loading model idx: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: cc37b764ee3c117dfce1f1d7bd0e6e12</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:2ae8d3386b5fee38596e0104e04bc151</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 8911fc506ba3bf2824e9ff1da1379aac</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:5095d65c2f257d705855a6ddbc6dc7a7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting name: One compartment model</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting time scale: hours</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base from: user</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting catalog selection: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model id: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model name: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: a9377216084868217a1496c27e249347</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:d81158159bd5323e1e73f01f41e5cdd7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: added element idx: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: loading model idx: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: a2705583c39f533700b82e27229faaf5</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:ad958a4d17feaeeba51248cd2625870d</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting name: PK Biomarker</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting time scale: days</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base from: user</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting catalog selection: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model id: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model name: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 9e566c4f2ecefda905229bfcaa28cf71</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:0a5d8f6a73a7b85b9e966de1594b3865</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: added element idx: 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: MB_preload(session = session, src_list = src_list, yaml_res = yaml_res, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     mod_ID = mod_ID, react_state = react_state, quickload = quickload)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: formods::FM_le(state, paste0("module isgood: ", isgood))</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module isgood: TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (("ShinySession" %in% class(session))) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> } else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     session = FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: session = FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: res = list(isgood = isgood, msgs = msgs, session = session, input = input, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     react_state = react_state, state = state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: res</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.docx")</span>
@@ -125,13 +151,37 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.yaml")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: source model change detected</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:  &gt; covariates reset</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 98890dc17c3d5a8008f5fd879ab1368c</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 875396d76b918e9df1255e19976d2034</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: bc1de16244650329a4c97a63637aa965</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 170f83727acd417f0374620f03dc4316</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: source model change detected</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:  &gt; covariates reset</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 8468c4a061cb1df849ddd449fdad0ec7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: e4d88a11fcde148c754a69871ae2f310</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: loading element idx: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: setting cohort name: Single dose</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: setting model source: MB_obj_1_rx</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: setting trial options:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - nsub: 3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - visit_times: 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - trial_end: 100</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - fpage: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - dvcols: Cc</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - time_scale: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - tc_dim: d2x4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - evplot: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - cts_config_atol: 1e-8</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - cts_config_rtol: 1e-6</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - cts_config_sigdig: NULL</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - cts_config_seed: 5446</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - cts_config_nsteps: 5</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 4e59d508617c4e8f49df8b2311935e00</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 76e8ba57e1b2a3e9ef382580fd62479a</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: adding rule: first_dose</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 25e440c9ecc4b8058f7e8eedf9c8fa37</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 7f4cc83ac02a009b6747a02b36bce9d7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 9d4a253fd7bd6835a94db3bc04180e89</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 771581d9a7008317946a834323b7aecc</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> using C compiler: ‘Apple clang version 15.0.0 (clang-1500.3.9.4)’</span>
@@ -144,8 +194,101 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 299e10ecd7da5e5b61a30c0a355e69f8</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 61242dd11d225d71986e8e903e29da8c</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: simulation complete</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: plot complete</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: c9bc628332c19ebbd4fc7716cb3b8c7d</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 2492cb0c548e22bff8ac0051788d8b0c</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: added element idx: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: loading element idx: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: setting cohort name: Biomarker Titration</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: setting model source: MB_obj_2_rx</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: source model change detected</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:  &gt; covariates reset</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: setting trial options:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - nsub: 12</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - visit_times: (0:6)*28*2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - trial_end: 400</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - fpage: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - dvcols: C_ng_ml</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - dvcols: BM</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - time_scale: weeks</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - tc_dim: d2x4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - evplot: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - cts_config_atol: 1e-8</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - cts_config_rtol: 1e-6</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - cts_config_sigdig: NULL</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - cts_config_seed: 5446</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - cts_config_nsteps: 50</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: adding covariates:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - WT: cont_lognormal (70, .1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - SEX_ID: discrete (0, 1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   - SUBTYPE_ID: fixed (1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 4e9b45f89dc5a346b632548eb96c8ee8</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 28f872ae5afe5c5c004b30276370765f</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: adding rule: first_dose</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: f55ec4159d0d6afa04a775d0129571bd</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 397290d2eefaef12ca763308d98f449f</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: adding rule: keep_dose</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 427ffe2d137851da82bf2b595603bc17</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: cc5dcf130ebdb88385c66e6a1fc2bb50</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: adding rule: decrease_dose</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 4d212892986b4b42ab535415acda5ce7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: d9504b8faf3ad95971c8105a3e06c1f4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: adding rule: increase_dose</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 1e8bdb4b44557820593bd32960322810</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 9f16c284aa48502eaf92a3546ed350d8</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> using C compiler: ‘Apple clang version 15.0.0 (clang-1500.3.9.4)’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> using SDK: ‘’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Evaluation times <span style="color: #00BB00;">■■■■■■■■■                       </span>  25% | ETA:  4s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 12 11 10 9 8 7 6 5 4 3 2 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 12 11 10 9 8 7 6 5 4 3 2 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Evaluation times <span style="color: #00BB00;">■■■■■■■■■■■■■■■■                </span>  50% | ETA:  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 12 11 10 9 8 7 6 5 4 3 2 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 12 11 10 9 8 7 6 5 4 3 2 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 12 11 10 9 8 7 6 5 4 3 2 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Evaluation times <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■     </span>  88% | ETA:  1s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>multi-subject simulation without without 'omega'</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>IDs without zero-time start at the first observed time: 12 11 10 9 8 7 6 5 4 3 2 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Evaluation times <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 100% | ETA:  0s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: simulation complete</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: plot complete</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: da252163b020fee9754a16958247a888</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 83b43c58075c2480a55dc4fd562a9743</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: added element idx: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module isgood: TRUE</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

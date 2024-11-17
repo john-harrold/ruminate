@@ -20,5 +20,5 @@ State with interval added to the current analysis.
 }
 \description{
 Takes the start time, stop time, and NCA parameters and adds
-them to the intervals table
+them to the intervals table of the current analysis
 }

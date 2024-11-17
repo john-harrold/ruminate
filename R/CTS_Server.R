@@ -2363,7 +2363,7 @@ CTS_Server <- function(id,
 #'@examples
 #' # Within shiny both session and input variables will exist,
 #' # this creates examples here for testing purposes:
-#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
+#' sess_res = MB_test_mksession()
 #' session = sess_res$session
 #' input   = sess_res$input
 #'
@@ -2818,7 +2818,7 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
 #'@examples
 #' # Within shiny both session and input variables will exist,
 #' # this creates examples here for testing purposes:
-#' sess_res = MB_test_mksession(session=list(), full_session=FALSE)
+#' sess_res = MB_test_mksession()
 #' session = sess_res$session
 #' input   = sess_res$input
 #'
@@ -2899,8 +2899,31 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
     session         = session)
 
   # Getting the currently defined models
-  # JMH update this when reacting to id_MB
   MDL = FM_fetch_mdl(state, session, ids = id_MB)
+
+  rule_ui_map = list(
+    dose = list(
+      name       = "rule_name", 
+      type       = "rule_type", 
+      condition  = "rule_condition",
+      state      = "action_dosing_state",
+      values     = "action_dosing_values",
+      times      = "action_dosing_times", 
+      durations  = "action_dosing_durations" ),
+    "set state"  = list(
+      name       = "rule_name", 
+      type       = "rule_type", 
+      condition  = "rule_condition",
+      state      = "action_set_state",
+      value      = "action_state_values"),
+    "manual"  = list(
+      name       = "rule_name", 
+      type       = "rule_type", 
+      condition  = "rule_condition",
+      code       = "action_manual_code")
+  )
+
+  state[["CTS"]][["rule_ui_map"]]          = rule_ui_map
 
   # Storing the ui_ids for the elements
   state[["CTS"]][["MDL"]]                  = MDL
@@ -3620,7 +3643,7 @@ res}
 #  #'}
 #  #'@examples
 #  #' # We need a module state:
-#  #' sess_res = CTS_test_mksession(session=list(), full_session=FALSE)
+#  #' sess_res = CTS_test_mksession()
 #  #' state = sess_res$state
 #  #'
 #  #' mdls = CTS_fetch_mdl(state)
@@ -3712,200 +3735,200 @@ state}
 #'@title Populate Session Data for Module Testing
 #'@description Populates the supplied session variable for testing.
 #'@param session Shiny session variable (in app) or a list (outside of app)
-#'@param id An ID string that corresponds with the ID used to call the modules UI elements
-#'@param id_ASM An ID string that corresponds with the ID used to call the ASM module
-#'@param id_MB An ID string that corresponds with the ID used to call the MB module
-#'@param full_session  Boolean to indicate if the full test session should be created (default \code{TRUE}).
-#'@return list with the following elements
-#' \itemize{
-#'   \item{isgood:} Boolean indicating the exit status of the function.
-#'   \item{session:} The value Shiny session variable (in app) or a list (outside of app) after initialization.
-#'   \item{input:} The value of the shiny input at the end of the session initialization.
-#'   \item{state:} App state.
-#'   \item{rsc:} The \code{react_state} components.
-#'}
+#'@return The CTS portion of the `all_sess_res` returned from \code{\link{ASM_set_app_state}} 
 #'@examples
 #'\donttest{
-#'sess_res = CTS_test_mksession(session=list(), full_session=FALSE)
+#'sess_res = CTS_test_mksession()
 #'}
-CTS_test_mksession = function(session, id = "CTS", id_ASM="ASM", id_MB = "MB", full_session=TRUE){
+#'@seealso \code{\link{ASM_set_app_state}}
+CTS_test_mksession = function(session=list()){
 
   isgood = TRUE
-  rsc    = list()
+  rsc    = NULL
   input  = list()
-  state  = list()
 
-  sess_res = MB_test_mksession(session=session, full_session=full_session)
-  session = sess_res[["session"]]
+  sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
+              system.file(package="ruminate", "preload", "MB_preload.yaml"),
+              system.file(package="ruminate", "preload", "CTS_preload.yaml"))
 
-  # Configuration files
-  FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
-  MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml")
-
-  # Creating an empty state object
-  state = CTS_fetch_state(id             = id,
-                         id_ASM          = id_ASM,
-                         id_MB           = id_MB,
-                         input           = input,
-                         session         = session,
-                         FM_yaml_file    = FM_yaml_file,
-                         MOD_yaml_file   = MOD_yaml_file,
-                         react_state     = NULL)
-
-
-  # Pulling the default first element
-  current_ele = CTS_fetch_current_element(state)
-
-  # Defining the source model
-  state[["CTS"]][["ui"]][["source_model"]] = "MB_obj_1_rx"
-  current_ele = CTS_change_source_model(state, current_ele)
-
-  # Single visit
-  current_ele[["ui"]][["visit_times"]]                 = "0"
-  current_ele[["ui"]][["cts_config_nsteps"]]           = "5"
-
-  # Creating a dosing rule
-  state[["CTS"]][["ui"]][["rule_condition"]]           = "time == 0"
-  state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
-  state[["CTS"]][["ui"]][["action_dosing_state"]]      = "central"
-  state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(1)"
-  state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0)"
-  state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0)"
-  state[["CTS"]][["ui"]][["rule_name"]]                = "Single_Dose"
-
-
-  # Adding the rule:
-  current_ele = CTS_add_rule(state, current_ele)
-
-  # Appending the plotting details as well
-  current_ele[["ui"]][["fpage"]]             = "1"
-  current_ele[["ui"]][["dvcols"]]            = "Cc"
-
-  # Reducing the number of subjects and steps to speed things up on CRAN
-  current_ele[["ui"]][["nsub"]]              = "2"
-  current_ele[["ui"]][["cts_config_nsteps"]] = "5"
-
-  # Putting the element back in the state forcing code generation
-  state = CTS_set_current_element(
-    state   = state,
-    element = current_ele)
-
-  # Now we pull out the current element, and simulate it
-  current_ele = CTS_fetch_current_element(state)
-  current_ele = CTS_simulate_element(state, current_ele)
-
-  # Next we plot the element
-  current_ele = CTS_plot_element(state, current_ele)
-
-  # Now we save those results back into the state:
-  state = CTS_set_current_element(
-    state   = state,
-    element = current_ele)
-
-  #-------------------------------------------------------
-  if(full_session){
-    # Creating a new element, pulling it out, setting the source model,
-    # and defining the visit times:
-    state       = CTS_new_element(state)
-    current_ele = CTS_fetch_current_element(state)
-    state[["CTS"]][["ui"]][["source_model"]] = "MB_obj_2_rx"
-    current_ele = CTS_change_source_model(state, current_ele)
-    current_ele[["ui"]][["visit_times"]]  = "(0:6)*28*2"
-
-    # We must define covariates:
-    state[["CTS"]][["ui"]][["covariate_value"]]            = "70, .1"
-    state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "cont_lognormal"
-    state[["CTS"]][["ui"]][["selected_covariate"]]         = "WT"
-    current_ele = CTS_add_covariate(state, current_ele)
-
-    state[["CTS"]][["ui"]][["covariate_value"]]            = "0, 1"
-    state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "discrete"
-    state[["CTS"]][["ui"]][["selected_covariate"]]         = "SEX_ID"
-    current_ele = CTS_add_covariate(state, current_ele)
-
-    state[["CTS"]][["ui"]][["covariate_value"]]            = "1"
-    state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "fixed"
-    state[["CTS"]][["ui"]][["selected_covariate"]]         = "SUBTYPE_ID"
-    current_ele = CTS_add_covariate(state, current_ele)
-
-    # Next we define the rules
-    # Initial dose:
-    state[["CTS"]][["ui"]][["rule_condition"]]           = "time == 0"
-    state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
-    state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
-    state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(0.1,  0.1,  0.1,  0.1)*1e6/MW"
-    state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
-    state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
-    state[["CTS"]][["ui"]][["rule_name"]]                = "first_dose"
-    current_ele = CTS_add_rule(state, current_ele)
-
-    # Maintain steady state if within rage:
-    state[["CTS"]][["ui"]][["rule_condition"]]           = "((BM <=  7e4) & (BM >=5e4)) & (time > 0)"
-    state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
-    state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
-    state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c( 1.0,  1.00,  1.00,  1.00)*SI_fpd(id=id, state='Ac')"
-    state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
-    state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
-    state[["CTS"]][["ui"]][["rule_name"]]                = "keep_dose"
-    current_ele = CTS_add_rule(state, current_ele)
-
-    # Decrease dose if over target
-    state[["CTS"]][["ui"]][["rule_condition"]]           = "(BM >  7e4) & (time > 0)"
-    state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
-    state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
-    state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c( .90,   .90,   .90,   .90)*SI_fpd(id=id, state='Ac')"
-    state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
-    state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
-    state[["CTS"]][["ui"]][["rule_name"]]                = "decrease_dose"
-    current_ele = CTS_add_rule(state, current_ele)
-
-    # Increase dose if below target
-    state[["CTS"]][["ui"]][["rule_condition"]]           = "(BM <  5e4) & (time > 0)"
-    state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
-    state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
-    state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(1.30,  1.30,  1.30,  1.30)*SI_fpd(id=id, state='Ac')"
-    state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
-    state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
-    state[["CTS"]][["ui"]][["rule_name"]]                = "increase_dose"
-    current_ele = CTS_add_rule(state, current_ele)
-
-    # Appending the plotting details as well
-    current_ele[["ui"]][["fpage"]]                = "1"
-    current_ele[["ui"]][["trial_end"]]            = "400"
-    current_ele[["ui"]][["dvcols"]]               = c("Cc", "BM")
-
-    # Number of sujbects
-    current_ele[["ui"]][["nsub"]]                 = "12"
-    current_ele[["ui"]][["cts_config_nsteps"]]    = "50"
-
-    # Putting the element back in the state forcing code generation
-    state = CTS_set_current_element( state   = state, element = current_ele)
-
-    # Now we pull out the current element and simulate it:
-    current_ele = CTS_fetch_current_element(state)
-    current_ele = CTS_simulate_element(state, current_ele)
-
-    # Next we plot the element
-    current_ele = CTS_plot_element(state, current_ele)
-
-    # then we save everything:
-    state = CTS_set_current_element( state   = state, element = current_ele)
-  }
-
-  if(("ShinySession" %in% class(session))){
-    FM_set_mod_state(session, id, state)
-  } else {
-    session = FM_set_mod_state(session, id, state)
-  }
-
-  res = list(
-    isgood  = isgood,
-    session = session,
-    input   = input,
-    state   = state,
-    rsc     = rsc
-  )
-}
+  res = ASM_set_app_state(session=session, sources=sources)
+  res = res[["all_sess_res"]][["CTS"]]
+ #isgood = TRUE
+ #rsc    = list()
+ #input  = list()
+ #state  = list()
+ #
+ #sess_res = MB_test_mksession()
+ #session = sess_res[["session"]]
+ #
+ ## Configuration files
+ #FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
+ #MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml")
+ #
+ ## Creating an empty state object
+ #state = CTS_fetch_state(id             = id,
+ #                       id_ASM          = id_ASM,
+ #                       id_MB           = id_MB,
+ #                       input           = input,
+ #                       session         = session,
+ #                       FM_yaml_file    = FM_yaml_file,
+ #                       MOD_yaml_file   = MOD_yaml_file,
+ #                       react_state     = NULL)
+ #
+ #
+ ## Pulling the default first element
+ #current_ele = CTS_fetch_current_element(state)
+ #
+ ## Defining the source model
+ #state[["CTS"]][["ui"]][["source_model"]] = "MB_obj_1_rx"
+ #current_ele = CTS_change_source_model(state, current_ele)
+ #
+ ## Single visit
+ #current_ele[["ui"]][["visit_times"]]                 = "0"
+ #current_ele[["ui"]][["cts_config_nsteps"]]           = "5"
+ #
+ ## Creating a dosing rule
+ #state[["CTS"]][["ui"]][["rule_condition"]]           = "time == 0"
+ #state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
+ #state[["CTS"]][["ui"]][["action_dosing_state"]]      = "central"
+ #state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(1)"
+ #state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0)"
+ #state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0)"
+ #state[["CTS"]][["ui"]][["rule_name"]]                = "Single_Dose"
+ #
+ #
+ ## Adding the rule:
+ #current_ele = CTS_add_rule(state, current_ele)
+ #
+ ## Appending the plotting details as well
+ #current_ele[["ui"]][["fpage"]]             = "1"
+ #current_ele[["ui"]][["dvcols"]]            = "Cc"
+ #
+ ## Reducing the number of subjects and steps to speed things up on CRAN
+ #current_ele[["ui"]][["nsub"]]              = "2"
+ #current_ele[["ui"]][["cts_config_nsteps"]] = "5"
+ #
+ ## Putting the element back in the state forcing code generation
+ #state = CTS_set_current_element(
+ #  state   = state,
+ #  element = current_ele)
+ #
+ ## Now we pull out the current element, and simulate it
+ #current_ele = CTS_fetch_current_element(state)
+ #current_ele = CTS_simulate_element(state, current_ele)
+ #
+ ## Next we plot the element
+ #current_ele = CTS_plot_element(state, current_ele)
+ #
+ ## Now we save those results back into the state:
+ #state = CTS_set_current_element(
+ #  state   = state,
+ #  element = current_ele)
+ #
+ ##-------------------------------------------------------
+ #if(full_session){
+ #  # Creating a new element, pulling it out, setting the source model,
+ #  # and defining the visit times:
+ #  state       = CTS_new_element(state)
+ #  current_ele = CTS_fetch_current_element(state)
+ #  state[["CTS"]][["ui"]][["source_model"]] = "MB_obj_2_rx"
+ #  current_ele = CTS_change_source_model(state, current_ele)
+ #  current_ele[["ui"]][["visit_times"]]  = "(0:6)*28*2"
+ #
+ #  # We must define covariates:
+ #  state[["CTS"]][["ui"]][["covariate_value"]]            = "70, .1"
+ #  state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "cont_lognormal"
+ #  state[["CTS"]][["ui"]][["selected_covariate"]]         = "WT"
+ #  current_ele = CTS_add_covariate(state, current_ele)
+ #
+ #  state[["CTS"]][["ui"]][["covariate_value"]]            = "0, 1"
+ #  state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "discrete"
+ #  state[["CTS"]][["ui"]][["selected_covariate"]]         = "SEX_ID"
+ #  current_ele = CTS_add_covariate(state, current_ele)
+ #
+ #  state[["CTS"]][["ui"]][["covariate_value"]]            = "1"
+ #  state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "fixed"
+ #  state[["CTS"]][["ui"]][["selected_covariate"]]         = "SUBTYPE_ID"
+ #  current_ele = CTS_add_covariate(state, current_ele)
+ #
+ #  # Next we define the rules
+ #  # Initial dose:
+ #  state[["CTS"]][["ui"]][["rule_condition"]]           = "time == 0"
+ #  state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
+ #  state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
+ #  state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(0.1,  0.1,  0.1,  0.1)*1e6/MW"
+ #  state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
+ #  state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
+ #  state[["CTS"]][["ui"]][["rule_name"]]                = "first_dose"
+ #  current_ele = CTS_add_rule(state, current_ele)
+ #
+ #  # Maintain steady state if within rage:
+ #  state[["CTS"]][["ui"]][["rule_condition"]]           = "((BM <=  7e4) & (BM >=5e4)) & (time > 0)"
+ #  state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
+ #  state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
+ #  state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c( 1.0,  1.00,  1.00,  1.00)*SI_fpd(id=id, state='Ac')"
+ #  state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
+ #  state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
+ #  state[["CTS"]][["ui"]][["rule_name"]]                = "keep_dose"
+ #  current_ele = CTS_add_rule(state, current_ele)
+ #
+ #  # Decrease dose if over target
+ #  state[["CTS"]][["ui"]][["rule_condition"]]           = "(BM >  7e4) & (time > 0)"
+ #  state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
+ #  state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
+ #  state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c( .90,   .90,   .90,   .90)*SI_fpd(id=id, state='Ac')"
+ #  state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
+ #  state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
+ #  state[["CTS"]][["ui"]][["rule_name"]]                = "decrease_dose"
+ #  current_ele = CTS_add_rule(state, current_ele)
+ #
+ #  # Increase dose if below target
+ #  state[["CTS"]][["ui"]][["rule_condition"]]           = "(BM <  5e4) & (time > 0)"
+ #  state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
+ #  state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
+ #  state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(1.30,  1.30,  1.30,  1.30)*SI_fpd(id=id, state='Ac')"
+ #  state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
+ #  state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
+ #  state[["CTS"]][["ui"]][["rule_name"]]                = "increase_dose"
+ #  current_ele = CTS_add_rule(state, current_ele)
+ #
+ #  # Appending the plotting details as well
+ #  current_ele[["ui"]][["fpage"]]                = "1"
+ #  current_ele[["ui"]][["trial_end"]]            = "400"
+ #  current_ele[["ui"]][["dvcols"]]               = c("Cc", "BM")
+ #
+ #  # Number of sujbects
+ #  current_ele[["ui"]][["nsub"]]                 = "12"
+ #  current_ele[["ui"]][["cts_config_nsteps"]]    = "50"
+ #
+ #  # Putting the element back in the state forcing code generation
+ #  state = CTS_set_current_element( state   = state, element = current_ele)
+ #
+ #  # Now we pull out the current element and simulate it:
+ #  current_ele = CTS_fetch_current_element(state)
+ #  current_ele = CTS_simulate_element(state, current_ele)
+ #
+ #  # Next we plot the element
+ #  current_ele = CTS_plot_element(state, current_ele)
+ #
+ #  # then we save everything:
+ #  state = CTS_set_current_element( state   = state, element = current_ele)
+ #}
+ #
+ #if(("ShinySession" %in% class(session))){
+ #  FM_set_mod_state(session, id, state)
+ #} else {
+ #  session = FM_set_mod_state(session, id, state)
+ #}
+ #
+ #res = list(
+ #  isgood  = isgood,
+ #  session = session,
+ #  input   = input,
+ #  state   = state,
+ #  rsc     = rsc
+ #)
+res}
 
 #'@export
 #'@title New Clinical Trial Simulation Cohort
@@ -4760,3 +4783,359 @@ CTS_change_source_model   = function(state, element){
     element[["MDLchecksum"]] = state[["CTS"]][["MDL"]][["mdl"]][[tmp_source_model]][["MDLchecksum"]]
 
 element}
+
+#'@export
+#'@title Preload Data for CTS Module
+#'@description Populates the supplied session variable with information from
+#'list of sources.
+#'@param session     Shiny session variable (in app) or a list (outside of app)
+#'@param src_list    List of preload data (all read together with module IDs at the top level) 
+#'@param yaml_res    List data from module yaml config
+#'@param mod_ID      Module ID of the module being loaded. 
+#'@param react_state Reactive shiny object (in app) or a list (outside of app) used to trigger reactions. 
+#'@param quickload   Logical \code{TRUE} to load reduced analysis \code{FALSE} to load the full analysis
+#'@return list with the following elements
+#' \itemize{
+#'   \item{isgood:}      Boolean indicating the exit status of the function.
+#'   \item{msgs:}        Messages to be passed back to the user.
+#'   \item{session:}     Session object
+#'   \item{input:}       The value of the shiny input at the end of the session initialization.
+#'   \item{state:}       App state.
+#'   \item{react_state:} The \code{react_state} components.
+#'}
+CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = list(), quickload=FALSE){
+  isgood  = TRUE
+  input   = list()
+  msgs    = c()
+  res     = c()
+  err_msg = c()
+  
+  FM_yaml_file  = render_str(src_list[[mod_ID]][["fm_yaml"]])
+  MOD_yaml_file = render_str(src_list[[mod_ID]][["mod_yaml"]])
+  id_ASM        = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_ASM"]]
+  id_MB         = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_MB"]]
+# id_DW         = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_DW"]]
+
+  # Creating an empty state object
+  state = CTS_fetch_state(id             = mod_ID,
+                         id_ASM          = id_ASM,
+                         id_MB           = id_MB,
+                         input           = input,
+                         session         = session,
+                         FM_yaml_file    = FM_yaml_file,
+                         MOD_yaml_file   = MOD_yaml_file,
+                         react_state     = react_state)
+
+  elements = src_list[[mod_ID]][["elements"]]
+ 
+
+  # Mapping between rule elements in preload and ui element names
+  rule_ui_map = state[["CTS"]][["rule_ui_map"]]
+
+  # accepted covariate types
+  covariate_types = state[["MC"]][["covariate_generation"]][["types"]]
+
+  # Checks to see if we can add elements
+  ADD_ELEMENTS = TRUE
+  if(is.null(elements)){
+    ADD_ELEMENTS = FALSE
+  } else {
+    # Finding model sources
+    MDL = state[["CTS"]][["MDL"]]
+    if(is.null(MDL[["hasmdl"]])){
+      ADD_ELEMENTS = FALSE
+      err_msg = c(err_msg, "No source models available.")
+      isgood = FALSE
+    } else if(!MDL[["hasmdl"]]){
+      ADD_ELEMENTS = FALSE
+      err_msg = c(err_msg, "No source models available.")
+      isgood = FALSE
+    }
+  }
+
+  if(ADD_ELEMENTS){
+    # All of the numeric IDs in the preload
+    enumeric    = c()
+
+    # Map between list index and internal figure ID
+    element_map = list()
+    for(ele_idx in 1:length(elements)){
+      enumeric = c(enumeric, elements[[ele_idx]][["idx"]])
+      element_map[[ paste0("element_",elements[[ele_idx]][["idx"]] )]] = ele_idx
+    }
+
+    # Creating empty element placeholders
+    while(state[["CTS"]][["element_cntr"]] < max(enumeric)){
+      state = CTS_new_element(state)
+    }
+
+    # culling any unneeded views 
+    for(ele_id  in names(state[["CTS"]][["elements"]])){
+      # This is a view that doesn't exist in elements so 
+      # we need to cull it
+      if(!(ele_id  %in% names(element_map))){
+        # Setting the view to be deleted as the current view
+        state[["CTS"]][["elements"]][[ ele_id  ]] = NULL
+      }
+    }
+
+    # TODO: You need to process the elements and components here
+    # Now we have empty elements defined
+    for(element_id in names(element_map)){
+      # Making the current element id active
+      state[["CTS"]][["current_element"]]  =  element_id
+      ele_err_msg = c()
+
+      # Getting the numeric position in the list corresponding 
+      # to the current element id
+      ele_idx = element_map[[element_id]]
+      ele_isgood = TRUE
+
+      #-------------------------------------------------------
+      # Defining general options
+      FM_le(state, paste0("loading element idx: ", ele_idx ))
+
+      # Pulling out the current element to update it below
+      current_ele = CTS_fetch_current_element(state)
+
+      # Checking for required fields:
+      req_ele_opts =c("model_source")
+      if(!all(req_ele_opts    %in% names( elements[[ele_idx]]))){
+        ele_isgood      = FALSE
+        missing_opts    = req_ele_opts[!(req_ele_opts %in% names(elements[[ele_idx]]))]
+        ele_err_msg = c(ele_err_msg,
+          paste0("element idx:  ",ele_idx, " missing option(s):" ),
+          paste0("  -> ", paste0(missing_opts, collapse=", "))
+          )
+      }
+
+      # If the module requires components check here:
+      if(!("components" %in% names(elements[[ele_idx]]))){
+        ele_isgood = FALSE
+        ele_err_msg = c(ele_err_msg, 
+            paste0("element idx: ",ele_idx, " no components defined"))
+      }
+
+      # Setting model name
+      if(!is.null(elements[[ele_idx]][["name"]])){
+        formods::FM_le(state, paste0("setting cohort name: ",  elements[[ele_idx]][["name"]]))
+        current_ele[["ui"]][["element_name"]]  = elements[[ele_idx]][["name"]]
+      }
+
+      # Finding source model
+      if(!is.null(elements[[ele_idx]][["model_source"]][["id"]]) &
+         !is.null(elements[[ele_idx]][["model_source"]][["idx"]])){
+        tmp_MDL = MDL[["catalog"]][c(MDL[["catalog"]][["id"]]  == elements[[ele_idx]][["model_source"]][["id"]] & 
+                                     MDL[["catalog"]][["idx"]] == elements[[ele_idx]][["model_source"]][["idx"]]), ]
+        if(nrow(tmp_MDL) == 1){
+          formods::FM_le(state, paste0("setting model source: ", tmp_MDL[["object"]][1]) )
+          state[["CTS"]][["ui"]][["source_model"]] = tmp_MDL[["object"]][1] 
+          current_ele = CTS_change_source_model(state, current_ele)
+        } else {
+          ele_err_msg = c(ele_err_msg, 
+            paste0("error locating model source, expecting 1 source found ", nrow(tmp_MDL)))
+          ele_isgood = FALSE
+        }
+      } else {
+          ele_err_msg = c(ele_err_msg, 
+            paste0("error missing either model source id or idx"))
+        ele_isgood = FALSE
+      }
+
+      if("cts_options" %in% names(elements[[ele_idx]])){
+        formods::FM_le(state, paste0("setting trial options:"))
+        for(oname in names(elements[[ele_idx]][["cts_options"]])){
+          formods::FM_le(state, paste0("  - ", oname, ": ", elements[[ele_idx]][["cts_options"]][[oname]]))
+          current_ele[["ui"]][[oname]] = elements[[ele_idx]][["cts_options"]][[oname]]
+        }
+      }
+
+
+      # Defining subject covariates
+      if("covariates" %in% names(elements[[ele_idx]][["subjects"]])){
+        FM_le(state, "adding covariates:")
+        for(cname in names(elements[[ele_idx]][["subjects"]][["covariates"]])){
+          req_cov_opts   = c("type", "value")
+          found_cov_opts = names(elements[[ele_idx]][["subjects"]][["covariates"]][[cname]])
+          if(all( req_cov_opts %in%  found_cov_opts)){
+            # This prepares the UI values to add the covariate
+            state[["CTS"]][["ui"]][["covariate_value"]]            = elements[[ele_idx]][["subjects"]][["covariates"]][[cname]][["value"]]
+            state[["CTS"]][["ui"]][["covariate_type_selected"]]    = elements[[ele_idx]][["subjects"]][["covariates"]][[cname]][["type"]]
+            state[["CTS"]][["ui"]][["selected_covariate"]]         = cname 
+
+            # This adds it:
+            current_ele = CTS_add_covariate(state, current_ele)
+
+            # Here we check for any errors:
+            if(current_ele[["cares"]][["COV_IS_GOOD"]]){
+              FM_le(state, paste0("  - ", cname, ": ", 
+                           elements[[ele_idx]][["subjects"]][["covariates"]][[cname]][["type"]], " (",
+                           elements[[ele_idx]][["subjects"]][["covariates"]][[cname]][["value"]], ")"))
+            } else {
+              FM_le(state, paste0("  - ", cname, ": failed to add"))
+              ele_isgood = FALSE
+              ele_err_msg = c(ele_err_msg, 
+                paste0("failed to add covariate: ", cname),
+                current_ele[["cares"]][["msgs"]])
+            }
+          } else {
+            missing_opts    = 
+              req_cov_opts[!(req_cov_opts %in% found_cov_opts)]
+            ele_isgood = FALSE
+            ele_err_msg = c(ele_err_msg, 
+              paste0("error covariate ",cname, " is missing the following option(s):"),
+              paste0("  > ", paste0(missing_opts, collapse=", ")))
+            ele_isgood = FALSE
+          }
+        }
+      }
+      
+
+
+      # Saving any changes to the current element
+      state = CTS_set_current_element(
+        state   = state,
+        element = current_ele)
+
+      # Next we process the components (models)
+      if(ele_isgood){
+        # Creating element components
+        # If there are components you can add them here:
+        for(comp_idx in 1:length(elements[[ele_idx]][["components"]])){
+          tmp_component = elements[[ele_idx]][["components"]][[comp_idx]][["component"]]
+          add_component = TRUE
+
+          if("type" %in% names(tmp_component)){
+            if(tmp_component[["type"]] %in% names(rule_ui_map)){
+              req_comp_opts = names(rule_ui_map[[ tmp_component[["type"]] ]])
+              if(!  all( req_comp_opts %in%  names(tmp_component) )){
+                missing_opts    = 
+                  req_comp_opts[!(req_comp_opts %in% names(tmp_component))]
+             
+                ele_err_msg = c(ele_err_msg,
+                  paste0("component idx: ", comp_idx, ", missing the following required component options: " ),
+                  paste0("  > ", paste0(missing_opts, collapse=", ")))
+              }
+            } else {
+              add_component = FALSE
+              ele_isgood    = FALSE
+              ele_err_msg = c(ele_err_msg,
+                paste0("component idx: ", comp_idx, ", bad type: ", tmp_component[["type"]]),
+                paste0("should be one of:" ),
+                paste0("  > ", paste0(names(rule_ui_map), collapse=", ")))
+            }
+          }else{
+            add_component = FALSE
+            ele_isgood    = FALSE
+            ele_err_msg = c(ele_err_msg,
+              paste0("component idx: ", comp_idx, ", type not defined" ))
+          }
+
+
+          if(add_component && ele_isgood){
+            # If everything is good we add the component
+            current_ele = CTS_fetch_current_element(state)
+
+            # This puts the component options into the ui locations expected
+            # by the CTs_add_rule() function
+            for(oname in names(rule_ui_map[[ tmp_component[["type"]] ]])){
+              state[["CTS"]][["ui"]][[ rule_ui_map[[ tmp_component[["type"]] ]][[ oname ]] ]] = 
+                tmp_component[[ oname ]]
+            }
+
+            formods::FM_le(state, paste0("adding rule: ", tmp_component[["name"]]))
+            current_ele = CTS_add_rule(state, current_ele)
+
+            if(current_ele[["rares"]][["RULE_IS_GOOD"]]){
+              state = CTS_set_current_element(
+                state   = state,
+                element = current_ele)
+            } else {
+              ele_isgood = FALSE
+              ele_err_msg = c(ele_err_msg,
+                paste0("component idx: ", comp_idx, ", unable to add rule" ),
+                current_ele[["rares"]][["msgs"]]
+              )
+
+            }
+          }
+        }
+
+
+        # If everything is good after adding the components 
+        # we simulate and plot the results:
+        if(ele_isgood){
+        # Now we pull out the current element, and simulate it
+        current_ele = CTS_fetch_current_element(state)
+
+        # If quickload has been set then we reduce the number of subjects
+        if(quickload){
+          current_ele[["ui"]][["nsub"]] = 3
+        }
+        current_ele = CTS_simulate_element(state, current_ele)
+        if(current_ele[["simres"]][["isgood"]]){
+          FM_le(state, "simulation complete")
+        } else {
+          FM_le(state, "simulate failed")
+          ele_isgood = FALSE
+          ele_err_msg = c(ele_err_msg, 
+            "simulation failed",
+            current_ele[["simres"]][["msgs"]])
+        }
+
+         #browser()
+        
+        # Next we plot the element
+        current_ele = CTS_plot_element(state, current_ele)
+        if(current_ele[["plotres"]][["isgood"]]){
+          FM_le(state, "plot complete")
+        } else {
+          FM_le(state, "simulate failed")
+          ele_isgood = FALSE
+          ele_err_msg = c(ele_err_msg, 
+            "plot failed",
+            current_ele[["plotres"]][["msgs"]])
+          browser()
+        }
+        
+        # Now we save those results back into the state:
+        state = CTS_set_current_element(
+          state   = state,
+          element = current_ele)
+        }
+      }
+
+      if(ele_isgood){
+        formods::FM_le(state,paste0("added element idx: ",ele_idx))
+      } else {
+        ele_err_msg = c(
+          paste0("failed to add element idx: ",ele_idx),
+          ele_err_msg)
+        msgs = c(msgs, ele_err_msg)
+        #formods::FM_le(state,ele_err_msg,entry_type="danger")
+        isgood = FALSE
+      }
+    }
+  }
+
+  if(!isgood && !is.null(err_msg)){
+    #formods::FM_le(state,err_msg,entry_type="danger")
+    msgs = c(msgs, err_msg)
+  }
+
+  formods::FM_le(state,paste0("module isgood: ",isgood))
+
+  if(("ShinySession" %in% class(session))){
+    FM_set_mod_state(session, mod_ID, state)
+  } else {
+    session = FM_set_mod_state(session, mod_ID, state)
+  }
+
+  res = list(isgood      = isgood, 
+             msgs        = msgs,
+             session     = session,
+             input       = input,
+             react_state = react_state,
+             state       = state)
+  
+res}

@@ -23,14 +23,9 @@ library(ruminate)
 id     = "NCA"                                                                 
 id_UD  = "UD"                                                                  
 id_DW  = "DW"                                                                  
-id_ASM = "ASM"                                                                 
+id_ASM = "ASM"  
 # We need session and input variables to be define                             
- sess_res = NCA_test_mksession(session=list(),                                 
-      id     = id,                                                             
-      id_UD  = id_UD,                                                          
-      id_DW  = id_DW,                                                          
-      id_ASM = id_ASM,
-      full_session=FALSE)
+ sess_res = NCA_test_mksession()
                                                                                
 # Extracting the session and input variables                                   
 session      = sess_res$session                                                

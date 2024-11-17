@@ -26,6 +26,7 @@
 <url><loc>https://ruminate.ubiquity.tools/reference/CTS_init_state.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/CTS_new_element.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/CTS_plot_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/CTS_preload.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/CTS_set_current_element.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/CTS_sim_isgood.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/CTS_simulate_element.html</loc></url>
@@ -47,6 +48,7 @@
 <url><loc>https://ruminate.ubiquity.tools/reference/MB_init_state.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/MB_mod_ok.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/MB_new_element.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/MB_preload.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/MB_set_current_element.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/MB_test_catalog.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/MB_test_mksession.html</loc></url>
@@ -70,6 +72,7 @@
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_load_scenario.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_mkactive_ana.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_new_ana.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_preload.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_process_current_ana.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_set_current_ana.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_test_mksession.html</loc></url>

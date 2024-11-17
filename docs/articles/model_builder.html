@@ -127,6 +127,12 @@ create as many entries as you want.</p>
 </h2>
 <pre><code># The MC field is a skeleton for constructing new modules
 MC:
+  # Module informaiton
+  module:
+    type: "MB"
+    # internal R Object: module ID used in deployment
+    depends: 
+      id_ASM: "ASM"
   # The prefix of object names created in the generated code
   element_object_name: "MB_obj"
   # This is a list of model sources. In the app the sources will be listed in
@@ -186,7 +192,7 @@ MC:
   # This is where you put reporting options. The expected options are shown
   # here, but module-specific options can also be added if needed:
   reporting:
-    enabled: FALSE
+    enabled: TRUE 
     # Priority of reporting relative to other modules
     # (higher numbers are reported first)
     priority: 1

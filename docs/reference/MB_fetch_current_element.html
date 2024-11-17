@@ -74,7 +74,7 @@ of this list is the same as the structure of <code>state$MB$elements</code> in t
 <span class="r-in"><span><span class="co"># This will get the full session:</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://formods.ubiquity.tools/" class="external-link">formods</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"ruminate_rxfamily_found"</span><span class="op">)</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span><span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="MB_test_mksession.html">MB_test_mksession</a></span><span class="op">(</span>session<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, full_session<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="MB_test_mksession.html">MB_test_mksession</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="co"># This is just for CRAN</span></span></span>
 <span class="r-in"><span>  <span class="co">#sess_res = MB_test_mksession(session=list())</span></span></span>
 <span class="r-in"><span>  <span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span></span></span>
@@ -161,6 +161,17 @@ of this list is the same as the structure of <code>state$MB$elements</code> in t
 <span class="r-in"><span>  <span class="co"># This will fetch the code to regenerate all of the components of this module</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="MB_fetch_code.html">MB_fetch_code</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   source: file.path(system.file(package="onbrand"), "templates", "report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM:   dest:   file.path("config","report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: module isgood: TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   dest:   file.path("config","report.docx")</span>
@@ -174,20 +185,51 @@ of this list is the same as the structure of <code>state$MB$elements</code> in t
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:24933f86b657b9503f22440e8c4d3cac</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: State initialized</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: loading model idx: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 98407146cbcfb0e5392b7bf47aeb1d09</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:a317b4031c8ca91b0c52f2a06412fe69</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 03794438dbfd3a3a27eebc39ad436203</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:34a469deda5568fc0e260a6afd1891f3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting name: One compartment model</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting time scale: hours</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base from: user</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting catalog selection: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model id: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model name: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: cc835f1a733e62e5519b3a962ae0ae89</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:927a0ae0a0cdc1138d0d7d9fa0c05836</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: added element idx: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: loading model idx: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 99b8ba1b35abab95a3b996e9a746e957</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:73f9beb51e56ccf966b8875d8b341812</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: fc406d7985a63a9d9180ee8cf5078467</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:0022b3bca2d4246a8138498d608566b0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting name: PK Biomarker</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting time scale: days</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base from: user</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting catalog selection: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model id: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: setting base model name: manual</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 24cee75002f07a3b3385b9a9a478760c</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:b0996670161add364a6078a8c7872849</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: added element idx: 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: MB_preload(session = session, src_list = src_list, yaml_res = yaml_res, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     mod_ID = mod_ID, react_state = react_state, quickload = quickload)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: formods::FM_le(state, paste0("module isgood: ", isgood))</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module isgood: TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: if (("ShinySession" %in% class(session))) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> } else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     session = FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: session = FM_set_mod_state(session, mod_ID, state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: res = list(isgood = isgood, msgs = msgs, session = session, input = input, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     react_state = react_state, state = state)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug: res</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.ctl not found (skipping)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> MB: User-defined model: /Users/jmh/projects/ruminate/github/ruminate/docs/reference/user_model.R not found (skipping)</span>
@@ -201,8 +243,8 @@ of this list is the same as the structure of <code>state$MB$elements</code> in t
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 7868cad93a54cc04bddb2f453d86688f</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:400b526b0c5f4b68c51a507d4ebc95bd</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 5bd986a71bb83ce58d1918c6acbf4f1d</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:1f8546bb45a252684ba8f3b50d35136f</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> my_fcn_obj = function () </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     description &lt;- "One compartment PK model with linear clearance"</span>
@@ -307,7 +349,7 @@ of this list is the same as the structure of <code>state$MB$elements</code> in t
 <span class="r-msg co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> # Base model: user====</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> # Base model: manual====</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> MB_obj_2_fcn = function () </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     ini({</span>

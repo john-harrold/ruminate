@@ -4,40 +4,22 @@
 \alias{CTS_test_mksession}
 \title{Populate Session Data for Module Testing}
 \usage{
-CTS_test_mksession(
-  session,
-  id = "CTS",
-  id_ASM = "ASM",
-  id_MB = "MB",
-  full_session = TRUE
-)
+CTS_test_mksession(session = list())
 }
 \arguments{
 \item{session}{Shiny session variable (in app) or a list (outside of app)}
-
-\item{id}{An ID string that corresponds with the ID used to call the modules UI elements}
-
-\item{id_ASM}{An ID string that corresponds with the ID used to call the ASM module}
-
-\item{id_MB}{An ID string that corresponds with the ID used to call the MB module}
-
-\item{full_session}{Boolean to indicate if the full test session should be created (default \code{TRUE}).}
 }
 \value{
-list with the following elements
-\itemize{
-\item{isgood:} Boolean indicating the exit status of the function.
-\item{session:} The value Shiny session variable (in app) or a list (outside of app) after initialization.
-\item{input:} The value of the shiny input at the end of the session initialization.
-\item{state:} App state.
-\item{rsc:} The \code{react_state} components.
-}
+The CTS portion of the \code{all_sess_res} returned from \code{\link{ASM_set_app_state}}
 }
 \description{
 Populates the supplied session variable for testing.
 }
 \examples{
 \donttest{
-sess_res = CTS_test_mksession(session=list(), full_session=FALSE)
+sess_res = CTS_test_mksession()
 }
+}
+\seealso{
+\code{\link{ASM_set_app_state}}
 }

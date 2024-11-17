@@ -29,6 +29,9 @@ close(fileConn)
 # building documentation
 devtools::document(roclets = c('rd', 'collate', 'namespace', 'vignette'))
 
+# Build the favicons
+pkgdown::build_favicons(overwrite=TRUE)
+
 # Rebuilding the pkgdown site
 pkgdown::build_site()
 

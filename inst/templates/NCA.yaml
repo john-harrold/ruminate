@@ -1,4 +1,12 @@
 MC:
+  # Module informaiton
+  module:
+    type: "NCA"
+    # internal R Object: module ID used in deployment
+    depends: 
+      id_ASM: "ASM"
+      id_UD:  "UD"
+      id_DW:  "DW"
   code: # module specific code options
     packages: ["PKNCA", "dplyr", "stringr", "formods", "ruminate", "onbrand"]
     readOnly: TRUE
@@ -39,7 +47,7 @@ MC:
     #   sub_title_multiple  Slide sub_title used when a table or figure spans multiple
     #                       pages.
     #
-    # The following placeholders can be used bu surroudning them with ===. For
+    # The following placeholders can be used bu surrounding them with ===. For
     # example to include the total number of figures you would use
     # ===FIGTOT===:
     #
@@ -203,7 +211,7 @@ MC:
     select_ana_nca_parameters:
       width: 150
       # ?pickerOptions
-      picker_options: 
+      picker_options:
         liveSearch: TRUE
         actionsBox: TRUE
     select_ana_col_id:
@@ -516,14 +524,14 @@ MC:
       value:         20
       options:       NULL
       pknca_option:  max.aucinf.pext
- #  progress_bar:    
+ #  progress_bar:
  #    group:         "General"
  #    label:         "Progress bar"
  #    tooltip:       "Show progress bar"
  #    type:          "logical"
  #    value:         TRUE
  #    options:       [TRUE, FALSE]
- #    pknca_option:  progress 
+ #    pknca_option:  progress
   # Prefix used to create NCA analysis objects in generated code
   nca_object_name: "myANA_"
   # The following patterns are used when detecting columns in your dataset
@@ -848,7 +856,7 @@ MC:
       text:        NULL
       md:          "C~ave~"
       group:       "Other"
-    cav.int.all: 
+    cav.int.all:
       description: NULL
       text:        NULL
       md:          "C~ave,int,all~"

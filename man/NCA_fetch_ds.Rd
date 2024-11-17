@@ -34,7 +34,7 @@ Fetches the datasets contained in the module
 }
 \examples{
 # We need a state object to use below
-sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
+sess_res = NCA_test_mksession()
 state = sess_res$state
 
 myDs = NCA_fetch_ds(state)

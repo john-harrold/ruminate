@@ -78,18 +78,8 @@ Create paginated tables from PKNCA to use in reports and Shiny
 apps.
 }
 \examples{
-id     = "NCA"
-id_UD  = "UD"
-id_DW  = "DW"
-id_ASM = "ASM"
-
 # We need a state variable to be define
-sess_res = NCA_test_mksession(session=list(),
-     id     = id,
-     id_UD  = id_UD,
-     id_DW  = id_DW,
-     id_ASM = id_ASM,
-     full_session=FALSE)
+sess_res = NCA_test_mksession()
 
 state = sess_res$state
 

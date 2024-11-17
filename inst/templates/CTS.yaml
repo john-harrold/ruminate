@@ -1,5 +1,12 @@
 # The MC field is a skeleton for constructing new modules
 MC:
+  # Module informaiton
+  module:
+    type: "CTS"
+    # internal R Object: module ID used in deployment
+    depends: 
+      id_ASM: "ASM"
+      id_MB:  "MB"
   element_object_name: "CTS_obj"
 # The include section is optional. You can use this section to copy files 
 # from the directory where you are running the app to the user directory to be
@@ -436,10 +443,10 @@ MC:
       tooltip:       'Integer value to set the seed for the random number generator'
       uitype:        "text"
       type:          "numeric"
-      value:         "5447"     
+      value:         "5446"     
       options:       NULL
       use:           "Misc"
-      placeholder:   "5447"     
+      placeholder:   "5446"     
     nsteps:    
       group:         "Misc"
       label:         "Time Steps"

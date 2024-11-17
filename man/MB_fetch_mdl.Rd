@@ -38,7 +38,7 @@ Fetches the models contained in the module.
 }
 \examples{
 # We need a module state:
-sess_res = MB_test_mksession(session=list(), full_session=FALSE)
+sess_res = MB_test_mksession()
 state = sess_res$state
 
 mdls = MB_fetch_mdl(state)

@@ -27,7 +27,7 @@ library(formods)
 if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
 
 # This will populate the session variable with the model building (MB) module
-sess_res = MB_test_mksession(session=list(), full_session=FALSE)
+sess_res = MB_test_mksession()
 session = sess_res[["session"]]
 
 id     = "CTS"

@@ -35,7 +35,7 @@ Fetches the selected component of the provided model.
 # This will get the full session:
 library(formods)
 if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
-  sess_res = MB_test_mksession(session=list(), full_session=TRUE)
+  sess_res = MB_test_mksession()
   # This is just for CRAN
   #sess_res = MB_test_mksession(session=list())
   session = sess_res$session

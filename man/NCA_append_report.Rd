@@ -35,7 +35,7 @@ will be reported. Those not in a good state will be ignored.
 }
 \examples{
 # We need a state object to use below
-sess_res = NCA_test_mksession(session=list(), full_session=FALSE)
+sess_res = NCA_test_mksession()
 state = sess_res$state
 
 # here we need an empty report object for tabular data
@@ -44,9 +44,9 @@ rpt = list(summary = list(), sheets=list())
 # Now we append the report indicating we want
 # Excel output:
 rpt_res = NCA_append_report(state,
- rpt           = rpt,
- rpttype       = "xlsx",
- gen_code_only = TRUE)
+  rpt           = rpt,
+  rpttype       = "xlsx",
+  gen_code_only = TRUE)
 
 # Shows if report elements are present
 rpt_res$hasrptele
