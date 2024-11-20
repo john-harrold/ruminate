@@ -5,87 +5,89 @@ NCA:
   elements:
     # Each element is a specific analysis
     - element:
-      idx:    1
-      name:   "PK Example"
-      # The data source contains the module ID (text) and the index used in
-      # the module to identify the data source. When you use FM_fetch_ds to
-      # identify data sources in other modules it creates a catalog data
-      # frame. These correspond to the id and idx columns in that data frame.
-      data_source:
-        id:   "DW"  # Module ID
-        idx:    3   # Data source index
-      # This is where the options for PKNCA are defined. Those not defined
-      # here will default to the values in the NCA.yaml file
-      nca_config:
-        adj.r.squared.factor:   1e-04
-      # This is the rest of the analysis options 
-      ana_options:
-        tab_type:    "report"
-        fig_type:    "report"
-        col_id:      "ID"
-        col_conc:    "DV"
-        col_dose:    "DOSE"
-        col_cycle:   "DOSE_NUM"
-        col_route:   "ROUTE"
-        col_time:    "TIME_DY"
-        col_ntime:   "NTIME_DY"
-        col_dur:     "N/A"
-        col_analyte: "N/A"
-        sampling:    "serial"
-        dose_from:   "cols"
-      components:     
-        # Each component here is an NCA analysis interval. The nca_parameters
-        # are the PKNCA parameters that you want calculated over that
-        # interval. The sampling can be either serial or sparse and the start
-        # and stop times indicate the beginning or end of the interval
-        - component:
-            nca_parameters: ["aucinf.obs"]
-            start:           0
-            stop:            Inf
-        - component:
-            nca_parameters: ["cmax", "auclast"]
-            start:           0
-            stop:            21
+        idx:    1
+        name:   "PK Example"
+        notes:  "Calculating exposure for a single output."
+        # The data source contains the module ID (text) and the index used in
+        # the module to identify the data source. When you use FM_fetch_ds to
+        # identify data sources in other modules it creates a catalog data
+        # frame. These correspond to the id and idx columns in that data frame.
+        data_source:
+          id:   "DW"  # Module ID
+          idx:    3   # Data source index
+        # This is where the options for PKNCA are defined. Those not defined
+        # here will default to the values in the NCA.yaml file
+        nca_config:
+          adj.r.squared.factor:   1e-04
+        # This is the rest of the analysis options 
+        ana_options:
+          tab_type:    "report"
+          fig_type:    "report"
+          col_id:      "ID"
+          col_conc:    "DV"
+          col_dose:    "DOSE"
+          col_cycle:   "DOSE_NUM"
+          col_route:   "ROUTE"
+          col_time:    "TIME_DY"
+          col_ntime:   "NTIME_DY"
+          col_dur:     "N/A"
+          col_analyte: "N/A"
+          sampling:    "serial"
+          dose_from:   "cols"
+        components:     
+          # Each component here is an NCA analysis interval. The nca_parameters
+          # are the PKNCA parameters that you want calculated over that
+          # interval. The sampling can be either serial or sparse and the start
+          # and stop times indicate the beginning or end of the interval
+          - component:
+              nca_parameters: ["aucinf.obs"]
+              start:           0
+              stop:            Inf
+          - component:
+              nca_parameters: ["cmax", "auclast"]
+              start:           0
+              stop:            21
     - element:
-      idx:    2
-      name:   "PK/PD Example"
-      # The data source contains the module ID (text) and the index used in
-      # the module to identify the data source. When you use FM_fetch_ds to
-      # identify data sources in other modules it creates a catalog data
-      # frame. These correspond to the id and idx columns in that data frame.
-      data_source:
-        id:   "DW"  # Module ID
-        idx:    4   # Data source index
-      # This is where the options for PKNCA are defined. Those not defined
-      # here will default to the values in the NCA.yaml file
-      nca_config:
-        adj.r.squared.factor:   1e-04
-      # This is the rest of the analysis options 
-      ana_options:
-        tab_type:    "report"
-        fig_type:    "report"
-        col_id:      "ID"
-        col_conc:    "DV"
-        col_dose:    "DOSE"
-        col_cycle:   "DOSE_NUM"
-        col_evid:    "EVID"
-        col_route:   "ROUTE"
-        col_time:    "TIME_DY"
-        col_ntime:   "NTIME_DY"
-        col_dur:     "N/A"
-        col_analyte: "CMT"
-        sampling:    "serial"
-        dose_from:   "cols"
-      components:     
-        # Each component here is an NCA analysis interval. The nca_parameters
-        # are the PKNCA parameters that you want calculated over that
-        # interval. The sampling can be either serial or sparse and the start
-        # and stop times indicate the beginning or end of the interval
-        - component:
-            nca_parameters: ["aucinf.obs"]
-            start:           0
-            stop:            Inf
-        - component:
-            nca_parameters: ["cmax", "auclast"]
-            start:           0
-            stop:            21
+        idx:    2
+        name:   "PK/PD Example"
+        notes:  "Calculating exposure for multiple outputs."
+        # The data source contains the module ID (text) and the index used in
+        # the module to identify the data source. When you use FM_fetch_ds to
+        # identify data sources in other modules it creates a catalog data
+        # frame. These correspond to the id and idx columns in that data frame.
+        data_source:
+          id:   "DW"  # Module ID
+          idx:    4   # Data source index
+        # This is where the options for PKNCA are defined. Those not defined
+        # here will default to the values in the NCA.yaml file
+        nca_config:
+          adj.r.squared.factor:   1e-04
+        # This is the rest of the analysis options 
+        ana_options:
+          tab_type:    "report"
+          fig_type:    "report"
+          col_id:      "ID"
+          col_conc:    "DV"
+          col_dose:    "DOSE"
+          col_cycle:   "DOSE_NUM"
+          col_evid:    "EVID"
+          col_route:   "ROUTE"
+          col_time:    "TIME_DY"
+          col_ntime:   "NTIME_DY"
+          col_dur:     "N/A"
+          col_analyte: "CMT"
+          sampling:    "serial"
+          dose_from:   "cols"
+        components:     
+          # Each component here is an NCA analysis interval. The nca_parameters
+          # are the PKNCA parameters that you want calculated over that
+          # interval. The sampling can be either serial or sparse and the start
+          # and stop times indicate the beginning or end of the interval
+          - component:
+              nca_parameters: ["aucinf.obs"]
+              start:           0
+              stop:            Inf
+          - component:
+              nca_parameters: ["cmax", "auclast"]
+              start:           0
+              stop:            21

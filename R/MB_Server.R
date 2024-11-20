@@ -2073,7 +2073,8 @@ res}
 #'@title Populate Session Data for Module Testing
 #'@description Populates the supplied session variable for testing.
 #'@param session Shiny session variable (in app) or a list (outside of app)
-#'@return The MB portion of the `all_sess_res` returned from \code{\link{ASM_set_app_state}} 
+#'@return The MB portion of the `all_sess_res` returned from
+#'\code{\link{FM_app_preload}} 
 #'@examples
 #' sess_res = MB_test_mksession()
 MB_test_mksession = function(session=list()){
@@ -2086,7 +2087,7 @@ MB_test_mksession = function(session=list()){
   sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
               system.file(package="ruminate", "preload", "MB_preload.yaml"))
 
-  res = ASM_set_app_state(session=session, sources=sources)
+  res = FM_app_preload(session=session, sources=sources)
   res = res[["all_sess_res"]][["MB"]]
 # isgood = TRUE
 # rsc    = list()
@@ -3241,8 +3242,8 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
     # Map between list index and internal figure ID
     element_map = list()
     for(ele_idx in 1:length(elements)){
-      enumeric = c(enumeric, elements[[ele_idx]][["idx"]])
-      element_map[[ paste0("element_",elements[[ele_idx]][["idx"]] )]] = ele_idx
+      enumeric = c(enumeric, elements[[ele_idx]][["element"]][["idx"]])
+      element_map[[ paste0("element_",elements[[ele_idx]][["element"]][["idx"]] )]] = ele_idx
     }
 
     # Creating empty element placeholders
@@ -3275,9 +3276,9 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
       FM_le(state, paste0("loading model idx: ", ele_idx ))
 
       req_ele_opts =c("name", "time_scale", "base_from", "base_model_id", "base_model_name")
-      if(!all(req_ele_opts    %in% names( elements[[ele_idx]]))){
+      if(!all(req_ele_opts    %in% names( elements[[ele_idx]][["element"]]))){
         ele_isgood      = FALSE
-        missing_opts    = req_ele_opts[!(req_ele_opts %in% names(elements[[ele_idx]]))]
+        missing_opts    = req_ele_opts[!(req_ele_opts %in% names(elements[[ele_idx]][["element"]]))]
         err_msg = c(err_msg,
           paste0("element idx:  ",ele_idx, " missing option(s):" ),
           paste0("  -> ", paste0(missing_opts, collapse=", "))
@@ -3285,7 +3286,7 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
       }
 
 
-      if(!("components" %in% names(elements[[ele_idx]]))){
+      if(!("components" %in% names(elements[[ele_idx]][["element"]]))){
         ele_isgood = FALSE
         err_msg = c(err_msg, 
             paste0("element idx: ",ele_idx, " no models defined"))
@@ -3297,10 +3298,10 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
       if(ele_isgood){
 
         # Creating element components
-        for(comp_idx in 1:length(elements[[ele_idx]][["components"]])){
+        for(comp_idx in 1:length(elements[[ele_idx]][["element"]][["components"]])){
 
           req_comp_opts =c("object", "model")
-          tmp_component = elements[[ele_idx]][["components"]][[comp_idx]][["component"]]
+          tmp_component = elements[[ele_idx]][["element"]][["components"]][[comp_idx]][["component"]]
           add_component = TRUE
 
           if(!all(req_comp_opts    %in% names(tmp_component))){
@@ -3355,23 +3356,23 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
 
         # Setting element options:
         current_ele = MB_fetch_current_element(state)
-        FM_le(state, paste0("setting name: ", elements[[ele_idx]][["name"]]))
-        current_ele[["ui"]][["element_name"]] = elements[[ele_idx]][["name"]]
+        FM_le(state, paste0("setting name: ", elements[[ele_idx]][["element"]][["name"]]))
+        current_ele[["ui"]][["element_name"]] = elements[[ele_idx]][["element"]][["name"]]
 
-        FM_le(state, paste0("setting time scale: ", elements[[ele_idx]][["time_scale"]]))
-        current_ele[["ui"]][["time_scale"]] = elements[[ele_idx]][["time_scale"]]
+        FM_le(state, paste0("setting time scale: ", elements[[ele_idx]][["element"]][["time_scale"]]))
+        current_ele[["ui"]][["time_scale"]] = elements[[ele_idx]][["element"]][["time_scale"]]
 
-        FM_le(state, paste0("setting base from: ", elements[[ele_idx]][["base_from"]]))
-        current_ele[["ui"]][["base_from"]]    = elements[[ele_idx]][["base_from"]]
+        FM_le(state, paste0("setting base from: ", elements[[ele_idx]][["element"]][["base_from"]]))
+        current_ele[["ui"]][["base_from"]]    = elements[[ele_idx]][["element"]][["base_from"]]
 
-        FM_le(state, paste0("setting catalog selection: ", elements[[ele_idx]][["catalog_selection"]]))
-        current_ele[["ui"]][["catalog_selection"]]    = elements[[ele_idx]][["catalog_selection"]]
+        FM_le(state, paste0("setting catalog selection: ", elements[[ele_idx]][["element"]][["catalog_selection"]]))
+        current_ele[["ui"]][["catalog_selection"]]    = elements[[ele_idx]][["element"]][["catalog_selection"]]
 
-        FM_le(state, paste0("setting base model id: ", elements[[ele_idx]][["base_model_id"]]))
-        current_ele[["base_model"]]           = elements[[ele_idx]][["base_model_id"]]
+        FM_le(state, paste0("setting base model id: ", elements[[ele_idx]][["element"]][["base_model_id"]]))
+        current_ele[["base_model"]]           = elements[[ele_idx]][["element"]][["base_model_id"]]
 
-        FM_le(state, paste0("setting base model name: ", elements[[ele_idx]][["base_model_name"]]))
-        current_ele[["base_model_name"]]      = elements[[ele_idx]][["base_model_name"]]
+        FM_le(state, paste0("setting base model name: ", elements[[ele_idx]][["element"]][["base_model_name"]]))
+        current_ele[["base_model_name"]]      = elements[[ele_idx]][["element"]][["base_model_name"]]
         state = MB_set_current_element(state, current_ele)
 
 
@@ -3392,7 +3393,6 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
   }
 
   current_ele = MB_fetch_current_element(state)
-  browser()
 
   formods::FM_le(state,paste0("module isgood: ",isgood))
 

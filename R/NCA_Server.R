@@ -6861,7 +6861,7 @@ res}
 #'@title Populate Session Data for Module Testing
 #'@description Populates the supplied session variable for testing.
 #'@param session Shiny session variable (in app) or a list (outside of app)
-#'@return The NCA portion of the `all_sess_res` returned from \code{\link{ASM_set_app_state}} 
+#'@return The NCA portion of the `all_sess_res` returned from \code{\link{FM_app_preload}} 
 #'@examples
 #' sess_res = NCA_test_mksession()
 NCA_test_mksession = function(session=list()){
@@ -6875,7 +6875,7 @@ NCA_test_mksession = function(session=list()){
               system.file(package="formods",  "preload", "DW_preload.yaml"),
               system.file(package="ruminate", "preload", "NCA_preload.yaml"))
 
-  res = ASM_set_app_state(session=session, sources=sources)
+  res = FM_app_preload(session=session, sources=sources)
   res = res[["all_sess_res"]][["NCA"]]
 
 res}
@@ -7256,8 +7256,8 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
     # Map between list index and internal figure ID
     element_map = list()
     for(ele_idx in 1:length(elements)){
-      enumeric = c(enumeric, elements[[ele_idx]][["idx"]])
-      element_map[[ paste0("NCA_",elements[[ele_idx]][["idx"]] )]] = ele_idx
+      enumeric = c(enumeric, elements[[ele_idx]][["element"]][["idx"]])
+      element_map[[ paste0("NCA_",elements[[ele_idx]][["element"]][["idx"]] )]] = ele_idx
     }
     # Creating empty fig placeholders
     while(state[["NCA"]][["ana_cntr"]] < max(enumeric)){
@@ -7303,16 +7303,22 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       ele_isgood = TRUE
       formods::FM_le(state, paste0("loading element idx: ", ele_idx ))
       # first we set the element name:
-      if(!is.null(elements[[ele_idx]][["name"]])){
-        formods::FM_le(state, paste0("setting name: ", elements[[ele_idx]][["name"]]))
-        current_ele[["key"]] = elements[[ele_idx]][["name"]]
+      if(!is.null(elements[[ele_idx]][["element"]][["name"]])){
+        formods::FM_le(state, paste0("setting name: ", elements[[ele_idx]][["element"]][["name"]]))
+        current_ele[["key"]] = elements[[ele_idx]][["element"]][["name"]]
+      }
+
+      # Setting any notes:
+      if(!is.null(elements[[ele_idx]][["element"]][["notes"]])){
+        FM_le(state, paste0("notes found and set"))
+        current_ele[["notes"]] = elements[[ele_idx]][["element"]][["notes"]]
       }
 
       # Checking the specified nca_config options
-      if(!all(names(elements[[ele_idx]][["nca_config"]]) %in% nca_opt_names)){
+      if(!all(names(elements[[ele_idx]][["element"]][["nca_config"]]) %in% nca_opt_names)){
         missing_nca_cfg = 
-        names(elements[[ele_idx]][["nca_config"]])[ 
-               !(names(elements[[ele_idx]][["nca_config"]]) %in% nca_opt_names) ]
+        names(elements[[ele_idx]][["element"]][["nca_config"]])[ 
+               !(names(elements[[ele_idx]][["element"]][["nca_config"]]) %in% nca_opt_names) ]
 
         err_msg = c(err_msg, 
                     "The following nca_config options were specified",
@@ -7322,10 +7328,10 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       }
 
       # Checking the specified ana_options 
-      if(!all(names(elements[[ele_idx]][["ana_options"]]) %in% ana_opt_names)){
+      if(!all(names(elements[[ele_idx]][["element"]][["ana_options"]]) %in% ana_opt_names)){
         missing_nca_cfg = 
-        names(elements[[ele_idx]][["ana_options"]])[ 
-               !(names(elements[[ele_idx]][["ana_options"]]) %in% ana_opt_names) ]
+        names(elements[[ele_idx]][["element"]][["ana_options"]])[ 
+               !(names(elements[[ele_idx]][["element"]][["ana_options"]]) %in% ana_opt_names) ]
 
         err_msg = c(err_msg, 
                     "The following ana_options options were specified",
@@ -7344,8 +7350,8 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         ui_name = state[["NCA"]][["ui_ana_map"]][[ui_id]]
         # Here we check to see if the option is defined in the preload file.
         # If it is we use that otherwise we use the 
-        if(ui_name %in% names(elements[[ele_idx]][["ana_options"]])){
-          current_ele[[ui_name]] = elements[[ele_idx]][["ana_options"]][[ui_name]] 
+        if(ui_name %in% names(elements[[ele_idx]][["element"]][["ana_options"]])){
+          current_ele[[ui_name]] = elements[[ele_idx]][["element"]][["ana_options"]][[ui_name]] 
         }
       }
 
@@ -7358,8 +7364,8 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
         # Here we check to see if the option is defined in the preload file.
         # If it is we use that otherwise we use the default:
-        if(nca_opt_pknca_option %in% names(elements[[ele_idx]][["nca_config"]])){
-          nca_opt_value = elements[[ele_idx]][["nca_config"]][[ nca_opt_pknca_option]]
+        if(nca_opt_pknca_option %in% names(elements[[ele_idx]][["element"]][["nca_config"]])){
+          nca_opt_value = elements[[ele_idx]][["element"]][["nca_config"]][[ nca_opt_pknca_option]]
         }else{
           nca_opt_value = state[["NCA"]][["nca_config"]][["default"]][[nca_opt]][["value"]]
         }
@@ -7367,10 +7373,10 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       }
 
       # Attaching data source
-      if(!is.null(elements[[ele_idx]][["data_source"]][["id"]]) &
-         !is.null(elements[[ele_idx]][["data_source"]][["idx"]])){
-        tmp_DSV = DSV[["catalog"]][c(DSV[["catalog"]][["id"]]  == elements[[ele_idx]][["data_source"]][["id"]] & 
-                                     DSV[["catalog"]][["idx"]] == elements[[ele_idx]][["data_source"]][["idx"]]), ]
+      if(!is.null(elements[[ele_idx]][["element"]][["data_source"]][["id"]]) &
+         !is.null(elements[[ele_idx]][["element"]][["data_source"]][["idx"]])){
+        tmp_DSV = DSV[["catalog"]][c(DSV[["catalog"]][["id"]]  == elements[[ele_idx]][["element"]][["data_source"]][["id"]] & 
+                                     DSV[["catalog"]][["idx"]] == elements[[ele_idx]][["element"]][["data_source"]][["idx"]]), ]
         if(nrow(tmp_DSV) == 1){
           formods::FM_le(state, paste0("setting data source: ", tmp_DSV[["object"]][1]) )
           current_ele[["ana_dsview"]] = tmp_DSV[["object"]][1] 
@@ -7389,9 +7395,9 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
       # If the analysis is good we add the components
       if(ele_isgood){
-        for(comp_idx in 1:length(elements[[ele_idx]][["components"]])){
+        for(comp_idx in 1:length(elements[[ele_idx]][["element"]][["components"]])){
 
-          tmp_component = elements[[ele_idx]][["components"]][[comp_idx]][["component"]]
+          tmp_component = elements[[ele_idx]][["element"]][["components"]][[comp_idx]][["component"]]
           add_component = TRUE
           req_comp_opts    =c("nca_parameters", "start", "stop")
 

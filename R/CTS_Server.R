@@ -3735,12 +3735,12 @@ state}
 #'@title Populate Session Data for Module Testing
 #'@description Populates the supplied session variable for testing.
 #'@param session Shiny session variable (in app) or a list (outside of app)
-#'@return The CTS portion of the `all_sess_res` returned from \code{\link{ASM_set_app_state}} 
+#'@return The CTS portion of the `all_sess_res` returned from \code{\link{FM_app_preload}} 
 #'@examples
 #'\donttest{
 #'sess_res = CTS_test_mksession()
 #'}
-#'@seealso \code{\link{ASM_set_app_state}}
+#'@seealso \code{\link{FM_app_preload}}
 CTS_test_mksession = function(session=list()){
 
   isgood = TRUE
@@ -3751,7 +3751,7 @@ CTS_test_mksession = function(session=list()){
               system.file(package="ruminate", "preload", "MB_preload.yaml"),
               system.file(package="ruminate", "preload", "CTS_preload.yaml"))
 
-  res = ASM_set_app_state(session=session, sources=sources)
+  res = FM_app_preload(session=session, sources=sources)
   res = res[["all_sess_res"]][["CTS"]]
  #isgood = TRUE
  #rsc    = list()
@@ -4860,8 +4860,8 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
     # Map between list index and internal figure ID
     element_map = list()
     for(ele_idx in 1:length(elements)){
-      enumeric = c(enumeric, elements[[ele_idx]][["idx"]])
-      element_map[[ paste0("element_",elements[[ele_idx]][["idx"]] )]] = ele_idx
+      enumeric = c(enumeric, elements[[ele_idx]][["element"]][["idx"]])
+      element_map[[ paste0("element_",elements[[ele_idx]][["element"]][["idx"]] )]] = ele_idx
     }
 
     # Creating empty element placeholders
@@ -4900,9 +4900,9 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
       # Checking for required fields:
       req_ele_opts =c("model_source")
-      if(!all(req_ele_opts    %in% names( elements[[ele_idx]]))){
+      if(!all(req_ele_opts    %in% names( elements[[ele_idx]][["element"]]))){
         ele_isgood      = FALSE
-        missing_opts    = req_ele_opts[!(req_ele_opts %in% names(elements[[ele_idx]]))]
+        missing_opts    = req_ele_opts[!(req_ele_opts %in% names(elements[[ele_idx]][["element"]]))]
         ele_err_msg = c(ele_err_msg,
           paste0("element idx:  ",ele_idx, " missing option(s):" ),
           paste0("  -> ", paste0(missing_opts, collapse=", "))
@@ -4910,23 +4910,23 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       }
 
       # If the module requires components check here:
-      if(!("components" %in% names(elements[[ele_idx]]))){
+      if(!("components" %in% names(elements[[ele_idx]][["element"]]))){
         ele_isgood = FALSE
         ele_err_msg = c(ele_err_msg, 
             paste0("element idx: ",ele_idx, " no components defined"))
       }
 
       # Setting model name
-      if(!is.null(elements[[ele_idx]][["name"]])){
-        formods::FM_le(state, paste0("setting cohort name: ",  elements[[ele_idx]][["name"]]))
-        current_ele[["ui"]][["element_name"]]  = elements[[ele_idx]][["name"]]
+      if(!is.null(elements[[ele_idx]][["element"]][["name"]])){
+        formods::FM_le(state, paste0("setting cohort name: ",  elements[[ele_idx]][["element"]][["name"]]))
+        current_ele[["ui"]][["element_name"]]  = elements[[ele_idx]][["element"]][["name"]]
       }
 
       # Finding source model
-      if(!is.null(elements[[ele_idx]][["model_source"]][["id"]]) &
-         !is.null(elements[[ele_idx]][["model_source"]][["idx"]])){
-        tmp_MDL = MDL[["catalog"]][c(MDL[["catalog"]][["id"]]  == elements[[ele_idx]][["model_source"]][["id"]] & 
-                                     MDL[["catalog"]][["idx"]] == elements[[ele_idx]][["model_source"]][["idx"]]), ]
+      if(!is.null(elements[[ele_idx]][["element"]][["model_source"]][["id"]]) &
+         !is.null(elements[[ele_idx]][["element"]][["model_source"]][["idx"]])){
+        tmp_MDL = MDL[["catalog"]][c(MDL[["catalog"]][["id"]]  == elements[[ele_idx]][["element"]][["model_source"]][["id"]] & 
+                                     MDL[["catalog"]][["idx"]] == elements[[ele_idx]][["element"]][["model_source"]][["idx"]]), ]
         if(nrow(tmp_MDL) == 1){
           formods::FM_le(state, paste0("setting model source: ", tmp_MDL[["object"]][1]) )
           state[["CTS"]][["ui"]][["source_model"]] = tmp_MDL[["object"]][1] 
@@ -4942,25 +4942,25 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         ele_isgood = FALSE
       }
 
-      if("cts_options" %in% names(elements[[ele_idx]])){
+      if("cts_options" %in% names(elements[[ele_idx]][["element"]])){
         formods::FM_le(state, paste0("setting trial options:"))
-        for(oname in names(elements[[ele_idx]][["cts_options"]])){
-          formods::FM_le(state, paste0("  - ", oname, ": ", elements[[ele_idx]][["cts_options"]][[oname]]))
-          current_ele[["ui"]][[oname]] = elements[[ele_idx]][["cts_options"]][[oname]]
+        for(oname in names(elements[[ele_idx]][["element"]][["cts_options"]])){
+          formods::FM_le(state, paste0("  - ", oname, ": ", elements[[ele_idx]][["element"]][["cts_options"]][[oname]]))
+          current_ele[["ui"]][[oname]] = elements[[ele_idx]][["element"]][["cts_options"]][[oname]]
         }
       }
 
 
       # Defining subject covariates
-      if("covariates" %in% names(elements[[ele_idx]][["subjects"]])){
+      if("covariates" %in% names(elements[[ele_idx]][["element"]][["subjects"]])){
         FM_le(state, "adding covariates:")
-        for(cname in names(elements[[ele_idx]][["subjects"]][["covariates"]])){
+        for(cname in names(elements[[ele_idx]][["element"]][["subjects"]][["covariates"]])){
           req_cov_opts   = c("type", "value")
-          found_cov_opts = names(elements[[ele_idx]][["subjects"]][["covariates"]][[cname]])
+          found_cov_opts = names(elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]])
           if(all( req_cov_opts %in%  found_cov_opts)){
             # This prepares the UI values to add the covariate
-            state[["CTS"]][["ui"]][["covariate_value"]]            = elements[[ele_idx]][["subjects"]][["covariates"]][[cname]][["value"]]
-            state[["CTS"]][["ui"]][["covariate_type_selected"]]    = elements[[ele_idx]][["subjects"]][["covariates"]][[cname]][["type"]]
+            state[["CTS"]][["ui"]][["covariate_value"]]            = elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]][["value"]]
+            state[["CTS"]][["ui"]][["covariate_type_selected"]]    = elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]][["type"]]
             state[["CTS"]][["ui"]][["selected_covariate"]]         = cname 
 
             # This adds it:
@@ -4969,8 +4969,8 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
             # Here we check for any errors:
             if(current_ele[["cares"]][["COV_IS_GOOD"]]){
               FM_le(state, paste0("  - ", cname, ": ", 
-                           elements[[ele_idx]][["subjects"]][["covariates"]][[cname]][["type"]], " (",
-                           elements[[ele_idx]][["subjects"]][["covariates"]][[cname]][["value"]], ")"))
+                           elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]][["type"]], " (",
+                           elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]][["value"]], ")"))
             } else {
               FM_le(state, paste0("  - ", cname, ": failed to add"))
               ele_isgood = FALSE
@@ -5001,8 +5001,8 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       if(ele_isgood){
         # Creating element components
         # If there are components you can add them here:
-        for(comp_idx in 1:length(elements[[ele_idx]][["components"]])){
-          tmp_component = elements[[ele_idx]][["components"]][[comp_idx]][["component"]]
+        for(comp_idx in 1:length(elements[[ele_idx]][["element"]][["components"]])){
+          tmp_component = elements[[ele_idx]][["element"]][["components"]][[comp_idx]][["component"]]
           add_component = TRUE
 
           if("type" %in% names(tmp_component)){

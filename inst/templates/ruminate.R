@@ -218,7 +218,7 @@ server <- function(input, output, session) {
                 system.file(package="formods",  "preload", "DW_preload.yaml"),
                 system.file(package="ruminate", "preload", "NCA_preload.yaml"))
     
-    res = ASM_set_app_state(session=session, sources=sources)
+    res = FM_app_preload(session=session, sources=sources)
   }
 
   # Module servers

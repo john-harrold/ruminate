@@ -236,7 +236,7 @@ server <- function(input, output, session) {
                 system.file(package="ruminate", "preload", "MB_preload.yaml"),
                 system.file(package="ruminate", "preload", "CTS_preload.yaml"))
     
-    res = ASM_set_app_state(session=session, sources=sources, react_state=react_FM)
+    res = FM_app_preload(session=session, sources=sources, react_state=react_FM)
   }
 
   # Module servers
