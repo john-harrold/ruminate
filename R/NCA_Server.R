@@ -3467,8 +3467,6 @@ NCA_fetch_state = function(id, input, session,
       (!fetch_hold(state, "select_current_ana"))){
 
     # Changing the current view to the one selected in the UI
-    # JMH create NCA_mkactive_ana here to set active
-    # state[["NCA"]][["current_ana"]]  =  state[["NCA"]][["ui"]][["select_current_ana"]]
     state = NCA_mkactive_ana(state, state[["NCA"]][["ui"]][["select_current_ana"]])
     state = set_hold(state)
     # browser()
@@ -5267,7 +5265,6 @@ current_ana}
 #'@description Takes the current analysis in the state object and creates the
 #'code to run the analysis
 #'@param state NCA state from \code{NCA_fetch_state()}
-#' JMH update the return list below
 #'@return NCA state with the NCA for the current analysis built.
 #'@examples
 #'# We need a module variables to be defined
@@ -5646,7 +5643,7 @@ nca_builder = function(state){
       )
 
     # code for figures and tables
-    # JMH add other UI optoins to function calls here:
+    # JMH add other UI options to function calls here:
     code_fg_ind_obs   = c(
       "",
       "# Generating figures of indiviudal profiles",
@@ -7304,13 +7301,13 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       formods::FM_le(state, paste0("loading element idx: ", ele_idx ))
       # first we set the element name:
       if(!is.null(elements[[ele_idx]][["element"]][["name"]])){
-        formods::FM_le(state, paste0("setting name: ", elements[[ele_idx]][["element"]][["name"]]))
+        formods::FM_le(state, paste0("  -> setting name: ", elements[[ele_idx]][["element"]][["name"]]))
         current_ele[["key"]] = elements[[ele_idx]][["element"]][["name"]]
       }
 
       # Setting any notes:
       if(!is.null(elements[[ele_idx]][["element"]][["notes"]])){
-        FM_le(state, paste0("notes found and set"))
+        FM_le(state, paste0("  -> notes found and set"))
         current_ele[["notes"]] = elements[[ele_idx]][["element"]][["notes"]]
       }
 
@@ -7369,7 +7366,8 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         }else{
           nca_opt_value = state[["NCA"]][["nca_config"]][["default"]][[nca_opt]][["value"]]
         }
-        current_ele[[nca_opt_ui_id]] = nca_opt_value
+
+        current_ele[["nca_config"]][[nca_opt]][["value"]] = nca_opt_value
       }
 
       # Attaching data source
@@ -7378,7 +7376,7 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         tmp_DSV = DSV[["catalog"]][c(DSV[["catalog"]][["id"]]  == elements[[ele_idx]][["element"]][["data_source"]][["id"]] & 
                                      DSV[["catalog"]][["idx"]] == elements[[ele_idx]][["element"]][["data_source"]][["idx"]]), ]
         if(nrow(tmp_DSV) == 1){
-          formods::FM_le(state, paste0("setting data source: ", tmp_DSV[["object"]][1]) )
+          formods::FM_le(state, paste0("  -> setting data source: ", tmp_DSV[["object"]][1]) )
           current_ele[["ana_dsview"]] = tmp_DSV[["object"]][1] 
         } else {
           formods::FM_le(state, paste0("error locating data source, expecting 1 source found ", nrow(tmp_DSV)), entry_type="danger")
@@ -7452,7 +7450,6 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
           paste0("failed to add element idx: ",ele_idx),
           err_msg)
         msgs = c(msgs, err_msg)
-        # JMH add failed to add element message
         formods::FM_le(state,err_msg,entry_type="danger")
       }
     }
@@ -7474,4 +7471,127 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
              state       = state)
 res}
 
+#'@export
+#'@title Make List of Current NCA State
+#'@description Reads in the app state from yaml files.
+#'@param state NCA state object
+#'@return list with the following elements
+#' \itemize{
+#'   \item{isgood:}       Boolean indicating the exit status of the function.
+#'   \item{msgs:}         Messages to be passed back to the user.
+#'   \item{yaml_list:}    Lists with preload components.
+#'}
+#'@examples
+#'res = NCA_mk_preload(state)
+NCA_mk_preload     = function(state){
+  isgood    = TRUE
+  msgs      = c()  
+  err_msg   = c()
+  ylist     = list()
+  yaml_list = list()
+
+  ylist = list(
+      fm_yaml  = file.path("config", basename(state[["FM_yaml_file"]])),
+      mod_yaml = file.path("config", basename(state[["MOD_yaml_file"]]))
+  )
+
+  DSV = state[["NCA"]][["DSV"]]
+
+  if(DSV[["hasds"]]){
+    ele_idx = 1
+    # Walking through each element:
+    for(element_id in names(state[["NCA"]][["anas"]])){
+      tmp_source_ele = state[["NCA"]][["anas"]][[element_id]]
+   
+      # Finding the data source:
+      dsv_row = 
+      DSV[["catalog"]][
+        DSV[["catalog"]][["object"]] == tmp_source_ele[["ana_dsview"]], ]
+      ds_id  = dsv_row[["id"]]
+      ds_idx = dsv_row[["idx"]]
+
+      FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["key"]]))
+
+      # Creates the empty element:
+      tmp_element = list(
+        idx   = tmp_source_ele[["idx"]],
+        name  = tmp_source_ele[["key"]],
+        notes = tmp_source_ele[["notes"]],
+        data_source = list(
+          id  = ds_id,
+          idx = ds_idx),
+        nca_config  = list(),
+        ana_options = list(),
+        components  = list())
+
+      found_uis = c()
+      # Defining the analysis options:
+      ana_opts = as.vector(unlist(state[["NCA"]][["ui_ana_map"]]))
+      tmp_element[["ana_options"]] = tmp_source_ele[ana_opts]
+
+      # The key is defined as the name above and the mapping is handled on
+      # preload, so we set it to NULL here to remove it:
+      tmp_element[["ana_options"]][["key"]] = NULL
+
+      # Defining the nca_config options:
+      for(nca_opt in names(state[["NCA"]][["nca_config"]][["default"]])){
+        nca_opt_pknca_option = state[["NCA"]][["nca_config"]][["default"]][[nca_opt]][["pknca_option"]]
+        nca_opt_ui_id        = state[["NCA"]][["nca_config"]][["default"]][[nca_opt]][["ui_id"]]
+
+        if(nca_opt_ui_id %in% names(tmp_source_ele)){
+          nca_opt_value  = tmp_source_ele[[ nca_opt_ui_id ]]
+        } else { 
+          nca_opt_value  = state[["NCA"]][["nca_config"]][["default"]][[nca_opt]][["value"]]
+        }
+        tmp_element[["nca_config"]][[nca_opt_pknca_option]] = nca_opt_value
+      }
+
+      comp_idx = 1
+      for(ridx in 1:nrow(tmp_source_ele[["intervals"]])){
+        np_actual_vect = 
+          as.vector(
+            stringr::str_split(
+              string   = tmp_source_ele[["intervals"]][ridx, ][["np_actual"]],
+              pattern  = "," ,
+              simplify = TRUE)
+          )
+
+        tmp_msg = paste0("  -> interval: [", 
+                         tmp_source_ele[["intervals"]][ridx, ][["start"]],
+                         ",", 
+                         tmp_source_ele[["intervals"]][ridx, ][["stop"]],
+                         "]  ", tmp_source_ele[["intervals"]][ridx, ][["np_text"]])
+        FM_le(state, tmp_msg)
+        tmp_element[["components"]][[comp_idx]] = list( component = list(
+          nca_parameters = np_actual_vect,
+            start        = tmp_source_ele[["intervals"]][ridx, ][["start"]],
+            stop         = tmp_source_ele[["intervals"]][ridx, ][["stop"]]))
+
+        comp_idx = comp_idx + 1
+      }
+
+      # Appending element
+      ylist[["elements"]][[ele_idx]] = list(element = tmp_element)
+      ele_idx = ele_idx + 1
+    }
+  }
+
+  # Creating the yaml list with the module ID at the top level
+  yaml_list = list()
+  yaml_list[[ state[["id"]] ]]  = ylist
+      
+  formods::FM_le(state,paste0("mk_preload isgood: ",isgood))
+
+  if(!isgood && !is.null(err_msg)){
+    formods::FM_le(state,err_msg,entry_type="danger")
+    msgs = c(msgs, err_msg)
+  }
+
+  
+
+  res = list(
+    isgood    = isgood,
+    msgs      = msgs,
+    yaml_list = yaml_list)
+}
 

@@ -10,7 +10,7 @@ CTS_test_mksession(session = list())
 \item{session}{Shiny session variable (in app) or a list (outside of app)}
 }
 \value{
-The CTS portion of the \code{all_sess_res} returned from \code{\link{ASM_set_app_state}}
+The CTS portion of the \code{all_sess_res} returned from \code{\link{FM_app_preload}}
 }
 \description{
 Populates the supplied session variable for testing.
@@ -21,5 +21,5 @@ sess_res = CTS_test_mksession()
 }
 }
 \seealso{
-\code{\link{ASM_set_app_state}}
+\code{\link{FM_app_preload}}
 }

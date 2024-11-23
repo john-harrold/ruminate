@@ -3256,7 +3256,8 @@ CTS_add_covariate   = function(state, element){
           sampling = state[["MC"]][["covariate_generation"]][["types"]][[covariate_type]][["sampling"]],
           type     = state[["MC"]][["covariate_generation"]][["types"]][[covariate_type]][["type"]])
 
-      element[["covariates"]][[selected_covariate]] = cov_list
+      element[["covariates"]][[selected_covariate]]    = cov_list
+      element[["covariates_ui_type"]][[selected_covariate]] = covariate_type
     } else {
       tmp_msg = paste0("Unable to evaluate value for covariate: ", selected_covariate, ".")
       FM_le(state, tmp_msg)
@@ -4006,6 +4007,8 @@ CTS_new_element = function(state){
          # This will hold definitions for how covariates are to be determined
          # when subjects are created
          covariates             = list(),
+         # This tracks the original type of covariate selected in the UI
+         covariates_ui_type     = list(),
          # Generated on save
          checksum               = NULL,
          # code is the code to generate the element by itself. It assumes
@@ -5083,8 +5086,6 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
             current_ele[["simres"]][["msgs"]])
         }
 
-         #browser()
-        
         # Next we plot the element
         current_ele = CTS_plot_element(state, current_ele)
         if(current_ele[["plotres"]][["isgood"]]){
@@ -5095,7 +5096,6 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
           ele_err_msg = c(ele_err_msg, 
             "plot failed",
             current_ele[["plotres"]][["msgs"]])
-          browser()
         }
         
         # Now we save those results back into the state:
@@ -5139,3 +5139,129 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
              state       = state)
   
 res}
+
+
+#'@export
+#'@title Make List of Current CTS State
+#'@description Reads in the app state from yaml files.
+#'@param state CTS state object
+#'@return list with the following elements
+#' \itemize{
+#'   \item{isgood:}       Boolean indicating the exit status of the function.
+#'   \item{msgs:}         Messages to be passed back to the user.
+#'   \item{yaml_list:}    Lists with preload components.
+#'}
+#'@examples
+#'res = CTS_mk_preload(state)
+CTS_mk_preload     = function(state){
+  isgood    = TRUE
+  msgs      = c()  
+  err_msg   = c()
+  ylist     = list()
+  yaml_list = list()
+
+  ylist = list(
+      fm_yaml  = file.path("config", basename(state[["FM_yaml_file"]])),
+      mod_yaml = file.path("config", basename(state[["MOD_yaml_file"]]))
+  )
+
+      
+  # Pulling the available models:
+  MDL = state[["CTS"]][["MDL"]]
+
+  if(MDL[["hasmdl"]]){
+    ele_idx = 1
+    # Walking through each element:
+    for(element_id in names(state[["CTS"]][["elements"]])){
+      tmp_source_ele = state[["CTS"]][["elements"]][[element_id]]
+    
+      FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
+
+
+      # Model for the current element
+      SMR = MDL[["catalog"]][MDL[["catalog"]][["object"]] == tmp_source_ele[["ui"]][["source_model"]], ]
+
+      if(nrow(SMR) == 1){
+
+        # Determining the model source
+        model_source = list(
+          id  = SMR[["id"]][1],
+          idx = SMR[["idx"]][1])
+
+
+        # Pulling out the options removing the element name and source model
+        # because those are handled separately. 
+        cts_options = tmp_source_ele[["ui"]]
+        cts_options[["element_name"]] = NULL
+        cts_options[["source_model"]] = NULL
+
+
+        # Creating subject level information
+        subjects = list()
+        if(length(tmp_source_ele[["covariates"]])>0){
+          subjects = list(covariates=list())
+          for(cname in names(tmp_source_ele[["covariates"]])){
+            subjects[["covariates"]][[cname]] = list(
+               type  = tmp_source_ele[["covariates_ui_type"]][[cname]],
+               value = paste0(tmp_source_ele[["covariates"]][[cname]][["values"]], collapse=", "))
+          }
+        }
+
+        
+        tmp_element = list(
+          idx               = tmp_source_ele[["idx"]],
+          name              = tmp_source_ele[["ui"]][["element_name"]],
+          cts_options       = cts_options,
+          model_source      = model_source,
+          subjects          = subjects,   
+          components        = list())
+
+        comp_idx = 1
+        if(is.data.frame( tmp_source_ele[["components_table"]])){
+          for(ridx in 1:nrow( tmp_source_ele[["components_table"]])){
+
+            tmp_comp_row  = tmp_source_ele[["components_table"]][ ridx, ]
+            tmp_comp_list = tmp_source_ele[["components_list"]][[ tmp_comp_row[["hash"]] ]]
+            tmp_comp_name = names(tmp_comp_list)
+
+            tmp_comp = tmp_comp_list[[tmp_comp_name]][["action"]]
+            tmp_comp[["name"]] = tmp_comp_name
+            tmp_comp[["condition"]] = tmp_comp_list[[tmp_comp_name]][["condition"]]
+
+            tmp_element[["components"]][[comp_idx]] = list(component=tmp_comp)
+            FM_le(state, paste0("  -> rule ", tmp_comp[["type"]]))
+            comp_idx = comp_idx + 1
+          }
+        }
+        
+        
+        # Appending element
+        ylist[["elements"]][[ele_idx]] = list(element = tmp_element)
+        ele_idx = ele_idx + 1
+      } else {
+        isgood = FALSE
+        err_msg =  c(err_msg,paste0("error finding source model for element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
+        err_msg =  c(err_msg,paste0("found ", nrow(SMR), " models, expected 1"))
+      }
+
+
+    }
+  }
+
+  # Creating the yaml list with the module ID at the top level
+  yaml_list = list()
+  yaml_list[[ state[["id"]] ]]  = ylist
+
+  formods::FM_le(state,paste0("mk_preload isgood: ",isgood))
+  
+  if(!isgood && !is.null(err_msg)){
+    formods::FM_le(state,err_msg,entry_type="danger")
+    msgs = c(msgs, err_msg)
+  }
+
+  res = list(
+    isgood    = isgood,
+    msgs      = msgs,
+    yaml_list = yaml_list)
+}
+

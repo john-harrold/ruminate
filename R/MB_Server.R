@@ -3356,22 +3356,22 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
 
         # Setting element options:
         current_ele = MB_fetch_current_element(state)
-        FM_le(state, paste0("setting name: ", elements[[ele_idx]][["element"]][["name"]]))
+        FM_le(state, paste0("  -> setting name: ", elements[[ele_idx]][["element"]][["name"]]))
         current_ele[["ui"]][["element_name"]] = elements[[ele_idx]][["element"]][["name"]]
 
-        FM_le(state, paste0("setting time scale: ", elements[[ele_idx]][["element"]][["time_scale"]]))
+        FM_le(state, paste0("  -> setting time scale: ", elements[[ele_idx]][["element"]][["time_scale"]]))
         current_ele[["ui"]][["time_scale"]] = elements[[ele_idx]][["element"]][["time_scale"]]
 
-        FM_le(state, paste0("setting base from: ", elements[[ele_idx]][["element"]][["base_from"]]))
+        FM_le(state, paste0("  -> setting base from: ", elements[[ele_idx]][["element"]][["base_from"]]))
         current_ele[["ui"]][["base_from"]]    = elements[[ele_idx]][["element"]][["base_from"]]
 
-        FM_le(state, paste0("setting catalog selection: ", elements[[ele_idx]][["element"]][["catalog_selection"]]))
+        FM_le(state, paste0("  -> setting catalog selection: ", elements[[ele_idx]][["element"]][["catalog_selection"]]))
         current_ele[["ui"]][["catalog_selection"]]    = elements[[ele_idx]][["element"]][["catalog_selection"]]
 
-        FM_le(state, paste0("setting base model id: ", elements[[ele_idx]][["element"]][["base_model_id"]]))
+        FM_le(state, paste0("  -> setting base model id: ", elements[[ele_idx]][["element"]][["base_model_id"]]))
         current_ele[["base_model"]]           = elements[[ele_idx]][["element"]][["base_model_id"]]
 
-        FM_le(state, paste0("setting base model name: ", elements[[ele_idx]][["element"]][["base_model_name"]]))
+        FM_le(state, paste0("  -> setting base model name: ", elements[[ele_idx]][["element"]][["base_model_name"]]))
         current_ele[["base_model_name"]]      = elements[[ele_idx]][["element"]][["base_model_name"]]
         state = MB_set_current_element(state, current_ele)
 
@@ -3410,3 +3410,89 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
              state       = state)
 
 res}
+
+
+
+#'@export
+#'@title Make List of Current MB State
+#'@description Reads in the app state from yaml files.
+#'@param state MB state object
+#'@return list with the following elements
+#' \itemize{
+#'   \item{isgood:}       Boolean indicating the exit status of the function.
+#'   \item{msgs:}         Messages to be passed back to the user.
+#'   \item{yaml_list:}    Lists with preload components.
+#'}
+#'@examples
+#'res = MB_mk_preload(state)
+MB_mk_preload     = function(state){
+  isgood    = TRUE
+  msgs      = c()  
+  err_msg   = c()
+  ylist     = list()
+  yaml_list = list()
+
+  ylist = list(
+      fm_yaml  = file.path("config", basename(state[["FM_yaml_file"]])),
+      mod_yaml = file.path("config", basename(state[["MOD_yaml_file"]]))
+  )
+
+  ele_idx = 1
+  # Walking through each element:
+  for(element_id in names(state[["MB"]][["elements"]])){
+    tmp_source_ele = state[["MB"]][["elements"]][[element_id]]
+  
+    FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
+
+    # Creates the empty element:
+    tmp_element = list(
+      idx               = tmp_source_ele[["idx"]],
+      name              = tmp_source_ele[["ui"]][["element_name"]],
+      time_scale        = tmp_source_ele[["ui"]][["time_scale"]],
+      catalog_selection = tmp_source_ele[["ui"]][["catalog_selection"]],
+      base_from         = tmp_source_ele[["ui"]][["base_from"]],
+      base_model_id     = tmp_source_ele[["base_model"]],
+      base_model_name   = tmp_source_ele[["base_model_name"]],
+      components  = list())
+  
+    comp_idx = 1
+    if(is.data.frame( tmp_source_ele[["components_table"]])){
+      for(ridx in 1:nrow( tmp_source_ele[["components_table"]])){
+      
+        tmp_note   = tmp_source_ele[["components_table"]][ridx, ][["note"]]
+        tmp_model  = paste0("my_model = ", tmp_source_ele[["components_table"]][ridx, ][["fcn_def"]])
+        tmp_object = "my_model"
+      
+        tmp_element[["components"]][[comp_idx]] = list( component = list(
+          note = tmp_note,
+          object = tmp_object,
+          model = tmp_model)
+        )
+      
+        comp_idx = comp_idx + 1
+      }
+    }
+  
+    # Appending element
+    ylist[["elements"]][[ele_idx]] = list(element = tmp_element)
+    ele_idx = ele_idx + 1
+  }
+
+  # Creating the yaml list with the module ID at the top level
+  yaml_list = list()
+  yaml_list[[ state[["id"]] ]]  = ylist
+      
+  formods::FM_le(state,paste0("mk_preload isgood: ",isgood))
+
+  if(!isgood && !is.null(err_msg)){
+    formods::FM_le(state,err_msg,entry_type="danger")
+    msgs = c(msgs, err_msg)
+  }
+
+  
+
+  res = list(
+    isgood    = isgood,
+    msgs      = msgs,
+    yaml_list = yaml_list)
+}

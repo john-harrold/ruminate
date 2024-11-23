@@ -352,7 +352,7 @@ MC:
     head_run_analysis:               "Run Analysis"
     head_units:                      "Units"
     select_current_view:             "Data from"
-    select_current_ana:              "Current NCA"
+    select_current_ana:              "Current Analysis"
     select_ana_scenario:             NULL  # "Type of Analysis:"
     select_ana_col_id:               "Subject ID"
     select_ana_col_time:             "Time"

@@ -7,8 +7,7 @@
 nca_builder(state)
 }
 \arguments{
-\item{state}{NCA state from \code{NCA_fetch_state()}
-JMH update the return list below}
+\item{state}{NCA state from \code{NCA_fetch_state()}}
 }
 \value{
 NCA state with the NCA for the current analysis built.

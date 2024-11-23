@@ -18,22 +18,64 @@ NCA:
         # This is where the options for PKNCA are defined. Those not defined
         # here will default to the values in the NCA.yaml file
         nca_config:
-          adj.r.squared.factor:   1e-04
+          adj.r.squared.factor:    1e-04
+          max.missing:             0.5
+          auc.method:              lin up/log down
+          conc.na:                 drop
+          conc.blq$first:          keep
+          conc.blq$middle:         drop
+          conc.blq$last:           keep
+          first.tmax:              yes
+          allow.tmax.in.half.life: no
+          min.hl.points:           3
+          min.span.ratio:          2
+          min.hl.r.squared:        0.9
+          max.aucinf.pext:         20
         # This is the rest of the analysis options 
         ana_options:
-          tab_type:    "report"
-          fig_type:    "report"
-          col_id:      "ID"
-          col_conc:    "DV"
-          col_dose:    "DOSE"
-          col_cycle:   "DOSE_NUM"
-          col_route:   "ROUTE"
-          col_time:    "TIME_DY"
-          col_ntime:   "NTIME_DY"
-          col_dur:     "N/A"
-          col_analyte: "N/A"
-          sampling:    "serial"
-          dose_from:   "cols"
+          include_units: yes
+          interval_range:
+          - '0'
+          - Inf
+          fg_ind_obs_ncol: 4
+          fg_ind_obs_nrow: 4
+          curr_fg_ind_obs: Figure_1
+          curr_tb_ind_obs: Table 1
+          curr_tb_ind_params: Table 1
+          curr_tb_sum_params: ''
+          fg_ind_obs_rpt:
+          - docx
+          - pptx
+          tb_ind_obs_rpt: docx
+          tb_ind_params_rpt: docx
+          tb_sum_params_rpt: pptx
+          fg_ind_obs_logy: yes
+          sampling: serial
+          dose_from: cols
+          fig_type: report
+          tab_type: report
+          nca_parameters:
+          - cmax
+          - auclast
+          - aucinf.obs
+          ana_scenario: sd_iv
+          units_time: day
+          units_conc: ng/mL
+          units_dose: mg
+          units_amt: mg
+          col_id: ID
+          col_time: TIME_DY
+          col_ntime: NTIME_DY
+          col_dose: DOSE
+          col_dur: N/A
+          col_conc: DV
+          col_route: ROUTE
+          col_group: ''
+          col_evid: ''
+          col_cycle: DOSE_NUM
+          col_analyte: N/A
+          fig_view: fg_ind_obs
+          tab_view: tb_ind_obs
         components:     
           # Each component here is an NCA analysis interval. The nca_parameters
           # are the PKNCA parameters that you want calculated over that
@@ -61,23 +103,64 @@ NCA:
         # This is where the options for PKNCA are defined. Those not defined
         # here will default to the values in the NCA.yaml file
         nca_config:
-          adj.r.squared.factor:   1e-04
+          adj.r.squared.factor:    1e-04
+          max.missing:             0.5
+          auc.method:              lin up/log down
+          conc.na:                 drop
+          conc.blq$first:          keep
+          conc.blq$middle:         drop
+          conc.blq$last:           keep
+          first.tmax:              yes
+          allow.tmax.in.half.life: no
+          min.hl.points:           3
+          min.span.ratio:          2
+          min.hl.r.squared:        0.9
+          max.aucinf.pext:         20
         # This is the rest of the analysis options 
         ana_options:
-          tab_type:    "report"
-          fig_type:    "report"
-          col_id:      "ID"
-          col_conc:    "DV"
-          col_dose:    "DOSE"
-          col_cycle:   "DOSE_NUM"
-          col_evid:    "EVID"
-          col_route:   "ROUTE"
-          col_time:    "TIME_DY"
-          col_ntime:   "NTIME_DY"
-          col_dur:     "N/A"
-          col_analyte: "CMT"
-          sampling:    "serial"
-          dose_from:   "cols"
+          include_units: yes
+          interval_range:
+          - '0'
+          - Inf
+          fg_ind_obs_ncol: 4
+          fg_ind_obs_nrow: 4
+          curr_fg_ind_obs: Figure_1
+          curr_tb_ind_obs: Table 1
+          curr_tb_ind_params: Table 1
+          curr_tb_sum_params: ''
+          fg_ind_obs_rpt:
+          - docx
+          - pptx
+          tb_ind_obs_rpt: docx
+          tb_ind_params_rpt: docx
+          tb_sum_params_rpt: pptx
+          fg_ind_obs_logy: yes
+          sampling: serial
+          dose_from: cols
+          fig_type: report
+          tab_type: report
+          nca_parameters:
+          - cmax
+          - auclast
+          - aucinf.obs
+          ana_scenario: sd_iv
+          units_time: day
+          units_conc: ng/mL
+          units_dose: mg
+          units_amt: mg
+          col_id: ID
+          col_time: TIME_DY
+          col_ntime: NTIME_DY
+          col_dose: DOSE
+          col_dur: N/A
+          col_conc: DV
+          col_route: ROUTE
+          col_group: ''
+          col_evid: EVID
+          col_cycle: DOSE_NUM
+          col_analyte: CMT
+          fig_view: fg_ind_obs
+          tab_view: tb_ind_obs
         components:     
           # Each component here is an NCA analysis interval. The nca_parameters
           # are the PKNCA parameters that you want calculated over that

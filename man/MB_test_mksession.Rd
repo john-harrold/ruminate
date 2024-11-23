@@ -10,7 +10,8 @@ MB_test_mksession(session = list())
 \item{session}{Shiny session variable (in app) or a list (outside of app)}
 }
 \value{
-The MB portion of the \code{all_sess_res} returned from \code{\link{ASM_set_app_state}}
+The MB portion of the \code{all_sess_res} returned from
+\code{\link{FM_app_preload}}
 }
 \description{
 Populates the supplied session variable for testing.
