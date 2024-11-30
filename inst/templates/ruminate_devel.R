@@ -32,16 +32,17 @@ if(!exists("deployed")){
   deployed = FALSE
 }
 
+# If the DEPLOYED file marker existrs we set deployed to TRUE
+if(file.exists("DEPLOYED")){
+  deployed = TRUE
+}
+
+
 # If the SETUP.R file exists we source it
 if(file.exists("SETUP.R")){
   source("SETUP.R")
 }
 
-
-# If the DEPLOYED file marker existrs we set deployed to TRUE
-if(file.exists("DEPLOYED")){
-  deployed = TRUE
-}
 
 CSS <- "
 .wrapfig {
@@ -224,7 +225,7 @@ server <- function(input, output, session) {
   react_FM = reactiveValues()
 
   # Module IDs and the order they are needed for code generation
-  mod_ids = c("UD", "DW", "FG", "NCA", "MB")
+  mod_ids = c("UD", "DW", "FG", "NCA", "MB", "CTS")
 
   # If the ftmptest file is present we load test data
   if(file.exists(ftmptest)){
@@ -237,7 +238,13 @@ server <- function(input, output, session) {
                 system.file(package="ruminate", "preload", "CTS_preload.yaml"))
     
     res = FM_app_preload(session=session, sources=sources, react_state=react_FM)
+  # Otherwise we look for a preload file and load that if it exists
+  } else if(file.exists("preload.yaml")){
+    shinybusy::show_modal_spinner(text="Preloading analysis, be patient", session=session)
+    res = FM_app_preload(session=session, sources="preload.yaml")
+    shinybusy::remove_modal_spinner(session = session)
   }
+  
 
   # Module servers
   formods::ASM_Server( id="ASM",
@@ -263,6 +270,7 @@ server <- function(input, output, session) {
                        react_state      = react_FM,
                        MOD_yaml_file    = FG.yaml,
                        FM_yaml_file     = formods.yaml)
+
   ruminate::NCA_Server(id    ="NCA", id_ASM = "ASM",
                        id_UD = "UD", id_DW  = "DW",
                        deployed         = deployed,

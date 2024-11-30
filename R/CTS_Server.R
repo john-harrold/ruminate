@@ -2417,26 +2417,29 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
     FM_le(state, "Updating Models")
     state[["CTS"]][["MDL"]]  = FM_fetch_mdl(state, session, ids = id_MB)
 
-    # forcing a rebuild of the model for the current element
-    current_ele = CTS_fetch_current_element(state)
 
-    # Current source model
-    csm = current_ele[["ui"]][["source_model"]]
-    if(!(csm %in% names(state[["CTS"]][["MDL"]][["mdl"]]))){
-      FM_le(state, "Source model for current cohort not found:")
-      FM_le(state, paste0(" -> ", current_ele[["model_label"]]))
-      FM_le(state, paste0(" -> ", csm))
-      csm = names(state[["CTS"]][["MDL"]][["mdl"]])[1]
-      FM_le(state, "Defaulting to: ")
-      FM_le(state, paste0(" -> ", state[["CTS"]][["MDL"]][["mdl"]][[csm]][["label"]]))
-      FM_le(state, paste0(" -> ", csm))
+    if(state[["CTS"]][["MDL"]][["hasmdl"]]){
+      # forcing a rebuild of the model for the current element
+      current_ele = CTS_fetch_current_element(state)
+
+      # Current source model
+      csm = current_ele[["ui"]][["source_model"]]
+      if(!(csm %in% names(state[["CTS"]][["MDL"]][["mdl"]]))){
+        FM_le(state, "Source model for current cohort not found:")
+        FM_le(state, paste0(" -> ", current_ele[["model_label"]]))
+        FM_le(state, paste0(" -> ", csm))
+        csm = names(state[["CTS"]][["MDL"]][["mdl"]])[1]
+        FM_le(state, "Defaulting to: ")
+        FM_le(state, paste0(" -> ", state[["CTS"]][["MDL"]][["mdl"]][[csm]][["label"]]))
+        FM_le(state, paste0(" -> ", csm))
+      }
+      
+      state[["CTS"]][["ui"]][["source_model"]] = csm
+      current_ele = CTS_change_source_model(state, current_ele )
+      state = CTS_set_current_element(
+        state   = state,
+        element = current_ele)
     }
-
-    state[["CTS"]][["ui"]][["source_model"]] = csm
-    current_ele = CTS_change_source_model(state, current_ele )
-    state = CTS_set_current_element(
-      state   = state,
-      element = current_ele)
   }
 
   #---------------------------------------------
@@ -3961,7 +3964,7 @@ CTS_new_element = function(state){
   element_def =
     list(
          # internal use only
-         isgood                 = TRUE,
+         isgood                 = FALSE,
          # This will hold the ui values for the current element
          ui                     = list(
            element_name  = paste0("cohort ", state[["CTS"]][["element_cntr"]]),
@@ -4080,17 +4083,20 @@ CTS_init_element_model    = function(state, element){
   # DV cols selection
   rx_details = element[["rx_details"]]
 
-  if(rx_details[["isgood"]]){
-    all_values = c(
-      rx_details[["elements"]][["outputs"]],
-      rx_details[["elements"]][["states"]])
+  # Default to no dvcols
+  element[["ui"]][["dvcols"]]   = ""
 
-     # Storing the details in the element
-     if(is.null(all_values)){
-      element[["ui"]][["dvcols"]]   = ""
-     } else {
-      element[["ui"]][["dvcols"]]   = all_values[1]
-     }
+  if(!is.null(rx_details)){
+    if(rx_details[["isgood"]]){
+      all_values = c(
+        rx_details[["elements"]][["outputs"]],
+        rx_details[["elements"]][["states"]])
+    
+       # Storing the details in the element
+       if(!is.null(all_values)){
+        element[["ui"]][["dvcols"]]   = all_values[1]
+       }
+    }
   }
 
 element}
@@ -5125,7 +5131,7 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
   formods::FM_le(state,paste0("module isgood: ",isgood))
 
-  if(("ShinySession" %in% class(session))){
+  if(formods::is_shiny(session)){
     FM_set_mod_state(session, mod_ID, state)
   } else {
     session = FM_set_mod_state(session, mod_ID, state)
@@ -5173,6 +5179,7 @@ CTS_mk_preload     = function(state){
     ele_idx = 1
     # Walking through each element:
     for(element_id in names(state[["CTS"]][["elements"]])){
+      browser()
       tmp_source_ele = state[["CTS"]][["elements"]][[element_id]]
     
       FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))

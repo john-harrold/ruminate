@@ -1,7 +1,7 @@
 NCA:
   fm_yaml:   'system.file(package="formods",  "templates", "formods.yaml")'
-  mod_yaml: "/Users/jmh/projects/ruminate/github/ruminate/inst/templates/NCA.yaml"
-  #mod_yaml:  'system.file(package="ruminate", "templates", "NCA.yaml")'
+  #mod_yaml: "/Users/jmh/projects/ruminate/github/ruminate/inst/templates/NCA.yaml"
+  mod_yaml:  'system.file(package="ruminate", "templates", "NCA.yaml")'
   elements:
     # Each element is a specific analysis
     - element:
@@ -31,7 +31,7 @@ NCA:
           min.span.ratio:          2
           min.hl.r.squared:        0.9
           max.aucinf.pext:         20
-        # This is the rest of the analysis options 
+        # This is the rest of the analysis options
         ana_options:
           include_units: yes
           interval_range:
@@ -76,7 +76,7 @@ NCA:
           col_analyte: N/A
           fig_view: fg_ind_obs
           tab_view: tb_ind_obs
-        components:     
+        components:
           # Each component here is an NCA analysis interval. The nca_parameters
           # are the PKNCA parameters that you want calculated over that
           # interval. The sampling can be either serial or sparse and the start
@@ -116,7 +116,7 @@ NCA:
           min.span.ratio:          2
           min.hl.r.squared:        0.9
           max.aucinf.pext:         20
-        # This is the rest of the analysis options 
+        # This is the rest of the analysis options
         ana_options:
           include_units: yes
           interval_range:
@@ -161,7 +161,7 @@ NCA:
           col_analyte: CMT
           fig_view: fg_ind_obs
           tab_view: tb_ind_obs
-        components:     
+        components:
           # Each component here is an NCA analysis interval. The nca_parameters
           # are the PKNCA parameters that you want calculated over that
           # interval. The sampling can be either serial or sparse and the start

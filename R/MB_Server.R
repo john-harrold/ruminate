@@ -2029,32 +2029,35 @@ MB_fetch_mdl = function(state){
     m_checksum = state[["MB"]][["checksum"]]
     elements = names(state[["MB"]][["elements"]])
     if(!is.null(elements)){
-      # We have at least 1 model
-      hasmdl = TRUE
       for(element in elements){
         # current element
         ce = state[["MB"]][["elements"]][[element]]
-        ce_checksum = ce[["checksum"]]
-
-        # current component of the current element
-        cc = MB_fetch_component(state, ce)
-
-        # Saving the model
-        mdl[[ ce[["rx_obj_name"]] ]] =
-          list(label       = ce[["ui"]][["element_name"]],
-               MOD_TYPE    = "MB",
-               id          = state[["id"]],
-               idx         = ce[["idx"]],
-               ts_details  = ts_details,
-               rx_obj      = cc[["rx_obj"]],
-               rx_obj_name = ce[["rx_obj_name"]],
-               ts_obj      = cc[["ts_obj"]],
-               ts_obj_name = ce[["ts_obj_name"]],
-               fcn_def     = cc[["fcn_def"]],
-               MDLMETA     = cc[["note"]],
-               code        = cc[["model_code"]],
-               checksum    = m_checksum,
-               MDLchecksum = ce_checksum)
+        if(ce[["isgood"]]){
+          ce_checksum = ce[["checksum"]]
+         
+          # We have at least 1 model
+          hasmdl = TRUE
+         
+          # current component of the current element
+          cc = MB_fetch_component(state, ce)
+         
+          # Saving the model
+          mdl[[ ce[["rx_obj_name"]] ]] =
+            list(label       = ce[["ui"]][["element_name"]],
+                 MOD_TYPE    = "MB",
+                 id          = state[["id"]],
+                 idx         = ce[["idx"]],
+                 ts_details  = ts_details,
+                 rx_obj      = cc[["rx_obj"]],
+                 rx_obj_name = ce[["rx_obj_name"]],
+                 ts_obj      = cc[["ts_obj"]],
+                 ts_obj_name = ce[["ts_obj_name"]],
+                 fcn_def     = cc[["fcn_def"]],
+                 MDLMETA     = cc[["note"]],
+                 code        = cc[["model_code"]],
+                 checksum    = m_checksum,
+                 MDLchecksum = ce_checksum)
+        }
       }
     }
   } else {
@@ -2272,7 +2275,7 @@ MB_new_element = function(state){
   element_def =
     list(
          # internal use only
-         isgood                 = TRUE,
+         isgood                 = FALSE,
          ui                     =
            list(
                 ui_mb_model          = "",
@@ -3396,7 +3399,7 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
 
   formods::FM_le(state,paste0("module isgood: ",isgood))
 
-  if(("ShinySession" %in% class(session))){
+  if(formods::is_shiny(session)){
     FM_set_mod_state(session, mod_ID, state)
   } else {
     session = FM_set_mod_state(session, mod_ID, state)
@@ -3441,41 +3444,43 @@ MB_mk_preload     = function(state){
   # Walking through each element:
   for(element_id in names(state[["MB"]][["elements"]])){
     tmp_source_ele = state[["MB"]][["elements"]][[element_id]]
-  
-    FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
-
-    # Creates the empty element:
-    tmp_element = list(
-      idx               = tmp_source_ele[["idx"]],
-      name              = tmp_source_ele[["ui"]][["element_name"]],
-      time_scale        = tmp_source_ele[["ui"]][["time_scale"]],
-      catalog_selection = tmp_source_ele[["ui"]][["catalog_selection"]],
-      base_from         = tmp_source_ele[["ui"]][["base_from"]],
-      base_model_id     = tmp_source_ele[["base_model"]],
-      base_model_name   = tmp_source_ele[["base_model_name"]],
-      components  = list())
-  
-    comp_idx = 1
-    if(is.data.frame( tmp_source_ele[["components_table"]])){
-      for(ridx in 1:nrow( tmp_source_ele[["components_table"]])){
+    if(tmp_source_ele[["isgood"]]){
       
-        tmp_note   = tmp_source_ele[["components_table"]][ridx, ][["note"]]
-        tmp_model  = paste0("my_model = ", tmp_source_ele[["components_table"]][ridx, ][["fcn_def"]])
-        tmp_object = "my_model"
+      FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
       
-        tmp_element[["components"]][[comp_idx]] = list( component = list(
-          note = tmp_note,
-          object = tmp_object,
-          model = tmp_model)
-        )
+      # Creates the empty element:
+      tmp_element = list(
+        idx               = tmp_source_ele[["idx"]],
+        name              = tmp_source_ele[["ui"]][["element_name"]],
+        time_scale        = tmp_source_ele[["ui"]][["time_scale"]],
+        catalog_selection = tmp_source_ele[["ui"]][["catalog_selection"]],
+        base_from         = tmp_source_ele[["ui"]][["base_from"]],
+        base_model_id     = tmp_source_ele[["base_model"]],
+        base_model_name   = tmp_source_ele[["base_model_name"]],
+        components  = list())
       
-        comp_idx = comp_idx + 1
+      comp_idx = 1
+      if(is.data.frame( tmp_source_ele[["components_table"]])){
+        for(ridx in 1:nrow( tmp_source_ele[["components_table"]])){
+        
+          tmp_note   = tmp_source_ele[["components_table"]][ridx, ][["note"]]
+          tmp_model  = paste0("my_model = ", tmp_source_ele[["components_table"]][ridx, ][["fcn_def"]])
+          tmp_object = "my_model"
+        
+          tmp_element[["components"]][[comp_idx]] = list( component = list(
+            note = tmp_note,
+            object = tmp_object,
+            model = tmp_model)
+          )
+        
+          comp_idx = comp_idx + 1
+        }
       }
+      
+      # Appending element
+      ylist[["elements"]][[ele_idx]] = list(element = tmp_element)
+      ele_idx = ele_idx + 1
     }
-  
-    # Appending element
-    ylist[["elements"]][[ele_idx]] = list(element = tmp_element)
-    ele_idx = ele_idx + 1
   }
 
   # Creating the yaml list with the module ID at the top level

@@ -4964,7 +4964,7 @@ NCA_fetch_np_meta = function(
       if(system.file(package="cli")==""){
         message(msg)
       } else {
-        FM_message(msg, entry_type="danger")
+        FM_message(msg, entry_type="warning")
       }
     }
   }
@@ -7457,7 +7457,7 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
   formods::FM_le(state,paste0("module isgood: ",isgood))
 
-  if(("ShinySession" %in% class(session))){
+  if(formods::is_shiny(session)){
     FM_set_mod_state(session, mod_ID, state)
   } else {
     session = FM_set_mod_state(session, mod_ID, state)

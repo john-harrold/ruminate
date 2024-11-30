@@ -1,7 +1,7 @@
-CTS: 
+CTS:
   fm_yaml:   'system.file(package="formods", "templates", "formods.yaml")'
-  #mod_yaml:  'system.file(package="ruminate", "templates", "CTS.yaml")'
-  mod_yaml: "/Users/jmh/projects/ruminate/github/ruminate/inst/templates/CTS.yaml"
+  mod_yaml:  'system.file(package="ruminate", "templates", "CTS.yaml")'
+  #mod_yaml: "/Users/jmh/projects/ruminate/github/ruminate/inst/templates/CTS.yaml"
   # The remainder is the free form for your module. If your module has the
   # format of elements and components you can use the skeleton below to get
   # started
@@ -9,11 +9,11 @@ CTS:
    - element:
        idx:    1
        name:   "Single dose"
-       # General options for the trial. 
+       # General options for the trial.
        # Everything but the element_name and
        # source_model fields
        cts_options:
-         nsub:               3 
+         nsub:               3
          visit_times:        0
          trial_end:          100
          fpage:              "1"
@@ -25,12 +25,12 @@ CTS:
          cts_config_rtol:    "1e-6"
          cts_config_sigdig:  "NULL"
          cts_config_seed:    "5446"
-         cts_config_nsteps:   5 
+         cts_config_nsteps:   5
        model_source:
          id:   "MB"  # Module ID
          idx:    1   # Data source index
        # Rule/action combinations
-       components:     
+       components:
          - component:
              name:         "first_dose"
              type:         "dose"
@@ -44,20 +44,20 @@ CTS:
        name:   "Biomarker Titration"
        subjects:
          covariates:
-           WT: 
+           WT:
              type:           "cont_lognormal"
              value:          "70, .1"
-           SEX_ID: 
-             type:           "discrete"        
+           SEX_ID:
+             type:           "discrete"
              value:          "0, 1"
-           SUBTYPE_ID: 
-             type:           "fixed"        
+           SUBTYPE_ID:
+             type:           "fixed"
              value:          "1"
-       # General options for the trial. 
+       # General options for the trial.
        # Everything but the element_name and
        # source_model fields
        cts_options:
-         nsub:               12  
+         nsub:               12
          visit_times:        '(0:6)*28*2'
          trial_end:          400
          fpage:              "1"
@@ -74,12 +74,12 @@ CTS:
          id:   "MB"  # Module ID
          idx:    2   # Data source index
        # Rule/action combinations
-       components:     
+       components:
          - component:
              name:         "first_dose"
              type:         "dose"
              condition:    "time == 0"
-             state:        "Ac"     
+             state:        "Ac"
              values:       "c(0.1,  0.1,  0.1,  0.1)*1e6/MW"
              times:        "c(0, 14, 28, 42)"
              durations:    "c(0,  0,  0,  0)"
@@ -87,7 +87,7 @@ CTS:
              name:         "keep_dose"
              type:         "dose"
              condition:    "((BM <=  7e4) & (BM >=5e4)) & (time > 0)"
-             state:        "Ac"     
+             state:        "Ac"
              values:       "c( 1.0,  1.00,  1.00,  1.00)*SI_fpd(id=id, state='Ac')"
              times:        "c(0, 14, 28, 42)"
              durations:    "c(0,  0,  0,  0)"
@@ -95,7 +95,7 @@ CTS:
              name:         "decrease_dose"
              type:         "dose"
              condition:    "(BM >  7e4) & (time > 0)"
-             state:        "Ac"     
+             state:        "Ac"
              values:       "c( .90,   .90,   .90,   .90)*SI_fpd(id=id, state='Ac')"
              times:        "c(0, 14, 28, 42)"
              durations:    "c(0,  0,  0,  0)"
@@ -103,7 +103,7 @@ CTS:
              name:         "increase_dose"
              type:         "dose"
              condition:    "(BM <  5e4) & (time > 0)"
-             state:        "Ac"     
-             values:       "c(1.30,  1.30,  1.30,  1.30)*SI_fpd(id=id, state='Ac')"  
+             state:        "Ac"
+             values:       "c(1.30,  1.30,  1.30,  1.30)*SI_fpd(id=id, state='Ac')"
              times:        "c(0, 14, 28, 42)"
              durations:    "c(0,  0,  0,  0)"

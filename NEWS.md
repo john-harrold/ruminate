@@ -1,6 +1,9 @@
-# ruminate 0.2.5 (development version)
+# ruminate 0.3.0 (development version)
 
 - Fix for rxode 3.0 release.
+- Added preload() and mk_preload() files
+- Updated `templates/ruminate.R` and `templates/ruminate_development.R` apps
+  to use the preload file in the unzipped analysis state.
 
 
 # ruminate 0.2.4 
