@@ -4,17 +4,17 @@ MC:
   module:
     type: "CTS"
     # internal R Object: module ID used in deployment
-    depends: 
+    depends:
       id_ASM: "ASM"
       id_MB:  "MB"
   element_object_name: "CTS_obj"
-# The include section is optional. You can use this section to copy files 
+# The include section is optional. You can use this section to copy files
 # from the directory where you are running the app to the user directory to be
 # used in the app and when saved. The source and dest options can be a path
 # command like below or a double
 # quoted string: '"/path/to/file"'
 # The dest should be relative to user directory (think the root of the zip
-# file that is exported). See formods.yaml for examples. 
+# file that is exported). See formods.yaml for examples.
 #
 # include:
 #   files:
@@ -27,13 +27,13 @@ MC:
     mode:     r
   # Controls what is shown in the compact ui mode:
   compact:
-    code:    TRUE 
-    clip:    TRUE 
+    code:    TRUE
+    clip:    TRUE
   # This is where you put reporting options. The expected options are shown
   # here, but module-specific options can also be added if needed:
   reporting:
-    enabled: TRUE  
-    # Priority of reporting relative to other modules 
+    enabled: TRUE
+    # Priority of reporting relative to other modules
     # (higher numbers are reported first)
     priority: 2
     # The following placeholders can be used bu surrounding them with ===. For
@@ -70,7 +70,7 @@ MC:
       height: 300
     current_element:
       width:  "200px"
-    source_model:   
+    source_model:
       width:  "200px"
     element_name:
       width:  "200px"
@@ -124,7 +124,7 @@ MC:
     button_clk_add_cov:
       width:  "456px"
       size: "sm"
-      block: TRUE  
+      block: TRUE
       tooltip: "Define covariate."
       tooltip_position: "right"
     rule_condition:
@@ -158,10 +158,10 @@ MC:
       width:  400
       placeholder: "A value like 20 or an expression in terms of a system element such as Ac/2"
       tooltip: "An expression that evaluates to a new number."
-    action_manual_code:   
+    action_manual_code:
       width:  400
       height: 200
-      placeholder: |- 
+      placeholder: |-
         SI_interval_ev = etRbind(SI_interval_ev,
           et(cmt  = 'Ac',
              id   = id,
@@ -172,7 +172,7 @@ MC:
     rule_type:
       width: 300
       options:
-        dose: 
+        dose:
           choice:      "Dosing"
           subtext:     "Add bolus or infusion dosing"
           value:       "dose"
@@ -180,10 +180,10 @@ MC:
           choice:      "Set State"
           subtext:     "Reset the named state or compartment to a specified value"
           value:       "set state"
-        manual:     
+        manual:
           choice:      "Manual"
           subtext:     "Alter the event table directly."
-          value:       "manual"    
+          value:       "manual"
     config_text:
       width: 150
     config_select:
@@ -191,66 +191,66 @@ MC:
     config_textarea:
       width:    456
       height:   150
-    hot_current_rules:    
-      width:  800 
+    hot_current_rules:
+      width:  800
       height: 400
       no_rules: "No Rules Defined"
     hot_current_covariates:
-      width:  800 
+      width:  800
       height: 400
       no_covariates: "Covariate not yet defined"
-    nsub: 
+    nsub:
       value:  10
-      width:  50  
+      width:  50
       placeholder: 10
       tooltip: "Number of sujbects in the current cohort. Set to 1 to simulate only the typical value."
       tooltip_position: "bottom"
     visit_times:
-      value:  0   
-      width:  150 
+      value:  0
+      width:  150
       placeholder: "c(0, 7, 14, 21)"
       tooltip: "Study visit times."
       tooltip_position: "bottom"
-    trial_end:   
-      value:  100   
-      width:  150 
+    trial_end:
+      value:  100
+      width:  150
       placeholder: "100"
       tooltip: "Final simulation time point in simulation units."
       tooltip_position: "bottom"
     covariates:
       none_found: "There were no coviaraites found in this model"
     selected_covariate:
-      width:  200 
+      width:  200
       tooltip: "Pick covariate to define."
       tooltip_position: "right"
-    rule_name:  
-      width:  300 
+    rule_name:
+      width:  300
       placeholder: "first_dose"
       tooltip: "This is a unique identifier for the current rule. It should start with a letter and can contain letters, numbers and underscores."
       tooltip_position: "bottom"
     time_scale:
-      width:  75  
+      width:  75
       tooltip: "Select the timescale to plot."
       tooltip_position: "top"
     tc_dim:
-      width:  75  
+      width:  75
       default: "d2x4"
       tooltip: "rows x cols for figures"
       tooltip_position: "top"
       choices:
-        d4x4: 
+        d4x4:
           verb: "4x4"
           nrow: 4
           ncol: 4
-        d2x4: 
+        d2x4:
           verb: "2x4"
           nrow: 2
           ncol: 4
-        d2x2: 
+        d2x2:
           verb: "2x2"
           nrow: 2
           ncol: 2
-        d1x1: 
+        d1x1:
           verb: "1x1"
           nrow: 1
           ncol: 1
@@ -260,13 +260,13 @@ MC:
       tooltip: "Select the different model outputs, states, etc to plot"
       tooltip_position: "top"
       choices:
-        outputs: 
+        outputs:
           verb: "Outputs"
-        states:  
+        states:
           verb: "States"
         parameters:
           verb: "Parameters"
-        secondary: 
+        secondary:
           verb: "Secondary Parameters"
         covariates:
           verb: "Covariates"
@@ -276,30 +276,30 @@ MC:
       tooltip_position: "top"
       default: "dose"
       choices:
-        dose: 
+        dose:
           value: 1
           verb: "Dose"
         set_state:
           value: 4
           verb: "State Resets"
-    fpage:  
-      width:  50 
+    fpage:
+      width:  50
       tooltip: "Go to the selected output page"
       tooltip_position: "top"
   labels:
-    current_element:     NULL # "Select cohort"
+    current_element:     "Select cohort"
     element_name :       NULL # "cohort name"
     save_btn:            "Save"
     runsim_btn:          "Simulate Cohort"
     running_sim:         "Running simulation. Be patient!"
     update_plot_btn:     "Update Plots"
-    clip_btn:            "Code" 
+    clip_btn:            "Code"
     copy_btn:            "Copy"
     del_btn:             "Delete"
     add_rule_btn:        "Add Rule"
     add_cov_btn:         "Add Covariate Details"
     new_btn:             "New"
-    source_model:        "Select Model"
+    source_model:        "Source Model"
     dvcols:              NULL
     evplot:              NULL
     time_scale:          NULL
@@ -342,9 +342,9 @@ MC:
     # Set to FALSE to disable tool tips for this module
     include: TRUE
     elements:     "Show cohort rules"
-    show_code:    "Show cohort code" 
+    show_code:    "Show cohort code"
     # Set urls to NULL to disable the icon links.
-    url_manual:   "https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html#example-manual-code-evaluation" 
+    url_manual:   "https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html#example-manual-code-evaluation"
     url_rule_env: "https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html#rule-evaluation-environment"
   # This is the content in the app that describes the rule evaluation
   # environment. THis code is evaluated in the app. You can use any html tags
@@ -352,19 +352,19 @@ MC:
   # of fetch_rxinfo for the current source model (found in the rx_details
   # object).
   rule_env_content: |-
-    uiele = tagList(tags$b("Simulation environment"), 
+    uiele = tagList(tags$b("Simulation environment"),
                     icon_link(href=state[["MC"]][["tooltips"]][["url_rule_env"]]),
                     tags$br(),
                     "The condition and actions (e.g., dose times, amounts,
                     durations) that are triggered are all
                     evaluated in an environment with different objects that
-                    you can use. For details on this see the Clinical Trial Simulation vignette ", 
-                    icon_link(href=state[["MC"]][["tooltips"]][["url_rule_env"]]), 
+                    you can use. For details on this see the Clinical Trial Simulation vignette ",
+                    icon_link(href=state[["MC"]][["tooltips"]][["url_rule_env"]]),
                     " for more information.")
-    uiele = tagList(uiele, 
+    uiele = tagList(uiele,
                     tags$br(),
                     tags$br(),
-                    "For the current system the following are available:", 
+                    "For the current system the following are available:",
                     tags$br())
     uiele = tagList(uiele, tags$br())
     uiele = tagList(uiele, rx_details[["ht_info"]])
@@ -387,12 +387,12 @@ MC:
   #                  - logical (TRUE or FALSE)
   # value        - Default value in the UI if it is NULL you need to set it as
   #                "NULL" with quotes. If you want it to be empty set it as
-  #                NULL without quotes. 
+  #                NULL without quotes.
   # options      - These are the options if uitype is set to select
   # use          - This idicates where the configuration is being used. Allowed types:
   #                  - rxSolve
   sim_config:
-    atol:    
+    atol:
       group:         "ODE Solver"
       label:         "Absolute tolerance"
       tooltip:       "Absolute tolerance used by the ODE solver to determine if a good solution has been achieved; This is also used in the solved linear model to check if prior doses do not add anything to the solution."
@@ -402,7 +402,7 @@ MC:
       options:       NULL
       use:           "rxSolve"
       placeholder:   "1e-8"
-    rtol:    
+    rtol:
       group:         "ODE Solver"
       label:         "Relative tolerance"
       tooltip:       "Relative tolerance used by the ODE solver to determine if a good solution has been achieved. This is also used in the solved linear model to check if prior doses do not add anything to the solution."
@@ -412,7 +412,7 @@ MC:
       options:       NULL
       use:           "rxSolve"
       placeholder:   "1e-6"
-    sigdig:  
+    sigdig:
       group:         "ODE Solver"
       label:         "Significant digits"
       tooltip:       'Specifies the "significant digits" that the ode solving requests. When specified this controls the relative and absolute tolerances of the ODE solvers. By default the tolerance is 0.5*10^(-sigdig-2) for regular ODEs. For the sensitivity equations the default is ⁠0.5*10\^(-sigdig-1.5)⁠ (sensitivity changes only applicable for liblsoda). This also controls the atol/rtol of the steady state solutions. The ssAtol/ssRtol is ⁠0.5*10\^(-sigdig)⁠ and for the sensitivities ⁠0.5*10\^(-sigdig+0.625)⁠. By default this is unspecified (NULL) and uses the standard atol/rtol.'
@@ -422,12 +422,12 @@ MC:
       options:       NULL
       use:           "rxSolve"
       placeholder:   "NULL"
-#   method:  
+#   method:
 #     group:         "ODE Solver"
-#     label:         "Solver method"      
+#     label:         "Solver method"
 #     tooltip:       |-
 #       The method for solving ODEs currently supports:
-#       "liblsoda"- thread safe lsoda. This supports parallel thread-based solving, and ignores user Jacobian specification. 
+#       "liblsoda"- thread safe lsoda. This supports parallel thread-based solving, and ignores user Jacobian specification.
 #       "lsoda"  - LSODA solver. Does not support parallel thread-based solving, but allows user Jacobian specification.
 #       "dop853" -  DOP853 solver. Does not support parallel thread-based solving nor user Jacobian specification
 #       "indLin" -  Solving through inductive linearization. The rxode2 dll must be setup specially to use this solving routine.
@@ -437,17 +437,17 @@ MC:
 #     choices:       ["liblsoda", "lsoda", "dop853", "indLin"]
 #     use:           "rxSolve"
 #     placeholder:   NULL
-    seed:    
+    seed:
       group:         "Misc"
       label:         "Random Seed"
       tooltip:       'Integer value to set the seed for the random number generator'
       uitype:        "text"
       type:          "numeric"
-      value:         "5446"     
+      value:         "5446"
       options:       NULL
       use:           "Misc"
-      placeholder:   "5446"     
-    nsteps:    
+      placeholder:   "5446"
+    nsteps:
       group:         "Misc"
       label:         "Time Steps"
       tooltip:       'Integer value representing the number of time steps to add between zero and the end of trial. A larger value will give smoother curves but it will also take more time to simulate.'
@@ -487,25 +487,25 @@ MC:
         type:        "fixed"
         placeholder: "1"
         tooltip:    "Fix the covariate at a specific value."
-      cont_random: 
+      cont_random:
         choice:      "Continuous/random in range"
         type:        "continuous"
         sampling:    "random"
         placeholder: "0,1"
         tooltip:    "Sample randomly from within the specified range."
-      cont_normal: 
+      cont_normal:
         choice:      "Sample normally"
         type:        "continuous"
         sampling:    "normal"
         placeholder: "mean, variance"
         tooltip:    "Sample from normal distribution provided a mean and variance"
-      cont_lognormal: 
+      cont_lognormal:
         choice:      "Sample log-normally"
         type:        "continuous"
         sampling:    "log-normal"
         placeholder: "mean, variance"
         tooltip:    "Sample from log-normal distribution provided a mean and variance"
-#   method:  
+#   method:
 #     group:         "ODE Solver"
 #     label:         "Solver method"
 #     tooltip:       "Relative tolerance used by the ODE solver to determine if a good solution has been achieved. This is also used in the solved linear model to check if prior doses do not add anything to the solution."

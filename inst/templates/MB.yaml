@@ -4,7 +4,7 @@ MC:
   module:
     type: "MB"
     # internal R Object: module ID used in deployment
-    depends: 
+    depends:
       id_ASM: "ASM"
   # The prefix of object names created in the generated code
   element_object_name: "MB_obj"
@@ -65,7 +65,7 @@ MC:
   # This is where you put reporting options. The expected options are shown
   # here, but module-specific options can also be added if needed:
   reporting:
-    enabled: TRUE 
+    enabled: TRUE
     # Priority of reporting relative to other modules
     # (higher numbers are reported first)
     priority: 1
@@ -120,7 +120,7 @@ MC:
       tooltip: "Create a new model."
       tooltip_position: "right"
       width: 100
-    export_nonmem: 
+    export_nonmem:
       size: "sm"
       block: TRUE
       color: "primary"
@@ -149,7 +149,7 @@ MC:
       default:   "rxode2"
     upload_model_file:
       width: "400px"
-    append_model:       
+    append_model:
       tooltip: "Append the selected sub-model to the current model."
       tooltip_position: "bottom"
       no_models:  "None available"
@@ -171,12 +171,12 @@ MC:
     #
     # The conv filed is the mathematical conversion between different
     # timescales. Below everything is relative to seconds. So the conv for
-    # seconds is 1. The conv fields for days is 
+    # seconds is 1. The conv fields for days is
     #
     #                     1                      1       day
     # conv =  ------------------------- = -------------- ---
     #            sec      min   24 hr       60 x 60 x 24 sec
-    #         60 --- x 60 --- x ------ 
+    #         60 --- x 60 --- x ------
     #            min      hr     day
     #
     # Generally you dont want to  change what is already here in terms of
@@ -187,7 +187,7 @@ MC:
     #
     # The match field is a list of values that can be matched to the short
     # name so if the short name is 'days' when reading in the metadata from
-    # nlmixr2 models. You you may want to match 'd', 'day', etc. 
+    # nlmixr2 models. You you may want to match 'd', 'day', etc.
     #
     #   -match: ["day", "d"]
     #
@@ -224,7 +224,7 @@ MC:
 #         verb: "Seconds"
 #         match: ["sec", "seconds", "s"]
   labels:
-    current_element: NULL # "Select model"
+    current_element: "Select model"
     element_name :   NULL # "model name"
     upload_model_file:    NULL
     base_from:            NULL
