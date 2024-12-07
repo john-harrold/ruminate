@@ -1300,7 +1300,6 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
           element = current_ele)
 
         FM_le(state, note_str)
-
       }else{
         state = FM_set_notification(
           state       = state,
@@ -1389,7 +1388,7 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
     for(tmp_id_str in new_ele[["components_table"]][["id_str"]]){
 
       # Current component values
-      tmp_id = new_ele[["components_table"]][new_ele[["components_table"]][["id_str"]] == tmp_id_str][["id"]]
+      tmp_id = new_ele[["components_table"]][new_ele[["components_table"]][["id_str"]] == tmp_id_str, ][["id"]]
       component = MB_fetch_component(
                     state        = state,
                     current_ele  = new_ele,
@@ -2595,7 +2594,7 @@ MB_fetch_component = function(state, current_ele, component_id = NULL){
     component_id    = current_ele[["selected_component_id"]]
   }
 
-  comp_row  = current_ele[["components_table"]][current_ele[["components_table"]] == component_id, ]
+  comp_row  = current_ele[["components_table"]][current_ele[["components_table"]][["id"]] == component_id, ]
   comp_list = current_ele[["components_list"]][[paste0("component_", component_id)]]
 
   if(is.null(comp_list)){

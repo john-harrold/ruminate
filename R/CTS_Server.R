@@ -250,7 +250,7 @@ CTS_Server <- function(id,
       rx_details = current_ele[["rx_details"]]
 
 
-      # JMH updating dosing based on availablility of dosing compartments and
+      # JMH updating dosing based on availability of dosing compartments and
       # units
 
 
@@ -5179,11 +5179,9 @@ CTS_mk_preload     = function(state){
     ele_idx = 1
     # Walking through each element:
     for(element_id in names(state[["CTS"]][["elements"]])){
-      browser()
       tmp_source_ele = state[["CTS"]][["elements"]][[element_id]]
     
       FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
-
 
       # Model for the current element
       SMR = MDL[["catalog"]][MDL[["catalog"]][["object"]] == tmp_source_ele[["ui"]][["source_model"]], ]
