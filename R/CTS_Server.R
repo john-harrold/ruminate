@@ -5007,6 +5007,14 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         element = current_ele)
 
       # Next we process the components (models)
+      if(is.null(length(elements[[ele_idx]][["element"]][["components"]]))){
+        ele_isgood = FALSE
+        ele_err_msg = c(ele_err_msg, "components is NULL")
+      } else if( length(elements[[ele_idx]][["element"]][["components"]]) == 0){
+        ele_isgood = FALSE
+        ele_err_msg = c(ele_err_msg, "components is empty")
+      }
+
       if(ele_isgood){
         # Creating element components
         # If there are components you can add them here:
@@ -5180,76 +5188,82 @@ CTS_mk_preload     = function(state){
     # Walking through each element:
     for(element_id in names(state[["CTS"]][["elements"]])){
       tmp_source_ele = state[["CTS"]][["elements"]][[element_id]]
-    
-      FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
 
-      # Model for the current element
-      SMR = MDL[["catalog"]][MDL[["catalog"]][["object"]] == tmp_source_ele[["ui"]][["source_model"]], ]
-
-      if(nrow(SMR) == 1){
-
-        # Determining the model source
-        model_source = list(
-          id  = SMR[["id"]][1],
-          idx = SMR[["idx"]][1])
-
-
-        # Pulling out the options removing the element name and source model
-        # because those are handled separately. 
-        cts_options = tmp_source_ele[["ui"]]
-        cts_options[["element_name"]] = NULL
-        cts_options[["source_model"]] = NULL
-
-
-        # Creating subject level information
-        subjects = list()
-        if(length(tmp_source_ele[["covariates"]])>0){
-          subjects = list(covariates=list())
-          for(cname in names(tmp_source_ele[["covariates"]])){
-            subjects[["covariates"]][[cname]] = list(
-               type  = tmp_source_ele[["covariates_ui_type"]][[cname]],
-               value = paste0(tmp_source_ele[["covariates"]][[cname]][["values"]], collapse=", "))
-          }
-        }
-
-        
-        tmp_element = list(
-          idx               = tmp_source_ele[["idx"]],
-          name              = tmp_source_ele[["ui"]][["element_name"]],
-          cts_options       = cts_options,
-          model_source      = model_source,
-          subjects          = subjects,   
-          components        = list())
-
-        comp_idx = 1
-        if(is.data.frame( tmp_source_ele[["components_table"]])){
-          for(ridx in 1:nrow( tmp_source_ele[["components_table"]])){
-
-            tmp_comp_row  = tmp_source_ele[["components_table"]][ ridx, ]
-            tmp_comp_list = tmp_source_ele[["components_list"]][[ tmp_comp_row[["hash"]] ]]
-            tmp_comp_name = names(tmp_comp_list)
-
-            tmp_comp = tmp_comp_list[[tmp_comp_name]][["action"]]
-            tmp_comp[["name"]] = tmp_comp_name
-            tmp_comp[["condition"]] = tmp_comp_list[[tmp_comp_name]][["condition"]]
-
-            tmp_element[["components"]][[comp_idx]] = list(component=tmp_comp)
-            FM_le(state, paste0("  -> rule ", tmp_comp[["type"]]))
-            comp_idx = comp_idx + 1
-          }
-        }
-        
-        
-        # Appending element
-        ylist[["elements"]][[ele_idx]] = list(element = tmp_element)
-        ele_idx = ele_idx + 1
-      } else {
-        isgood = FALSE
-        err_msg =  c(err_msg,paste0("error finding source model for element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
-        err_msg =  c(err_msg,paste0("found ", nrow(SMR), " models, expected 1"))
+      add_ele = TRUE
+      if(is.null(tmp_source_ele[["components_table"]])){
+        add_ele = FALSE
+        FM_le(state, paste0("skipping element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
+        FM_le(state, paste0("  -> no rules found"))
       }
-
-
+      if(add_ele){
+        FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
+       
+        # Model for the current element
+        SMR = MDL[["catalog"]][MDL[["catalog"]][["object"]] == tmp_source_ele[["ui"]][["source_model"]], ]
+       
+        if(nrow(SMR) == 1){
+       
+          # Determining the model source
+          model_source = list(
+            id  = SMR[["id"]][1],
+            idx = SMR[["idx"]][1])
+       
+       
+          # Pulling out the options removing the element name and source model
+          # because those are handled separately. 
+          cts_options = tmp_source_ele[["ui"]]
+          cts_options[["element_name"]] = NULL
+          cts_options[["source_model"]] = NULL
+       
+       
+          # Creating subject level information
+          subjects = list()
+          if(length(tmp_source_ele[["covariates"]])>0){
+            subjects = list(covariates=list())
+            for(cname in names(tmp_source_ele[["covariates"]])){
+              subjects[["covariates"]][[cname]] = list(
+                 type  = tmp_source_ele[["covariates_ui_type"]][[cname]],
+                 value = paste0(tmp_source_ele[["covariates"]][[cname]][["values"]], collapse=", "))
+            }
+          }
+       
+          
+          tmp_element = list(
+            idx               = tmp_source_ele[["idx"]],
+            name              = tmp_source_ele[["ui"]][["element_name"]],
+            cts_options       = cts_options,
+            model_source      = model_source,
+            subjects          = subjects,   
+            components        = list())
+       
+          comp_idx = 1
+          if(is.data.frame( tmp_source_ele[["components_table"]])){
+            for(ridx in 1:nrow( tmp_source_ele[["components_table"]])){
+       
+              tmp_comp_row  = tmp_source_ele[["components_table"]][ ridx, ]
+              tmp_comp_list = tmp_source_ele[["components_list"]][[ tmp_comp_row[["hash"]] ]]
+              tmp_comp_name = names(tmp_comp_list)
+       
+              tmp_comp = tmp_comp_list[[tmp_comp_name]][["action"]]
+              tmp_comp[["name"]] = tmp_comp_name
+              tmp_comp[["condition"]] = tmp_comp_list[[tmp_comp_name]][["condition"]]
+       
+              tmp_element[["components"]][[comp_idx]] = list(component=tmp_comp)
+              FM_le(state, paste0("  -> rule ", tmp_comp[["type"]]))
+              comp_idx = comp_idx + 1
+            }
+          }
+          
+          
+          # Appending element
+          ylist[["elements"]][[ele_idx]] = list(element = tmp_element)
+          ele_idx = ele_idx + 1
+        } else {
+          isgood = FALSE
+          err_msg =  c(err_msg,paste0("error finding source model for element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
+          err_msg =  c(err_msg,paste0("found ", nrow(SMR), " models, expected 1"))
+        }
+      }
     }
   }
 

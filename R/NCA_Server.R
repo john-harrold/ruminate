@@ -7503,76 +7503,79 @@ NCA_mk_preload     = function(state){
     for(element_id in names(state[["NCA"]][["anas"]])){
       tmp_source_ele = state[["NCA"]][["anas"]][[element_id]]
    
-      # Finding the data source:
-      dsv_row = 
-      DSV[["catalog"]][
-        DSV[["catalog"]][["object"]] == tmp_source_ele[["ana_dsview"]], ]
-      ds_id  = dsv_row[["id"]]
-      ds_idx = dsv_row[["idx"]]
-
-      FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["key"]]))
-
-      # Creates the empty element:
-      tmp_element = list(
-        idx   = tmp_source_ele[["idx"]],
-        name  = tmp_source_ele[["key"]],
-        notes = tmp_source_ele[["notes"]],
-        data_source = list(
-          id  = ds_id,
-          idx = ds_idx),
-        nca_config  = list(),
-        ana_options = list(),
-        components  = list())
-
-      found_uis = c()
-      # Defining the analysis options:
-      ana_opts = as.vector(unlist(state[["NCA"]][["ui_ana_map"]]))
-      tmp_element[["ana_options"]] = tmp_source_ele[ana_opts]
-
-      # The key is defined as the name above and the mapping is handled on
-      # preload, so we set it to NULL here to remove it:
-      tmp_element[["ana_options"]][["key"]] = NULL
-
-      # Defining the nca_config options:
-      for(nca_opt in names(state[["NCA"]][["nca_config"]][["default"]])){
-        nca_opt_pknca_option = state[["NCA"]][["nca_config"]][["default"]][[nca_opt]][["pknca_option"]]
-        nca_opt_ui_id        = state[["NCA"]][["nca_config"]][["default"]][[nca_opt]][["ui_id"]]
-
-        if(nca_opt_ui_id %in% names(tmp_source_ele)){
-          nca_opt_value  = tmp_source_ele[[ nca_opt_ui_id ]]
-        } else { 
-          nca_opt_value  = state[["NCA"]][["nca_config"]][["default"]][[nca_opt]][["value"]]
+      # we only processess analyses that have intervals
+      if(!is.null(tmp_source_ele[["intervals"]])){
+        # Finding the data source:
+        dsv_row = 
+        DSV[["catalog"]][
+          DSV[["catalog"]][["object"]] == tmp_source_ele[["ana_dsview"]], ]
+        ds_id  = dsv_row[["id"]]
+        ds_idx = dsv_row[["idx"]]
+        
+        FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["key"]]))
+        
+        # Creates the empty element:
+        tmp_element = list(
+          idx   = tmp_source_ele[["idx"]],
+          name  = tmp_source_ele[["key"]],
+          notes = tmp_source_ele[["notes"]],
+          data_source = list(
+            id  = ds_id,
+            idx = ds_idx),
+          nca_config  = list(),
+          ana_options = list(),
+          components  = list())
+        
+        found_uis = c()
+        # Defining the analysis options:
+        ana_opts = as.vector(unlist(state[["NCA"]][["ui_ana_map"]]))
+        tmp_element[["ana_options"]] = tmp_source_ele[ana_opts]
+        
+        # The key is defined as the name above and the mapping is handled on
+        # preload, so we set it to NULL here to remove it:
+        tmp_element[["ana_options"]][["key"]] = NULL
+        
+        # Defining the nca_config options:
+        for(nca_opt in names(state[["NCA"]][["nca_config"]][["default"]])){
+          nca_opt_pknca_option = state[["NCA"]][["nca_config"]][["default"]][[nca_opt]][["pknca_option"]]
+          nca_opt_ui_id        = state[["NCA"]][["nca_config"]][["default"]][[nca_opt]][["ui_id"]]
+        
+          if(nca_opt_ui_id %in% names(tmp_source_ele)){
+            nca_opt_value  = tmp_source_ele[[ nca_opt_ui_id ]]
+          } else { 
+            nca_opt_value  = state[["NCA"]][["nca_config"]][["default"]][[nca_opt]][["value"]]
+          }
+          tmp_element[["nca_config"]][[nca_opt_pknca_option]] = nca_opt_value
         }
-        tmp_element[["nca_config"]][[nca_opt_pknca_option]] = nca_opt_value
+        
+        comp_idx = 1
+        for(ridx in 1:nrow(tmp_source_ele[["intervals"]])){
+          np_actual_vect = 
+            as.vector(
+              stringr::str_split(
+                string   = tmp_source_ele[["intervals"]][ridx, ][["np_actual"]],
+                pattern  = "," ,
+                simplify = TRUE)
+            )
+        
+          tmp_msg = paste0("  -> interval: [", 
+                           tmp_source_ele[["intervals"]][ridx, ][["start"]],
+                           ",", 
+                           tmp_source_ele[["intervals"]][ridx, ][["stop"]],
+                           "]  ", tmp_source_ele[["intervals"]][ridx, ][["np_text"]])
+          FM_le(state, tmp_msg)
+          tmp_element[["components"]][[comp_idx]] = list( component = list(
+            nca_parameters = np_actual_vect,
+              start        = tmp_source_ele[["intervals"]][ridx, ][["start"]],
+              stop         = tmp_source_ele[["intervals"]][ridx, ][["stop"]]))
+        
+          comp_idx = comp_idx + 1
+        }
+        
+        # Appending element
+        ylist[["elements"]][[ele_idx]] = list(element = tmp_element)
+        ele_idx = ele_idx + 1
       }
-
-      comp_idx = 1
-      for(ridx in 1:nrow(tmp_source_ele[["intervals"]])){
-        np_actual_vect = 
-          as.vector(
-            stringr::str_split(
-              string   = tmp_source_ele[["intervals"]][ridx, ][["np_actual"]],
-              pattern  = "," ,
-              simplify = TRUE)
-          )
-
-        tmp_msg = paste0("  -> interval: [", 
-                         tmp_source_ele[["intervals"]][ridx, ][["start"]],
-                         ",", 
-                         tmp_source_ele[["intervals"]][ridx, ][["stop"]],
-                         "]  ", tmp_source_ele[["intervals"]][ridx, ][["np_text"]])
-        FM_le(state, tmp_msg)
-        tmp_element[["components"]][[comp_idx]] = list( component = list(
-          nca_parameters = np_actual_vect,
-            start        = tmp_source_ele[["intervals"]][ridx, ][["start"]],
-            stop         = tmp_source_ele[["intervals"]][ridx, ][["stop"]]))
-
-        comp_idx = comp_idx + 1
-      }
-
-      # Appending element
-      ylist[["elements"]][[ele_idx]] = list(element = tmp_element)
-      ele_idx = ele_idx + 1
     }
   }
 
