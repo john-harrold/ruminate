@@ -3426,7 +3426,9 @@ res}
 #'   \item{yaml_list:}    Lists with preload components.
 #'}
 #'@examples
-#'res = MB_mk_preload(state)
+#' sess_res = MB_test_mksession()
+#' state = sess_res$state
+#' res = MB_mk_preload(state)
 MB_mk_preload     = function(state){
   isgood    = TRUE
   msgs      = c()  

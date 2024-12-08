@@ -5166,7 +5166,9 @@ res}
 #'   \item{yaml_list:}    Lists with preload components.
 #'}
 #'@examples
-#'res = CTS_mk_preload(state)
+#' sess_res = CTS_test_mksession()
+#' state = sess_res$state
+#' res = CTS_mk_preload(state)
 CTS_mk_preload     = function(state){
   isgood    = TRUE
   msgs      = c()  

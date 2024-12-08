@@ -21,5 +21,7 @@ list with the following elements
 Reads in the app state from yaml files.
 }
 \examples{
+sess_res = NCA_test_mksession()
+state = sess_res$state
 res = NCA_mk_preload(state)
 }
