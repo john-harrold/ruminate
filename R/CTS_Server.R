@@ -493,12 +493,11 @@ CTS_Server <- function(id,
           choices    = c("PH"),
           width      = state[["MC"]][["formatting"]][["source_model"]][["width"]],
           choicesOpt = choicesOpt)
-
       uiele})
     #------------------------------------
     # Text description of simulation environment
     output$CTS_ui_sim_env      = renderUI({
-      input$source_model
+      #input$source_model
       input$button_clk_save
       react_state[[id_MB]]
       react_state[[id_ASM]]
@@ -1659,33 +1658,43 @@ CTS_Server <- function(id,
 
       current_cht = CTS_fetch_current_element(state)
 
-      # This only updates if there are models
-      if( !is.null(state[["CTS"]][["MDL"]][["hasmdl"]]) ){
-      if( state[["CTS"]][["MDL"]][["hasmdl"]] ){
 
-        catalog = state[["CTS"]][["MDL"]][["catalog"]]
+      UPDATE_PI = FALSE
+      if(isolate(input$source_model) == "PH"){
+        UPDATE_PI = TRUE }
+      if(isolate(input$source_model) != "PH" & !fetch_hold(state, "source_model")){
+        UPDATE_PI = TRUE }
 
-        if(current_cht[["ui"]][["source_model"]] %in% catalog[["object"]]){
-          current_source_model =  current_cht[["ui"]][["source_model"]]
-        } else {
-          current_source_model = catalog[["object"]][1]
-          FM_le(state, paste0("source_model: model missing missing."   ))
-          FM_le(state, paste0("key: ",            current_cht[["id"]]       ))
-          FM_le(state, paste0("source_model: ",   current_cht[["ui"]][["source_model"]]))
-          FM_le(state, paste0("switching model:", current_source_model ))
+
+      if(UPDATE_PI){
+        # This only updates if there are models
+        if( !is.null(state[["CTS"]][["MDL"]][["hasmdl"]]) ){
+        if( state[["CTS"]][["MDL"]][["hasmdl"]] ){
+        
+          catalog = state[["CTS"]][["MDL"]][["catalog"]]
+        
+          if(current_cht[["ui"]][["source_model"]] %in% catalog[["object"]]){
+            current_source_model =  current_cht[["ui"]][["source_model"]]
+          } else {
+            current_source_model = catalog[["object"]][1]
+            FM_le(state, paste0("source_model: model missing missing."   ))
+            FM_le(state, paste0("key: ",            current_cht[["id"]]       ))
+            FM_le(state, paste0("source_model: ",   current_cht[["ui"]][["source_model"]]))
+            FM_le(state, paste0("switching model:", current_source_model ))
+          }
+        
+          choices        = catalog[["object"]]
+          names(choices) = catalog[["label"]]
+        
+          choicesOpt = NULL
+          shinyWidgets::updatePickerInput(
+            session    = session,
+            selected   = current_source_model,
+            inputId    = "source_model",
+            choices    = choices)
+            #choicesOpt = choicesOpt)
         }
-
-        choices        = catalog[["object"]]
-        names(choices) = catalog[["label"]]
-
-        choicesOpt = NULL
-        shinyWidgets::updatePickerInput(
-          session    = session,
-          selected   = current_source_model,
-          inputId    = "source_model",
-          choices    = choices,
-          choicesOpt = choicesOpt)
-      }
+        }
       }
     })
     #------------------------------------
@@ -1713,7 +1722,7 @@ CTS_Server <- function(id,
     #------------------------------------
     # Creating the actual picker input options
     observe({
-      req(input$source_model)
+      #req(input$source_model)
       req(input$time_scale)
       input$element_selection
       react_state[[id_MB]]
@@ -2301,6 +2310,7 @@ CTS_Server <- function(id,
         list(
              react_state[[id_ASM]],
              react_state[[id_MB]],
+             input$source_model,
            # input$button_clk_new,
            # input$button_clk_del,
            # input$button_clk_copy,
@@ -2403,18 +2413,25 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
         # If the MB checksum isn't NULL but the stored value in MDL is then we
         # need to update the dataset
         UPDATE_MDL = TRUE
+        FM_le(state, "models found not prevously avaliable.")
       } else if(isolate(react_state[[id_MB]][["MB"]][["checksum"]]) !=
-               state[["CTS"]][["MDL"]][["modules"]][["MB"]][[id_MB]]){
+                state[["CTS"]][["MDL"]][["modules"]][["MB"]][[id_MB]]){
 
         # If the stored checksum in MDL is different than the currently
         # models from MD then we force a reset as well:
         UPDATE_MDL = TRUE
+        FM_le(state, "model source checksum has changed.")
       }
     }
   }
 
   if(UPDATE_MDL){
-    FM_le(state, "Updating Models")
+    FM_le(state, "updating models")
+
+    #message(paste0("mb module: ", isolate(react_state[[id_MB]][["MB"]][["checksum"]])))
+    #message(paste0("stored:    ",    state[["CTS"]][["MDL"]][["modules"]][["MB"]][[id_MB]]))
+    #message(paste0("source:    ", isolate(input$source_model)))
+
     state[["CTS"]][["MDL"]]  = FM_fetch_mdl(state, session, ids = id_MB)
 
 
@@ -2546,7 +2563,7 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
       element = current_ele)
   }
   #---------------------------------------------
-  # save cohort
+  # runing simulation of current cohort
   if("button_clk_runsim" %in% changed_uis){
     FM_le(state, "run simulation")
     current_ele = CTS_fetch_current_element(state)
@@ -2724,8 +2741,8 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
   }
   #---------------------------------------------
   # changing source model
-  if("source_model" %in% changed_uis){
-    FM_le(state, "changing source model")
+  if(("source_model" %in% changed_uis)){
+    FM_le(state, "changing selected source model")
 
     # Pulling out the current element
     current_ele = CTS_fetch_current_element(state)
@@ -2737,6 +2754,8 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
     state = CTS_set_current_element(
       state   = state,
       element = current_ele)
+
+    state = set_hold(state, "source_model")
   }
   #---------------------------------------------
   # add rule
@@ -2772,13 +2791,13 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
        state[["CTS"]][["ui"]][["element_selection"]]
 
     # Setting the hold for all the other UI elements
-    state = set_hold(state)
+    state = set_hold(state, "element_selection")
   }
   #---------------------------------------------
   # clip cohort
   if("covariate_type" %in% changed_uis){
     FM_le(state, "covariate type changed")
-    state = set_hold(state)
+    state = set_hold(state, "covariate_type")
   }
   #---------------------------------------------
   # time scale updated
