@@ -1,7 +1,7 @@
 CTS:
   fm_yaml:   'system.file(package="formods", "templates", "formods.yaml")'
-  mod_yaml:  'system.file(package="ruminate", "templates", "CTS.yaml")'
-  #mod_yaml: "/Users/jmh/projects/ruminate/github/ruminate/inst/templates/CTS.yaml"
+  #mod_yaml:  'system.file(package="ruminate", "templates", "CTS.yaml")'
+  mod_yaml: "/Users/jmh/projects/ruminate/github/ruminate/inst/templates/CTS.yaml"
   # The remainder is the free form for your module. If your module has the
   # format of elements and components you can use the skeleton below to get
   # started
@@ -13,19 +13,20 @@ CTS:
        # Everything but the element_name and
        # source_model fields
        cts_options:
-         nsub:               3
-         visit_times:        0
-         trial_end:          100
-         fpage:              "1"
-         dvcols:             "Cc"
-         time_scale:         ""
-         tc_dim:             "d2x4"
-         evplot:              1
-         cts_config_atol:    "1e-8"
-         cts_config_rtol:    "1e-6"
-         cts_config_sigdig:  "NULL"
-         cts_config_seed:    "5446"
-         cts_config_nsteps:   5
+         nsub:                 3
+         visit_times:          0
+         trial_end:            100
+         fpage:                "1"
+         dvcols:               "Cc"
+         time_scale:           ""
+         tc_dim:               "d2x4"
+         evplot:                1
+         cts_config_atol:      "1e-8"
+         cts_config_rtol:      "1e-6"
+         cts_config_sigdig:    "NULL"
+         cts_config_seed:      "5446"
+         cts_config_nsteps:     5
+         cts_config_preamble:   NULL
        model_source:
          id:   "MB"  # Module ID
          idx:    1   # Data source index
@@ -70,6 +71,10 @@ CTS:
          cts_config_sigdig:  "NULL"
          cts_config_seed:    "5446"
          cts_config_nsteps:   50
+         cts_config_preamble: |-
+            my_func = function(id=NULL){
+            
+            NULL}
        model_source:
          id:   "MB"  # Module ID
          idx:    2   # Data source index

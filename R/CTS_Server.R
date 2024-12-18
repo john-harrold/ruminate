@@ -4011,6 +4011,8 @@ CTS_new_element = function(state){
          ot_object_name         = paste0(element_object_name, "_output_times"),
          fgtc_object_name       = paste0(element_object_name, "_fgtc"),
          fgev_object_name       = paste0(element_object_name, "_fgev"),
+         nsub_object_name       = paste0(element_object_name, "_nsub"),
+         preamble_object_name   = paste0(element_object_name, "_preamble"),
          code_previous          = NULL,
          # This contains the selection choices and is populated by 
          # CTS_init_element_model()
@@ -4320,6 +4322,15 @@ CTS_set_current_element    = function(state, element){
   fgtc_object_name        = element[["fgtc_object_name"]]
   fgev_object_name        = element[["fgev_object_name"]]
 
+  preamble_object_name    = element[["preamble_object_name"]]
+  nsub_object_name        = element[["nsub_object_name"]]
+
+  tmp_preamble = element[["ui"]][["cts_config_preamble"]]
+
+  if(is.null(tmp_preamble)){
+    tmp_preamble = ""
+  }
+
   time_scale              = "time"
   time_label              = "Time"
   if(!is.null(element[["ui"]][["time_scale"]])){
@@ -4339,10 +4350,17 @@ CTS_set_current_element    = function(state, element){
   # pieces of code for the element
   code_packages       =  paste0("library(", state[["MC"]][["code"]][["packages"]],")")
   code_seed           = c( 
+                          "",
                           "# Setting the random seeds",
                           paste0("set.seed(",element[["ui"]][["cts_config_seed"]],")"),
                           paste0("rxode2::rxSetSeed(",element[["ui"]][["cts_config_seed"]],")"), 
-                          "")
+                          "",
+                          "# Define the number of subjects to simulate for this cohort ",
+                          paste0(nsub_object_name, " = ", element[["ui"]][["nsub"]]),
+                          "",
+                          "# User defined functions used in the simulations",
+                          paste0(preamble_object_name, " = ", deparse(tmp_preamble))
+                          )
   code_model          = c()
   code_rx_details     = c()
   code_cov            = c("",
@@ -4390,8 +4408,8 @@ CTS_set_current_element    = function(state, element){
     paste0(""),
     paste0("# Generating the subjects"),
     paste0(subs_object_name, " = mk_subjects(object = ", model_object,  ","),
-    paste0("  nsub   = ", element[["ui"]][["nsub"]],               ","),
-    paste0("  covs   = ", cov_object_name,                         ")"))
+    paste0("  nsub   = ", nsub_object_name,               ","),
+    paste0("  covs   = ", cov_object_name,                ")"))
 
   # Code to define rules
   if(!is.null(names(element[["components_list"]]))){
@@ -4514,13 +4532,14 @@ CTS_set_current_element    = function(state, element){
   c(
     paste0('# Running simulation'),
     paste0(simres_object_name, ' =                                 '  ),
-    paste0(' simulate_rules(object            = ', model_object,       ','),
-    paste0('                subjects          = ', subs_object_name,   '[["subjects"]],'),
-    paste0('                eval_times        = ', visit_str,          ','),
-    paste0('                output_times      = ', ot_object_name,     ','),
-    paste0('                time_scales       = ', ts_object,          ','),
-    paste0('                rules             = ', rules_object_name,  ','),
-    paste0('                rx_options        = ', rxopts_object_name, ')'),
+    paste0(' simulate_rules(object            = ', model_object,          ','),
+    paste0('                subjects          = ', subs_object_name,      '[["subjects"]],'),
+    paste0('                eval_times        = ', visit_str,             ','),
+    paste0('                output_times      = ', ot_object_name,        ','),
+    paste0('                time_scales       = ', ts_object,             ','),
+    paste0('                preamble          = ', preamble_object_name,  ','),
+    paste0('                rules             = ', rules_object_name,     ','),
+    paste0('                rx_options        = ', rxopts_object_name,    ')'),
     "",
     "# Collecting the simulation and event history values",
     paste0(sim_tc_object_name, ' = ', simres_object_name, '[["simall"]]'),

@@ -3463,7 +3463,6 @@ NCA_fetch_state = function(id, input, session,
   # Here we react to changes between the UI and the current state
   if(has_changed(ui_val   = state[["NCA"]][["ui"]][["select_current_ana"]],
                  old_val  = state[["NCA"]][["current_ana"]]) &
-
       (!fetch_hold(state, "select_current_ana"))){
 
     # Changing the current view to the one selected in the UI
