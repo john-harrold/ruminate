@@ -3758,199 +3758,31 @@ state}
 #'@title Populate Session Data for Module Testing
 #'@description Populates the supplied session variable for testing.
 #'@param session Shiny session variable (in app) or a list (outside of app)
+#'@param full    Boolean indicating if the full test session should be created
+#'(\code{TRUE}) or a minimal test session should be created (\code{FALSE},
+#'default)
 #'@return The CTS portion of the `all_sess_res` returned from \code{\link{FM_app_preload}} 
 #'@examples
 #'\donttest{
-#'sess_res = CTS_test_mksession()
+#' session = shiny::MockShinySession$new()
+#' sess_res = CTS_test_mksession(session=session)
 #'}
 #'@seealso \code{\link{FM_app_preload}}
-CTS_test_mksession = function(session=list()){
+CTS_test_mksession = function(session=list(), full=FALSE){
 
-  isgood = TRUE
-  rsc    = NULL
-  input  = list()
-
-  sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
-              system.file(package="ruminate", "preload", "MB_preload.yaml"),
-              system.file(package="ruminate", "preload", "CTS_preload.yaml"))
+  if(full){
+    sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
+                system.file(package="ruminate", "preload", "MB_preload.yaml"),
+                system.file(package="ruminate", "preload", "CTS_preload.yaml"))
+  }  else {
+    sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
+                system.file(package="ruminate", "preload", "MB_preload.yaml"),
+                system.file(package="ruminate", "preload", "CTS_preload_minimal.yaml"))
+  }  
 
   res = FM_app_preload(session=session, sources=sources)
   res = res[["all_sess_res"]][["CTS"]]
- #isgood = TRUE
- #rsc    = list()
- #input  = list()
- #state  = list()
- #
- #sess_res = MB_test_mksession()
- #session = sess_res[["session"]]
- #
- ## Configuration files
- #FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
- #MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml")
- #
- ## Creating an empty state object
- #state = CTS_fetch_state(id             = id,
- #                       id_ASM          = id_ASM,
- #                       id_MB           = id_MB,
- #                       input           = input,
- #                       session         = session,
- #                       FM_yaml_file    = FM_yaml_file,
- #                       MOD_yaml_file   = MOD_yaml_file,
- #                       react_state     = NULL)
- #
- #
- ## Pulling the default first element
- #current_ele = CTS_fetch_current_element(state)
- #
- ## Defining the source model
- #state[["CTS"]][["ui"]][["source_model"]] = "MB_obj_1_rx"
- #current_ele = CTS_change_source_model(state, current_ele)
- #
- ## Single visit
- #current_ele[["ui"]][["visit_times"]]                 = "0"
- #current_ele[["ui"]][["cts_config_nsteps"]]           = "5"
- #
- ## Creating a dosing rule
- #state[["CTS"]][["ui"]][["rule_condition"]]           = "time == 0"
- #state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
- #state[["CTS"]][["ui"]][["action_dosing_state"]]      = "central"
- #state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(1)"
- #state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0)"
- #state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0)"
- #state[["CTS"]][["ui"]][["rule_name"]]                = "Single_Dose"
- #
- #
- ## Adding the rule:
- #current_ele = CTS_add_rule(state, current_ele)
- #
- ## Appending the plotting details as well
- #current_ele[["ui"]][["fpage"]]             = "1"
- #current_ele[["ui"]][["dvcols"]]            = "Cc"
- #
- ## Reducing the number of subjects and steps to speed things up on CRAN
- #current_ele[["ui"]][["nsub"]]              = "2"
- #current_ele[["ui"]][["cts_config_nsteps"]] = "5"
- #
- ## Putting the element back in the state forcing code generation
- #state = CTS_set_current_element(
- #  state   = state,
- #  element = current_ele)
- #
- ## Now we pull out the current element, and simulate it
- #current_ele = CTS_fetch_current_element(state)
- #current_ele = CTS_simulate_element(state, current_ele)
- #
- ## Next we plot the element
- #current_ele = CTS_plot_element(state, current_ele)
- #
- ## Now we save those results back into the state:
- #state = CTS_set_current_element(
- #  state   = state,
- #  element = current_ele)
- #
- ##-------------------------------------------------------
- #if(full_session){
- #  # Creating a new element, pulling it out, setting the source model,
- #  # and defining the visit times:
- #  state       = CTS_new_element(state)
- #  current_ele = CTS_fetch_current_element(state)
- #  state[["CTS"]][["ui"]][["source_model"]] = "MB_obj_2_rx"
- #  current_ele = CTS_change_source_model(state, current_ele)
- #  current_ele[["ui"]][["visit_times"]]  = "(0:6)*28*2"
- #
- #  # We must define covariates:
- #  state[["CTS"]][["ui"]][["covariate_value"]]            = "70, .1"
- #  state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "cont_lognormal"
- #  state[["CTS"]][["ui"]][["selected_covariate"]]         = "WT"
- #  current_ele = CTS_add_covariate(state, current_ele)
- #
- #  state[["CTS"]][["ui"]][["covariate_value"]]            = "0, 1"
- #  state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "discrete"
- #  state[["CTS"]][["ui"]][["selected_covariate"]]         = "SEX_ID"
- #  current_ele = CTS_add_covariate(state, current_ele)
- #
- #  state[["CTS"]][["ui"]][["covariate_value"]]            = "1"
- #  state[["CTS"]][["ui"]][["covariate_type_selected"]]    = "fixed"
- #  state[["CTS"]][["ui"]][["selected_covariate"]]         = "SUBTYPE_ID"
- #  current_ele = CTS_add_covariate(state, current_ele)
- #
- #  # Next we define the rules
- #  # Initial dose:
- #  state[["CTS"]][["ui"]][["rule_condition"]]           = "time == 0"
- #  state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
- #  state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
- #  state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(0.1,  0.1,  0.1,  0.1)*1e6/MW"
- #  state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
- #  state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
- #  state[["CTS"]][["ui"]][["rule_name"]]                = "first_dose"
- #  current_ele = CTS_add_rule(state, current_ele)
- #
- #  # Maintain steady state if within rage:
- #  state[["CTS"]][["ui"]][["rule_condition"]]           = "((BM <=  7e4) & (BM >=5e4)) & (time > 0)"
- #  state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
- #  state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
- #  state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c( 1.0,  1.00,  1.00,  1.00)*SI_fpd(id=id, state='Ac')"
- #  state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
- #  state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
- #  state[["CTS"]][["ui"]][["rule_name"]]                = "keep_dose"
- #  current_ele = CTS_add_rule(state, current_ele)
- #
- #  # Decrease dose if over target
- #  state[["CTS"]][["ui"]][["rule_condition"]]           = "(BM >  7e4) & (time > 0)"
- #  state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
- #  state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
- #  state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c( .90,   .90,   .90,   .90)*SI_fpd(id=id, state='Ac')"
- #  state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
- #  state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
- #  state[["CTS"]][["ui"]][["rule_name"]]                = "decrease_dose"
- #  current_ele = CTS_add_rule(state, current_ele)
- #
- #  # Increase dose if below target
- #  state[["CTS"]][["ui"]][["rule_condition"]]           = "(BM <  5e4) & (time > 0)"
- #  state[["CTS"]][["ui"]][["rule_type"]]                = "dose"
- #  state[["CTS"]][["ui"]][["action_dosing_state"]]      = "Ac"
- #  state[["CTS"]][["ui"]][["action_dosing_values"]]     = "c(1.30,  1.30,  1.30,  1.30)*SI_fpd(id=id, state='Ac')"
- #  state[["CTS"]][["ui"]][["action_dosing_times"]]      = "c(0, 14, 28, 42)"
- #  state[["CTS"]][["ui"]][["action_dosing_durations"]]  = "c(0,  0,  0,  0)"
- #  state[["CTS"]][["ui"]][["rule_name"]]                = "increase_dose"
- #  current_ele = CTS_add_rule(state, current_ele)
- #
- #  # Appending the plotting details as well
- #  current_ele[["ui"]][["fpage"]]                = "1"
- #  current_ele[["ui"]][["trial_end"]]            = "400"
- #  current_ele[["ui"]][["dvcols"]]               = c("Cc", "BM")
- #
- #  # Number of sujbects
- #  current_ele[["ui"]][["nsub"]]                 = "12"
- #  current_ele[["ui"]][["cts_config_nsteps"]]    = "50"
- #
- #  # Putting the element back in the state forcing code generation
- #  state = CTS_set_current_element( state   = state, element = current_ele)
- #
- #  # Now we pull out the current element and simulate it:
- #  current_ele = CTS_fetch_current_element(state)
- #  current_ele = CTS_simulate_element(state, current_ele)
- #
- #  # Next we plot the element
- #  current_ele = CTS_plot_element(state, current_ele)
- #
- #  # then we save everything:
- #  state = CTS_set_current_element( state   = state, element = current_ele)
- #}
- #
- #if(("ShinySession" %in% class(session))){
- #  FM_set_mod_state(session, id, state)
- #} else {
- #  session = FM_set_mod_state(session, id, state)
- #}
- #
- #res = list(
- #  isgood  = isgood,
- #  session = session,
- #  input   = input,
- #  state   = state,
- #  rsc     = rsc
- #)
+
 res}
 
 #'@export

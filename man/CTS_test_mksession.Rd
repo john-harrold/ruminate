@@ -4,10 +4,14 @@
 \alias{CTS_test_mksession}
 \title{Populate Session Data for Module Testing}
 \usage{
-CTS_test_mksession(session = list())
+CTS_test_mksession(session = list(), full = FALSE)
 }
 \arguments{
 \item{session}{Shiny session variable (in app) or a list (outside of app)}
+
+\item{full}{Boolean indicating if the full test session should be created
+(\code{TRUE}) or a minimal test session should be created (\code{FALSE},
+default)}
 }
 \value{
 The CTS portion of the \code{all_sess_res} returned from \code{\link{FM_app_preload}}
@@ -17,7 +21,8 @@ Populates the supplied session variable for testing.
 }
 \examples{
 \donttest{
-sess_res = CTS_test_mksession()
+session = shiny::MockShinySession$new()
+sess_res = CTS_test_mksession(session=session)
 }
 }
 \seealso{

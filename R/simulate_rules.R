@@ -1248,6 +1248,14 @@ fetch_rxinfo <- function(object){
       }
     }
 
+    # If an output or secondary parameter is defined after it has been used it
+    # can be misinterpreted as a covaraite. This checks for that. 
+    if(any(elements[["covariates"]] %in% c(elements[["outputs"]], elements[["secondary"]]))){
+      isgood = FALSE
+      bad_covs = elements[["covariates"]][ elements[["covariates"]] %in% c(elements[["outputs"]], elements[["secondary"]])]
+      msgs = c(msgs, paste0("The following covariate(s) were found in either outputs or secondary parameters: ", paste0(bad_covs, collapse=", ")))
+    }
+    
 
     # Output details
     txt_info = c(txt_info, "Outputs\n")
@@ -1360,8 +1368,6 @@ fetch_rxinfo <- function(object){
   if(is.null(txt_info)){
     txt_info = ""
   }
-
-
 
   res = list(
     isgood    = isgood,
@@ -1725,6 +1731,10 @@ rx2other <- function(object,
             dataset = dataset |> rxode2::et(id=c(1,2), time=c(0,1), evid=0, cmt=tmp_output)
           }
 
+          # Making sure the dataset is a dataframe so we can manipulate 
+          # it like a dataframe below:
+          dataset = as.data.frame(dataset)
+          
           # Adding default values for covariates
           if(length(rx_details[["elements"]][["covariates"]]) > 0){
             for(tmp_cov in rx_obj$allCovs){
@@ -1793,39 +1803,39 @@ rx2other <- function(object,
                          contents = c())
             )
           }
+        }
 
-          # If either failed we want to package that failure up as well.
-          if(!tcres[["isgood"]]){
+        # If either failed we want to package that failure up as well.
+        if(!tcres[["isgood"]]){
+          isgood = FALSE
+          msgs = c(msgs, tcres[["msgs"]])
+
+          # Creating a text file with the errors that were encountered:
+          fn_full = file.path(export_wd, paste0(export_name,"-error.txt"))
+
+          fileConn<-file(fn_full)
+          writeLines(c(paste0("Error generating ",out_type ," output."),
+                       "See below for details: ",
+                       tcres[["msgs"]]), fileConn)
+          close(fileConn)
+
+          files = list(
+            txt = list(fn       = paste0(export_name,"-error.txt"),
+                       fn_full  = fn_full,
+                       contents = c()))
+        }
+
+        # Reading in any contents
+        for(tmp_file in names(files)){
+         if(file.exists(files[[tmp_file]][["fn_full"]])){
+            files[[tmp_file]][["contents"]] = paste0(readLines( files[[tmp_file]][["fn_full"]]), collapse="\n")
+          } else {
             isgood = FALSE
-            msgs = c(msgs, tcres[["msgs"]])
-
-            # Creating a text file with the errors that were encountered:
-            fn_full = file.path(export_wd, paste0(export_name,"-error.txt"))
-
-            fileConn<-file(fn_full)
-            writeLines(c(paste0("Error generating ",out_type ," output."),
-                         "See below for details: ",
-                         tcres[["msgs"]]), fileConn)
-            close(fileConn)
-
-
-            files = list(
-              txt = list(fn       = paste0(export_name,"-error.txt"),
-                         fn_full  = fn_full,
-                         contents = c()))
-
-          }
-
-          # Reading in any contents
-          for(tmp_file in names(files)){
-           if(file.exists(files[[tmp_file]][["fn_full"]])){
-              files[[tmp_file]][["contents"]] = paste0(readLines( files[[tmp_file]][["fn_full"]]), collapse="\n")
-            } else {
-              isgood = FALSE
-              msgs   = c(msgs, paste0(out_type, ": ",files[[tmp_file]][["fn_full"]], "file not found"))
-            }
+            msgs   = c(msgs, paste0(out_type, ": ",files[[tmp_file]][["fn_full"]], "file not found"))
           }
         }
+
+        # Getting back to the correct working directory
         setwd(oldwd)
       }
     } else {

@@ -1,6 +1,7 @@
 # ruminate 0.3.0 (development version)
 
 - Fix for rxode 3.0 release.
+- Using new yaml save methodology for formods, and will break previous saved states
 - Added preload() and mk_preload() files
 - Updated `templates/ruminate.R` and `templates/ruminate_development.R` apps
   to use the preload file in the unzipped analysis state.

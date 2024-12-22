@@ -1,6 +1,6 @@
 Package: ruminate
 Title: A Pharmacometrics Data Transformation and Analysis Tool
-Version: 0.2.5
+Version: 0.3.0
 Authors@R: 
     person("John", "Harrold", , "john.m.harrold@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2052-4373"))

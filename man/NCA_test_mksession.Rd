@@ -16,5 +16,6 @@ The NCA portion of the \code{all_sess_res} returned from \code{\link{FM_app_prel
 Populates the supplied session variable for testing.
 }
 \examples{
-sess_res = NCA_test_mksession()
+session = shiny::MockShinySession$new()
+sess_res = NCA_test_mksession(session=session)
 }

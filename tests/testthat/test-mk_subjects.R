@@ -2,6 +2,7 @@ library(ruminate)
 
 if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
   library(nlmixr2lib)
+  library(rxode2)
   nsub = 3
   for(ridx in 1:nrow(nlmixr2lib::modeldb)){
     model_name = nlmixr2lib::modeldb[ridx, ][["name"]]

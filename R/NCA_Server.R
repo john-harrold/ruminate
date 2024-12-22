@@ -6859,7 +6859,8 @@ res}
 #'@param session Shiny session variable (in app) or a list (outside of app)
 #'@return The NCA portion of the `all_sess_res` returned from \code{\link{FM_app_preload}} 
 #'@examples
-#' sess_res = NCA_test_mksession()
+#' session = shiny::MockShinySession$new()
+#' sess_res = NCA_test_mksession(session=session)
 NCA_test_mksession = function(session=list()){
 
   isgood = TRUE
