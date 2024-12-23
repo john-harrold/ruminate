@@ -1,7 +1,7 @@
 CTS:
   fm_yaml:   'system.file(package="formods", "templates", "formods.yaml")'
-  #mod_yaml:  'system.file(package="ruminate", "templates", "CTS.yaml")'
-  mod_yaml: "/Users/jmh/projects/ruminate/github/ruminate/inst/templates/CTS.yaml"
+  mod_yaml:  'system.file(package="ruminate", "templates", "CTS.yaml")'
+  #mod_yaml: "/Users/jmh/projects/ruminate/github/ruminate/inst/templates/CTS.yaml"
   # The remainder is the free form for your module. If your module has the
   # format of elements and components you can use the skeleton below to get
   # started

@@ -1,7 +1,7 @@
 MB:
   fm_yaml:   'system.file(package="formods",  "templates", "formods.yaml")'
-  #mod_yaml:  'system.file(package="ruminate", "templates", "MB.yaml")'
-  mod_yaml: "/Users/jmh/projects/ruminate/github/ruminate/inst/templates/MB.yaml"
+  mod_yaml:  'system.file(package="ruminate", "templates", "MB.yaml")'
+  #mod_yaml: "/Users/jmh/projects/ruminate/github/ruminate/inst/templates/MB.yaml"
   elements:
     # Each element is a specific model
     - element:
