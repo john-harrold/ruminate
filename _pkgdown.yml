@@ -53,6 +53,8 @@ navbar:
   - text: "Videos"
     icon: fas fa-video
     menu:
+       - text: "Introduction and Overview"
+         href:  https://vimeo.com/1042516737
        - text: "Workflow Example"
          href: https://vimeo.com/1042510561
   - text: "Tutorial"
