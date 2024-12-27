@@ -50,11 +50,14 @@ navbar:
   - text: "Try Online"
     icon: fas fa-cloud
     href: https://runruminate.ubiquity.tools/
+  - text: "Videos"
+    icon: fas fa-video
+    menu:
+       - text: "Workflow Example"
+         href: https://vimeo.com/1042510561
   - text: "Tutorial"
     icon: fas fa-chalkboard-teacher
     menu:
-       - text: "Video Tutorial"
-         href: https://vimeo.com/user3889152/ruminate
        - text: "Deployment & Customization"
          href: articles/deployment.html
        - text: "Non-Compartmental Analysis"

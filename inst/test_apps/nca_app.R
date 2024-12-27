@@ -32,12 +32,17 @@ if(!exists("deployed")){
   deployed = FALSE
 }
 
-# Making sure that the run_dev object is created
-if(file.exists(file.path(tempdir(), "RUMINTE_DEVELOPMENT"))){
-  run_dev  = TRUE
-}else{
-  run_dev  = FALSE
+# If the DEPLOYED file marker existrs we set deployed to TRUE
+if(file.exists("DEPLOYED")){
+  deployed = TRUE
 }
+
+# # Making sure that the run_dev object is created
+# if(file.exists(file.path(tempdir(), "RUMINTE_DEVELOPMENT"))){
+#   run_dev  = TRUE
+# }else{
+#   run_dev  = FALSE
+# }
 
 # If the SETUP.R file exists we source it
 if(file.exists("SETUP.R")){
@@ -45,10 +50,6 @@ if(file.exists("SETUP.R")){
 }
 
 
-# If the DEPLOYED file marker existrs we set deployed to TRUE
-if(file.exists("DEPLOYED")){
-  deployed = TRUE
-}
 
 CSS <- "
 .wrapfig {
@@ -220,6 +221,11 @@ server <- function(input, output, session) {
                 system.file(package="ruminate", "preload", "NCA_preload.yaml"))
     
     res = FM_app_preload(session=session, sources=sources)
+  # Otherwise we look for a preload file and load that if it exists
+  } else if(file.exists("preload.yaml")){
+    shinybusy::show_modal_spinner(text="Preloading analysis, be patient", session=session)
+    res = FM_app_preload(session=session, sources="preload.yaml")
+    shinybusy::remove_modal_spinner(session = session)
   }
 
   # Module servers
