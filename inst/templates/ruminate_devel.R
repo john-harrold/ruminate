@@ -147,6 +147,8 @@ ui <- shinydashboard::dashboardPage(
                        htmlOutput(NS("UD", "ui_ud_load_data"))),
                        htmlOutput(NS("UD", "ui_ud_clean")),
                        htmlOutput(NS("UD", "ui_ud_select_sheets")),
+                       htmlOutput(NS(id, "ui_ud_workflows")),
+                       div(style="display:inline-block;vertical-align:top;width:40px", uiele_code_button),
                        htmlOutput(NS("UD", "ui_ud_text_load_result"))),
                      column(width=6,
                          tags$p(
@@ -236,7 +238,7 @@ server <- function(input, output, session) {
                 system.file(package="ruminate", "preload", "NCA_preload.yaml"),
                 system.file(package="ruminate", "preload", "MB_preload.yaml"),
                 system.file(package="ruminate", "preload", "CTS_preload.yaml"))
-    
+
     res = FM_app_preload(session=session, sources=sources, react_state=react_FM)
   # Otherwise we look for a preload file and load that if it exists
   } else if(file.exists("preload.yaml")){
@@ -244,7 +246,7 @@ server <- function(input, output, session) {
     res = FM_app_preload(session=session, sources="preload.yaml")
     shinybusy::remove_modal_spinner(session = session)
   }
-  
+
 
   # Module servers
   formods::ASM_Server( id="ASM",

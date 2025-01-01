@@ -57,7 +57,7 @@ navbar:
          href:  https://vimeo.com/1042516737
        - text: "Workflow Example"
          href: https://vimeo.com/1042510561
-  - text: "Tutorial"
+  - text: "Tutorials"
     icon: fas fa-chalkboard-teacher
     menu:
        - text: "Deployment & Customization"
