@@ -147,8 +147,7 @@ ui <- shinydashboard::dashboardPage(
                        htmlOutput(NS("UD", "ui_ud_load_data"))),
                        htmlOutput(NS("UD", "ui_ud_clean")),
                        htmlOutput(NS("UD", "ui_ud_select_sheets")),
-                       htmlOutput(NS(id, "ui_ud_workflows")),
-                       div(style="display:inline-block;vertical-align:top;width:40px", uiele_code_button),
+                       htmlOutput(NS("UD", "ui_ud_workflows")),
                        htmlOutput(NS("UD", "ui_ud_text_load_result"))),
                      column(width=6,
                          tags$p(
