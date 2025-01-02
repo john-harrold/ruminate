@@ -132,6 +132,7 @@ ui <- shinydashboard::dashboardPage(
                        htmlOutput(NS("UD", "ui_ud_load_data"))),
                        htmlOutput(NS("UD", "ui_ud_clean")),
                        htmlOutput(NS("UD", "ui_ud_select_sheets")),
+                       htmlOutput(NS("UD", "ui_ud_workflows")),
                        htmlOutput(NS("UD", "ui_ud_text_load_result"))),
                      column(width=6,
                          tags$p(
@@ -219,7 +220,7 @@ server <- function(input, output, session) {
                 system.file(package="formods",  "preload", "FG_preload.yaml"),
                 system.file(package="formods",  "preload", "DW_preload.yaml"),
                 system.file(package="ruminate", "preload", "NCA_preload.yaml"))
-    
+
     res = FM_app_preload(session=session, sources=sources)
   # Otherwise we look for a preload file and load that if it exists
   } else if(file.exists("preload.yaml")){

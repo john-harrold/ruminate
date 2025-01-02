@@ -46,6 +46,7 @@ Suggests:
   rmarkdown,
   readxl,
   rxode2 (>= 3.0.0),
+  shinybusy,
   shinydashboard,
   testthat (>= 3.0.0),
   ubiquity
