@@ -21,10 +21,11 @@ Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 The goal of `{ruminate}` is to facilitate exploration of pharmacometrics
 data. This is done by creating a Shiny interface to different tools for
 data transformation (`{dplyr}` and `{tidyr}`), plotting (`{ggplot2}`),
-and noncompartmental analysis (`{PKNCA}`). These results can be reported
-in Excel, Word or PowerPoint. The state of the app can be saved and
-loaded at a later date. When saved, a script is generated to reproduce
-the different actions in the Shiny interface.
+noncompartmental analysis (`{PKNCA}`), and ODE-based adaptive trial
+simulations (`{rxode2}`). These results can be reported in Excel, Word
+or PowerPoint. The state of the app can be saved and loaded at a later
+date. When saved, a script is generated to reproduce the different
+actions in the Shiny interface.
 
 # Deployed example in the cloud
 
@@ -43,23 +44,8 @@ You can install the released version of `ruminate` from
 [CRAN](https://cran.r-project.org/package=ruminate) with:
 
 ``` r
-# General dependencies:
-install.packages("clipr")
-install.packages("gridExtra")
-install.packages("prompter")
-install.packages("readxl")
-install.packages("shinydashboard")
-install.packages("ubiquity")
-
-# Dependencies for the MB and CTS modules
-install.packages("nlmixr2lib")
-install.packages("nonmem2rx")
-install.packages("rxode2")
-install.packages("rxode2et")
-install.packages("nlmixr2")
-
 # Actual package
-install.packages("ruminate")
+install.packages("ruminate",  dependencies=TRUE)
 ```
 
 ## Development version
@@ -73,22 +59,9 @@ if(system.file(package="devtools") == ""){
   install.packages("devtools") 
 }
 
-# General dependencies:
-install.packages("clipr")
-install.packages("gridExtra")
-install.packages("prompter")
-install.packages("readxl")
-install.packages("shinydashboard")
-install.packages("ubiquity")
-
-# Dependencies for the MB and CTS modules
-install.packages("nlmixr2lib")
-install.packages("nonmem2rx")
-install.packages("rxode2")
-
-devtools::install_github("john-harrold/onbrand",  dependencies=TRUE)
-devtools::install_github("john-harrold/formods",  dependencies=TRUE)
-devtools::install_github("john-harrold/ruminate")
+devtools::install_github("john-harrold/onbrand",   dependencies=TRUE)
+devtools::install_github("john-harrold/formods",   dependencies=TRUE)
+devtools::install_github("john-harrold/ruminate",  dependencies=TRUE)
 ```
 
 Note that because `{ruminate}` depends on `{formods}` and `{onbrand}`

@@ -528,7 +528,7 @@ CTS_Server <- function(id,
       uiele})
     #------------------------------------
     #  Row of controls above the simulation results
-    # JMH move the reaction here to the 
+    # JMH move the reaction here to the
     output$CTS_ui_top_btn_row  = renderUI({
       react_state[[id_MB]]
       react_state[[id_ASM]]
@@ -595,7 +595,7 @@ CTS_Server <- function(id,
 #           choices    = c("PH"),
 #           width      = state[["MC"]][["formatting"]][["time_scale"]][["width"]])
 
-        uiele_time_scale = 
+        uiele_time_scale =
           formods::FM_add_ui_tooltip(state, uiele_time_scale,
                  tooltip     = state[["MC"]][["formatting"]][["time_scale"]][["tooltip"]],
                  position    = state[["MC"]][["formatting"]][["time_scale"]][["tooltip_position"]])
@@ -1593,7 +1593,7 @@ CTS_Server <- function(id,
               tmp_details = tags$span(style="color:green", paste0(type, ", ", sampling, ": ", paste0(values, collapse=", ")))
             }
           }
-          uiele = tagList(uiele, 
+          uiele = tagList(uiele,
             tmp_cov,": ",  tmp_details, tags$br())
         }
         uiele = tagList(tags$h3(state[["MC"]][["labels"]][["covariate_values"]]), uiele)
@@ -1670,9 +1670,9 @@ CTS_Server <- function(id,
         # This only updates if there are models
         if( !is.null(state[["CTS"]][["MDL"]][["hasmdl"]]) ){
         if( state[["CTS"]][["MDL"]][["hasmdl"]] ){
-        
+
           catalog = state[["CTS"]][["MDL"]][["catalog"]]
-        
+
           if(current_cht[["ui"]][["source_model"]] %in% catalog[["object"]]){
             current_source_model =  current_cht[["ui"]][["source_model"]]
           } else {
@@ -1682,10 +1682,10 @@ CTS_Server <- function(id,
             FM_le(state, paste0("source_model: ",   current_cht[["ui"]][["source_model"]]))
             FM_le(state, paste0("switching model:", current_source_model ))
           }
-        
+
           choices        = catalog[["object"]]
           names(choices) = catalog[["label"]]
-        
+
           choicesOpt = NULL
           shinyWidgets::updatePickerInput(
             session    = session,
@@ -1698,7 +1698,7 @@ CTS_Server <- function(id,
       }
     })
     #------------------------------------
-    # Time scale 
+    # Time scale
     # Creates the time scale picker input witha  placeholder
     output$CTS_time_scale_PH = renderUI({
       state = CTS_fetch_state(id              = id,
@@ -1710,7 +1710,7 @@ CTS_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
 
-      res = 
+      res =
           shinyWidgets::pickerInput(
             selected   = "PH",
             inputId    = NS(id, "time_scale"),
@@ -1763,13 +1763,13 @@ CTS_Server <- function(id,
          # Defining the choices
          choices = list()
          for(curr_ts_value in names(ts_details)){
-           choices[[ ts_details[[curr_ts_value]][["verb"]] ]] = curr_ts_value 
+           choices[[ ts_details[[curr_ts_value]][["verb"]] ]] = curr_ts_value
          }
 
          choicesOpt = NULL
          shinyWidgets::updatePickerInput(
            session    = session,
-           selected   = current_time_scale,   
+           selected   = current_time_scale,
            inputId    = "time_scale",
            choices    = choices,
            choicesOpt = choicesOpt)
@@ -2450,7 +2450,7 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
         FM_le(state, paste0(" -> ", state[["CTS"]][["MDL"]][["mdl"]][[csm]][["label"]]))
         FM_le(state, paste0(" -> ", csm))
       }
-      
+
       state[["CTS"]][["ui"]][["source_model"]] = csm
       current_ele = CTS_change_source_model(state, current_ele )
       state = CTS_set_current_element(
@@ -2501,7 +2501,7 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
         # Button changes are compared to the button click tracking values
         change_detected =
           has_updated(ui_val    = state[["CTS"]][["ui"]][[ui_name]],
-                      old_val   = state[["CTS"]][["button_counters"]][[ui_name]], 
+                      old_val   = state[["CTS"]][["button_counters"]][[ui_name]],
                       init_val  = c("", "0"))
 
         if(change_detected){
@@ -2925,22 +2925,22 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
 
   rule_ui_map = list(
     dose = list(
-      name       = "rule_name", 
-      type       = "rule_type", 
+      name       = "rule_name",
+      type       = "rule_type",
       condition  = "rule_condition",
       state      = "action_dosing_state",
       values     = "action_dosing_values",
-      times      = "action_dosing_times", 
+      times      = "action_dosing_times",
       durations  = "action_dosing_durations" ),
     "set state"  = list(
-      name       = "rule_name", 
-      type       = "rule_type", 
+      name       = "rule_name",
+      type       = "rule_type",
       condition  = "rule_condition",
       state      = "action_set_state",
       value      = "action_state_values"),
     "manual"  = list(
-      name       = "rule_name", 
-      type       = "rule_type", 
+      name       = "rule_name",
+      type       = "rule_type",
       condition  = "rule_condition",
       code       = "action_manual_code")
   )
@@ -2980,22 +2980,30 @@ state}
 CTS_fetch_code = function(state){
 
   cmds = c()
+  cohorts_found = FALSE
 
   enames = names(state[["CTS"]][["elements"]])
   if(length(enames) > 0){
     for(ename in enames){
       current_element = state[["CTS"]][["elements"]][[ename]]
-      cmds            = c(cmds, paste0("# Cohort: ", current_element[["element_name"]], "===="))
-      cmds            = c(cmds, current_element[["code_ele_only"]])
-      cmds            = c(cmds, "\n")
+      if(current_element[["isgood"]]){
+        cohorts_found   = TRUE
+        cmds            = c(cmds, paste0("# Cohort: ", current_element[["ui"]][["element_name"]], " ===="))
+        cmds            = c(cmds, current_element[["code_ele_only"]])
+        cmds            = c(cmds, "\n")
+      }
     }
-    cmds = c("# Adaptive Trial Simulations ----", cmds)
+  }
+
+  if(cohorts_found){
+    cmds = c("# Adaptive Trial Simulations ----",
+             cmds)
   } else {
-    cmds = "# No cohorts available"
+    cmds = c("# Adaptive Trial Simulations ----",
+             "# No cohorts were found")
   }
 
   code = paste0(cmds, collapse="\n")
-
 code}
 
 #'@export
@@ -3315,7 +3323,7 @@ element}
 #'  \item{msgs:}      Messages to be passed back to the user.
 #'  \item{rpt:}       Report with any additions passed back to the user.
 #'}
-#'@seealso 
+#'@seealso
 #'\code{\link[formods:FM_generate_report]{formods::FM_generate_report()}} and
 #'\code{\link[onbrand:template_details]{onbrand::template_details()}}
 CTS_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
@@ -3761,13 +3769,13 @@ state}
 #'@param full    Boolean indicating if the full test session should be created
 #'(\code{TRUE}) or a minimal test session should be created (\code{FALSE},
 #'default)
-#'@return The CTS portion of the `all_sess_res` returned from \code{\link{FM_app_preload}} 
+#'@return The CTS portion of the `all_sess_res` returned from \code{\link[formods]{FM_app_preload}}
 #'@examples
 #'\donttest{
 #' session = shiny::MockShinySession$new()
 #' sess_res = CTS_test_mksession(session=session)
 #'}
-#'@seealso \code{\link{FM_app_preload}}
+#'@seealso \code{\link[formods]{FM_app_preload}}
 CTS_test_mksession = function(session=list(), full=FALSE){
 
   if(full){
@@ -3778,7 +3786,7 @@ CTS_test_mksession = function(session=list(), full=FALSE){
     sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
                 system.file(package="ruminate", "preload", "MB_preload.yaml"),
                 system.file(package="ruminate", "preload", "CTS_preload_minimal.yaml"))
-  }  
+  }
 
   res = FM_app_preload(session=session, sources=sources)
   res = res[["all_sess_res"]][["CTS"]]
@@ -3846,9 +3854,9 @@ CTS_new_element = function(state){
          nsub_object_name       = paste0(element_object_name, "_nsub"),
          preamble_object_name   = paste0(element_object_name, "_preamble"),
          code_previous          = NULL,
-         # This contains the selection choices and is populated by 
+         # This contains the selection choices and is populated by
          # CTS_init_element_model()
-         dvcols_selection       = list(), 
+         dvcols_selection       = list(),
          # This is information about the source model from fetch_rxinfo()
          rx_details             = NULL,
          model_label            = "",
@@ -3944,7 +3952,7 @@ CTS_init_element_model    = function(state, element){
       all_values = c(
         rx_details[["elements"]][["outputs"]],
         rx_details[["elements"]][["states"]])
-    
+
        # Storing the details in the element
        if(!is.null(all_values)){
         element[["ui"]][["dvcols"]]   = all_values[1]
@@ -4166,7 +4174,7 @@ CTS_set_current_element    = function(state, element){
   time_scale              = "time"
   time_label              = "Time"
   if(!is.null(element[["ui"]][["time_scale"]])){
-    if((element[["ui"]][["time_scale"]] != ""  ) & 
+    if((element[["ui"]][["time_scale"]] != ""  ) &
        (element[["ui"]][["time_scale"]] != "PH")){
       time_scale = paste0("ts.", element[["ui"]][["time_scale"]])
 
@@ -4181,11 +4189,11 @@ CTS_set_current_element    = function(state, element){
   # These are the little code chunks that will be stacked to create the final
   # pieces of code for the element
   code_packages       =  paste0("library(", state[["MC"]][["code"]][["packages"]],")")
-  code_seed           = c( 
+  code_seed           = c(
                           "",
                           "# Setting the random seeds",
                           paste0("set.seed(",element[["ui"]][["cts_config_seed"]],")"),
-                          paste0("rxode2::rxSetSeed(",element[["ui"]][["cts_config_seed"]],")"), 
+                          paste0("rxode2::rxSetSeed(",element[["ui"]][["cts_config_seed"]],")"),
                           "",
                           "# Define the number of subjects to simulate for this cohort ",
                           paste0(nsub_object_name, " = ", element[["ui"]][["nsub"]]),
@@ -4476,7 +4484,8 @@ CTS_set_current_element    = function(state, element){
 
   # Code to make the element only assuming all the goodies it needs are
   # already defined
-  element[["code_ele_only"]] = paste0(c(code_rx_details,
+  element[["code_ele_only"]] = paste0(c(code_seed,
+                                        code_rx_details,
                                         code_cov,
                                         code_mksubs,
                                         code_rules,
@@ -4668,10 +4677,10 @@ element}
 #'@description Populates the supplied session variable with information from
 #'list of sources.
 #'@param session     Shiny session variable (in app) or a list (outside of app)
-#'@param src_list    List of preload data (all read together with module IDs at the top level) 
+#'@param src_list    List of preload data (all read together with module IDs at the top level)
 #'@param yaml_res    List data from module yaml config
-#'@param mod_ID      Module ID of the module being loaded. 
-#'@param react_state Reactive shiny object (in app) or a list (outside of app) used to trigger reactions. 
+#'@param mod_ID      Module ID of the module being loaded.
+#'@param react_state Reactive shiny object (in app) or a list (outside of app) used to trigger reactions.
 #'@param quickload   Logical \code{TRUE} to load reduced analysis \code{FALSE} to load the full analysis
 #'@return list with the following elements
 #' \itemize{
@@ -4688,7 +4697,7 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
   msgs    = c()
   res     = c()
   err_msg = c()
-  
+
   FM_yaml_file  = render_str(src_list[[mod_ID]][["fm_yaml"]])
   MOD_yaml_file = render_str(src_list[[mod_ID]][["mod_yaml"]])
   id_ASM        = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_ASM"]]
@@ -4706,7 +4715,7 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
                          react_state     = react_state)
 
   elements = src_list[[mod_ID]][["elements"]]
- 
+
 
   # Mapping between rule elements in preload and ui element names
   rule_ui_map = state[["CTS"]][["rule_ui_map"]]
@@ -4748,9 +4757,9 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       state = CTS_new_element(state)
     }
 
-    # culling any unneeded views 
+    # culling any unneeded views
     for(ele_id  in names(state[["CTS"]][["elements"]])){
-      # This is a view that doesn't exist in elements so 
+      # This is a view that doesn't exist in elements so
       # we need to cull it
       if(!(ele_id  %in% names(element_map))){
         # Setting the view to be deleted as the current view
@@ -4765,7 +4774,7 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       state[["CTS"]][["current_element"]]  =  element_id
       ele_err_msg = c()
 
-      # Getting the numeric position in the list corresponding 
+      # Getting the numeric position in the list corresponding
       # to the current element id
       ele_idx = element_map[[element_id]]
       ele_isgood = TRUE
@@ -4791,7 +4800,7 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       # If the module requires components check here:
       if(!("components" %in% names(elements[[ele_idx]][["element"]]))){
         ele_isgood = FALSE
-        ele_err_msg = c(ele_err_msg, 
+        ele_err_msg = c(ele_err_msg,
             paste0("element idx: ",ele_idx, " no components defined"))
       }
 
@@ -4804,19 +4813,19 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       # Finding source model
       if(!is.null(elements[[ele_idx]][["element"]][["model_source"]][["id"]]) &
          !is.null(elements[[ele_idx]][["element"]][["model_source"]][["idx"]])){
-        tmp_MDL = MDL[["catalog"]][c(MDL[["catalog"]][["id"]]  == elements[[ele_idx]][["element"]][["model_source"]][["id"]] & 
+        tmp_MDL = MDL[["catalog"]][c(MDL[["catalog"]][["id"]]  == elements[[ele_idx]][["element"]][["model_source"]][["id"]] &
                                      MDL[["catalog"]][["idx"]] == elements[[ele_idx]][["element"]][["model_source"]][["idx"]]), ]
         if(nrow(tmp_MDL) == 1){
           formods::FM_le(state, paste0("setting model source: ", tmp_MDL[["object"]][1]) )
-          state[["CTS"]][["ui"]][["source_model"]] = tmp_MDL[["object"]][1] 
+          state[["CTS"]][["ui"]][["source_model"]] = tmp_MDL[["object"]][1]
           current_ele = CTS_change_source_model(state, current_ele)
         } else {
-          ele_err_msg = c(ele_err_msg, 
+          ele_err_msg = c(ele_err_msg,
             paste0("error locating model source, expecting 1 source found ", nrow(tmp_MDL)))
           ele_isgood = FALSE
         }
       } else {
-          ele_err_msg = c(ele_err_msg, 
+          ele_err_msg = c(ele_err_msg,
             paste0("error missing either model source id or idx"))
         ele_isgood = FALSE
       }
@@ -4840,35 +4849,35 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
             # This prepares the UI values to add the covariate
             state[["CTS"]][["ui"]][["covariate_value"]]            = elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]][["value"]]
             state[["CTS"]][["ui"]][["covariate_type_selected"]]    = elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]][["type"]]
-            state[["CTS"]][["ui"]][["selected_covariate"]]         = cname 
+            state[["CTS"]][["ui"]][["selected_covariate"]]         = cname
 
             # This adds it:
             current_ele = CTS_add_covariate(state, current_ele)
 
             # Here we check for any errors:
             if(current_ele[["cares"]][["COV_IS_GOOD"]]){
-              FM_le(state, paste0("  - ", cname, ": ", 
+              FM_le(state, paste0("  - ", cname, ": ",
                            elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]][["type"]], " (",
                            elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]][["value"]], ")"))
             } else {
               FM_le(state, paste0("  - ", cname, ": failed to add"))
               ele_isgood = FALSE
-              ele_err_msg = c(ele_err_msg, 
+              ele_err_msg = c(ele_err_msg,
                 paste0("failed to add covariate: ", cname),
                 current_ele[["cares"]][["msgs"]])
             }
           } else {
-            missing_opts    = 
+            missing_opts    =
               req_cov_opts[!(req_cov_opts %in% found_cov_opts)]
             ele_isgood = FALSE
-            ele_err_msg = c(ele_err_msg, 
+            ele_err_msg = c(ele_err_msg,
               paste0("error covariate ",cname, " is missing the following option(s):"),
               paste0("  > ", paste0(missing_opts, collapse=", ")))
             ele_isgood = FALSE
           }
         }
       }
-      
+
 
 
       # Saving any changes to the current element
@@ -4896,9 +4905,9 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
             if(tmp_component[["type"]] %in% names(rule_ui_map)){
               req_comp_opts = names(rule_ui_map[[ tmp_component[["type"]] ]])
               if(!  all( req_comp_opts %in%  names(tmp_component) )){
-                missing_opts    = 
+                missing_opts    =
                   req_comp_opts[!(req_comp_opts %in% names(tmp_component))]
-             
+
                 ele_err_msg = c(ele_err_msg,
                   paste0("component idx: ", comp_idx, ", missing the following required component options: " ),
                   paste0("  > ", paste0(missing_opts, collapse=", ")))
@@ -4926,7 +4935,7 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
             # This puts the component options into the ui locations expected
             # by the CTs_add_rule() function
             for(oname in names(rule_ui_map[[ tmp_component[["type"]] ]])){
-              state[["CTS"]][["ui"]][[ rule_ui_map[[ tmp_component[["type"]] ]][[ oname ]] ]] = 
+              state[["CTS"]][["ui"]][[ rule_ui_map[[ tmp_component[["type"]] ]][[ oname ]] ]] =
                 tmp_component[[ oname ]]
             }
 
@@ -4949,7 +4958,7 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         }
 
 
-        # If everything is good after adding the components 
+        # If everything is good after adding the components
         # we simulate and plot the results:
         if(ele_isgood){
         # Now we pull out the current element, and simulate it
@@ -4965,7 +4974,7 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         } else {
           FM_le(state, "simulate failed")
           ele_isgood = FALSE
-          ele_err_msg = c(ele_err_msg, 
+          ele_err_msg = c(ele_err_msg,
             "simulation failed",
             current_ele[["simres"]][["msgs"]])
         }
@@ -4977,11 +4986,11 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         } else {
           FM_le(state, "simulate failed")
           ele_isgood = FALSE
-          ele_err_msg = c(ele_err_msg, 
+          ele_err_msg = c(ele_err_msg,
             "plot failed",
             current_ele[["plotres"]][["msgs"]])
         }
-        
+
         # Now we save those results back into the state:
         state = CTS_set_current_element(
           state   = state,
@@ -5015,13 +5024,13 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
     session = FM_set_mod_state(session, mod_ID, state)
   }
 
-  res = list(isgood      = isgood, 
+  res = list(isgood      = isgood,
              msgs        = msgs,
              session     = session,
              input       = input,
              react_state = react_state,
              state       = state)
-  
+
 res}
 
 
@@ -5041,7 +5050,7 @@ res}
 #' res = CTS_mk_preload(state)
 CTS_mk_preload     = function(state){
   isgood    = TRUE
-  msgs      = c()  
+  msgs      = c()
   err_msg   = c()
   ylist     = list()
   yaml_list = list()
@@ -5051,7 +5060,7 @@ CTS_mk_preload     = function(state){
       mod_yaml = file.path("config", basename(state[["MOD_yaml_file"]]))
   )
 
-      
+
   # Pulling the available models:
   MDL = state[["CTS"]][["MDL"]]
 
@@ -5069,25 +5078,25 @@ CTS_mk_preload     = function(state){
       }
       if(add_ele){
         FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
-       
+
         # Model for the current element
         SMR = MDL[["catalog"]][MDL[["catalog"]][["object"]] == tmp_source_ele[["ui"]][["source_model"]], ]
-       
+
         if(nrow(SMR) == 1){
-       
+
           # Determining the model source
           model_source = list(
             id  = SMR[["id"]][1],
             idx = SMR[["idx"]][1])
-       
-       
+
+
           # Pulling out the options removing the element name and source model
-          # because those are handled separately. 
+          # because those are handled separately.
           cts_options = tmp_source_ele[["ui"]]
           cts_options[["element_name"]] = NULL
           cts_options[["source_model"]] = NULL
-       
-       
+
+
           # Creating subject level information
           subjects = list()
           if(length(tmp_source_ele[["covariates"]])>0){
@@ -5098,35 +5107,35 @@ CTS_mk_preload     = function(state){
                  value = paste0(tmp_source_ele[["covariates"]][[cname]][["values"]], collapse=", "))
             }
           }
-       
-          
+
+
           tmp_element = list(
             idx               = tmp_source_ele[["idx"]],
             name              = tmp_source_ele[["ui"]][["element_name"]],
             cts_options       = cts_options,
             model_source      = model_source,
-            subjects          = subjects,   
+            subjects          = subjects,
             components        = list())
-       
+
           comp_idx = 1
           if(is.data.frame( tmp_source_ele[["components_table"]])){
             for(ridx in 1:nrow( tmp_source_ele[["components_table"]])){
-       
+
               tmp_comp_row  = tmp_source_ele[["components_table"]][ ridx, ]
               tmp_comp_list = tmp_source_ele[["components_list"]][[ tmp_comp_row[["hash"]] ]]
               tmp_comp_name = names(tmp_comp_list)
-       
+
               tmp_comp = tmp_comp_list[[tmp_comp_name]][["action"]]
               tmp_comp[["name"]] = tmp_comp_name
               tmp_comp[["condition"]] = tmp_comp_list[[tmp_comp_name]][["condition"]]
-       
+
               tmp_element[["components"]][[comp_idx]] = list(component=tmp_comp)
               FM_le(state, paste0("  -> rule ", tmp_comp[["type"]]))
               comp_idx = comp_idx + 1
             }
           }
-          
-          
+
+
           # Appending element
           ylist[["elements"]][[ele_idx]] = list(element = tmp_element)
           ele_idx = ele_idx + 1
@@ -5144,7 +5153,7 @@ CTS_mk_preload     = function(state){
   yaml_list[[ state[["id"]] ]]  = ylist
 
   formods::FM_le(state,paste0("mk_preload isgood: ",isgood))
-  
+
   if(!isgood && !is.null(err_msg)){
     formods::FM_le(state,err_msg,entry_type="danger")
     msgs = c(msgs, err_msg)

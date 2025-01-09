@@ -11,7 +11,7 @@ MB_test_mksession(session = list())
 }
 \value{
 The MB portion of the \code{all_sess_res} returned from
-\code{\link{FM_app_preload}}
+\code{\link[formods]{FM_app_preload}}
 }
 \description{
 Populates the supplied session variable for testing.
@@ -19,4 +19,7 @@ Populates the supplied session variable for testing.
 \examples{
 session = shiny::MockShinySession$new()
 sess_res = MB_test_mksession(session=session)
+}
+\seealso{
+\code{\link[formods]{FM_app_preload}}
 }

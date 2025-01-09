@@ -43,7 +43,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-videos" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true"><span class="fa fas fa-video"></span> Videos</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-videos">
 <li><a class="external-link dropdown-item" href="https://vimeo.com/1042516737">Introduction and Overview</a></li>
-    <li><a class="external-link dropdown-item" href="https://vimeo.com/1042510561">Workflow Example</a></li>
+    <li><a class="external-link dropdown-item" href="https://vimeo.com/1042510561">Getting Started: Wrangling, Plotting and NCA</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -80,7 +80,7 @@
 <!-- badges: start -->
 
 <!-- badges: end -->
-<p>The goal of <a href="https://ruminate.ubiquity.tools/">ruminate</a> is to facilitate exploration of pharmacometrics data. This is done by creating a Shiny interface to different tools for data transformation (<a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a> and <a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a>), plotting (<a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>), and noncompartmental analysis (<a href="https://billdenney.github.io/pknca/" class="external-link">PKNCA</a>). These results can be reported in Excel, Word or PowerPoint. The state of the app can be saved and loaded at a later date. When saved, a script is generated to reproduce the different actions in the Shiny interface.</p>
+<p>The goal of <a href="https://ruminate.ubiquity.tools/">ruminate</a> is to facilitate exploration of pharmacometrics data. This is done by creating a Shiny interface to different tools for data transformation (<a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a> and <a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a>), plotting (<a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>), noncompartmental analysis (<a href="https://billdenney.github.io/pknca/" class="external-link">PKNCA</a>), and ODE-based adaptive trial simulations (<a href="https://nlmixr2.github.io/rxode2/" class="external-link">rxode2</a>). These results can be reported in Excel, Word or PowerPoint. The state of the app can be saved and loaded at a later date. When saved, a script is generated to reproduce the different actions in the Shiny interface.</p>
 </div>
 <div class="section level1">
 <h1 id="deployed-example-in-the-cloud">Deployed example in the cloud<a class="anchor" aria-label="anchor" href="#deployed-example-in-the-cloud"></a>
@@ -95,23 +95,8 @@
 </h2>
 <p>You can install the released version of <code>ruminate</code> from <a href="https://cran.r-project.org/package=ruminate" class="external-link">CRAN</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># General dependencies:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"clipr"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gridExtra"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"prompter"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"readxl"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"shinydashboard"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ubiquity"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Dependencies for the MB and CTS modules</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"nlmixr2lib"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"nonmem2rx"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"rxode2"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"rxode2et"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"nlmixr2"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Actual package</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ruminate"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Actual package</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ruminate"</span>,  dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="development-version">Development version<a class="anchor" aria-label="anchor" href="#development-version"></a>
@@ -123,22 +108,9 @@
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span> </span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="co"># General dependencies:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"clipr"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gridExtra"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"prompter"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"readxl"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"shinydashboard"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ubiquity"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Dependencies for the MB and CTS modules</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"nlmixr2lib"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"nonmem2rx"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"rxode2"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"john-harrold/onbrand"</span>,  dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"john-harrold/formods"</span>,  dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"john-harrold/ruminate"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"john-harrold/onbrand"</span>,   dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"john-harrold/formods"</span>,   dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"john-harrold/ruminate"</span>,  dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Note that because <a href="https://ruminate.ubiquity.tools/">ruminate</a> depends on <a href="https://formods.ubiquity.tools/" class="external-link">formods</a> and <a href="https://onbrand.ubiquity.tools/" class="external-link">onbrand</a> you will need to first install the development versions of <a href="https://onbrand.ubiquity.tools/" class="external-link">onbrand</a> and <a href="https://formods.ubiquity.tools/" class="external-link">formods</a>.</p>
 </div>
 </div>

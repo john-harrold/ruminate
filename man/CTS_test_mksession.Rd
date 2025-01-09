@@ -14,7 +14,7 @@ CTS_test_mksession(session = list(), full = FALSE)
 default)}
 }
 \value{
-The CTS portion of the \code{all_sess_res} returned from \code{\link{FM_app_preload}}
+The CTS portion of the \code{all_sess_res} returned from \code{\link[formods]{FM_app_preload}}
 }
 \description{
 Populates the supplied session variable for testing.
@@ -26,5 +26,5 @@ sess_res = CTS_test_mksession(session=session)
 }
 }
 \seealso{
-\code{\link{FM_app_preload}}
+\code{\link[formods]{FM_app_preload}}
 }

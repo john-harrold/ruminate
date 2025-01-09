@@ -4,13 +4,15 @@
 \alias{NCA_test_mksession}
 \title{Populate Session Data for Module Testing}
 \usage{
-NCA_test_mksession(session = list())
+NCA_test_mksession(session = list(), full = FALSE)
 }
 \arguments{
 \item{session}{Shiny session variable (in app) or a list (outside of app)}
+
+\item{full}{Boolean indicating if the full test session should be created}
 }
 \value{
-The NCA portion of the \code{all_sess_res} returned from \code{\link{FM_app_preload}}
+The NCA portion of the \code{all_sess_res} returned from \code{\link[formods]{FM_app_preload}}
 }
 \description{
 Populates the supplied session variable for testing.
@@ -18,4 +20,7 @@ Populates the supplied session variable for testing.
 \examples{
 session = shiny::MockShinySession$new()
 sess_res = NCA_test_mksession(session=session)
+}
+\seealso{
+\code{\link[formods]{FM_app_preload}}
 }

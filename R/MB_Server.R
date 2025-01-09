@@ -321,7 +321,7 @@ MB_Server <- function(id,
             tooltip     = state[["MC"]][["formatting"]][["export_nonmem"]][["tooltip"]],
             position    = state[["MC"]][["formatting"]][["export_nonmem"]][["tooltip_position"]])
 
-      
+
       }
 
       uiele})
@@ -430,7 +430,7 @@ MB_Server <- function(id,
             tooltip     = state[["MC"]][["formatting"]][["export_monolix"]][["tooltip"]],
             position    = state[["MC"]][["formatting"]][["export_monolix"]][["tooltip_position"]])
 
-      
+
       }
 
       uiele})
@@ -796,7 +796,7 @@ MB_Server <- function(id,
                   block   = state[["MC"]][["formatting"]][["button_clk_append_model"]][["block"]],
                   color   = "primary",
                   icon    = icon("paperclip"))
-       
+
         # Optinally adding the tooltip:
         uiele = formods::FM_add_ui_tooltip(state, uiele,
                  tooltip             = state[["MC"]][["formatting"]][["append_model"]][["tooltip"]],
@@ -804,7 +804,7 @@ MB_Server <- function(id,
       }
 
 
-      uiele =    div(style=paste0("width:", state[["MC"]][["formatting"]][["append_model"]][["width"]]), 
+      uiele =    div(style=paste0("width:", state[["MC"]][["formatting"]][["append_model"]][["width"]]),
                      uiele)
 
       uiele})
@@ -946,7 +946,7 @@ MB_Server <- function(id,
           ),
           fluidRow(
           column(4,
-            div(style="display:inline-block", 
+            div(style="display:inline-block",
                 htmlOutput(NS(id, "ui_select_append_model")),
                 htmlOutput(NS(id, "ui_mb_append_model_btn")))),
           column(8,NULL)
@@ -1331,7 +1331,7 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
     component   = MB_fetch_component(state, current_ele)
 
     # We only update the model if there is an object. This prevents updates
-    # during initialization. 
+    # during initialization.
     if(!is.null(component[["rx_obj"]])){
       FM_le(state, "time scale changed")
       current_ele = MB_update_model(
@@ -1342,7 +1342,7 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
         note        = "Updated time scale",
         reset       = FALSE)
     }
-    
+
     # Saving the updated element
     state = MB_set_current_element(
       state   = state,
@@ -1452,30 +1452,30 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
     if(as.numeric(state[["MB"]][["ui"]][["button_clk_append_model"]]) > 0){
       current_ele = MB_fetch_current_element(state)
       component   = MB_fetch_component(state, current_ele)
-      
+
       FM_pause_screen(
           state   = state,
           session = session,
           message = state[["MC"]][["labels"]][["building_model"]])
-      
-      
+
+
       # Getting the model to be appended:
       mod_id    = state[["MB"]][["ui"]][["append_model"]]
       mod_sum   = state[["MB"]][["model_catalog"]][["summary"]]
       mod_sum   = mod_sum[mod_sum[["mod_id"]] == mod_id, ]
       app_fun   = mod_sum[["Model"]][1]
       app_obj   = mod_sum[["Object"]][1]
-      
+
       fun_cmd = c(app_fun,
                   paste0("rx_obj = rxAppendModel(rx_obj, ",  app_obj, ")"))
-      
+
       tc_res = formods::FM_tc(
-        capture="rx_obj", 
+        capture="rx_obj",
         cmd    = fun_cmd,
         tc_env = list(rx_obj=component[["rx_obj"]]))
-      
+
       if(tc_res[["isgood"]]){
-      
+
         # Updating the model
         current_ele = MB_update_model(
           state       = state,
@@ -1484,36 +1484,36 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
           rx_obj      = tc_res[["capture"]][["rx_obj"]],
           note        = "Append sub-model",
           reset       = FALSE)
-      
+
         # Saving the updated element
         state = MB_set_current_element(
           state   = state,
           element = current_ele)
-      
+
       } else {
-      
+
         # logging the error
         formods::FM_le(state, state[["MC"]][["errors"]][["append_failed"]])
         if(!is.null(tc_res[["msgs"]])){
           formods::FM_le(state, tc_res[["msgs"]])
         }
-      
+
         # Notifying the user
         msgs  = c(msgs,
                   state[["MC"]][["errors"]][["append_failed"]],
-                  tc_res[["msgs"]]) 
-      
+                  tc_res[["msgs"]])
+
         state = FM_set_notification(
           state       = state,
           notify_text = state[["MC"]][["errors"]][["append_failed"]],
           notify_id   = "Append failed",
           type        = "failure")
-      
+
       }
       FM_resume_screen(state, session)
     }
 
-    
+
   }
   #---------------------------------------------
   # model catalog selection changed, new button selected
@@ -1867,22 +1867,32 @@ state}
 MB_fetch_code = function(state){
 
   cmds = c()
+  models_found = FALSE
 
   enames = names(state[["MB"]][["elements"]])
   if(length(enames) > 0){
     for(ename in enames){
+
       current_element = state[["MB"]][["elements"]][[ename]]
-      component       = MB_fetch_component(state, current_element)
-      cmds            = c(cmds, paste0("# Base model: ", current_element[["base_model_name"]], "===="))
-      cmds            = c(cmds, component$model_code)
-      cmds            = c(cmds, "\n")
+
+      if(current_element[["isgood"]]){
+        models_found = TRUE
+        component       = MB_fetch_component(state, current_element)
+        cmds            = c(cmds, paste0("# Base model: ", current_element[["base_model_name"]], " ===="))
+        cmds            = c(cmds, component$model_code)
+        cmds            = c(cmds, "\n")
+      }
     }
-    cmds = c("# Model Building ----", cmds)
-  } else {
-    cmds = "# No models available"
   }
 
-  code_str = paste0(cmds, collapse="\n")
+  if(models_found){
+    cmds = c("# Model Building ----", cmds)
+    code_str = paste0(cmds, collapse="\n")
+  } else {
+    cmds = c("# Model Building ----",
+             "# No models were found")
+  }
+    code_str = paste0(cmds, collapse="\n")
 
 code_str}
 
@@ -1904,7 +1914,7 @@ code_str}
 #'  \item{msgs:}      Messages to be passed back to the user.
 #'  \item{rpt:}       Report with any additions passed back to the user.
 #'}
-#'@seealso 
+#'@seealso
 #'\code{\link[formods:FM_generate_report]{formods::FM_generate_report()}}
 MB_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 
@@ -1928,7 +1938,7 @@ MB_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 
           component       = MB_fetch_component(state, element)
           tc_env[[ element[["fcn_obj_name"]] ]] =eval(parse(text=component[["fcn_def"]]))
-          
+
           code = c(code,
                 paste0('# Inserting header with model description'),
                        'rpt = onbrand::report_add_doc_content(rpt,',
@@ -1993,7 +2003,7 @@ res}
 #'    \item{id:}          Module ID.
 #'    \item{rx_obj:}      The rxode2 object.
 #'    \item{rx_obj_name:} The rxode2 object name that holds the model.
-#'    \item{ts_obj}       List with elements system and details 
+#'    \item{ts_obj}       List with elements system and details
 #'    \item{ts_obj_name:} The object name that holds the model time scale information.
 #'    \item{fcn_def:}     Text to define the model
 #'    \item{MDLMETA:}     Notes about the model.
@@ -2017,7 +2027,7 @@ MB_fetch_mdl = function(state){
   msgs        = c()
   mdl         = list()
 
-  # General timescale information 
+  # General timescale information
   ts_details = state[["MB"]][["ts_details"]]
 
   # This prevents returning a dataset if this is triggered before data has
@@ -2033,13 +2043,13 @@ MB_fetch_mdl = function(state){
         ce = state[["MB"]][["elements"]][[element]]
         if(ce[["isgood"]]){
           ce_checksum = ce[["checksum"]]
-         
+
           # We have at least 1 model
           hasmdl = TRUE
-         
+
           # current component of the current element
           cc = MB_fetch_component(state, ce)
-         
+
           # Saving the model
           mdl[[ ce[["rx_obj_name"]] ]] =
             list(label       = ce[["ui"]][["element_name"]],
@@ -2076,10 +2086,11 @@ res}
 #'@description Populates the supplied session variable for testing.
 #'@param session Shiny session variable (in app) or a list (outside of app)
 #'@return The MB portion of the `all_sess_res` returned from
-#'\code{\link{FM_app_preload}} 
+#'\code{\link[formods]{FM_app_preload}}
 #'@examples
 #' session = shiny::MockShinySession$new()
 #' sess_res = MB_test_mksession(session=session)
+#'@seealso \code{\link[formods]{FM_app_preload}}
 MB_test_mksession = function(session=list()){
 
   sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
@@ -2307,7 +2318,7 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
 
   if( Sys.getenv("ruminate_rxfamily_found")){
     if(isgood){
-      # This will reset the current model 
+      # This will reset the current model
       if(reset){
         # Zeros out the components table
         current_ele[["components_table"]] = data.frame()
@@ -2318,7 +2329,7 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
             # updating the timescale from the value specified in the models
             # meta data. This will look at the time units and compare them to
             # the valid matches for that timescale in the MB.yaml file. If
-            # it's there it will set the time scale to the current that short 
+            # it's there it will set the time scale to the current that short
             # name (ts_sn)
             for(ts_sn in names(state[["MC"]][["formatting"]][["time_scales"]][["choices"]])){
               if(rx_obj$meta$units$time %in% state[["MC"]][["formatting"]][["time_scales"]][["choices"]][[ts_sn]][["match"]]){
@@ -2331,7 +2342,7 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
 
       # String for creating model function in R
       cmd = 'fcn_def    = paste0(deparse(as.function(rx_obj$fun)), collapse="\n")'
-      tcres = 
+      tcres =
         FM_tc(cmd     = cmd,
               tc_env  = list(rx_obj=rx_obj),
               capture = c("fcn_def"))
@@ -2357,12 +2368,12 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
                         ts_obj_name  = current_ele[["ts_obj_name"]])
 
         # Pulling out the time scale code and building the object
-        tcres_ts = 
+        tcres_ts =
           FM_tc(cmd     = bcres[["ts_code"]],
                 tc_env  = list(),
                 capture = c( current_ele[["ts_obj_name"]]))
         ts_obj = tcres_ts[["capture"]][[ current_ele[["ts_obj_name"]] ]]
-        
+
         tmpdf =
         data.frame(id            = component_id,
                    id_str        = component_id_str,
@@ -2601,7 +2612,7 @@ MB_fetch_catalog   = function(state){
 
               # This sets ana_sol to no for sysems that have ODEs and don't
               # have linCmt() calls.
-              if(!model_row[["algebraic"]] & 
+              if(!model_row[["algebraic"]] &
                  !model_row[["linCmt"]]){
                 ana_sol = "no"
               } else{
@@ -2798,7 +2809,7 @@ MB_fetch_appends   = function(state, current_ele){
     # getting the models that are only ODEs and also have dependencies:
     model_summary = state[["MB"]][["model_catalog"]][["summary"]]
     model_summary = model_summary[model_summary[["ana_sol"]] == "no", ]   # Only ODEs
-    model_summary = model_summary[!is.na(model_summary[["depends"]]), ]   # Has dependencies 
+    model_summary = model_summary[!is.na(model_summary[["depends"]]), ]   # Has dependencies
 
     for(mod_id in model_summary[["mod_id"]]){
       # Pulling out the current row
@@ -2832,7 +2843,7 @@ MB_fetch_appends   = function(state, current_ele){
   # If there are no appendable elements we put a message in the pulldown.
   if(!hasappends){
     select_plain    = list()
-    select_plain[[state[["MC"]][["formatting"]][["append_model"]][["no_models"]] ]] = 
+    select_plain[[state[["MC"]][["formatting"]][["append_model"]][["no_models"]] ]] =
       state[["MC"]][["formatting"]][["append_model"]][["no_models"]]
     choicesOpt      = NULL
   }
@@ -2840,7 +2851,7 @@ MB_fetch_appends   = function(state, current_ele){
   res = list(
     isgood        = isgood,
     msgs          = msgs,
-    hasappends    = hasappends,  
+    hasappends    = hasappends,
     select_plain  = select_plain,
     choicesOpt    = choicesOpt)
 
@@ -3041,10 +3052,10 @@ res}
 #'@description Populates the supplied session variable with information from
 #'list of sources.
 #'@param session     Shiny session variable (in app) or a list (outside of app)
-#'@param src_list    List of preload data (all read together with module IDs at the top level) 
+#'@param src_list    List of preload data (all read together with module IDs at the top level)
 #'@param yaml_res    List data from module yaml config
-#'@param mod_ID      Module ID of the module being loaded. 
-#'@param react_state Reactive shiny object (in app) or a list (outside of app) used to trigger reactions. 
+#'@param mod_ID      Module ID of the module being loaded.
+#'@param react_state Reactive shiny object (in app) or a list (outside of app) used to trigger reactions.
 #'@param quickload   Logical \code{TRUE} to load reduced analysis \code{FALSE} to load the full analysis
 #'@return list with the following elements
 #' \itemize{
@@ -3061,7 +3072,7 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
   msgs    = c()
   res     = c()
   err_msg = c()
-        
+
 
   FM_yaml_file  = render_str(src_list[[mod_ID]][["fm_yaml"]])
   MOD_yaml_file = render_str(src_list[[mod_ID]][["mod_yaml"]])
@@ -3099,9 +3110,9 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
       state = MB_new_element(state)
     }
 
-    # culling any unneeded views 
+    # culling any unneeded views
     for(ele_id  in names(state[["MB"]][["elements"]])){
-      # This is a view that doesn't exist in elements so 
+      # This is a view that doesn't exist in elements so
       # we need to cull it
       if(!(ele_id  %in% names(element_map))){
         # Setting the view to be deleted as the current view
@@ -3114,7 +3125,7 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
       # Making the current element id active
       state[["MB"]][["current_element"]]  =  element_id
 
-      # Getting the numeric position in the list corresponding 
+      # Getting the numeric position in the list corresponding
       # to the current element id
       ele_idx = element_map[[element_id]]
       ele_isgood = TRUE
@@ -3136,7 +3147,7 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
 
       if(!("components" %in% names(elements[[ele_idx]][["element"]]))){
         ele_isgood = FALSE
-        err_msg = c(err_msg, 
+        err_msg = c(err_msg,
             paste0("element idx: ",ele_idx, " no models defined"))
 
       }
@@ -3155,7 +3166,7 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
           if(!all(req_comp_opts    %in% names(tmp_component))){
             ele_isgood      = FALSE
             add_component   = FALSE
-            missing_opts    = 
+            missing_opts    =
               req_comp_opts[!(req_comp_opts %in% names(tmp_component))]
             err_msg = c(err_msg,
               paste0("element idx:  ",ele_idx, ", model idx: ", comp_idx, ", missing option(s):" ),
@@ -3171,9 +3182,9 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
             }
             mk_rx_res = mk_rx_obj(
               type="rxode2",
-              model = list(fcn_def = tmp_component[["model"]],     
+              model = list(fcn_def = tmp_component[["model"]],
                            fcn_obj = tmp_component[["object"]]))
-                
+
             if(mk_rx_res[["isgood"]]){
               tmp_note = "import"
               if(!is.null(tmp_component[["note"]])){
@@ -3250,7 +3261,7 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
     session = FM_set_mod_state(session, mod_ID, state)
   }
 
-  res = list(isgood      = isgood, 
+  res = list(isgood      = isgood,
              msgs        = msgs,
              session     = session,
              input       = input,
@@ -3277,7 +3288,7 @@ res}
 #' res = MB_mk_preload(state)
 MB_mk_preload     = function(state){
   isgood    = TRUE
-  msgs      = c()  
+  msgs      = c()
   err_msg   = c()
   ylist     = list()
   yaml_list = list()
@@ -3292,9 +3303,9 @@ MB_mk_preload     = function(state){
   for(element_id in names(state[["MB"]][["elements"]])){
     tmp_source_ele = state[["MB"]][["elements"]][[element_id]]
     if(tmp_source_ele[["isgood"]]){
-      
+
       FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
-      
+
       # Creates the empty element:
       tmp_element = list(
         idx               = tmp_source_ele[["idx"]],
@@ -3305,25 +3316,25 @@ MB_mk_preload     = function(state){
         base_model_id     = tmp_source_ele[["base_model"]],
         base_model_name   = tmp_source_ele[["base_model_name"]],
         components  = list())
-      
+
       comp_idx = 1
       if(is.data.frame( tmp_source_ele[["components_table"]])){
         for(ridx in 1:nrow( tmp_source_ele[["components_table"]])){
-        
+
           tmp_note   = tmp_source_ele[["components_table"]][ridx, ][["note"]]
           tmp_model  = paste0("my_model = ", tmp_source_ele[["components_table"]][ridx, ][["fcn_def"]])
           tmp_object = "my_model"
-        
+
           tmp_element[["components"]][[comp_idx]] = list( component = list(
             note = tmp_note,
             object = tmp_object,
             model = tmp_model)
           )
-        
+
           comp_idx = comp_idx + 1
         }
       }
-      
+
       # Appending element
       ylist[["elements"]][[ele_idx]] = list(element = tmp_element)
       ele_idx = ele_idx + 1
@@ -3333,7 +3344,7 @@ MB_mk_preload     = function(state){
   # Creating the yaml list with the module ID at the top level
   yaml_list = list()
   yaml_list[[ state[["id"]] ]]  = ylist
-      
+
   formods::FM_le(state,paste0("mk_preload isgood: ",isgood))
 
   if(!isgood && !is.null(err_msg)){
@@ -3341,7 +3352,7 @@ MB_mk_preload     = function(state){
     msgs = c(msgs, err_msg)
   }
 
-  
+
 
   res = list(
     isgood    = isgood,
