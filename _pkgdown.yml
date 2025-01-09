@@ -57,6 +57,8 @@ navbar:
          href:  https://vimeo.com/1042516737
        - text: "Getting Started: Wrangling, Plotting and NCA"
          href: https://vimeo.com/1042510561
+       - text: "Deployment, App Preloading, and Analysis Workflows"
+         href:  https://vimeo.com/1045192047
   - text: "Tutorials"
     icon: fas fa-chalkboard-teacher
     menu:
