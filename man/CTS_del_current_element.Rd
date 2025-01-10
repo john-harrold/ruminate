@@ -19,8 +19,8 @@ If that is the last element, then a new default will be added.
 \examples{
 # For more information see the Clinical Trial Simulation vignette:
 # https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html
-
 # None of this will work if rxode2 isn't installed:
+\donttest{
 library(formods)
 if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
 
@@ -120,5 +120,6 @@ state = CTS_new_element(state)
 
 # Delete the current element
 state = CTS_del_current_element(state)
+}
 }
 }

@@ -1,3 +1,4 @@
+\donttest{
 library(formods)
 library(ggplot2)
 
@@ -10,7 +11,7 @@ library(rxode2)
 set.seed(8675309)
 rxSetSeed(8675309)
 
-my_model = function () 
+my_model = function ()
 {
     description <- "One compartment PK model with linear clearance using differential equations"
     ini({
@@ -45,7 +46,7 @@ rxdetails = fetch_rxinfo(object)
 
 rxdetails$elements
 
-# Next we will create subjects. To do that we need to 
+# Next we will create subjects. To do that we need to
 # specify information about covariates:
 nsub = 2
 covs = list(
@@ -65,7 +66,7 @@ rules = list(
     condition = "TRUE",
     action    = list(
       type  = "dose",
-      state     = "central", 
+      state     = "central",
       values    = "c(1)",
       times     = "c(0)",
       durations = "c(0)")
@@ -79,12 +80,12 @@ eval_times =  0
 output_times = seq(0, 56, 1)
 
 # This runs the rule-based simulations
-simres = 
+simres =
   simulate_rules(
     object        = object,
     subjects      = subs[["subjects"]],
     eval_times    = eval_times,
-    output_times  = output_times, 
+    output_times  = output_times,
     rules         = rules)
 
 # First subject data:
@@ -99,17 +100,18 @@ simall = simres$simall
 simall$id = as.factor(simall$id)
 
 # Timecourse
-psim = 
+psim =
   plot_sr_tc(
     sro    = simres,
     dvcols = "Cc")
 psim$fig
 
 # Events
-pev = 
+pev =
   plot_sr_ev(
     sro    = simres,
     ylog   = FALSE)
 pev$fig
 
+}
 }

@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ruminate</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -139,7 +139,8 @@ this indcates       the page to return.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://formods.ubiquity.tools/" class="external-link">formods</a></span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://formods.ubiquity.tools/" class="external-link">formods</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For more information see the Clinical Trial Simulation vignette:</span></span></span>
@@ -151,7 +152,7 @@ this indcates       the page to return.</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://nlmixr2.github.io/rxode2/reference/rxSetSeed.html" class="external-link">rxSetSeed</a></span><span class="op">(</span><span class="fl">8675309</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">my_model</span> <span class="op">=</span> <span class="kw">function</span> <span class="op">(</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="va">my_model</span> <span class="op">=</span> <span class="kw">function</span> <span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">{</span></span></span>
 <span class="r-in"><span>    <span class="va">description</span> <span class="op">&lt;-</span> <span class="st">"One compartment PK model with linear clearance using differential equations"</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://nlmixr2.github.io/rxode2/reference/ini.html" class="external-link">ini</a></span><span class="op">(</span><span class="op">{</span></span></span>
@@ -186,7 +187,7 @@ this indcates       the page to return.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rxdetails</span><span class="op">$</span><span class="va">elements</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Next we will create subjects. To do that we need to </span></span></span>
+<span class="r-in"><span><span class="co"># Next we will create subjects. To do that we need to</span></span></span>
 <span class="r-in"><span><span class="co"># specify information about covariates:</span></span></span>
 <span class="r-in"><span><span class="va">nsub</span> <span class="op">=</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span><span class="va">covs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
@@ -206,7 +207,7 @@ this indcates       the page to return.</p></dd>
 <span class="r-in"><span>    condition <span class="op">=</span> <span class="st">"TRUE"</span>,</span></span>
 <span class="r-in"><span>    action    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>      type  <span class="op">=</span> <span class="st">"dose"</span>,</span></span>
-<span class="r-in"><span>      state     <span class="op">=</span> <span class="st">"central"</span>, </span></span>
+<span class="r-in"><span>      state     <span class="op">=</span> <span class="st">"central"</span>,</span></span>
 <span class="r-in"><span>      values    <span class="op">=</span> <span class="st">"c(1)"</span>,</span></span>
 <span class="r-in"><span>      times     <span class="op">=</span> <span class="st">"c(0)"</span>,</span></span>
 <span class="r-in"><span>      durations <span class="op">=</span> <span class="st">"c(0)"</span><span class="op">)</span></span></span>
@@ -220,12 +221,12 @@ this indcates       the page to return.</p></dd>
 <span class="r-in"><span><span class="va">output_times</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">56</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This runs the rule-based simulations</span></span></span>
-<span class="r-in"><span><span class="va">simres</span> <span class="op">=</span> </span></span>
+<span class="r-in"><span><span class="va">simres</span> <span class="op">=</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="simulate_rules.html">simulate_rules</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    object        <span class="op">=</span> <span class="va">object</span>,</span></span>
 <span class="r-in"><span>    subjects      <span class="op">=</span> <span class="va">subs</span><span class="op">[[</span><span class="st">"subjects"</span><span class="op">]</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>    eval_times    <span class="op">=</span> <span class="va">eval_times</span>,</span></span>
-<span class="r-in"><span>    output_times  <span class="op">=</span> <span class="va">output_times</span>, </span></span>
+<span class="r-in"><span>    output_times  <span class="op">=</span> <span class="va">output_times</span>,</span></span>
 <span class="r-in"><span>    rules         <span class="op">=</span> <span class="va">rules</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># First subject data:</span></span></span>
@@ -240,14 +241,14 @@ this indcates       the page to return.</p></dd>
 <span class="r-in"><span><span class="va">simall</span><span class="op">$</span><span class="va">id</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">simall</span><span class="op">$</span><span class="va">id</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Timecourse</span></span></span>
-<span class="r-in"><span><span class="va">psim</span> <span class="op">=</span> </span></span>
+<span class="r-in"><span><span class="va">psim</span> <span class="op">=</span></span></span>
 <span class="r-in"><span>  <span class="fu">plot_sr_tc</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    sro    <span class="op">=</span> <span class="va">simres</span>,</span></span>
 <span class="r-in"><span>    dvcols <span class="op">=</span> <span class="st">"Cc"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">psim</span><span class="op">$</span><span class="va">fig</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Events</span></span></span>
-<span class="r-in"><span><span class="va">pev</span> <span class="op">=</span> </span></span>
+<span class="r-in"><span><span class="va">pev</span> <span class="op">=</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="plot_sr_ev.html">plot_sr_ev</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    sro    <span class="op">=</span> <span class="va">simres</span>,</span></span>
 <span class="r-in"><span>    ylog   <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
@@ -271,6 +272,7 @@ this indcates       the page to return.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `geom_line()`: Each group consists of only one observation.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Do you need to adjust the <span style="color: #00BB00;">group</span> aesthetic?</span>
 <span class="r-plt img"><img src="plot_sr_tc-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
