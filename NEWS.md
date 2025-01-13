@@ -1,5 +1,10 @@
-# ruminate 0.3.0 (development version)
+# ruminate 0.3.2 (development version)
 
+
+# ruminate 0.3.1 
+
+- CRAN release for MB module to build ODE-based models with rxode2
+- CRAN release for CTS module to construct and run rule-based/adaptive trial simulations
 - Fix for rxode 3.0 release.
 - Using new yaml save methodology for formods, and will break previous saved states
 - Added preload() and mk_preload() files

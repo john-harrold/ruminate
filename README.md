@@ -80,12 +80,11 @@ ruminate()
 ```
 
 As new modules are developed they can be found in the development app.
-This command will run the ruminate with any development modules enabled:
+You can access them by setting `devmode` to `TRUE`:
 
 ``` r
 library(ruminate)
-library(shiny)
-runApp(system.file(package="ruminate","templates", "ruminate_devel.R"))
+ruminate(devmode=TRUE)
 ```
 
 **If you are running this you should probably be using the development
