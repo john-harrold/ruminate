@@ -148,7 +148,7 @@ if(ubiquity_found){
 }
 ```
 
-```{r warning=FALSE, message=FALSE, echo=FALSE, error=FALSE, eval=TRUE, fig.width=8, fig.height=3.5}
+```{r warning=FALSE, message=FALSE, echo=FALSE, error=FALSE, eval=TRUE, fig.width=8, fig.height=3.5, fig.alt="Two figures: left panel showing PK profile and right showing integration of the PK profile."}
 if(gridExtra_found & ubiquity_found){
   gridExtra::grid.arrange(p_AUC, p_AUMC, ncol=2)
 }

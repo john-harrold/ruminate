@@ -14,7 +14,7 @@ run_nca_components(
 \item{state}{NCA state from \code{NCA_fetch_state()}}
 
 \item{components}{List of components to run. By default it will run all of
-the following. If you just need to regenerate a figure based on the current
+the following to. If you just need to regenerate a figure based on the current
 nca results you can just specify that component. These are the valid}
 
 \item{verbose}{Logical to enable or disable messaging

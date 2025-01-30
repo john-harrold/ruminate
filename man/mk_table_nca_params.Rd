@@ -7,8 +7,8 @@
 mk_table_nca_params(
   nca_res,
   type = "individual",
+  flag_map = list(),
   grouping = "interval",
-  not_calc = "NC",
   obnd = NULL,
   nps = NULL,
   mult_str = "*",
@@ -18,8 +18,8 @@ mk_table_nca_params(
   notes_detect = NULL,
   max_height = 7,
   max_width = 6.5,
-  max_row = NULL,
-  max_col = NULL
+  max_row = 17,
+  max_col = 9
 )
 }
 \arguments{
@@ -27,9 +27,9 @@ mk_table_nca_params(
 
 \item{type}{Type of table to generate. Can be either \code{"individual"} or \code{"summary"]}.}
 
-\item{grouping}{How to group columns in tables. Can be either \code{"interval"} or \code{"parameter"]}.}
+\item{flag_map}{List with flag mapping details.}
 
-\item{not_calc}{Text string to replace NA values with to indicated values were not calculated.}
+\item{grouping}{How to group columns in tables. Can be either \code{"interval"} or \code{"parameter"]}.}
 
 \item{obnd}{onbrand reporting object.}
 
@@ -59,6 +59,8 @@ mk_table_nca_params(
 \item{max_row}{Maximum number of rows to have on a page. Spillover will hang over the side of the page..}
 
 \item{max_col}{Maximum number of columns to have on a page. Spillover will be wrapped to multiple pages.}
+
+\item{not_calc}{Text string to replace NA values with to indicated values were not calculated.}
 }
 \value{
 list containing the following elements
@@ -78,21 +80,228 @@ Create paginated tables from PKNCA to use in reports and Shiny
 apps.
 }
 \examples{
-# We need a state variable to be define
-sess_res = NCA_test_mksession()
+library(dplyr)  
+library(stringr)
+library(ruminate)
+library(PKNCA)
+library(formods)
 
-state = sess_res$state
+if(formods::is_installed("readxl")){
+  library(readxl)
 
-# Pulls out the active analysis
-current_ana = NCA_fetch_current_ana(state)
+  # Reporting object
+  rpt =  onbrand::read_template(
+    template = file.path(system.file(package = "onbrand"), "templates", "report.docx"),
+    mapping  = file.path(system.file(package = "onbrand"), "templates", "report.yaml")
+  )
+  
+  # metadata about NCA parameters
+  nps = NCA_fetch_np_meta()[["summary"]]
 
-# This is the raw PKNCA output
-pknca_res = NCA_fetch_ana_pknca(state, current_ana)
+  # Datafile with only 3 subjects for the example
+  data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
+  myDS = readxl::read_excel(path=data_file, sheet="DATA")   |>
+    dplyr::filter(EVID == 0)                                |>
+    dplyr::filter(str_detect(string=Cohort, "^SD"))         |>
+    dplyr::filter(CMT == "C_ng_ml")
 
-# Parameter reporting details from the ruminate configuration
-nps  = state[["NCA"]][["nca_parameters"]][["summary"]]
+  # First three subjects for the example
+  myDS = myDS |>
+    dplyr::filter(ID \%in\%  unique(myDS$ID)[1:3])
+  
+  # This contains flags used in functions below. 
+  #  - manual indicates that it can be assinged with manual point selection.
+  #    This SHOULD NOT BE CHANGED
+  #  - color  color used when plotting flagged points 
+  #  - flag   internal flag used (SHOULD NOT BE CHANGED).
+  #  - description short description used in figure legends
+  #  - notes       notes that go at the bottom of tables
+  flag_map = list(
+    reset = list(
+      manual      = "yes",
+      color       = "black",
+      sn          = "NF",
+      description = "No Flag",
+      notes       = "reset point/selection to dataset default"
+      ),
+    obs = list(
+      manual      = "no",
+      color       = "black",
+      sn          = "OBS",
+      description = "Observation",
+      notes       = "normal observation"
+      ),
+    blq = list(
+      manual      = "no",
+      color       = "#56B4E9",
+      sn          = "BLQ",
+      description = "BLQ",
+      notes       = "below the level of quantification"
+      ),
+    hlex = list(
+      manual      = "yes",
+      color       = "#F0E441",
+      sn          = "HX",
+      description = "Exclude Half-life",
+      notes       = "exclude from half-life calculation"
+      ),
+    hlin = list(
+      manual      = "yes",
+      color       = "#029E73",
+      sn          = "HI",
+      description = "Specify Half-life",
+      notes       = "specified for inclusion in half-life calculation"
+      ),
+    censor = list(
+      manual      = "yes",
+      color       = "#D65E00",
+      sn          = "C",
+      description = "Censored",
+      notes       = "censored from analysis"
+      ),
+    ns = list(
+      manual      = "no",
+      color       = "black",
+      sn          = "NS",
+      description = "Not Sampled",
+      notes       = "not calculated"
+      ),
+    nc = list(
+      manual      = "no",
+      color       = "black",
+      sn          = "NC",
+      description = "Not Calclated",
+      notes       = "not calculated"
+      )
+    )
+  
+  # Creating column mapping
+  col_map = list(
+    col_id      = c("ID"),
+    col_dose    = c("DOSE"),
+    col_conc    = c("DV"),
+    col_dur     = NULL,
+    col_analyte = c("CMT"),
+    col_route   = c("ROUTE"),
+    col_time    = c("TIME_DY"),
+    col_ntime   = c("NTIME_DY"),
+    col_group   = NULL,
+    col_evid    = c("EVID"),
+    col_cycle   = c("DOSE_NUM")
+    )
 
-# Building the figure
-mk_res = mk_table_nca_params(nca_res = pknca_res, nps=nps, digits=3)
-mk_res$tables[["Table 1"]]$ft
+
+  # This flags specific rows in the source dataset  based on the row number.
+  # See flag_map for possible flags (those that include  manual="yes"). To
+  # remove a flag just delete the row.
+  ds_flags = dplyr::tribble(
+         ~key,        ~flag,
+     "rec_3",       "censor",
+     "rec_7",         "hlex"
+    )
+  
+  
+  # Defining patterns to look for different ways routes were specified.
+  route_map = list(
+    intravascular = c("^(?i)iv$"),
+    extravascular = c("^(?i)sc$", "^(?i)oral")
+  )
+
+  myDS = apply_route_map(route_map = route_map,
+                         route_col = "ROUTE",
+                         DS        = myDS)
+
+  utils::head(myDS[["ROUTE"]])
+
+
+  # Extracting dosing records from the dataset
+  dose_rec = dose_records_builder( 
+    NCA_DS    = myDS,    
+    col_map   = col_map, 
+    dose_from = "cols")[["dose_rec"]]
+    
+  
+  
+  conc_DS = 
+    flag_nca_ds(
+      DS       = myDS,
+      flag_map = flag_map,
+      col_map  = col_map,
+      ds_flags = ds_flags)
+
+  nca_dose = PKNCA::PKNCAdose(dose_rec, DOSE~TIME_DY|ID, route = "ROUTE")
+  
+  # NCA concentration object
+  nca_conc = PKNCA::PKNCAconc(
+      data              = conc_DS,
+      formula           = DV~TIME_DY|ID/CMT, 
+      time.nominal      = "NTIME_DY", 
+      sparse            = FALSE,
+      exclude_half.life = "rmnt_hlex",
+      include_half.life = "rmnt_hlin",
+      exclude           = "rmnt_cens"
+     )
+  
+  # NCA units table
+  nca_units = 
+    PKNCA::pknca_units_table(
+      concu   = "ng/mL", 
+      doseu   = "mg", 
+      amountu = "mg", 
+      timeu   = "day")
+  
+  # Analysis intervals
+  nca_intervals = 
+   data.frame(
+     start      = c(0, 0),
+     end        = c(Inf, 21),
+     half.life  = c(TRUE, FALSE),
+     aucinf.obs = c(TRUE, FALSE),
+     cmax       = c(FALSE, TRUE),
+     auclast    = c(FALSE, TRUE)
+   )
+
+  # Data packaged up for PKNCA
+  nca_data = PKNCA::PKNCAdata(  
+    data.conc = nca_conc,
+    data.dose = nca_dose,
+    intervals = nca_intervals,
+    units     = nca_units)
+  
+  # Running NCA
+  nca_res = PKNCA::pk.nca(nca_data)
+
+  # Generating figures of indiviudal profiles
+  figure_ind_obs = mk_figure_ind_obs(
+    conc_DS,
+    time_units = "day", 
+    conc_units = "ng/mL", 
+    col_map    = col_map, 
+    flag_map   = flag_map, 
+    nfrows     = 4, 
+    nfcols     = 4, 
+    log_scale  = TRUE)
+
+  figure_ind_obs$figures$Figure_1$gg
+  
+  # Generating tables of the concentration data
+  table_ind_obs = mk_table_ind_obs(
+    nca_res      = nca_res,
+    obnd         = rpt,
+    flag_map     = flag_map,
+    digits       = 3)
+
+  table_ind_obs$tables[["Table 1"]]$ft
+  
+  # Generating tables of individual parameters
+  table_ind_params = mk_table_nca_params(
+    nca_res      = nca_res, 
+    obnd         = rpt, 
+    flag_map     = flag_map,
+    nps          = nps, 
+    text_format  = "md",
+    digits       = 3)
+
+  table_ind_params$tables[["Table 1"]]$ft
+}
 }

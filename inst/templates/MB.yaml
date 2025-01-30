@@ -55,7 +55,7 @@ MC:
 #       source: 'file.path(system.file(package="onbrand"), "templates", "report.docx")'
 #       dest:   'file.path("config","report.docx")'
   code: # module specific code options
-    packages: [ "rxode2", "nonmem2rx", "nlmixr2lib"]
+    packages: [ "rxode2", "nonmem2rx", "nlmixr2lib", "ruminate"]
     readOnly: TRUE
     mode:     r
   # Controls what is shown in the compact ui mode:

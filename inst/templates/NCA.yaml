@@ -91,15 +91,17 @@ MC:
     # to change inf in parameters you need to change them for the individual
     # parameters below.
     infinity:    "inf"
-    not_calc:    "NC"
-    not_sampled: "NS"
-    blq:         "BLQ"
-    # Here we list all the notes that can be present in tables. You need an
-    # entry for whatever you put in not_calc and blq above here.
-    notes:
-      NC: "not calculated"
-      NS: "not sampled"
-      BLQ: "below the level of quantification"
+   # JMH delete these, they shouldn't be used any longer
+   #not_calc:    "NC"
+   #not_sampled: "NS"
+   #blq:         "BLQ"
+   # JMH remove the notes here they are not used any longer
+   ## Here we list all the notes that can be present in tables. You need an
+   ## entry for whatever you put in not_calc and blq above here.
+   #notes:
+   #  NC: "not calculated"
+   #  NS: "not sampled"
+   #  BLQ: "below the level of quantification"
   notifications:
     ana_add_int_success: "Interval added: ===DETAILS==="
   # Put different formatting options (widths, heights,
@@ -126,7 +128,7 @@ MC:
       width:           "100%"
       height:          "600px"
       nrow:            4
-      ncol:            4
+      ncol:            3
       nrow_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
       ncol_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
       logy:            TRUE
@@ -224,7 +226,7 @@ MC:
       tooltip_position: "bottom"
     select_ana_col_dur:
       width: 150
-      tooltip: "Duration of infusion (optional)"
+      tooltip: "Duration of collection, typically used for urine or feces (optional)"
       tooltip_position: "bottom"
     select_ana_col_conc:
       width: 150
@@ -274,8 +276,74 @@ MC:
       width: 50
     select_fg_ind_obs_page:
       width: 100
+    select_fg_ind_obs_manual:
+      width: 150
+      tooltip: "The flag selected here will be applied when you select points on the figure below"
+      tooltip_position: "top"
     select_tb_page:
       width: 100
+    # This contains flags used to flag data/results
+    #  - manual indicates that it can be assinged with manual point selection.
+    #    This generally this SHOULD NOT BE CHANGED. However, you can set the "yes"
+    #    values to "no" to prevent them from being being options in 
+    #    manual point selection. But do not change "no" values to "yes".
+    #  - flag   internal flag used (SHOULD NOT BE CHANGED).
+    #  - color       This can be a color (black) or a hex (#000000). The only
+    #                ones that are really necessary are: obs, blq, hlex, hlin,
+    #                and censor. The values below were taken from the Wong
+    #                pallet to make the points more distinguishable for folks
+    #                with colorblindness (https://www.nature.com/articles/nmeth.1618)
+    #  - description short description used in figure legends
+    #  - notes       notes that go at the bottom of tables
+    flags:
+      reset:
+        manual:       "yes"
+        sn:           "NF"     
+        description:  "No Flag"     
+        color:        "black"
+        notes:        "reset point/selection to dataset default"
+      obs:
+        manual:       "no" 
+        sn:           "OBS"     
+        description:  "Observation"
+        color:        "black"
+        notes:        "normal observation"
+      blq:           
+        manual:       "no"
+        sn:           "BLQ"     
+        description:  "BLQ"
+        color:        "#56B4E9"
+        notes:        "below the level of quantification"
+      hlex:          
+        manual:       "yes"
+        sn:           "HX"    
+        description:  "Exclude Half-life"
+        notes:        "exclude from half-life calculation"
+        color:        "#F0E441"
+      hlin:         
+        manual:       "yes"
+        sn:           "HI"    
+        description:  "Specify Half-life"
+        notes:        "specified for use in half-life calculation"
+        color:        "#029E73"
+      censor:        
+        manual:       "yes"
+        sn:           "C"    
+        description:  "Censored"
+        notes:        "censored from NCA analysis"
+        color:        "#D65E00"
+      ns:            
+        manual:       "no"
+        sn:           "NS"    
+        description:  "Not Sampled"
+        notes:        "not calculated"
+        color:        "black"
+      nc:            
+        manual:       "no"
+        sn:           "NC"    
+        description:  "Not Calclated"
+        notes:        "not calculated"
+        color:        "black"
   errors:
     nca_run_filed: "Unable to run PKNCA. Please, see below for details."
     bad_input: "Input error message"
@@ -373,6 +441,7 @@ MC:
     select_fg_ind_obs_nrow:          "Rows"
     select_fg_ind_obs_ncol:          "Columns"
     select_fg_ind_obs_page:          "Show Page"
+    select_fg_ind_obs_manual:        "Manually flag as"
     select_tb_page:                  "Show Page"
     check_fg_ind_obs_logy:           "Log 10 y-scale"
     switch_ana_include_units:        "Include Units"
@@ -441,7 +510,7 @@ MC:
       tooltip:       "The method used to calculate the AUC and related statistics."
       type:          "character"
       value:         "lin up/log down"
-      options:       ["lin up/log down", "linear"]
+      options:       ["lin up/log down", "linear", "lin-log"]
       pknca_option:  auc.method
     conc_na:
       group:         Missing and BLQ Values

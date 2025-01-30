@@ -4,45 +4,14 @@
 \alias{dose_records_builder}
 \title{Builds Dose Records Dataframe}
 \usage{
-dose_records_builder(
-  NCA_DS = NULL,
-  dose_from = NULL,
-  col_id = NULL,
-  col_time = NULL,
-  col_ntime = NULL,
-  col_route = NULL,
-  col_dose = NULL,
-  col_cycle = NULL,
-  col_dur = NULL,
-  col_evid = NULL,
-  col_analyte = NULL,
-  col_group = NULL
-)
+dose_records_builder(NCA_DS = NULL, dose_from = NULL, col_map = list())
 }
 \arguments{
 \item{NCA_DS}{Dataset containing dosing records.}
 
 \item{dose_from}{Method of dose extraction either "cols" or "rows".}
 
-\item{col_id}{Name of column with subject ID.}
-
-\item{col_time}{Name of column with time since first dose.}
-
-\item{col_ntime}{Name of column with time since the last dose (required with \code{dose_from="cols"}).}
-
-\item{col_route}{Name of column with route information.}
-
-\item{col_dose}{Name of column with last dose given.}
-
-\item{col_cycle}{Name of column with dose cycle (required with \code{dose_from="cols"}).}
-
-\item{col_dur}{Name of column with dose duration.}
-
-\item{col_evid}{Name of column with event ID (required with \code{dose_from="rows"}).}
-
-\item{col_analyte}{Name of column with analyte (optional).}
-
-\item{col_group}{Names of columns with grouping information (optionl).}
+\item{col_map}{List with column mapping details}
 }
 \value{
 list containing the following elements
@@ -57,52 +26,228 @@ Takes information about columns in dataset and constructs the
 dosing records.
 }
 \examples{
-
-if(system.file(package="readxl") !=""){
-library(dplyr)
-library(readxl)
+library(dplyr)  
 library(stringr)
+library(ruminate)
+library(PKNCA)
+library(formods)
 
-# Example data file:
-data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
+if(formods::is_installed("readxl")){
+  library(readxl)
 
-# Dataset formatted to extract dosing from columns
-DS_cols = readxl::read_excel(path=data_file, sheet="DATA")        |>
- dplyr::filter(EVID == 0)                                |>
- dplyr::filter(DOSE \%in\% c(3))                           |>
- dplyr::filter(str_detect(string=Cohort, "^MD"))         |>
- dplyr::filter(CMT == "C_ng_ml")
+  # Reporting object
+  rpt =  onbrand::read_template(
+    template = file.path(system.file(package = "onbrand"), "templates", "report.docx"),
+    mapping  = file.path(system.file(package = "onbrand"), "templates", "report.yaml")
+  )
+  
+  # metadata about NCA parameters
+  nps = NCA_fetch_np_meta()[["summary"]]
 
-drb_res = dose_records_builder(
- NCA_DS     = DS_cols,
- dose_from  = "cols",
- col_id     = "ID",
- col_time   = "TIME_DY",
- col_ntime  = "NTIME_DY",
- col_route  = "ROUTE",
- col_cycle  = "DOSE_NUM",
- col_dose   = "DOSE",
- col_group  = "Cohort")
+  # Datafile with only 3 subjects for the example
+  data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
+  myDS = readxl::read_excel(path=data_file, sheet="DATA")   |>
+    dplyr::filter(EVID == 0)                                |>
+    dplyr::filter(str_detect(string=Cohort, "^SD"))         |>
+    dplyr::filter(CMT == "C_ng_ml")
 
-utils::head(drb_res$dose_rec)
+  # First three subjects for the example
+  myDS = myDS |>
+    dplyr::filter(ID \%in\%  unique(myDS$ID)[1:3])
+  
+  # This contains flags used in functions below. 
+  #  - manual indicates that it can be assinged with manual point selection.
+  #    This SHOULD NOT BE CHANGED
+  #  - color  color used when plotting flagged points 
+  #  - flag   internal flag used (SHOULD NOT BE CHANGED).
+  #  - description short description used in figure legends
+  #  - notes       notes that go at the bottom of tables
+  flag_map = list(
+    reset = list(
+      manual      = "yes",
+      color       = "black",
+      sn          = "NF",
+      description = "No Flag",
+      notes       = "reset point/selection to dataset default"
+      ),
+    obs = list(
+      manual      = "no",
+      color       = "black",
+      sn          = "OBS",
+      description = "Observation",
+      notes       = "normal observation"
+      ),
+    blq = list(
+      manual      = "no",
+      color       = "#56B4E9",
+      sn          = "BLQ",
+      description = "BLQ",
+      notes       = "below the level of quantification"
+      ),
+    hlex = list(
+      manual      = "yes",
+      color       = "#F0E441",
+      sn          = "HX",
+      description = "Exclude Half-life",
+      notes       = "exclude from half-life calculation"
+      ),
+    hlin = list(
+      manual      = "yes",
+      color       = "#029E73",
+      sn          = "HI",
+      description = "Specify Half-life",
+      notes       = "specified for inclusion in half-life calculation"
+      ),
+    censor = list(
+      manual      = "yes",
+      color       = "#D65E00",
+      sn          = "C",
+      description = "Censored",
+      notes       = "censored from analysis"
+      ),
+    ns = list(
+      manual      = "no",
+      color       = "black",
+      sn          = "NS",
+      description = "Not Sampled",
+      notes       = "not calculated"
+      ),
+    nc = list(
+      manual      = "no",
+      color       = "black",
+      sn          = "NC",
+      description = "Not Calclated",
+      notes       = "not calculated"
+      )
+    )
+  
+  # Creating column mapping
+  col_map = list(
+    col_id      = c("ID"),
+    col_dose    = c("DOSE"),
+    col_conc    = c("DV"),
+    col_dur     = NULL,
+    col_analyte = c("CMT"),
+    col_route   = c("ROUTE"),
+    col_time    = c("TIME_DY"),
+    col_ntime   = c("NTIME_DY"),
+    col_group   = NULL,
+    col_evid    = c("EVID"),
+    col_cycle   = c("DOSE_NUM")
+    )
 
-# Dataset formatted to extract dosing from rows (records)
-DS_rows = readxl::read_excel(path=data_file, sheet="DATA")        |>
- dplyr::filter(DOSE \%in\% c(3))                                   |>
- dplyr::filter(str_detect(string=Cohort, "^MD"))                 |>
- dplyr::filter(CMT \%in\% c("Ac", "C_ng_ml"))
 
-drb_res = dose_records_builder(
- NCA_DS     = DS_rows,
- dose_from  = "rows",
- col_id     = "ID",
- col_time   = "TIME_DY",
- col_ntime  = "NTIME_DY",
- col_route  = "ROUTE",
- col_dose   = "AMT",
- col_evid   = "EVID",
- col_group  = "Cohort")
+  # This flags specific rows in the source dataset  based on the row number.
+  # See flag_map for possible flags (those that include  manual="yes"). To
+  # remove a flag just delete the row.
+  ds_flags = dplyr::tribble(
+         ~key,        ~flag,
+     "rec_3",       "censor",
+     "rec_7",         "hlex"
+    )
+  
+  
+  # Defining patterns to look for different ways routes were specified.
+  route_map = list(
+    intravascular = c("^(?i)iv$"),
+    extravascular = c("^(?i)sc$", "^(?i)oral")
+  )
 
-utils::head(drb_res$dose_rec)
+  myDS = apply_route_map(route_map = route_map,
+                         route_col = "ROUTE",
+                         DS        = myDS)
+
+  utils::head(myDS[["ROUTE"]])
+
+
+  # Extracting dosing records from the dataset
+  dose_rec = dose_records_builder( 
+    NCA_DS    = myDS,    
+    col_map   = col_map, 
+    dose_from = "cols")[["dose_rec"]]
+    
+  
+  
+  conc_DS = 
+    flag_nca_ds(
+      DS       = myDS,
+      flag_map = flag_map,
+      col_map  = col_map,
+      ds_flags = ds_flags)
+
+  nca_dose = PKNCA::PKNCAdose(dose_rec, DOSE~TIME_DY|ID, route = "ROUTE")
+  
+  # NCA concentration object
+  nca_conc = PKNCA::PKNCAconc(
+      data              = conc_DS,
+      formula           = DV~TIME_DY|ID/CMT, 
+      time.nominal      = "NTIME_DY", 
+      sparse            = FALSE,
+      exclude_half.life = "rmnt_hlex",
+      include_half.life = "rmnt_hlin",
+      exclude           = "rmnt_cens"
+     )
+  
+  # NCA units table
+  nca_units = 
+    PKNCA::pknca_units_table(
+      concu   = "ng/mL", 
+      doseu   = "mg", 
+      amountu = "mg", 
+      timeu   = "day")
+  
+  # Analysis intervals
+  nca_intervals = 
+   data.frame(
+     start      = c(0, 0),
+     end        = c(Inf, 21),
+     half.life  = c(TRUE, FALSE),
+     aucinf.obs = c(TRUE, FALSE),
+     cmax       = c(FALSE, TRUE),
+     auclast    = c(FALSE, TRUE)
+   )
+
+  # Data packaged up for PKNCA
+  nca_data = PKNCA::PKNCAdata(  
+    data.conc = nca_conc,
+    data.dose = nca_dose,
+    intervals = nca_intervals,
+    units     = nca_units)
+  
+  # Running NCA
+  nca_res = PKNCA::pk.nca(nca_data)
+
+  # Generating figures of indiviudal profiles
+  figure_ind_obs = mk_figure_ind_obs(
+    conc_DS,
+    time_units = "day", 
+    conc_units = "ng/mL", 
+    col_map    = col_map, 
+    flag_map   = flag_map, 
+    nfrows     = 4, 
+    nfcols     = 4, 
+    log_scale  = TRUE)
+
+  figure_ind_obs$figures$Figure_1$gg
+  
+  # Generating tables of the concentration data
+  table_ind_obs = mk_table_ind_obs(
+    nca_res      = nca_res,
+    obnd         = rpt,
+    flag_map     = flag_map,
+    digits       = 3)
+
+  table_ind_obs$tables[["Table 1"]]$ft
+  
+  # Generating tables of individual parameters
+  table_ind_params = mk_table_nca_params(
+    nca_res      = nca_res, 
+    obnd         = rpt, 
+    flag_map     = flag_map,
+    nps          = nps, 
+    text_format  = "md",
+    digits       = 3)
+
+  table_ind_params$tables[["Table 1"]]$ft
 }
 }

@@ -64,7 +64,7 @@ Note that because `{ruminate}` depends on `{formods}` and `{onbrand}` you will n
 
 # Running ruminate
 
-## In RStudio
+## In R or RStudio
 
 This will run the default/stable version of ruminate:
 

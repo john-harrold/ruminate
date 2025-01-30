@@ -65,8 +65,12 @@ fc_res = NCA_fetch_code(state)
 # columns. In this example we are detecting the id column:
 id_col = NCA_find_col(
   patterns = state[["MC"]][["detect_col"]][["id"]],
-  dscols   = names(ds$DS))
+  dscols   = names(ds))
 
 # This creates a new analysis
 state = NCA_new_ana(state)
+
+# Switching back to the previous analysis
+state = NCA_mkactive_ana(state, "NCA_1")
+
 }

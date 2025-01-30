@@ -62,6 +62,9 @@ NCA_Server <- function(id,
       input[["select_current_ana"]]
       input[["button_fg_ind_obs_save"]]
 
+      react_internal[["click"]] 
+      react_internal[["select"]] 
+
       state = NCA_fetch_state(id              = id,
                              input           = input,
                              session         = session,
@@ -143,7 +146,7 @@ NCA_Server <- function(id,
 
       # Optinally adding the tooltip:
       uiele = formods::FM_add_ui_tooltip(state, uiele,
-               tooltip             = state[["MC"]][["formatting"]][["button_ana_new"]][["tooltip"]],
+               tooltip     = state[["MC"]][["formatting"]][["button_ana_new"]][["tooltip"]],
                position    = state[["MC"]][["formatting"]][["button_ana_new"]][["tooltip_position"]])
 
       uiele})
@@ -918,6 +921,7 @@ NCA_Server <- function(id,
 
     #------------------------------------
     # Figure Results plotly
+    # Actual figure generation
     output$ui_nca_ana_results_fig_plotly             = plotly::renderPlotly({
       input[["button_ana_run"]]
       input[["button_ana_new"]]
@@ -926,10 +930,12 @@ NCA_Server <- function(id,
       input[["button_ana_copy"]]
       input[["select_current_ana"]]
       input[["switch_ana_fig"]]
+      react_internal[["click"]] 
+      react_internal[["select"]] 
 
       input[["button_fg_ind_obs_save"]]
 
-      state = NCA_fetch_state(id              = id,
+      state = NCA_fetch_state(id             = id,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -941,6 +947,8 @@ NCA_Server <- function(id,
 
       current_ana = NCA_fetch_current_ana(state)
 
+
+
       uiele = NULL
       # We only return a non-NULL result if the current analysis is good
       # and this should only be called if an interactive figure has been
@@ -948,10 +956,52 @@ NCA_Server <- function(id,
       if(current_ana[["isgood"]]){
          fobj = NCA_fetch_current_obj(state, "figure")
         if(!is.null(fobj)){
-          uiele = plotly::ggplotly(fobj[["ggplot"]])
+          uiele = plotly::ggplotly(fobj[["ggplot"]], source=paste0(id, "-results_fig"))
+          uiele = plotly::event_register(uiele, "plotly_click")
+          uiele = plotly::event_register(uiele, "plotly_selected")
+          uiele = plotly::layout(uiele, dragmode="select")
         }
       }
       uiele})
+    # Reacting to clicks
+    react_internal = reactiveValues()
+    observe({
+      clk = plotly::event_data("plotly_click", source=paste0(id, "-results_fig"), priority="event")
+      #req(clk)
+      react_internal[["click"]] = clk
+
+      state = NCA_fetch_state(id             = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state,
+                             react_internal  = react_internal)
+      react_internal[["click"]] = NULL
+      })
+    observe({
+      select = plotly::event_data("plotly_selected", source=paste0(id, "-results_fig"), priority="event")
+      #req(select)
+      react_internal[["select"]] = select
+
+      state = NCA_fetch_state(id             = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state,
+                             react_internal  = react_internal)
+
+      react_internal[["select"]] = NULL
+
+
+      })
     #------------------------------------
     # Figure Results (plot controls)
     output$ui_nca_ana_results_fig_controls           = renderUI({
@@ -1017,6 +1067,8 @@ NCA_Server <- function(id,
 
           uiele_page = htmlOutput(NS(id, "ui_nca_ana_results_fig_pages"))
 
+          uiele_manual = htmlOutput(NS(id, "ui_nca_ana_results_fig_manual"))
+
           uiele_logy = shinyWidgets::awesomeCheckbox(
                    inputId  = NS(id, "check_fg_ind_obs_logy"),
                    label    = state[["MC"]][["labels"]][["check_fg_ind_obs_logy"]],
@@ -1027,7 +1079,8 @@ NCA_Server <- function(id,
                           div(style=dvstyle, uiele_nrow),
                           div(style=dvstyle, uiele_ncol),
                           div(style=dvstyle, uiele_logy),
-                          div(style=dvstyle, uiele_page))
+                          div(style=dvstyle, uiele_page),
+                          div(style=dvstyle, uiele_manual))
         }
       }
 
@@ -1162,6 +1215,84 @@ NCA_Server <- function(id,
 
 
     uiele})
+
+    # Figure manual ui element
+    output$ui_nca_ana_results_fig_manual             = renderUI({
+      input[["button_ana_run"]]
+      input[["button_ana_new"]]
+      input[["button_ana_save"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["select_current_ana"]]
+      input[["switch_ana_fig"]]
+      # This is dependent on the figure view so
+      # shouldn't build out until that.
+      req(input[["select_ana_fig_view"]])
+
+      input[["button_fg_ind_obs_save"]]
+      state = NCA_fetch_state(id             = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+      uiele = NULL
+
+      current_ana = NCA_fetch_current_ana(state)
+
+      if(current_ana[["isgood"]]){
+
+
+        if(current_ana[["fig_type"]]  == "interactive"){
+          choices = c()
+          cnames  = c()
+          subtext = c()
+          for(fname in names(state[["MC"]][["formatting"]][["flags"]])){
+            # Only includes the flags for manual selection
+            if(state[["MC"]][["formatting"]][["flags"]][[fname]][["manual"]] == "yes"){
+              choices = c(choices, fname) #state[["MC"]][["formatting"]][["flags"]][[fname]][["flag"]])
+              cnames  = c(cnames , state[["MC"]][["formatting"]][["flags"]][[fname]][["description"]])
+              subtext = c(subtext, state[["MC"]][["formatting"]][["flags"]][[fname]][["notes"]])
+            }
+          }
+          names(choices) = cnames
+
+          # Adding the subtext
+          choicesOpt = list(
+            subtext = subtext)
+
+          selected_flag = current_ana[["manual_fg_ind_obs"]]
+          if(is.null(selected_flag)){
+            selected_flag = as.character(choices[1])
+          } else if(!(selected_flag %in% choices)){
+            selected_flag = as.character(choices[1])
+          }
+
+          uiele =
+          shinyWidgets::pickerInput(
+            inputId    = NS(id, "select_fg_ind_obs_manual"),
+            choices    = choices,
+            label      = state[["MC"]][["labels"]][["select_fg_ind_obs_manual"]],
+            selected   = selected_flag,
+            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            width      = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual"]][["width"]],
+            choicesOpt = choicesOpt
+            )
+        }
+      }
+
+    uiele = formods::FM_add_ui_tooltip(state, uiele,
+             tooltip     = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual"]][["tooltip"]],
+             position    = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual"]][["tooltip_position"]])
+
+    uiele})
+
+
+
     #------------------------------------
     # Tabular Results
     output$ui_nca_ana_results_tab             = renderUI({
@@ -3040,6 +3171,7 @@ NCA_Server <- function(id,
 #'@param id_ASM ID string for the app state management module used to save and load app states
 #'@param id_UD ID string for the upload data module used to save and load app states
 #'@param id_DW ID string for the data wrangling module used to save and load app states
+#'@param react_state Variable used within server to handle non-standard reactions  (e.g. reacting to plotly)
 #'@param react_state Variable passed to server to allow reaction outside of module (\code{NULL})
 #'@return list containing the current state of the app including default
 #'values from the yaml file as well as any changes made by the user. The list
@@ -3119,7 +3251,7 @@ NCA_Server <- function(id,
 #'@example inst/test_apps/NCA_funcs.R
 NCA_fetch_state = function(id, input, session,
                            FM_yaml_file, MOD_yaml_file,
-                           id_ASM, id_UD, id_DW, react_state){
+                           id_ASM, id_UD, id_DW, react_state, react_internal = NULL){
 
   # Template for an empty dataset
   #---------------------------------------------
@@ -3320,6 +3452,63 @@ NCA_fetch_state = function(id, input, session,
       }
     }
   }
+  #---------------------------------------------
+  # Checking for internal reaction changes
+  if(!is.null(react_internal)){
+      manual_rows = NULL
+      if(!is.null(isolate(react_internal[["select"]]))){
+        manual_rows = rbind(manual_rows, isolate(react_internal[["select"]])) }
+      if(!is.null(isolate(react_internal[["click"]]))){
+        manual_rows = rbind(manual_rows, isolate(react_internal[["click"]])) }
+
+    if(!is.null(manual_rows)){
+
+      # Opening up the current analysis 
+      current_ana = NCA_fetch_current_ana(state)
+
+      FM_le(state, "updating manual flag")
+      # Getting the current manual flag:
+      manual_flag = current_ana[["manual_fg_ind_obs"]]
+      manual_key = unlist(manual_rows$key)
+      FM_le(state, paste0("  ", manual_key,": ", manual_flag))
+
+      # Removing records from the manual flag tracking dataframe 
+      # that match the current manual key(s):
+      if(nrow(current_ana[["manual_ds_flags"]])>0){
+        current_ana[["manual_ds_flags"]] = 
+          current_ana[["manual_ds_flags"]][!(current_ana[["manual_ds_flags"]]$key %in% manual_key), ] 
+      }
+
+      # Adding non reset keys to the dataframe tracking manual flags:
+      if(manual_flag != "reset"){
+        # JMH BLQ selection error here
+        current_ana[["manual_ds_flags"]] = rbind(
+           current_ana[["manual_ds_flags"]],
+           data.frame('key'  = manual_key,
+                      'flag' = manual_flag)
+        )
+      }
+
+      if(nrow(current_ana[["manual_ds_flags"]]) > 0){
+        FM_le(state, "applying manual flags:")
+        FM_le(state, paste0("  ", current_ana[["manual_ds_flags"]]$key, ": ", current_ana[["manual_ds_flags"]]$flag, "\n"))
+      } else {
+        FM_le(state, "No manual flags currently set.")
+      }
+
+      # Saving the current analysis
+      state = NCA_set_current_ana(state, current_ana)
+
+      # Rebuilding the figure to incorporate any flag changes:
+      state = run_nca_components(state, "fg_ind_obs")
+
+      #current_ana = NCA_fetch_current_ana(state)
+      #fobj = NCA_fetch_current_obj(state, "figure")
+      #browser()
+    }
+  }
+
+
   #---------------------------------------------
   # Process option changes to the fg_ind_obs figure
   # the current selection in the UI:
@@ -3685,6 +3874,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session
     "select_fg_ind_obs_ncol"         = "fg_ind_obs_ncol",
     "select_fg_ind_obs_nrow"         = "fg_ind_obs_nrow",
     "select_fg_ind_obs_page"         = "curr_fg_ind_obs",
+    "select_fg_ind_obs_manual"       = "manual_fg_ind_obs",
     "select_tb_ind_obs_page"         = "curr_tb_ind_obs",
     "select_tb_ind_params_page"      = "curr_tb_ind_params",
     "select_tb_sum_params_page"      = "curr_tb_sum_params",
@@ -4227,6 +4417,12 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
           }
           #----------------------------------------------------------
           # Reporting tables:
+          flag_map = state[["MC"]][["formatting"]][["flags"]]
+          note_map = list()
+          for(fname in sort(names(flag_map))){
+            note_map [[ flag_map[[fname]][["sn"]] ]] = flag_map[[fname]][["notes"]] 
+          }
+          
           for(tid in names(state[["MC"]][["reporting"]][["tables"]])){
             # This is the list name contiaing the selected report outputs for
             # this table
@@ -4262,14 +4458,18 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                       tb_notes_full = c()
                       for(tb_note in tb_notes){
                         tb_note_full = NULL
-                        if(tb_note %in% names(state[["MC"]][["reporting"]][["notes"]])){
-                          tb_note_full = state[["MC"]][["reporting"]][["notes"]][[tb_note]]
+                        # JMH Check for other instances of the reporting notes
+                        # field and address them. Once addressed remove the
+                        # notes field form the yaml file:
+                        # if(tb_note %in% names(state[["MC"]][["reporting"]][["notes"]])){
+                        if(tb_note %in% names(note_map)){
+                          tb_note_full = note_map[[tb_note]]
                         }
                         # If we didn't find the full note we flag that
                         # here. This probably shouldn't happen but it's not
                         # important enough to stop everything.
                         if(is.null(tb_note_full)){
-                          formods::FM_le(state, "Note not added. Note string: ", tb_note)
+                          formods::FM_le(state, paste0("Note not added. Note string: ", tb_note))
                           formods::FM_le(state, paste0("  Analysis: ", ana))
                           formods::FM_le(state, paste0("  tab_id:   ", tab_id))
                           formods::FM_le(state, paste0("  table:    ", tmp_tab))
@@ -4312,7 +4512,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                              '        type     = "flextable_object",',
                              '        content  = list(',
                                         notes_str,
-                      paste0('          ft              =  ', tb_object_name, ','),
+                      paste0('          ft              =  flextable::autofit(', tb_object_name, '),'),
                       paste0('          key             = "', tab_id,  '",'),
                       paste0('          caption_format  = "',state[["MC"]][["reporting"]][["text_format"]],'",'),
                       paste0('          caption         = "',tab_caption,'"))'),
@@ -4324,8 +4524,6 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                       )
                     }
 
-                    # JMH
-                    #browser()
                     # Now we evaluate the code chunk
                     if(!is.null(code_chunk)){
                       # Evaluating the code
@@ -4335,6 +4533,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                         if(tc_res[["isgood"]]){
                           tab_idx = tab_idx + 1
                           rpt     = tc_res[["capture"]][["rpt"]]
+                          #formods::FM_le(state, paste0("      Added: ", ana, ", ", tab_id, ", ", tmp_tab))
                         } else {
                           formods::FM_le(state, "Failed to add report element: ")
                           formods::FM_le(state, paste0("  Analysis: ", ana))
@@ -4526,6 +4725,11 @@ NCA_new_ana    = function(state){
 
   # This is the object that contains the different components of
   # the analysis list:
+
+  first_flag_name = names(state[["MC"]][["formatting"]][["flags"]])[1]
+  first_flag      = state[["MC"]][["formatting"]][["flags"]][[first_flag_name]][["flag"]]
+
+
   nca_def =
     list(key                     = nca_id,
          id                      = nca_id,
@@ -4563,10 +4767,12 @@ NCA_new_ana    = function(state){
          col_evid                = "",
          col_cycle               = "",
          curr_fg_ind_obs         = "",               # Current figure page
+         manual_fg_ind_obs       = first_flag,       # manual selection flag
          curr_tb_ind_obs         = "",               # Current table page
          curr_tb_ind_params      = "",               #
          curr_tb_sum_params      = "",               #
          include_units           = "",
+         manual_ds_flags         = data.frame(),     # Holds the manual flags for the dataset
          intervals               = NULL,             # holds intervals added to the analysis
          interval_range          = c("0", "Inf"),    # Current interval in the interface.
          nca_parameters          = "",
@@ -4822,6 +5028,78 @@ res}
 
 
 #'@export
+#'@title Creates Dataset Flags
+#'@description  Creates flag columns in dataset for both analysis, plotting
+#'and reporting. Can be used for manual flagging of data.
+#'@param DS        Dataframe containing the dataset.
+#'@param flag_map  List with flag mapping details.
+#'@param ds_flags  Dataframe or tibble with a column (key) for dataset row IDs
+#'("rec_2" for row 2) and a column (flag) for flags mapping can be found.
+#'@return Dataset with the following columns added for flagging data.
+#' \itemize{
+#'   \item{rmnt_key} Unique key for each record (eg \code{'rec_n'}, where \code{n} isthe row number)
+#'   \item{rmnt_flag} Flag short name
+#'   \item{rmnt_desc} Flag description used in plot legends
+#'   \item{rmnt_cens} Column used to indicate censoring (NA for not censored or a string indicating the record is censored)
+#'   \item{rmnt_hlex} Column used to indicate manual selection of points to exclude for half-life calculation (TRUE- exclude, FALSE - do not exclude)
+#'   \item{rmnt_hlin} Column used to indicate manual selection of points for half-life (NA or TRUE)
+#' }
+#'@example inst/test_apps/nca_programming_funcs.R
+flag_nca_ds  = function(DS       = NULL,
+                        flag_map = list(),
+                        col_map  = list(),
+                        ds_flags = data.frame()){
+ 
+  # Observation column in the dataset
+  col_conc = col_map[["col_conc"]]
+ 
+  # Creating columns with default values
+  DS = DS |>
+    dplyr::mutate(rmnt_key  = paste0("rec_", 1:nrow(DS)))          |>
+    dplyr::mutate(rmnt_flag = "obs")                               |>   # By default everything is an observation
+    dplyr::mutate(rmnt_desc = flag_map[["obs"]][["description"]])  |>   
+    dplyr::mutate(rmnt_cens = NA_character_)                       |>   # By default no censoring
+    dplyr::mutate(rmnt_hlex = FALSE)                               |>   # By default no exclusions for  half-life calculations
+    dplyr::mutate(rmnt_hlin = NA)                                  |>   # By default no inclusions for  half-life calculations
+    dplyr::mutate(rmnt_flag = ifelse(.data[[col_conc]] == 0, 
+                                     "blq", 
+                                     rmnt_flag)) |>                     # Lastly we flag all the blq values
+    dplyr::mutate(rmnt_desc = ifelse(.data[[col_conc]] == 0, 
+                                     flag_map[["blq"]][["description"]], 
+                                     rmnt_desc)) 
+ 
+  # Its possible this is being called with no flagging funcions jsut to create
+  # placeholders for the columns above.
+  if(nrow(ds_flags) > 0){
+    for(ridx in 1:nrow(ds_flags)){
+      manual_key  = ds_flags[ridx, ][["key"]]
+      manual_flag = ds_flags[ridx, ][["flag"]]
+
+      # Row with the record matching the key:
+      rec_row = which(DS[["rmnt_key"]] == manual_key)
+
+      if(manual_flag == "censor"){
+        DS[rec_row, ][["rmnt_flag"]] = "censor"
+        DS[rec_row, ][["rmnt_cens"]] = "censored manually" 
+        DS[rec_row, ][["rmnt_desc"]] = flag_map[["censor"]][["description"]]
+      }
+      if(manual_flag == "hlex"){
+        DS[rec_row, ][["rmnt_flag"]] = "hlex"
+        DS[rec_row, ][["rmnt_hlex"]] = TRUE
+        DS[rec_row, ][["rmnt_desc"]] = flag_map[["hlex"]][["description"]]
+      }
+      if(manual_flag == "hlin"){
+        DS[rec_row, ][["rmnt_flag"]] = "hlin"
+        DS[rec_row, ][["rmnt_hlin"]] = TRUE
+        DS[rec_row, ][["rmnt_desc"]] = flag_map[["hlin"]][["description"]]
+      }
+    }
+  }
+
+DS}
+
+
+#'@export
 #'@title Applies Route Mapping to Dataset
 #'@description Used to convert nonstandard dose route values (i.e. "IV") to
 #'standard values ("intravascular").
@@ -4830,26 +5108,7 @@ res}
 #'@param route_col Column name with the route data.
 #'@param DS        Dataframe containing the dataset.
 #'@return Dataset with the route mapping applied.
-#'@examples
-#' if(system.file(package="readxl") !=""){
-#' library(readxl)
-#' #loading a dataset
-#' data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
-#' myDS = readxl::read_excel(path=data_file, sheet="DATA")
-#'
-#'  route_map = list(
-#'    intravascular = c("^(?i)iv$"),
-#'    extravascular = c("^(?i)sc$", "^(?i)oral")
-#'  )
-#'
-#' utils::head(myDS[["ROUTE"]])
-#'
-#' myDS = apply_route_map(route_map = route_map,
-#'                        route_col = "ROUTE",
-#'                        DS        = myDS)
-#'
-#' utils::head(myDS[["ROUTE"]])
-#'}
+#'@example inst/test_apps/nca_programming_funcs.R
 apply_route_map  = function(route_map  = list(),
                              route_col = NULL,
                              DS        = NULL){
@@ -5275,10 +5534,19 @@ current_ana}
 nca_builder = function(state){
 
   isgood             = TRUE
-  cmd                = c()
   msgs               = c()
   objs               = list()
   code               = ""
+
+
+  # Defins the analysis options
+  code_ana_options   = c()
+  # Processes the dataset and extracts dosing. 
+  code_ds_dosing     = c()
+  # Building the PKNCA objects and running the analysi
+  code_pknca         = c()
+
+
   code_ana_only      = ""
   code_previous      = ""
   code_tb_ind_obs    = ""
@@ -5290,6 +5558,9 @@ nca_builder = function(state){
 
   # These are the object names that will be generated with the code
   nca_ds_object_name             = paste0(current_ana[["id"]], "_DS")
+  nca_col_map_object_name        = paste0(current_ana[["id"]], "_col_map")
+  nca_flag_map_object_name       = paste0(current_ana[["id"]], "_flag_map")
+  nca_ds_flags_object_name       = paste0(current_ana[["id"]], "_ds_flags")
   nca_rm_object_name             = paste0(current_ana[["id"]], "_route_map")
   nca_drec_object_name           = paste0(current_ana[["id"]], "_dose_rec")
   nca_ints_object_name           = paste0(current_ana[["id"]], "_intervals")
@@ -5334,25 +5605,6 @@ nca_builder = function(state){
     # ID is last
     plus_cols = c(plus_cols, col_id)
 
-  # JMH dose_rec_fix delete
-  # #--------------------------
-  # # These are the columns to keep in the
-  # # dosing records below:
-  # dose_select_cols = c(
-  #   col_id,
-  #   col_time,
-  #   col_ntime,
-  #   col_dose,
-  #   col_route)
-  # if(col_group != ""){
-  #   dose_select_cols = c(dose_select_cols, col_group)
-  # }
-  # if(col_dur != "N/A"){
-  #   dose_select_cols = c(dose_select_cols, col_dur)
-  # }
-  # if(col_analyte != "N/A"){
-  #   dose_select_cols = c(dose_select_cols, col_analyte)
-  # }
     #--------------------------
     # Converting sampling into boolean
     if(current_ana[["sampling"]] == "sparse"){
@@ -5368,7 +5620,7 @@ nca_builder = function(state){
 
     #--------------------------
     # Adding the text description of the analysis
-    cmd = c(cmd, "", FM_build_comment(2, current_ana[["key"]]))
+    code_ana_options = c("", FM_build_comment(2, current_ana[["key"]]))
 
     #--------------------------
     # Defining the pknca options.
@@ -5381,7 +5633,7 @@ nca_builder = function(state){
     "    )"
     )
 
-    cmd = c(cmd,
+    code_ana_options = c(code_ana_options,
     "# Setting the NCA options",
     "PKNCA::PKNCA.options(")
     for(nca_opt in names( current_ana[["nca_config"]])){
@@ -5398,54 +5650,27 @@ nca_builder = function(state){
         if(nca_opt_type %in% c("character", "mixed")){
           nca_opt_value = autocast(nca_opt_value)
         }
-        cmd = c(cmd,
+        code_ana_options = c(code_ana_options,
           paste0("  ", pknca_option, " = ", nca_opt_value, ",")
         )
       }
     }
 
     # lastly we append the blq options.
-    cmd = c(cmd,
+    code_ana_options = c(code_ana_options,
     blq_cmd,
-    ")"
+    ")", ""
     )
 
     #--------------------------
     # Defining the dataset
-    cmd = c(cmd, "# Creating a copy of the source dataset to use below")
-    cmd = c(cmd, paste0(nca_ds_object_name, " = ", ds_object_name))
+    code_ds_dosing = c(code_ds_dosing, "# Creating a copy of the source dataset to use below")
+    code_ds_dosing = c(code_ds_dosing, paste0(nca_ds_object_name, " = ", ds_object_name))
 
-    # If we have a route mapping in the module yaml file
-    # we construct the code here to apply that.
-    if(is.list(state[["MC"]][["detect_route"]])){
-      cmd = c(cmd, "")
-      cmd = c(cmd, "# Applying route mapping")
-      cmd = c(cmd, paste0(nca_rm_object_name, " = list("))
-      rmaps = names(state[["MC"]][["detect_route"]])
-      for(rmap_idx in 1:length(rmaps)){
-        rmap_txt =paste0("  ",rmaps[[rmap_idx]],'=c("',
-                          paste0(state[["MC"]][["detect_route"]][[ rmaps[[rmap_idx]] ]] , collapse = '", "'),
-                          '")')
-        # we have to add commas to each list element
-        # definition except for the last one.
-        if(rmap_idx < length(rmaps)){
-          rmap_txt =paste0(rmap_txt, ",")
-        }
-        cmd = c(cmd, rmap_txt)
-      }
-      cmd = c(cmd, "  )")
-      cmd = c(cmd, "")
-      cmd = c(cmd, paste0(nca_ds_object_name,
-                  " = apply_route_map(route_map=", nca_rm_object_name, ", ",
-                  ' route_col = "', current_ana[["col_route"]], '", ',
-                  ' DS  = ', nca_ds_object_name, ")"))
-    }
-
-
-    # We're going to walk through each column. If it's defined and in the
-    # dataset then we will include it in the assignment:
+    # Defining the column mapping
     all_cols = c("col_id",
                  "col_dose",
+                 "col_conc",
                  "col_dur",
                  "col_analyte",
                  "col_route",
@@ -5457,24 +5682,145 @@ nca_builder = function(state){
 
     col_args = c()
     for(cname in all_cols){
-      # This checks to see if all the columns are defined:
       if(all(get(cname) %in% names(ds[["DS"]]))){
-        col_args = c(col_args,
-          paste0('    ', cname, ' = c("', paste0(get(cname),collapse='", "'), '"),')
-        )
-      }
+        col_args =  c(col_args, 
+          paste0(stringr::str_pad(side="right", pad=" ", string = paste0('  ', cname), width=14),
+                 ' = c("', paste0(get(cname),collapse='", "'), '")'))
+      } else {
+        col_args =  c(col_args, 
+          paste0(stringr::str_pad(side="right", pad=" ", string = paste0('  ', cname), width=14),
+                 ' = NULL'))
 
+      }
     }
+
+    code_ds_dosing = c(code_ds_dosing, "",
+            "# Creating column mapping",
+            paste0(nca_col_map_object_name, " = list("),
+            paste0(col_args, collapse=",\n"),
+            "  )",
+            ""
+    )
+
+    code_ds_dosing = c(code_ds_dosing, 
+            "# This flags specific rows in the source dataset  based on the row number. See",
+            '# flag_map for possible flags (those that include  manual="yes"). To remove a',
+            "# flag just delete the row.",
+            paste0(nca_ds_flags_object_name, " = tribble(")
+    )
+
+    # Adding tibble components only if manual flags have been set
+    if(nrow(current_ana[["manual_ds_flags"]]) > 0){
+      row_str = paste0(
+            stringr::str_pad("~key, ", width=13),
+            stringr::str_pad("~flag,", width=13)
+      )
+      code_ds_dosing = c(code_ds_dosing,  row_str)
+
+      for(ridx in 1:nrow(current_ana[["manual_ds_flags"]])){
+        row_str = paste0(
+              stringr::str_pad(paste0( deparse(current_ana[["manual_ds_flags"]][ridx, ][["key"]]),", "), width=13),
+              stringr::str_pad(paste0( deparse(current_ana[["manual_ds_flags"]][ridx, ][["flag"]])), width=13)
+        )
+        if(ridx < nrow(current_ana[["manual_ds_flags"]]) ){
+          row_str = paste0(row_str, ",")
+        }
+        code_ds_dosing = c(code_ds_dosing, row_str)
+      }
+    }
+    # Closing up the tibble assignment
+    code_ds_dosing = c(code_ds_dosing,
+            "  )",
+            "")
+
+    # Creating the flag map components (fmc)
+    fmc = c()
+    fnames = names(state[["MC"]][["formatting"]][["flags"]])
+    
+    for(fnidx in 1:length(fnames)){
+      fname = fnames[fnidx]
+      fmc = 
+      c( fmc,
+         paste0("  ", fname," = list("),
+         paste0("    manual      = ", deparse(state[["MC"]][["formatting"]][["flags"]][[fname]][["manual"]]), ","),
+         paste0("    color       = ", deparse(state[["MC"]][["formatting"]][["flags"]][[fname]][["color"]]), ","),
+         paste0("    sn          = ", deparse(state[["MC"]][["formatting"]][["flags"]][[fname]][["sn"]]), ","),
+         paste0("    description = ", deparse(state[["MC"]][["formatting"]][["flags"]][[fname]][["description"]]), ","),
+         paste0("    notes       = ", deparse(state[["MC"]][["formatting"]][["flags"]][[fname]][["notes"]]), "")
+         )
+      if(fnidx == length(fnames)){
+        fmc = c( fmc, "    )")
+      } else {
+        fmc = c( fmc, "    ),")
+      }
+    }
+
+    code_ds_dosing = c(code_ds_dosing,
+            '# This contains flags used in functions below. ',
+            '#  - manual indicates that it can be assinged with manual point selection.',
+            '#    This SHOULD NOT BE CHANGED',
+            '#  - flag   internal flag used (SHOULD NOT BE CHANGED).',
+            '#  - description short description used in figure legends',
+            '#  - sn          short name used in tables', 
+            '#  - notes       notes that go at the bottom of tables',
+            paste0(nca_flag_map_object_name, " = list("),
+            fmc,
+            "  )",
+            ""
+    )
+
+    code_ds_dosing = c(code_ds_dosing,
+    paste0("# Adds unique keys and flagging information to the dataset"),
+    paste0(nca_ds_object_name, " = flag_nca_ds("),
+    paste0('  DS       = ', nca_ds_object_name, ","),
+    paste0("  flag_map = ", nca_flag_map_object_name, ","),
+    paste0("  col_map  = ", nca_col_map_object_name, ", "),
+    paste0('  ds_flags = ', nca_ds_flags_object_name, ")"),
+    "")
+
+
+    # If we have a route mapping in the module yaml file
+    # we construct the code here to apply that.
+    if(is.list(state[["MC"]][["detect_route"]])){
+      code_ds_dosing = c(code_ds_dosing, "# Defining patterns to look for different ways routes were specified.")
+      code_ds_dosing = c(code_ds_dosing, paste0(nca_rm_object_name, " = list("))
+      rmaps = names(state[["MC"]][["detect_route"]])
+      for(rmap_idx in 1:length(rmaps)){
+        rmap_txt =paste0("  ",rmaps[[rmap_idx]],' = c("',
+                          paste0(state[["MC"]][["detect_route"]][[ rmaps[[rmap_idx]] ]] , collapse = '", "'),
+                          '")')
+        # we have to add commas to each list element
+        # definition except for the last one.
+        if(rmap_idx < length(rmaps)){
+          rmap_txt =paste0(rmap_txt, ",")
+        }
+        code_ds_dosing = c(code_ds_dosing, rmap_txt)
+      }
+      code_ds_dosing = c(code_ds_dosing, "  )")
+      code_ds_dosing = c(code_ds_dosing, "")
+      code_ds_dosing = c(code_ds_dosing, 
+               "# This will apply the route patterns specified above. ",
+               paste0(nca_ds_object_name, " = apply_route_map("),
+               paste0("  route_map = ", nca_rm_object_name, ", "),
+               paste0('  route_col = "', current_ana[["col_route"]], '", '),
+               paste0('  DS        = ', nca_ds_object_name, ")"),
+                  "")
+    }
+
+
     # Creating dosing records
-    cmd = c( cmd,
+    code_ds_dosing = c( code_ds_dosing,
+        "# Extracting dosing records from the dataset",
         paste0(nca_drec_object_name, " = dose_records_builder( "),
-        paste0(    '    NCA_DS = ', nca_ds_object_name, ',' ),
-        col_args,
-        paste0(    '    dose_from = "', dose_from , '")[["dose_rec"]]' ))
+        paste0('  NCA_DS    = ', nca_ds_object_name, ',' ),
+        paste0("  col_map   = ", nca_col_map_object_name, ", "),
+        paste0('  dose_from = "', dose_from , '")[["dose_rec"]]' ),
+        "")
+
+
 
     # Constructing dose_obj
-    cmd=c(cmd,
-      "",
+    code_ds_dosing=c(code_ds_dosing,
       "# NCA dosing object",
       paste0(nca_dose_object_name, " = ",
              "PKNCA::PKNCAdose(",
@@ -5487,56 +5833,61 @@ nca_builder = function(state){
       )
 
     # If we dose from rows we need to strip those out
+    # JMH test EVID abstraction below:
     if(dose_from == "rows"){
-      cmd=c(cmd,
+      code_ds_dosing=c(code_ds_dosing,
         "",
         "# Redusing the NCA dataset to just the observations",
-        paste0(nca_ds_object_name, " = dplyr::filter(", nca_ds_object_name, ", EVID == 0)")
+        paste0(nca_ds_object_name, " = dplyr::filter(", nca_ds_object_name, ", ", col_evid, " == 0)")
         )
     }
 
+   # JMH start
     # Constructing conc_obj
     col_dur_component =  NULL
     if(col_dur != "N/A"){
-      col_dur_component = paste0(', duration = "', col_dur, '"')
+      col_dur_component = paste0('  duration          = "', col_dur, '",')
     }
 
     col_analyte_component = NULL
     if(col_analyte != "N/A"){
-    col_analyte_component =paste0("/",col_analyte)
+      col_analyte_component =paste0("/",col_analyte)
     }
-    cmd=c(cmd,
+
+    inchl_col = NULL
+    if(nrow(current_ana[["manual_ds_flags"]]) > 0){
+      if("hlin" %in% current_ana[["manual_ds_flags"]][["flag"]]){
+        inchl_col =   paste0('  include_half.life = "rmnt_hlin",')
+      }
+    }
+
+    code_pknca=c(code_pknca,
       "",
       "# NCA concentration object",
-      paste0(
-        nca_conc_object_name, " = ",
-        "PKNCA::PKNCAconc(",
-          nca_ds_object_name, ",",
-          col_conc, "~",col_time,"|",
-          paste(plus_cols, collapse="+"),
-          col_analyte_component,
-          ", ",
-          'time.nominal = "',col_ntime,'", ',
-          'sparse = ', is_sparse,
-          col_dur_component,
-        ")"
-        )
+      paste0(nca_conc_object_name, " = ", "PKNCA::PKNCAconc("),
+      paste0("  data              = ", nca_ds_object_name, ","),
+      paste0("  formula           = ", col_conc, "~",col_time,"|",paste(plus_cols, collapse="+"),col_analyte_component, ","),
+      paste0('  time.nominal      = "',col_ntime,'", '),
+      paste0('  exclude_half.life = "rmnt_hlex",'),
+      inchl_col,
+      paste0('  exclude           = "rmnt_cens",'),
+      col_dur_component,
+      paste0('  sparse            = ', is_sparse),
+      paste0("  )"),
+      ""
       )
 
     # Building out the units component
     if(current_ana[["include_units"]]){
-    cmd=c(cmd,
-      "",
+    code_pknca=c(code_pknca,
       "# NCA units table",
-      paste0(
-        nca_units_object_name, " = ",
-        "PKNCA::pknca_units_table(",
-        'concu = "',   current_ana[["units_conc"]],    '", ',
-        'doseu = "',   current_ana[["units_dose"]],    '", ',
-        'amountu = "', current_ana[["units_amt"]],     '", ',
-        'timeu = "',   current_ana[["units_time"]],    '"',
-        ")"
-        )
+      paste0( nca_units_object_name, " = ", "PKNCA::pknca_units_table("),
+      paste0( '  concu   = "', current_ana[["units_conc"]], '", '),
+      paste0( '  doseu   = "', current_ana[["units_dose"]], '", '),
+      paste0( '  amountu = "', current_ana[["units_amt"]],  '", '),
+      paste0( '  timeu   = "', current_ana[["units_time"]], '"'),
+      paste0( "  )"),
+      ""
       )
     }
 
@@ -5579,8 +5930,7 @@ nca_builder = function(state){
       }
     }
 
-    cmd = c(cmd,
-      "",
+    code_pknca = c(code_pknca,
       "# Dataframe containing the analysis intervals",
       paste0(nca_ints_object_name, " = "),
       "  data.frame("
@@ -5595,13 +5945,17 @@ nca_builder = function(state){
         comma_str = ""
       }
 
-      cmd = c(cmd,
-      paste0("    ",comp,"=c(",paste0(int_df_comp[[comp]], collapse=", "), ")", comma_str)
+      code_pknca = c(code_pknca,
+
+
+      paste0(
+          paste0(stringr::str_pad(side="right", pad=" ", string = paste0('    ', comp), width=14)),
+             " = c(",paste0(int_df_comp[[comp]], collapse=", "), ")", comma_str)
       )
 
     }
 
-    cmd = c(cmd,
+    code_pknca = c(code_pknca,
       "  )"
       )
     #--------------------------
@@ -5617,7 +5971,7 @@ nca_builder = function(state){
         paste0("  units = ", nca_units_object_name)
       )
     }
-    cmd = c(cmd,
+    code_pknca = c(code_pknca,
       "",
       "# Pulling everything together to create the data object.",
       paste0(
@@ -5630,7 +5984,7 @@ nca_builder = function(state){
       )
 
     # Running the NCA
-    cmd = c(cmd,
+    code_pknca = c(code_pknca,
       "",
       "# Running the NCA",
       paste0(
@@ -5643,26 +5997,34 @@ nca_builder = function(state){
 
     # code for figures and tables
     # JMH add other UI options to function calls here:
+    time_units = ""
+    conc_units = ""
+    if(current_ana[["include_units"]]){
+      conc_units = current_ana[["units_conc"]]
+      time_units = current_ana[["units_time"]]
+    }
+
     code_fg_ind_obs   = c(
       "",
       "# Generating figures of indiviudal profiles",
-      paste0(nca_fg_ind_obs_object_name,
-             " = mk_figure_ind_obs(",
-             nca_res_object_name, ", ",
-             "nfrows = ", current_ana$fg_ind_obs_nrow, ", ",
-             "nfcols = ", current_ana$fg_ind_obs_ncol, ", ",
-             "log_scale = ", current_ana$fg_ind_obs_logy,
-             ")"))
+      paste0(nca_fg_ind_obs_object_name, " = mk_figure_ind_obs("),
+      paste0(nca_ds_object_name, ", "),
+      paste0("  time_units = ", deparse(time_units), ", "),
+      paste0("  conc_units = ", deparse(conc_units), ", "),
+      paste0("  col_map    = ", nca_col_map_object_name, ", "),
+      paste0("  flag_map   = ", nca_flag_map_object_name, ", "),
+      paste0("  nfrows     = ", current_ana$fg_ind_obs_nrow, ", "),
+      paste0("  nfcols     = ", current_ana$fg_ind_obs_ncol, ", "),
+      paste0("  log_scale  = ", current_ana$fg_ind_obs_logy),
+      paste0(")"))
 
     code_tb_ind_obs   = c(
       "",
       "# Generating tables of individual profiles",
       paste0(nca_tb_ind_obs_object_name, " = mk_table_ind_obs("),
       paste0('  nca_res      = ',  nca_res_object_name,','),
+      paste0("  flag_map     = ", nca_flag_map_object_name, ", "),
              "  obnd         = rpt,",
-      paste0('  notes_detect = c("', paste0(names(state[["MC"]][["reporting"]][["notes"]]), collapse='", "'), '"), '),
-      paste0('  not_sampled  = "', state[["MC"]][["reporting"]][["not_sampled"]], '",'),
-      paste0('  blq          = "', state[["MC"]][["reporting"]][["blq"]], '",'),
       paste0('  digits       = ',  state[["MC"]][["reporting"]][["digits"]]),
              ")")
 
@@ -5672,26 +6034,34 @@ nca_builder = function(state){
       paste0(nca_tb_ind_params_object_name, " = mk_table_nca_params("),
       paste0("  nca_res      = ", nca_res_object_name, ", "),
              "  obnd         = rpt, ",
-      paste0('  notes_detect = c("', paste0(names(state[["MC"]][["reporting"]][["notes"]]), collapse='", "'), '"), '),
              "  nps          = NCA_nps, ",
       paste0('  text_format  = "', state[["MC"]][["reporting"]][["text_format"]] ,'",'),
-      paste0('  not_calc     = "', state[["MC"]][["reporting"]][["not_calc"]] ,'",'),
+      paste0("  flag_map     = ", nca_flag_map_object_name, ", "),
       paste0('  infinity     = "', state[["MC"]][["reporting"]][["infinity"]] ,'",'),
       paste0("  digits       = ",  state[["MC"]][["reporting"]][["digits"]]   ,','),
       paste0('  mult_str     = "', state[["MC"]][["reporting"]][["mult_str"]] ,'")'))
 
     # Working out the little code elements:
-    code_ana_only      = paste(cmd, collapse="\n")
-    code_fg_ind_obs    = paste(code_fg_ind_obs, collapse="\n")
-    code_tb_ind_obs    = paste(code_tb_ind_obs, collapse="\n")
+    code_ana_only      = paste(c(code_ana_options, 
+                                 code_ds_dosing, 
+                                 code_pknca),
+                               collapse="\n")
+    code_fg_ind_obs_sa = paste(c(code_ana_options, 
+                                 code_ds_dosing, 
+                                 code_fg_ind_obs), collapse="\n")
+
+    code_tb_ind_obs_sa = paste(c(code_ana_options, 
+                                 code_ds_dosing, 
+                                 code_tb_ind_obs), collapse="\n")
+
     code_tb_ind_params = paste(code_tb_ind_params, collapse="\n")
     code_previous      = ds[["code"]]
-    code               = paste(code_previous,
-                               code_ana_only,
-                               code_fg_ind_obs,
-                               code_tb_ind_obs,
-                               code_tb_ind_params,
-                               collapse="\n")
+    code               = paste(c(code_previous,
+                                 code_ana_only,
+                                 code_fg_ind_obs,
+                                 code_tb_ind_obs,
+                                 code_tb_ind_params),
+                                 collapse="\n")
 
   } else {
     isgood = FALSE
@@ -5730,21 +6100,27 @@ nca_builder = function(state){
   current_ana[["code_components"]]   = list(
     code_previous      = code_previous,
     code_ana_only      = code_ana_only,
-    code_fg_ind_obs    = code_fg_ind_obs,
-    code_tb_ind_obs    = code_tb_ind_obs,
+    code_fg_ind_obs    = code_fg_ind_obs_sa,
+    code_tb_ind_obs    = code_tb_ind_obs_sa,
     code_tb_ind_params = code_tb_ind_params
   )
-  current_ana[[ "objs" ]][[ "ds"           ]][[ "name" ]]   = nca_ds_object_name
-  current_ana[[ "objs" ]][[ "rm"           ]][[ "name" ]]   = nca_rm_object_name
-  current_ana[[ "objs" ]][[ "drec"         ]][[ "name" ]]   = nca_drec_object_name
-  current_ana[[ "objs" ]][[ "ints"         ]][[ "name" ]]   = nca_ints_object_name
-  current_ana[[ "objs" ]][[ "dose"         ]][[ "name" ]]   = nca_dose_object_name
-  current_ana[[ "objs" ]][[ "data"         ]][[ "name" ]]   = nca_data_object_name
-  current_ana[[ "objs" ]][[ "conc"         ]][[ "name" ]]   = nca_conc_object_name
-  current_ana[[ "objs" ]][[ "res"          ]][[ "name" ]]   = nca_res_object_name
-  current_ana[[ "objs" ]][[ "fg_ind_obs"   ]][[ "name" ]]   = nca_fg_ind_obs_object_name
-  current_ana[[ "objs" ]][[ "tb_ind_obs"   ]][[ "name" ]]   = nca_tb_ind_obs_object_name
-  current_ana[[ "objs" ]][[ "tb_ind_params"]][[ "name" ]]   = nca_tb_ind_params_object_name
+
+  # This stores the object names used in analyses. The values field will be
+  # updated as the objects are generated.
+  current_ana[["objs"]][["ds"           ]][[ "name" ]]   = nca_ds_object_name
+  current_ana[["objs"]][["rm"           ]][[ "name" ]]   = nca_rm_object_name
+  current_ana[["objs"]][["drec"         ]][[ "name" ]]   = nca_drec_object_name
+  current_ana[["objs"]][["ints"         ]][[ "name" ]]   = nca_ints_object_name
+  current_ana[["objs"]][["dose"         ]][[ "name" ]]   = nca_dose_object_name
+  current_ana[["objs"]][["data"         ]][[ "name" ]]   = nca_data_object_name
+  current_ana[["objs"]][["conc"         ]][[ "name" ]]   = nca_conc_object_name
+  current_ana[["objs"]][["res"          ]][[ "name" ]]   = nca_res_object_name
+  current_ana[["objs"]][["ds_flags"     ]][[ "name" ]]   = nca_ds_flags_object_name
+  current_ana[["objs"]][["col_map"      ]][[ "name" ]]   = nca_col_map_object_name
+  current_ana[["objs"]][["flag_map"     ]][[ "name" ]]   = nca_flag_map_object_name
+  current_ana[["objs"]][["fg_ind_obs"   ]][[ "name" ]]   = nca_fg_ind_obs_object_name
+  current_ana[["objs"]][["tb_ind_obs"   ]][[ "name" ]]   = nca_tb_ind_obs_object_name
+  current_ana[["objs"]][["tb_ind_params"]][[ "name" ]]   = nca_tb_ind_params_object_name
 
   # If we don't include units then the object wont be available, so we only
   # add this conditionally:
@@ -5765,7 +6141,7 @@ state}
 #'state.
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@param components List of components to run. By default it will run all of
-#'the following. If you just need to regenerate a figure based on the current
+#'the following to. If you just need to regenerate a figure based on the current
 #'nca results you can just specify that component. These are the valid
 #'@param verbose Logical to enable or disable messaging
 #'components:
@@ -5809,7 +6185,8 @@ run_nca_components = function(
 
   # Short name for objects created when running NCA.
   # These are all of the possible names:
-  obs_sns_nca  = c("res", "drec", "rm", "ints",
+  obs_sns_nca  = c("res", "col_map", "flag_map", "ds_flags", 
+                   "ds", "drec", "rm", "ints",
                    "dose", "data", "conc", "units")
 
   # Sometimes only a subset are generated. For example when units is
@@ -5883,6 +6260,7 @@ run_nca_components = function(
     for(fig_tab in names(fig_tabs)){
       if(current_ana[["isgood"]]){
         if(fig_tab %in% components){
+
           # Figure or table generation code:
           cmd = current_ana[["code_components"]][[  fig_tabs[[fig_tab]][["code"]]  ]]
 
@@ -5901,6 +6279,7 @@ run_nca_components = function(
             tc_env[[  current_ana[["objs"]][[obs_sn]][["name"]]  ]] =
             current_ana[["objs"]][[obs_sn]][["value"]]
           }
+          #message(paste0("building :", fig_tab))
 
           # Running the table or figure generation code:
           nca_run_res = formods::FM_tc(cmd, tc_env, capture)
@@ -6002,15 +6381,16 @@ state}
 #'(pages) if necessary.
 #'@param nca_res Output of PKNCA.
 #'@param obnd        onbrand reporting object.
-#'@param not_sampled Character string to use for missing data when pivoting.
-#'@param blq         Character string to use to indicate data below the level of quantification (value of 0 in the dataset).
+#'@param flag_map    List with flag mapping detials
 #'@param digits      Number of significant figures to report (set to \code{NULL} to disable rounding)
 #'@param text_format      Either \code{"md"} for markdown or \code{"text"} (default) for plain text.
 #'@param max_width   Maximum width of the final table in inches (A value of \code{NULL} will use 100 inches).
 #'@param max_height  Maximum height of the final table in inches (A value of \code{NULL} will use 100 inches).
 #'@param max_col     Maximum number of columns to have on a page. Spillover will be wrapped to multiple pages.
 #'@param max_row     Maximum number of rows to have on a page. Spillover will hang over the side of the page..
-#'@param notes_detect              Vector of strings to detect in output tables (example \code{c("NC", "BLQ")}).
+#'@param notes_detect  Vector of strings to detect in output tables (example
+#'                     \code{c("NC", "BLQ")}). If set to NULL it will attempt to
+#'                     extract notes for NC, NS and BLQ from the flag_map input.
 #'@param rows_by Can be either "time" or "id". If it is "time", there will be a
 #'column for time and separate column for each subject ID. If rows_by is set
 #'to "id" there will be a column for ID and a column for each individual time.
@@ -6024,34 +6404,42 @@ state}
 #'   \item{msgs:}        Vector of text messages describing any errors that were found.
 #'   format from \code{\link[onbrand]{build_span}}.
 #'}
-#'@examples
-#' # We need a state variable to be define
-#' sess_res = NCA_test_mksession()
-#'
-#' state = sess_res$state
-#'
-#' # Pulls out the active analysis
-#' current_ana = NCA_fetch_current_ana(state)
-#'
-#' # This is the raw PKNCA output
-#' pknca_res = NCA_fetch_ana_pknca(state, current_ana)
-#'
-#' # Building the figure
-#' mk_res = mk_table_ind_obs(nca_res = pknca_res)
-#' mk_res$tables[["Table 1"]]$ft
+#'@example inst/test_apps/nca_programming_funcs.R
 mk_table_ind_obs = function(
   nca_res   ,
   obnd         = NULL,
-  not_sampled  = "NS",
-  blq          = "BLQ",
+  flag_map     = list(),
   digits       = 3,
   text_format  = "text",
   max_height   = 7,
   max_width    = 6.5,
-  max_row      = NULL,
+  max_row      = 17,
   max_col      = 9,
   notes_detect = NULL,
   rows_by      = "time"){
+
+
+  # Auto-populating notes detect
+  if(is.null(notes_detect)){
+    notes_detect = c(notes_detect, 
+      flag_map[["ns"]][["sn"]],
+      flag_map[["nc"]][["sn"]],
+      flag_map[["blq"]][["sn"]]) 
+  }
+
+  # Defining note for not sampled
+  if(!is.null(flag_map[["ns"]][["sn"]])){
+    not_sampled  = flag_map[["ns"]][["sn"]]
+  } else{
+    not_sampled  = "NS"
+  }
+
+  # Defining note for blq
+  if(!is.null(flag_map[["blq"]][["sn"]])){
+    blq  = flag_map[["blq"]][["sn"]]
+  } else{
+    blq  = "BLQ"
+  }
 
   # Extracting the needed column names:
   col_id      = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
@@ -6071,18 +6459,25 @@ mk_table_ind_obs = function(
   }
 
   # Retaining only the needed columns
-  cols_keep = c(col_id, col_time, col_analyte, col_conc)
+  cols_keep = c(col_id, col_time, col_conc, col_analyte, "rmnt_flag")
 
   # These are the columns that contain the
   # row headers for the table
 
   # This is the original dataset along with what looks like
   # some extra columns added by PKNCA
-  all_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]])) |>
-    dplyr::select(dplyr::all_of(cols_keep)) |>
-    dplyr::rename(CONC = dplyr::all_of(col_conc))|>
-    dplyr::rename(TIME = dplyr::all_of(col_time))|>
-    dplyr::rename(ID   = dplyr::all_of(col_id))
+  raw_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]])) 
+
+  all_data = tibble(
+    rmnt_flag = raw_data[["rmnt_flag"]],
+    CONC = raw_data[[col_conc]],
+    TIME = raw_data[[col_time]],
+    ID   = raw_data[[col_id]]
+  )
+  if(!is.null(col_analyte)){
+    if(length(col_analyte) > 0){
+    all_data[[col_analyte]] = raw_data[[col_analyte]] }
+  }
 
   # BILL how does PKNCA handle units with multiple analytes?
 
@@ -6105,9 +6500,32 @@ mk_table_ind_obs = function(
     all_data[["TIME"]] = as.character(all_data[["TIME"]])
   }
 
+  # Adding flags
   # Replacing all BLQ and NA values with the appropriate text
+  for(mname in names(flag_map)){
+    flag_map[[mname]][["snmd"]] = paste0("^", flag_map[[mname]][["sn"]], "^")
+  }
+
   all_data[is.na(all_data[["CONC"]]), ][["CONC"]] = not_sampled
   all_data[all_data[["CONC"]] == "0", ][["CONC"]] = blq
+  all_data = all_data |>
+    dplyr::mutate(CONC := 
+      ifelse(
+        rmnt_flag == "censor", 
+        paste0(.data[["CONC"]], flag_map[["censor"]][["snmd"]]), 
+        .data[["CONC"]]))                                          |>
+    dplyr::mutate(CONC := 
+      ifelse(
+        rmnt_flag == "hlex", 
+        paste0(.data[["CONC"]], flag_map[["hlex"]][["snmd"]]), 
+        .data[["CONC"]]))                                          |>
+    dplyr::mutate(CONC := 
+      ifelse(
+        rmnt_flag == "hlin", 
+        paste0(.data[["CONC"]], flag_map[["hlin"]][["snmd"]]), 
+        .data[["CONC"]]))                                          |>
+    dplyr::select(-rmnt_flag)
+
 
   if(rows_by == "time"){
     if(is.null(row_common_head)){
@@ -6147,7 +6565,7 @@ mk_table_ind_obs = function(
 
   if(length(col_analyte) == 1){
     all_data = dplyr::rename(all_data, ANALYTE=col_analyte) |>
-               dplyr::arrange(!!as.name("ANALYTE"), !!as.name("TIME"))
+               dplyr::arrange(!!as.name("ANALYTE"), as.numeric(!!as.name("TIME")))
     if(is.null(row_common_head)){
       row_common_head = data.frame(ANALYTE="Analyte")
     } else {
@@ -6169,7 +6587,6 @@ mk_table_ind_obs = function(
   } else {
     col_header_label = stringr::str_replace(col_header_label, "===TIMEUNITS===", paste0("(", time_units, ")"))
   }
-
 
   # Splitting the data into header columns and observations
   row_common   = dplyr::select(all_data,  dplyr::all_of(names(row_common_head)))
@@ -6204,6 +6621,48 @@ mk_table_ind_obs = function(
              max_col         = max_col,
              notes_detect    = notes_detect)
 
+  if(stres[["isgood"]]){
+    for(tname in names(stres[["tables"]])){
+      tmpdf = stres[["tables"]][[tname]][["df"]]
+
+      #-------------
+      # Rendering the body of the table with markdown
+      # These are the indices of the columns where there is subject data
+      sub_cols = which(!(names(tmpdf)  %in% c("TIME", "ANALYTE")))
+
+      stres[["tables"]][[tname]][["ft"]] = 
+        onbrand::ft_apply_md(
+          ft    = stres[["tables"]][[tname]][["ft"]], 
+          pcols = sub_cols,
+          obnd  = obnd, 
+          part  = "body")
+
+
+      #-------------
+      # Now detecting any flags present in the table. These are the flags that 
+      # are not replacing observations. So NA would be replaced with NS or
+      # whatever the short name is for not sampled. Similarly 0 would be
+      # replaced with the short name for blq. The others can appear as
+      # superscripts and wont be detected automatically so we pull those out
+      # of the data frames that the flextables were built around:
+
+      # First we strip out any common rows to get just the data:
+      if("TIME" %in% names(tmpdf)){
+        tmpdf = dplyr::select(tmpdf, -.data[["TIME"]]) }
+      if("ANALYTE" %in% names(tmpdf)){
+        tmpdf = dplyr::select(tmpdf, -.data[["ANALYTE"]]) }
+
+      # Now we walk through each flag and see if it's there:
+      for(mname in names(flag_map)){
+        if(any(stringr::str_detect(string = as.matrix(tmpdf), stringr::str_escape(flag_map[[mname]][["snmd"]])))){
+          # Adding the notes for any strings present:
+          stres[["tables"]][[tname]][["notes"]] = c(
+            stres[["tables"]][[tname]][["notes"]],flag_map[[mname]][["sn"]])
+        }
+      }
+    }
+  }
+
   res = list(
     #all_data   = all_data,
     isgood     = stres[["isgood"]],
@@ -6221,16 +6680,18 @@ res}
 #'@title Creates Figures of Individual Observations from PKNCA Result
 #'@description Takes the output of PKNCA and creates `ggplot` figures faceted
 #'by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
-#'@param nca_res Output of PKNCA.
-#'@param OBS_LAB    Label of the observation axis with optional ===CONCUNITS=== placeholder for units.
-#'@param TIME_LAB   Label of the time axis with optional ===TIMEUNITS=== placeholder for units.
-#'@param OBS_STRING Label for observation data.
-#'@param BLQ_STRING Label for BLQ data.
-#'@param NA_STRING  Label for missing data.
-#'@param log_scale  Boolean variable to control y-scale (\code{TRUE}: Log 10, \code{FALSE}: linear).
-#'@param scales     String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}.
-#'@param nfrows     Number of facet rows per page.
-#'@param nfcols     Number of facet cols per page.
+#'@param ana_ds      Analysis dataset.
+#'@param OBS_LAB     Label of the observation axis with optional ===CONCUNITS=== placeholder for units.
+#'@param TIME_LAB    Label of the time axis with optional ===TIMEUNITS=== placeholder for units.
+#'@param time_units  Time units (default \code{""})
+#'@param conc_units  Concentration units (default \code{""})
+#'@param col_map     List with column mapping details
+#'@param flag_map    List with flag mapping detials
+#'@param log_scale   Boolean variable to control y-scale (\code{TRUE}: Log 10, \code{FALSE}: linear)
+#'@param scales      String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}
+#'@param nfrows      Number of facet rows per page
+#'@param nfcols      Number of facet cols per page
+#'@param only_figs   Vector of figures to generate (e.g \code{c(1,3)}) to generate 1 and 3 or \code{NULL} to generate all figures
 #'@return List containing the element \code{figures} which is a list of figure
 #'        pages (\code{"Figure 1"}, \code{"Figure 2"}, etc.). Each of these is
 #'        a also a list containing two elements:
@@ -6238,42 +6699,20 @@ res}
 #' \item{gg:}    A ggplot object for that page.
 #' \item{notes:} Placeholder for future notes, but NULL now.
 #'}
-#'@examples
-#' # We need a state variable to be define
-#' sess_res = NCA_test_mksession()
-#'
-#' state = sess_res$state
-#'
-#' # Pulls out the active analysis
-#' current_ana = NCA_fetch_current_ana(state)
-#'
-#' # This is the raw PKNCA output
-#' pknca_res = NCA_fetch_ana_pknca(state, current_ana)
-#'
-#' # Building the figure
-#' mk_res = mk_figure_ind_obs(nca_res = pknca_res)
-#' mk_res$figures$Figure_1$gg
+#'@example inst/test_apps/nca_programming_funcs.R
 mk_figure_ind_obs = function(
-  nca_res       ,
+  ana_ds        ,
   OBS_LAB         = "Concentration ===CONCUNITS===",
   TIME_LAB        = "Time ===TIMEUNITS===",
-  OBS_STRING      = "Observation",
-  BLQ_STRING      = "BLQ",
-  NA_STRING       = "Missing",
+  time_units      = "",
+  conc_units      = "",
+  col_map         = list(),
+  flag_map        = list(),
   log_scale       = TRUE,
   scales          = "fixed",
   nfrows          = 4,
-  nfcols          = 3){
-
-  # Plucking out the units for time and conc
-  time_units = ""
-  conc_units = ""
-  if(!is.null(nca_res[["data"]][["units"]])){
-    # Perhaps there is a better way to extract these things but this is the
-    # most obvious to me :)
-    time_units = nca_res[["data"]][["units"]][nca_res[["data"]][["units"]][["PPTESTCD"]] == "start", ][["PPORRESU"]]
-    conc_units = nca_res[["data"]][["units"]][nca_res[["data"]][["units"]][["PPTESTCD"]] == "cmax",  ][["PPORRESU"]]
-  }
+  nfcols          = 3,
+  only_figs       = NULL){
 
   if(conc_units == ""){
     OBS_LAB  = stringr::str_replace(OBS_LAB,  "===CONCUNITS===", "")
@@ -6287,21 +6726,27 @@ mk_figure_ind_obs = function(
     TIME_LAB = stringr::str_replace(TIME_LAB, "===TIMEUNITS===", paste0("(", time_units, ")"))
   }
 
-  col_id      = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
-  col_time    = nca_res[["data"]][["conc"]][["columns"]][["time"]]
-  col_conc    = nca_res[["data"]][["conc"]][["columns"]][["concentration"]]
-  col_group   = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_vars"]]
-  col_analyte = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_analyte"]]
+  col_id      = col_map[["col_id"]]
+  col_time    = col_map[["col_time"]]
+  col_conc    = col_map[["col_conc"]]
+  col_group   = col_map[["col_group"]]
+  col_analyte = col_map[["col_analyte"]]
+
+  # We need to group by both ID and any other columns specified in the
+  # grouping:
+  col_group = c(col_id, col_group)
+
 
   # Retaining only the needed columns
-  cols_keep = unique(c(col_id, col_time, col_conc, col_group, col_analyte))
+  cols_keep = unique(c(col_id, col_time, col_conc, col_group, col_analyte,
+                       "rmnt_key", "rmnt_flag", "rmnt_desc"))
 
   # If this value is NULL it will be set to the lowest value for that
   # individual
 
   # This is the original dataset along with what looks like
   # some extra columns added by PKNCA
-  all_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]])) |>
+  all_data = ana_ds                                                       |> 
     dplyr::select(dplyr::all_of(cols_keep))                               |>
     dplyr::rename(CONC = dplyr::all_of(col_conc))                         |>   # Renaming columns to standard values
     dplyr::rename(TIME = dplyr::all_of(col_time))                         |>
@@ -6310,21 +6755,12 @@ mk_figure_ind_obs = function(
     dplyr::mutate(NONOBS = min(.data[["CONC"]][.data[["CONC"]]>0 &
                                !is.na(.data[["CONC"]])]))                 |>   # Creating a concentration for non-observations (0 and NA below)
     dplyr::ungroup()                                                      |>
-    dplyr::mutate(PKNCA_DATA_TYPE = OBS_STRING)                           |>   # This sets all data types to "Observation":w
-    dplyr::mutate(PKNCA_DATA_TYPE = ifelse(.data[["CONC"]]==0,                 # Setting the BLQ Flag
-                                           BLQ_STRING,
-                                           .data[["PKNCA_DATA_TYPE"]]))   |>
-    dplyr::mutate(PKNCA_DATA_TYPE = ifelse(is.na(.data[["CONC"]]),             # Setting the Missing Flag
-                                           NA_STRING,
-                                           .data[["PKNCA_DATA_TYPE"]]))   |>
     dplyr::mutate(CONC            = ifelse(is.na(.data[["CONC"]]),             # Setting missing values to values for plotting
                                            .data[["NONOBS"]],
                                            .data[["CONC"]]))       |>
     dplyr::mutate(CONC            = ifelse(.data[["CONC"]] == 0,               # Setting missing values to values for plotting
                                            .data[["NONOBS"]],
                                            .data[["CONC"]]))
-
-
 
   # Subjects remaining to plot
   subs_left = unique(all_data[[col_id]])
@@ -6352,8 +6788,15 @@ mk_figure_ind_obs = function(
   fig_idx=1
   while(length(subs_left) > 0){
 
+    BLD_FIG = TRUE
+    if(!is.null(only_figs)){
+      if(!(fig_idx %in% only_figs)){
+        BLD_FIG = FALSE
+      }
+    }
+    
     fig_key = paste0("Figure_", fig_idx)
-
+    
     # Figuring out how many subjects to plot on the
     # current figure
     if(length(subs_left) < subs_pp){
@@ -6361,45 +6804,59 @@ mk_figure_ind_obs = function(
     } else {
       last_sub = subs_pp
     }
-    subs_current = subs_left[c(1:last_sub)]
-
-    # This dataset contains the subset of the current subjects for plotting.
-    plot_ds = dplyr::filter(all_data, .data[[col_id]] %in% subs_current)
+      subs_current = subs_left[c(1:last_sub)]
 
 
-    p = ggplot2::ggplot(data = plot_ds)
-
-    p = p + ggplot2::geom_line( ggplot2::aes(x=.data[["TIME"]],
-                                             y=.data[["CONC"]],
-                                             group=.data[["GROUP_ALL"]]),
-                                             linetype='dashed', color='grey')
-
-    if(length(col_analyte) == 1){
-      # If there is an analyte we set the shape based on the analyte column
-      p = p + ggplot2::geom_point(ggplot2::aes(x     = .data[["TIME"]],
-                                               y     = .data[["CONC"]],
-                                               shape = !!as.name(col_analyte),
-                                               group = .data[["GROUP_ALL"]],
-                                               color = .data[["PKNCA_DATA_TYPE"]]))
-
-    } else {
-      p = p + ggplot2::geom_point(ggplot2::aes(x     = .data[["TIME"]],
-                                               y     = .data[["CONC"]],
-                                               group = .data[["GROUP_ALL"]],
-                                               color = .data[["PKNCA_DATA_TYPE"]]))
+    flevels = c()
+    fcolors = c()
+    for(fname in names(flag_map)){
+      flevels = c(flevels, flag_map[[fname]]$description)
+      fcolors = c(fcolors, flag_map[[fname]]$color)
     }
-    p = p + ggplot2::facet_wrap(.~.data[[col_id]], ncol=nfcols, nrow=nfrows, scales=scales)
-    p = p + ggplot2::theme_light()
-    if(log_scale){
-      p = p + ggplot2::scale_y_log10()
-    }
-    p = p + ggplot2::xlab(TIME_LAB)
-    p = p + ggplot2::ylab(OBS_LAB)
-    p = p + ggplot2::labs(color="Data Type")
-    p = p + ggplot2::theme(legend.position="bottom")
 
-    figures[[fig_key]]$gg    = p
-    figures[[fig_key]]$notes = NULL
+    names(fcolors) = flevels
+      
+    if(BLD_FIG){
+      # This dataset contains the subset of the current subjects for plotting.
+      plot_ds = dplyr::filter(all_data, .data[[col_id]] %in% subs_current)
+      
+      
+      p = ggplot2::ggplot(data = plot_ds, ggplot2::aes( key   = .data[["rmnt_key"]]))
+      
+      p = p + ggplot2::geom_line( ggplot2::aes(x=.data[["TIME"]],
+                                               y=.data[["CONC"]],
+                                               group=.data[["GROUP_ALL"]]),
+                                               linetype='solid', color='cornsilk4')
+      
+      if(length(col_analyte) == 1){
+        # If there is an analyte we set the shape based on the analyte column
+        p = p + ggplot2::geom_point(ggplot2::aes(x     = .data[["TIME"]],
+                                                 y     = .data[["CONC"]],
+                                                 shape = !!as.name(col_analyte),
+                                                 group = .data[["GROUP_ALL"]],
+                                                 color = .data[["rmnt_desc"]]), size=1.8)
+      
+      } else {
+        p = p + ggplot2::geom_point(ggplot2::aes(x     = .data[["TIME"]],
+                                                 y     = .data[["CONC"]],
+                                                 group = .data[["GROUP_ALL"]],
+                                                 color = .data[["rmnt_desc"]]), size=1.8)
+      }
+      p = p + ggplot2::facet_wrap(.~.data[[col_id]], ncol=nfcols, nrow=nfrows, scales=scales)
+      p = p + ggplot2::theme_light()
+      if(log_scale){
+        p = p + ggplot2::scale_y_log10()
+      }
+      p = p + ggplot2::xlab(TIME_LAB)
+      p = p + ggplot2::ylab(OBS_LAB)
+      p = p + ggplot2::labs(color="Data Type")
+      p = p + ggplot2::theme(legend.position="bottom")
+      p = p + scale_color_manual(values = fcolors)
+      
+      figures[[fig_key]]$gg    = p
+      figures[[fig_key]]$notes = NULL
+
+    }
 
     # Removing the plotted subjects from the list
     subs_left = subs_left[!(subs_left %in% subs_current)]
@@ -6555,6 +7012,7 @@ obj}
 #'@param nca_res Output of PKNCA.
 #'@param type     Type of table to generate. Can be either \code{"individual"} or \code{"summary"]}.
 #'@param grouping How to group columns in tables. Can be either \code{"interval"} or \code{"parameter"]}.
+#'@param flag_map    List with flag mapping details.
 #'@param not_calc Text string to replace NA values with to indicated values were not calculated.
 #'@param mult_str Text string to replace * values in units.
 #'@param infinity Text string to replace infinity in time intervals in column headers.
@@ -6585,29 +7043,12 @@ obj}
 #'   \item{msgs:}        Vector of text messages describing any errors that were found.
 #'   format from \code{\link[onbrand]{build_span}}.
 #'}
-#'@examples
-#' # We need a state variable to be define
-#' sess_res = NCA_test_mksession()
-#'
-#' state = sess_res$state
-#'
-#' # Pulls out the active analysis
-#' current_ana = NCA_fetch_current_ana(state)
-#'
-#' # This is the raw PKNCA output
-#' pknca_res = NCA_fetch_ana_pknca(state, current_ana)
-#'
-#' # Parameter reporting details from the ruminate configuration
-#' nps  = state[["NCA"]][["nca_parameters"]][["summary"]]
-#'
-#' # Building the figure
-#' mk_res = mk_table_nca_params(nca_res = pknca_res, nps=nps, digits=3)
-#' mk_res$tables[["Table 1"]]$ft
+#'@example inst/test_apps/nca_programming_funcs.R
 mk_table_nca_params = function(
   nca_res   ,
   type         = "individual",
+  flag_map     = list(),
   grouping     = "interval",
-  not_calc     = "NC",
   obnd         = NULL,
   nps          = NULL,
   mult_str     = "*",
@@ -6618,8 +7059,23 @@ mk_table_nca_params = function(
   notes_detect = NULL,
   max_height   = 7,
   max_width    = 6.5,
-  max_row      = NULL,
-  max_col      = NULL){
+  max_row      = 17,
+  max_col      = 9){
+
+  # Auto-populating notes detect
+  if(is.null(notes_detect)){
+    notes_detect = c(notes_detect, 
+      flag_map[["ns"]][["sn"]],
+      flag_map[["nc"]][["sn"]],
+      flag_map[["blq"]][["sn"]]) 
+  }
+
+  # Defining note for not calculated
+  if(!is.null(flag_map[["nc"]][["sn"]])){
+    not_calc     = flag_map[["nc"]][["sn"]]
+  } else{
+    not_calc     = "NC"
+  }
 
   # Pulling out the different pieces from the PKNCA object
   raw_nca   = as.data.frame(nca_res)
@@ -6938,84 +7394,30 @@ state}
 #'dosing records.
 #'@param NCA_DS Dataset containing dosing records.
 #'@param dose_from Method of dose extraction either "cols" or "rows".
-#'@param col_id Name of column with subject ID.
-#'@param col_time Name of column with time since first dose.
-#'@param col_ntime Name of column with time since the last dose (required with \code{dose_from="cols"}).
-#'@param col_route Name of column with route information.
-#'@param col_dose Name of column with last dose given.
-#'@param col_cycle Name of column with dose cycle (required with \code{dose_from="cols"}).
-#'@param col_dur Name of column with dose duration.
-#'@param col_evid Name of column with event ID (required with \code{dose_from="rows"}).
-#'@param col_analyte Name of column with analyte (optional).
-#'@param col_group Names of columns with grouping information (optionl).
+#'@param col_map     List with column mapping details
 #'@return list containing the following elements
 #'\itemize{
 #'  \item{isgood:}           Return status of the function.
 #'  \item{msgs:}             Messages to be passed back to the user.
 #'  \item{dose_rec:}
 #'}
-#'@examples
-#'
-#'if(system.file(package="readxl") !=""){
-#'library(dplyr)
-#'library(readxl)
-#'library(stringr)
-#'
-#'# Example data file:
-#'data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
-#'
-#'# Dataset formatted to extract dosing from columns
-#'DS_cols = readxl::read_excel(path=data_file, sheet="DATA")        |>
-#'  dplyr::filter(EVID == 0)                                |>
-#'  dplyr::filter(DOSE %in% c(3))                           |>
-#'  dplyr::filter(str_detect(string=Cohort, "^MD"))         |>
-#'  dplyr::filter(CMT == "C_ng_ml")
-#'
-#'drb_res = dose_records_builder(
-#'  NCA_DS     = DS_cols,
-#'  dose_from  = "cols",
-#'  col_id     = "ID",
-#'  col_time   = "TIME_DY",
-#'  col_ntime  = "NTIME_DY",
-#'  col_route  = "ROUTE",
-#'  col_cycle  = "DOSE_NUM",
-#'  col_dose   = "DOSE",
-#'  col_group  = "Cohort")
-#'
-#' utils::head(drb_res$dose_rec)
-#'
-#'# Dataset formatted to extract dosing from rows (records)
-#'DS_rows = readxl::read_excel(path=data_file, sheet="DATA")        |>
-#'  dplyr::filter(DOSE %in% c(3))                                   |>
-#'  dplyr::filter(str_detect(string=Cohort, "^MD"))                 |>
-#'  dplyr::filter(CMT %in% c("Ac", "C_ng_ml"))
-#'
-#'drb_res = dose_records_builder(
-#'  NCA_DS     = DS_rows,
-#'  dose_from  = "rows",
-#'  col_id     = "ID",
-#'  col_time   = "TIME_DY",
-#'  col_ntime  = "NTIME_DY",
-#'  col_route  = "ROUTE",
-#'  col_dose   = "AMT",
-#'  col_evid   = "EVID",
-#'  col_group  = "Cohort")
-#'
-#' utils::head(drb_res$dose_rec)
-#'}
+#'@example inst/test_apps/nca_programming_funcs.R
 dose_records_builder = function(
   NCA_DS       = NULL,
   dose_from    = NULL,
-  col_id       = NULL,
-  col_time     = NULL,
-  col_ntime    = NULL,
-  col_route    = NULL,
-  col_dose     = NULL,
-  col_cycle    = NULL,
-  col_dur      = NULL,
-  col_evid     = NULL,
-  col_analyte  = NULL,
-  col_group    = NULL){
+  col_map      = list()){
+
+
+  # Pulling out the column values to use below
+  col_id      = col_map[["col_id"]]
+  col_time    = col_map[["col_time"]]
+  col_ntime   = col_map[["col_ntime"]]
+  col_route   = col_map[["col_route"]]
+  col_cycle   = col_map[["col_cycle"]]
+  col_dur     = col_map[["col_dur"]]
+  col_dose    = col_map[["col_dose"]]
+  col_group   = col_map[["col_group"]]
+  col_analyte = col_map[["col_analyte"]]
 
   isgood     = TRUE
   msgs       = c()
@@ -7174,10 +7576,12 @@ pknca_res}
 #'@param state NCA state from \code{NCA_fetch_state()}
 #'@param ana_id Analysis ID to make active.
 #'@return State with the analysis ID made active.
-#' JMH add to example script below
 #'@example inst/test_apps/NCA_funcs.R
 NCA_mkactive_ana  = function(state, ana_id){
-    state[["NCA"]][["current_ana"]]  =  state[["NCA"]][["ui"]][["select_current_ana"]]
+
+    # I think this was wrong (but working)
+    # state[["NCA"]][["current_ana"]]  = state[["NCA"]][["ui"]][["select_current_ana"]]
+    state[["NCA"]][["current_ana"]]  =  ana_id
 
     # Column values are found based on heuristics that include the current
     # value in the ui. This will overwrite the current ui column values tracked with
@@ -7285,8 +7689,12 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
     # Below we process the different options in an element based on what they
     # do.
     # These are the names and ui_ids possible for analysis options:
-    ana_opt_names = as.vector(unlist(state[["NCA"]][["ui_ana_map"]]))
-    ana_opt_ui_ids  =            names(state[["NCA"]][["ui_ana_map"]])
+    ana_opt_names   = as.vector(unlist(state[["NCA"]][["ui_ana_map"]]))
+    # The manual flags data frame is tracked internally and not
+    # an explicit UI element so we have to add it here... manually :)
+    ana_opt_names = unique(c(ana_opt_names, "manual_ds_flags"))
+    #ana_opt_ui_ids  =            names(state[["NCA"]][["ui_ana_map"]])
+
 
     # These are the names and ui_ids possible for NCA options:
     nca_opt_names  =as.vector( unlist(lapply(state[["NCA"]][["nca_config"]][["default"]], '[[', "pknca_option")))
@@ -7346,7 +7754,6 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         ele_isgood = FALSE
       }
 
-
       # JMH Setting any element uis
       #state[["NCA"]][["ui_ana_map"]]
       #state[["NCA"]][["ui_ids"]]
@@ -7359,6 +7766,14 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         if(ui_name %in% names(elements[[ele_idx]][["element"]][["ana_options"]])){
           current_ele[[ui_name]] = elements[[ele_idx]][["element"]][["ana_options"]][[ui_name]]
         }
+      }
+
+      # Converting the manual flags from a list to a data.frame 
+      # and storing it in the current element.
+      if("manual_ds_flags" %in% names(elements[[ele_idx]][["element"]][["ana_options"]])){
+        current_ele[["manual_ds_flags"]] = 
+          as.data.frame(
+            elements[[ele_idx]][["element"]][["ana_options"]][["manual_ds_flags"]] )
       }
 
       #-------------------------------------------------------
@@ -7540,6 +7955,12 @@ NCA_mk_preload     = function(state){
         found_uis = c()
         # Defining the analysis options:
         ana_opts = as.vector(unlist(state[["NCA"]][["ui_ana_map"]]))
+
+        # The manual flags data frame is tracked internally and not
+        # an explicit UI element so we have to add it here... manually :)
+        ana_opts = unique(c(ana_opts, "manual_ds_flags"))
+
+
         tmp_element[["ana_options"]] = tmp_source_ele[ana_opts]
 
         # The key is defined as the name above and the mapping is handled on

@@ -40,6 +40,7 @@ reference:
    - contents:
      - apply_route_map
      - dose_records_builder
+     - flag_nca_ds
      - starts_with("mk_table")
      - starts_with("mk_figure")
      - starts_with("NCA_")
