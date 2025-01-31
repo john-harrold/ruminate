@@ -3172,7 +3172,7 @@ NCA_Server <- function(id,
 #'@param id_UD ID string for the upload data module used to save and load app states
 #'@param id_DW ID string for the data wrangling module used to save and load app states
 #'@param react_state Variable used within server to handle non-standard reactions  (e.g. reacting to plotly)
-#'@param react_state Variable passed to server to allow reaction outside of module (\code{NULL})
+#'@param react_internal Variable passed to server to allow reaction outside of module (\code{NULL})
 #'@return list containing the current state of the app including default
 #'values from the yaml file as well as any changes made by the user. The list
 #'has the following structure:
@@ -3809,8 +3809,19 @@ NCA_fetch_state = function(id, input, session,
     # Saving the caption as well
     current_ana[["notes"]] = state[["NCA"]][["ui"]][["text_ana_notes"]]
 
+
+    # If the selected data view is different than the data view being used by
+    # the current analysis then we need to reset the manual flags
+    if(current_ana[["ana_dsview"]] != state[["NCA"]][["ui"]][["select_current_view"]]){
+      if(nrow(current_ana[["manual_ds_flags"]])){
+        notify_text = "Data source change detected: You will need to rerun the analysis. Manual flags reset."
+        state = FM_set_notification(state, notify_text, "Manual Flags Reset", "warning") }
+      current_ana[["manual_ds_flags"]] = data.frame()
+    }
     # updating the view id
     current_ana[["ana_dsview"]] = state[["NCA"]][["ui"]][["select_current_view"]]
+
+
 
     # Saving changes to the current analysis
     state = NCA_set_current_ana(state, current_ana)
@@ -4363,6 +4374,8 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                               '        type     = "ggplot",',
                               '        content  = list(',
                                          notes_str,
+                       paste0('          height          =  ',state[["MC"]][["reporting"]][["dimensions"]][["figures"]][["height"]],','),
+                       paste0('          width           =  ',state[["MC"]][["reporting"]][["dimensions"]][["figures"]][["width"]],','),
                        paste0('          image           =  ', fg_object_name, ','),
                        paste0('          key             = "', fig_id,  '",'),
                        paste0('          caption_format  = "',state[["MC"]][["reporting"]][["text_format"]],'",'),
@@ -5033,6 +5046,7 @@ res}
 #'and reporting. Can be used for manual flagging of data.
 #'@param DS        Dataframe containing the dataset.
 #'@param flag_map  List with flag mapping details.
+#'@param col_map   List with column mapping details.
 #'@param ds_flags  Dataframe or tibble with a column (key) for dataset row IDs
 #'("rec_2" for row 2) and a column (flag) for flags mapping can be found.
 #'@return Dataset with the following columns added for flagging data.
@@ -5063,10 +5077,10 @@ flag_nca_ds  = function(DS       = NULL,
     dplyr::mutate(rmnt_hlin = NA)                                  |>   # By default no inclusions for  half-life calculations
     dplyr::mutate(rmnt_flag = ifelse(.data[[col_conc]] == 0, 
                                      "blq", 
-                                     rmnt_flag)) |>                     # Lastly we flag all the blq values
+                                     .data[["rmnt_flag"]])) |>                     # Lastly we flag all the blq values
     dplyr::mutate(rmnt_desc = ifelse(.data[[col_conc]] == 0, 
                                      flag_map[["blq"]][["description"]], 
-                                     rmnt_desc)) 
+                                     .data[["rmnt_desc"]])) 
  
   # Its possible this is being called with no flagging funcions jsut to create
   # placeholders for the columns above.
@@ -6509,22 +6523,22 @@ mk_table_ind_obs = function(
   all_data[is.na(all_data[["CONC"]]), ][["CONC"]] = not_sampled
   all_data[all_data[["CONC"]] == "0", ][["CONC"]] = blq
   all_data = all_data |>
-    dplyr::mutate(CONC := 
+    dplyr::mutate(CONC = 
       ifelse(
-        rmnt_flag == "censor", 
+        .data[["rmnt_flag"]] == "censor", 
         paste0(.data[["CONC"]], flag_map[["censor"]][["snmd"]]), 
         .data[["CONC"]]))                                          |>
-    dplyr::mutate(CONC := 
+    dplyr::mutate(CONC = 
       ifelse(
-        rmnt_flag == "hlex", 
+        .data[["rmnt_flag"]] == "hlex", 
         paste0(.data[["CONC"]], flag_map[["hlex"]][["snmd"]]), 
         .data[["CONC"]]))                                          |>
-    dplyr::mutate(CONC := 
+    dplyr::mutate(CONC = 
       ifelse(
-        rmnt_flag == "hlin", 
+        .data[["rmnt_flag"]] == "hlin", 
         paste0(.data[["CONC"]], flag_map[["hlin"]][["snmd"]]), 
         .data[["CONC"]]))                                          |>
-    dplyr::select(-rmnt_flag)
+    dplyr::select(-.data[["rmnt_flag"]])
 
 
   if(rows_by == "time"){
@@ -6849,10 +6863,16 @@ mk_figure_ind_obs = function(
       }
       p = p + ggplot2::xlab(TIME_LAB)
       p = p + ggplot2::ylab(OBS_LAB)
-      p = p + ggplot2::labs(color="Data Type")
-      p = p + ggplot2::theme(legend.position="bottom")
+      p = p + ggplot2::labs(color="Data Flag", shape="Analyte")
+      p = p + ggplot2::theme(legend.position="bottom", 
+                             legend.box="horizontal")
       p = p + scale_color_manual(values = fcolors)
-      
+      p = p + guides(colour = guide_legend(title.position = "top", ncol=3))
+      p = p + guides(shape  = guide_legend(title.position = "top", ncol=3))
+      p = p + theme(legend.spacing.x      = unit(.01, "cm"))
+      p = p + theme(legend.key.spacing.x  = unit(.01, "cm"))
+
+
       figures[[fig_key]]$gg    = p
       figures[[fig_key]]$notes = NULL
 
@@ -7013,7 +7033,6 @@ obj}
 #'@param type     Type of table to generate. Can be either \code{"individual"} or \code{"summary"]}.
 #'@param grouping How to group columns in tables. Can be either \code{"interval"} or \code{"parameter"]}.
 #'@param flag_map    List with flag mapping details.
-#'@param not_calc Text string to replace NA values with to indicated values were not calculated.
 #'@param mult_str Text string to replace * values in units.
 #'@param infinity Text string to replace infinity in time intervals in column headers.
 #'@param obnd     onbrand reporting object.
@@ -7399,7 +7418,7 @@ state}
 #'\itemize{
 #'  \item{isgood:}           Return status of the function.
 #'  \item{msgs:}             Messages to be passed back to the user.
-#'  \item{dose_rec:}
+#'  \item{dose_rec:}         Tibble with dose records for PKNCA
 #'}
 #'@example inst/test_apps/nca_programming_funcs.R
 dose_records_builder = function(
@@ -7412,6 +7431,7 @@ dose_records_builder = function(
   col_id      = col_map[["col_id"]]
   col_time    = col_map[["col_time"]]
   col_ntime   = col_map[["col_ntime"]]
+  col_evid    = col_map[["col_evid"]]
   col_route   = col_map[["col_route"]]
   col_cycle   = col_map[["col_cycle"]]
   col_dur     = col_map[["col_dur"]]

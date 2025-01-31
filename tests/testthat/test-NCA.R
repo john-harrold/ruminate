@@ -1,94 +1,69 @@
 library(formods)
 library(ruminate)
 library(stringr)
-if(system.file(package="readxl") !=""){
-  readxl_found = TRUE 
-  library(readxl)
-} else {
-  readxl_found = FALSE
-}
 
 sess_res = suppressMessages(suppressWarnings(NCA_test_mksession()))
 
 expect_true(sess_res[["isgood"]])
 
-if(system.file(package="readxl") != ""){
+if(formods::is_installed("readxl")){
+  library(readxl)
 
   test_that("Extract dose records", {
 
-  if(readxl_found){
-    data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
-    DS_cols = readxl::read_excel(path=data_file, sheet="DATA")        |>
-      dplyr::filter(EVID == 0)                                |>
-      dplyr::filter(DOSE %in% c(3))                           |>
-      dplyr::filter(str_detect(string=Cohort, "^MD"))         |>
-      dplyr::filter(CMT == "C_ng_ml")
-    
-    drb_res = dose_records_builder(
-      NCA_DS     = DS_cols,
-      dose_from  = "cols",
-      col_id     = "ID",
-      col_time   = "TIME_DY",
-      col_ntime  = "NTIME_DY",
-      col_route  = "ROUTE",
-      col_cycle  = "DOSE_NUM",
-      col_dose   = "DOSE",
-      col_group  = "Cohort")
-    
-    expect_true(drb_res[["isgood"]])
-    
-    DS_rows = readxl::read_excel(path=data_file, sheet="DATA")        |>
-      dplyr::filter(DOSE %in% c(3))                                   |>
-      dplyr::filter(str_detect(string=Cohort, "^MD"))                 |>
-      dplyr::filter(CMT %in% c("Ac", "C_ng_ml"))
-    
-    drb_res = dose_records_builder(
-      NCA_DS     = DS_rows,
-      dose_from  = "rows",
-      col_id     = "ID",
-      col_time   = "TIME_DY",
-      col_ntime  = "NTIME_DY",
-      col_route  = "ROUTE",
-      col_dose   = "AMT",
-      col_evid   = "EVID",
-      col_group  = "Cohort")
-    
-    expect_true(drb_res[["isgood"]])
-  }
+  data_file =  system.file(package="formods","test_data","TEST_DATA.xlsx")
+  DS_cols = readxl::read_excel(path=data_file, sheet="DATA")        |>
+    dplyr::filter(EVID == 0)                                |>
+    dplyr::filter(DOSE %in% c(3))                           |>
+    dplyr::filter(str_detect(string=Cohort, "^MD"))         |>
+    dplyr::filter(CMT == "C_ng_ml")
+
+  col_map = list(
+    col_id = c("ID"),
+    col_dose = c("DOSE"),
+    col_conc = c("DV"),
+    col_dur = NULL,
+    col_analyte = c("CMT"),
+    col_route = c("ROUTE"),
+    col_time = c("TIME_DY"),
+    col_ntime = c("NTIME_DY"),
+    col_group = NULL,
+    col_evid = c("EVID"),
+    col_cycle = c("DOSE_NUM")
+  )
+
+
+  drb_res = dose_records_builder(
+    NCA_DS     = DS_cols,
+    col_map    = col_map,
+    dose_from  = "cols")
+
+  expect_true(drb_res[["isgood"]])
+
+  DS_rows = readxl::read_excel(path=data_file, sheet="DATA")        |>
+    dplyr::filter(DOSE %in% c(3))                                   |>
+    dplyr::filter(str_detect(string=Cohort, "^MD"))                 |>
+    dplyr::filter(CMT %in% c("Ac", "C_ng_ml"))
+
+  drb_res = dose_records_builder(
+    NCA_DS     = DS_rows,
+    col_map    = col_map,
+    dose_from  = "rows")
+
+  expect_true(drb_res[["isgood"]])
+
 
 
   })
 
   test_that("Test session examples", {
     state = sess_res$state
-    # This makes sure each analysis in the test 
+    # This makes sure each analysis in the test
     # session was completed successfully
     for(aname in names(state[["NCA"]][["anas"]])){
       expect_true(state[["NCA"]][["anas"]][[aname]][["isgood"]])
     }
   })
 
- #test_that("Run NCA", {
- #})
-
-
-  # JMH add test for NCA_test_mksession to make sure all of the state$NCA$anas
-  # are good
-
-  #*NCA_fetch_state
-  #*NCA_fetch_code
-  #*NCA_init_state
-  #*NCA_new_ana   
-  #*NCA_set_current_ana   
-  #*NCA_find_col
-  # NCA_add_int 
-  #*NCA_fetch_ana_ds
-  #*NCA_process_current_ana
-  #*nca_builder
-  # run_nca_components
-  #*mk_table_ind_obs   
-  #*mk_figure_ind_obs   
-  #*mk_table_nca_params
-  # NCA_load_scenario
 
 }

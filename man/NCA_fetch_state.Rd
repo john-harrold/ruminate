@@ -34,7 +34,9 @@ NCA_fetch_state(
 
 \item{id_DW}{ID string for the data wrangling module used to save and load app states}
 
-\item{react_state}{Variable passed to server to allow reaction outside of module (\code{NULL})}
+\item{react_state}{Variable used within server to handle non-standard reactions  (e.g. reacting to plotly)}
+
+\item{react_internal}{Variable passed to server to allow reaction outside of module (\code{NULL})}
 }
 \value{
 list containing the current state of the app including default

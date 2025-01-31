@@ -59,8 +59,6 @@ mk_table_nca_params(
 \item{max_row}{Maximum number of rows to have on a page. Spillover will hang over the side of the page..}
 
 \item{max_col}{Maximum number of columns to have on a page. Spillover will be wrapped to multiple pages.}
-
-\item{not_calc}{Text string to replace NA values with to indicated values were not calculated.}
 }
 \value{
 list containing the following elements
@@ -282,7 +280,6 @@ if(formods::is_installed("readxl")){
     nfcols     = 4, 
     log_scale  = TRUE)
 
-  figure_ind_obs$figures$Figure_1$gg
   
   # Generating tables of the concentration data
   table_ind_obs = mk_table_ind_obs(
@@ -291,7 +288,6 @@ if(formods::is_installed("readxl")){
     flag_map     = flag_map,
     digits       = 3)
 
-  table_ind_obs$tables[["Table 1"]]$ft
   
   # Generating tables of individual parameters
   table_ind_params = mk_table_nca_params(
@@ -302,6 +298,9 @@ if(formods::is_installed("readxl")){
     text_format  = "md",
     digits       = 3)
 
+  print(figure_ind_obs$figures$Figure_1$gg)
+
   table_ind_params$tables[["Table 1"]]$ft
+  table_ind_obs$tables[["Table 1"]]$ft
 }
 }
