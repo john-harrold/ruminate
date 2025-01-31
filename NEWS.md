@@ -1,5 +1,9 @@
 # ruminate 0.3.2 (development version)
 
+- Implemented manual point flagging to allow: censoring, exclusion of points 
+  from half-life calculation, or specyfing points to use in 
+  half-life calcualtion.
+- Fixed typos in PKNCA parameters (`sparse_se` -> `sparse_auc_se` and `sparse_df` -> `sparse_auc_df`)
 
 # ruminate 0.3.1 
 

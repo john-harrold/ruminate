@@ -18,7 +18,7 @@ list containing the following elements
 \itemize{
 \item{isgood:}           Return status of the function.
 \item{msgs:}             Messages to be passed back to the user.
-\item{dose_rec:}
+\item{dose_rec:}         Tibble with dose records for PKNCA
 }
 }
 \description{
@@ -141,9 +141,9 @@ if(formods::is_installed("readxl")){
   # See flag_map for possible flags (those that include  manual="yes"). To
   # remove a flag just delete the row.
   ds_flags = dplyr::tribble(
-         ~key,        ~flag,
-     "rec_3",       "censor",
-     "rec_7",         "hlex"
+       ~key,   ~flag,
+    "rec_3",  "censor",
+    "rec_7",    "hlex"
     )
   
   
@@ -166,8 +166,7 @@ if(formods::is_installed("readxl")){
     col_map   = col_map, 
     dose_from = "cols")[["dose_rec"]]
     
-  
-  
+  # Applying the flags to the dataset
   conc_DS = 
     flag_nca_ds(
       DS       = myDS,
@@ -248,7 +247,7 @@ if(formods::is_installed("readxl")){
 
   print(figure_ind_obs$figures$Figure_1$gg)
 
-  table_ind_params$tables[["Table 1"]]$ft
   table_ind_obs$tables[["Table 1"]]$ft
+  table_ind_params$tables[["Table 1"]]$ft
 }
 }

@@ -83,8 +83,6 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">NCA_fetch_np_meta</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> NCA: Parameter specified in YAML is not a valid PKNCA parameter: sparse_se</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> NCA: Parameter specified in YAML is not a valid PKNCA parameter: sparse_df</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $choices</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $choices$`Common Parameters`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $choices$`Common Parameters`$AUCall</span>
@@ -415,6 +413,12 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> $choices$`Sparse Analysis`$`Sparse AUClast`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sparse_auclast"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $choices$`Sparse Analysis`$`Sparse AUClast standard error`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sparse_auc_se"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $choices$`Sparse Analysis`$`Sparse AUClast degrees of freedom`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sparse_auc_df"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $summary</span>
@@ -508,29 +512,31 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 87             r.squared</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 88            span.ratio</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 89        sparse_auclast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90                 start</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91                 swing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92                tfirst</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93     thalf.eff.iv.last</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94      thalf.eff.iv.obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95     thalf.eff.iv.pred</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96        thalf.eff.last</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97         thalf.eff.obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98        thalf.eff.pred</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99            time_above</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100                 tlag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 101                tlast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 102              totdose</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 103          vss.iv.last</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 104           vss.iv.obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 105          vss.iv.pred</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 106             vss.last</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 107           vss.md.obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108          vss.md.pred</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 109              vss.obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 110             vss.pred</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 111               vz.obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 112              vz.pred</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90         sparse_auc_se</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91         sparse_auc_df</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92                 start</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93                 swing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94                tfirst</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95     thalf.eff.iv.last</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96      thalf.eff.iv.obs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97     thalf.eff.iv.pred</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98        thalf.eff.last</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99         thalf.eff.obs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100       thalf.eff.pred</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101           time_above</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102                 tlag</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103                tlast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104              totdose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105          vss.iv.last</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106           vss.iv.obs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107          vss.iv.pred</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108             vss.last</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109           vss.md.obs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110          vss.md.pred</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111              vss.obs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112             vss.pred</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113               vz.obs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114              vz.pred</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                        text</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                    AUCall</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                  r² (Adj)</span>
@@ -621,29 +627,31 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 87                                                       r²</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 88                                               Span ratio</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 89                                           Sparse AUClast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90                                           Interval Start</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91                                                    Swing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92                                                    t 1ˢᵗ</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93    Effective half-life (for IV dosing, based on MRTlast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94    Effective half-life (for IV dosing, based on MRT,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95   Effective half-life (for IV dosing, based on MRT,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96                  Effective half-life (based on MRT,last)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97                   Effective half-life (based on MRT,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98                  Effective half-life (based on MRT,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99                                 Time above Concentration</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100                                                    Tlag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 101                                                   Tlast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 102                                              Total dose</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 103                   Vss (for IV dosing, based on AUClast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 104                Vss (for IV dosing, based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 105               Vss (for IV dosing, based on AUCinf,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 106                                  Vss (based on AUClast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 107             Vss (for multiple-dose, based on Clast,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108            Vss (for multiple-dose, based on Clast,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 109                               Vss (based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 110                              Vss (based on AUCinf,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 111                                Vz (based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 112                               Vz (based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90                            Sparse AUClast standard error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91                        Sparse AUClast degrees of freedom</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92                                           Interval Start</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93                                                    Swing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94                                                    t 1ˢᵗ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95    Effective half-life (for IV dosing, based on MRTlast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96    Effective half-life (for IV dosing, based on MRT,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97   Effective half-life (for IV dosing, based on MRT,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                  Effective half-life (based on MRT,last)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99                   Effective half-life (based on MRT,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100                 Effective half-life (based on MRT,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101                                Time above Concentration</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102                                                    Tlag</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103                                                   Tlast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104                                              Total dose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105                   Vss (for IV dosing, based on AUClast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106                Vss (for IV dosing, based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107               Vss (for IV dosing, based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108                                  Vss (based on AUClast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109             Vss (for multiple-dose, based on Clast,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110            Vss (for multiple-dose, based on Clast,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111                               Vss (based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112                              Vss (based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113                                Vz (based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114                               Vz (based on AUCinf,pred)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                 md</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                         AUC~all~</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                        Adj. R^2^</span>
@@ -734,29 +742,31 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 87                            R^2^</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 88                              SR</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 89                    AUC~last,sp~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90                        t~start~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91                           SWING</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92                        t~first~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93             t~half,eff,iv,last~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94              t~half,eff,iv,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95             t~half,eff,iv,pred~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96                t~half,eff,last~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97                 t~half,eff,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98                t~half,eff,pred~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99                           t~ab~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100                         t~lag~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 101                        t~last~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 102                      Dose~tot~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 103                  V~ss,iv,last~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 104                   V~ss,iv,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 105                  V~ss,iv,pred~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 106                  V~ss,iv,last~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 107                   V~ss,md,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108                  V~ss,md,pred~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 109                      V~ss,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 110                     V~ss,pred~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 111                       V~z,obs~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 112                      V~z,pred~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90                SE(AUC~last,sp~)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91                DF(AUC~last,sp~)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92                        t~start~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93                           SWING</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94                        t~first~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95             t~half,eff,iv,last~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96              t~half,eff,iv,obs~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97             t~half,eff,iv,pred~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                t~half,eff,last~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99                 t~half,eff,obs~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100               t~half,eff,pred~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101                          t~ab~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102                         t~lag~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103                        t~last~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104                      Dose~tot~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105                  V~ss,iv,last~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106                   V~ss,iv,obs~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107                  V~ss,iv,pred~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108                  V~ss,iv,last~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109                   V~ss,md,obs~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110                  V~ss,md,pred~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111                      V~ss,obs~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112                     V~ss,pred~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113                       V~z,obs~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114                      V~z,pred~</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                       latex</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                    AUCall</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                               $r^2_{adj}$</span>
@@ -847,29 +857,31 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 87                                                    $r^2$</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 88                                               Span ratio</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 89                                           Sparse AUClast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90                                           Interval Start</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91                                                    Swing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92                                                   Tfirst</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93    Effective half-life (for IV dosing, based on MRTlast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94    Effective half-life (for IV dosing, based on MRT,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95   Effective half-life (for IV dosing, based on MRT,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96                  Effective half-life (based on MRT,last)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97                   Effective half-life (based on MRT,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98                  Effective half-life (based on MRT,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99                                 Time above Concentration</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100                                                    Tlag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 101                                                   Tlast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 102                                              Total dose</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 103                   Vss (for IV dosing, based on AUClast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 104                Vss (for IV dosing, based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 105               Vss (for IV dosing, based on AUCinf,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 106                                  Vss (based on AUClast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 107             Vss (for multiple-dose, based on Clast,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108            Vss (for multiple-dose, based on Clast,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 109                               Vss (based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 110                              Vss (based on AUCinf,pred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 111                                Vz (based on AUCinf,obs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 112                               Vz (based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90                            Sparse AUClast standard error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91                        Sparse AUClast degrees of freedom</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92                                           Interval Start</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93                                                    Swing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94                                                   Tfirst</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95    Effective half-life (for IV dosing, based on MRTlast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96    Effective half-life (for IV dosing, based on MRT,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97   Effective half-life (for IV dosing, based on MRT,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                  Effective half-life (based on MRT,last)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99                   Effective half-life (based on MRT,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100                 Effective half-life (based on MRT,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101                                Time above Concentration</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102                                                    Tlag</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103                                                   Tlast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104                                              Total dose</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105                   Vss (for IV dosing, based on AUClast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106                Vss (for IV dosing, based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107               Vss (for IV dosing, based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108                                  Vss (based on AUClast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109             Vss (for multiple-dose, based on Clast,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110            Vss (for multiple-dose, based on Clast,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111                               Vss (based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112                              Vss (based on AUCinf,pred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113                                Vz (based on AUCinf,obs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114                               Vz (based on AUCinf,pred)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                          description</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                        The area under the concentration time curve from the beginning of the interval to the last concentration above the limit of quantification plus the triangle from that last concentration to 0 at the first concentration below the limit of quantification</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                                                                                                                                                                                The adjusted r^2 value of the half-life calculation</span>
@@ -960,29 +972,31 @@ the following columns:</p><ul><li><p>parameter:   Name of parameter in PKNCA.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 87                                                                                                                                                                                                                                        The r^2 value of the half-life calculation</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 88                                                                                                                                                                                                         The ratio of the half-life to the duration used for half-life calculation</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 89                                                                                                                For sparse PK sampling, the area under the concentration time curve from the beginning of the interval to the last concentration above the limit of quantification</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90                                                                                                                                                                                                                                                     Starting time of the interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91                                                                                                                                                                                                                                                            Swing relative to Cmin</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92                                                                                                                                                                                                                 Time of the first concentration above the limit of quantification</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93                                                                                                                                                                                                              The effective half-life (as determined from the intravenous MRTlast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94                                                                                                                                                                                                               The effective half-life (as determined from the intravenous MRTobs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95                                                                                                                                                                                                              The effective half-life (as determined from the intravenous MRTpred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96                                                                                                                                                                                                                          The effective half-life (as determined from the MRTlast)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97                                                                                                                                                                                                                           The effective half-life (as determined from the MRTobs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98                                                                                                                                                                                                                          The effective half-life (as determined from the MRTpred)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99                                                                                                                                                                                                                                                  Time above a given concentration</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100                                                                                                                                                                                                                                                                         Lag time</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 101                                                                                                                                                                                                        Time of the last concentration observed above the limit of quantification</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 102                                                                                                                                                                                                                                       Total dose administered during an interval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 103                                                                                                                                                                                      The steady-state volume of distribution with intravenous infusion calculating through Tlast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 104                                                                                                                                                                                           The steady-state volume of distribution with intravenous infusion using observed Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 105                                                                                                                                                                                          The steady-state volume of distribution with intravenous infusion using predicted Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 106                                                                                                                                                                                                                The steady-state volume of distribution calculating through Tlast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 107                                                                                                                                                                                    The steady-state volume of distribution for nonlinear multiple-dose data using observed Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108                                                                                                                                                                                   The steady-state volume of distribution for nonlinear multiple-dose data using predicted Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 109                                                                                                                                                                                                                     The steady-state volume of distribution using observed Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 110                                                                                                                                                                                                                    The steady-state volume of distribution using predicted Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 111                                                                                                                                                                                                                         The terminal volume of distribution using observed Clast</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 112                                                                                                                                                                                                                        The terminal volume of distribution using predicted Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90                                                                                          For sparse PK sampling, the standard error of the area under the concentration time curve from the beginning of the interval to the last concentration above the limit of quantification</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91                                                                       For sparse PK sampling, the standard error degrees of freedom of the area under the concentration time curve from the beginning of the interval to the last concentration above the limit of quantification</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92                                                                                                                                                                                                                                                     Starting time of the interval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93                                                                                                                                                                                                                                                            Swing relative to Cmin</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94                                                                                                                                                                                                                 Time of the first concentration above the limit of quantification</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95                                                                                                                                                                                                              The effective half-life (as determined from the intravenous MRTlast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96                                                                                                                                                                                                               The effective half-life (as determined from the intravenous MRTobs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97                                                                                                                                                                                                              The effective half-life (as determined from the intravenous MRTpred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                                                                                                                                                                                                                          The effective half-life (as determined from the MRTlast)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99                                                                                                                                                                                                                           The effective half-life (as determined from the MRTobs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100                                                                                                                                                                                                                         The effective half-life (as determined from the MRTpred)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101                                                                                                                                                                                                                                                 Time above a given concentration</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102                                                                                                                                                                                                                                                                         Lag time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103                                                                                                                                                                                                        Time of the last concentration observed above the limit of quantification</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104                                                                                                                                                                                                                                       Total dose administered during an interval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105                                                                                                                                                                                      The steady-state volume of distribution with intravenous infusion calculating through Tlast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106                                                                                                                                                                                           The steady-state volume of distribution with intravenous infusion using observed Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107                                                                                                                                                                                          The steady-state volume of distribution with intravenous infusion using predicted Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108                                                                                                                                                                                                                The steady-state volume of distribution calculating through Tlast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109                                                                                                                                                                                    The steady-state volume of distribution for nonlinear multiple-dose data using observed Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110                                                                                                                                                                                   The steady-state volume of distribution for nonlinear multiple-dose data using predicted Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111                                                                                                                                                                                                                     The steady-state volume of distribution using observed Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112                                                                                                                                                                                                                    The steady-state volume of distribution using predicted Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113                                                                                                                                                                                                                         The terminal volume of distribution using observed Clast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114                                                                                                                                                                                                                        The terminal volume of distribution using predicted Clast</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
