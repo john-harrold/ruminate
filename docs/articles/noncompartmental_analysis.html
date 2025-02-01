@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ruminate</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -185,8 +185,8 @@ extravascular, required)</li>
 <strong>Other Grouping:</strong> Other columns used for grouping
 (optional)</li>
 <li>
-<strong>Dose Duration:</strong> Duration of collection, typically
-used for urine or feces (optional)</li>
+<strong>Collection Duration:</strong> Duration of collection,
+typically used for urine or feces (optional)</li>
 <li>
 <strong>Dosing Cycle or Period:</strong> The most recent dose cycle
 or period (optional, needed for dosing from columns)</li>
@@ -240,6 +240,45 @@ intervals with intensive sampling, then you don’t need to worry about
 having dosing information for the other intervals.</p>
 </div>
 </div>
+</div>
+<div class="section level2">
+<h2 id="manually-flagging-data">Manually flagging data<a class="anchor" aria-label="anchor" href="#manually-flagging-data"></a>
+</h2>
+<p>It is possible to manually flag data for the following purposes:</p>
+<ul>
+<li>Censoring: This will remove data from the analysis completely (flag:
+<code>censor</code>)</li>
+<li>Specifying half-life: For a given interval/analyte combination only
+these flagged points will be used to determine the half-life (flag:
+<code>hlin</code>)</li>
+<li>Exclusion from half-life: Records with this flag (<code>hlex</code>)
+will not be used in the half-life calculation but will otherwise be
+included in the analysis</li>
+</ul>
+<p>Note that if you have an interval/analyte combination with points
+specified to be included in the half-life (<code>hlin</code>), any flags
+for exclusion (<code>hlex</code>) in this interval/analyte combination
+will be ignored. At the scripting level the function
+<code><a href="../reference/flag_nca_ds.html">flag_nca_ds()</a></code> is used to apply flags to the dataset. See
+the examples section of that function documentation for an example of
+how flags are applied.</p>
+<p>In the Shiny App manual flags can be applied by:</p>
+<ul>
+<li>First running the analysis with no flags</li>
+<li>Navigate to the figures tab</li>
+<li>Select the individual profiles</li>
+<li>Select the interactive view</li>
+<li>Select the manual flag to apply</li>
+<li>Add any notes you want to associated with the flagged records</li>
+<li>Select the points to apply that flag</li>
+</ul>
+<p>Once manual flags have been applied it is necessary to rerun the
+analysis. These points will be carried through to the reported
+tables.</p>
+</div>
+<div class="section level2">
+<h2 id="nca-details">NCA details<a class="anchor" aria-label="anchor" href="#nca-details"></a>
+</h2>
 <div class="section level3">
 <h3 id="nca-analysis-intervals">NCA analysis intervals<a class="anchor" aria-label="anchor" href="#nca-analysis-intervals"></a>
 </h3>
@@ -340,7 +379,7 @@ Parameter Name is the value shown in the app.</p>
     figures:
       fg_ind_obs:
         caption_single:     "===NCADESC=== (Individual Observations)"
-        caption_multiple:   "===NCADESC=== (Individual Observations,  ===FIGNUM=== of ===FIGTOT===)"
+        caption_multiple:   "===NCADESC=== (Individual Observations, ===FIGNUM=== of ===FIGTOT===)"
         title_single:       " Individual Observations"
         title_multiple:     " Individual Observations"
         sub_title_single:   "===NCADESC==="
@@ -387,6 +426,12 @@ Parameter Name is the value shown in the app.</p>
     notes:
       width:  "520px"
       height: "75px"
+    # Dimensions of the notes text area
+    text_manual:
+      width:  "520px"
+      height: "75px"
+      tooltip:          "Place any notes here about subsequent flags. These notes will be carried through in the reporting."
+      tooltip_position: "top"
     # Width of textInput and selectInput UI elements in the
     # nca configuration
     nca_config_option:
@@ -399,7 +444,7 @@ Parameter Name is the value shown in the app.</p>
     preview:
       width:           "100%"
       height:          "600px"
-      nrow:            4
+      nrow:            3
       ncol:            3
       nrow_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
       ncol_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
@@ -445,6 +490,16 @@ Parameter Name is the value shown in the app.</p>
       block: TRUE
      #tooltip: "tooltip"
      #tooltip_position: "right"
+    button_fg_next_pg:
+      size: "sm"
+      block: TRUE
+      tooltip: "Next page"
+      tooltip_position: "top"
+    button_fg_prev_pg:
+      size: "sm"
+      block: TRUE
+      tooltip: "Previous page"
+      tooltip_position: "top"
     button_tb_save:
       size: "sm"
       block: TRUE
@@ -631,12 +686,14 @@ Parameter Name is the value shown in the app.</p>
     # Set urls to NULL to disable
     url_dosing:        "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#dosing-information"
     url_data:          "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#data-format"
+    url_manual:        "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#manually-flagging-data"
     url_intervals:     "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#nca-analysis-intervals"
     url_parameters:    "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#nca-parameters"
     ph:
       text_ana_interval_start: 0
       text_ana_interval_stop:  "number or Inf"
       notes:                   "Optional NCA notes that will be carried over and used in other elements (e.g. reporting)."
+      text_manual:             "Shipment left over the weekend without refrigeration."
   # This controls the figure and table selection for an analysis. The order of
   # the keys (e.g., tb_ind_params, tb_sum_params, etc) controls the
   # order they are dispalyed in the selector and the text controls what's show
@@ -666,6 +723,8 @@ Parameter Name is the value shown in the app.</p>
     del_ana:                         "Delete"
     copy_ana:                        "Copy"
     clip_ana:                        "Code"
+    fg_next_pg:                      NULL #"Next Page"
+    fg_prev_pg:                      NULL #"Previous page"
     fg_save:                         "Apply changes"
     tb_save:                         "Apply changes"
     curr_anas_none:                  "No figures yet created"
@@ -698,7 +757,7 @@ Parameter Name is the value shown in the app.</p>
     select_ana_col_time:             "Time"
     select_ana_col_ntime:            "Nominal Time"
     select_ana_col_dose:             "Dose"
-    select_ana_col_dur:              "Dose Duration"
+    select_ana_col_dur:              "Collection Duration"
     select_ana_col_conc:             "Concentration"
     select_ana_col_route:            "Route"
     select_ana_col_group:            "Other Grouping"

@@ -74,7 +74,7 @@ MC:
     figures:
       fg_ind_obs:
         caption_single:     "===NCADESC=== (Individual Observations)"
-        caption_multiple:   "===NCADESC=== (Individual Observations,  ===FIGNUM=== of ===FIGTOT===)"
+        caption_multiple:   "===NCADESC=== (Individual Observations, ===FIGNUM=== of ===FIGTOT===)"
         title_single:       " Individual Observations"
         title_multiple:     " Individual Observations"
         sub_title_single:   "===NCADESC==="
@@ -121,6 +121,12 @@ MC:
     notes:
       width:  "520px"
       height: "75px"
+    # Dimensions of the notes text area
+    text_manual:
+      width:  "520px"
+      height: "75px"
+      tooltip:          "Place any notes here about subsequent flags. These notes will be carried through in the reporting."
+      tooltip_position: "top"
     # Width of textInput and selectInput UI elements in the
     # nca configuration
     nca_config_option:
@@ -133,7 +139,7 @@ MC:
     preview:
       width:           "100%"
       height:          "600px"
-      nrow:            4
+      nrow:            3
       ncol:            3
       nrow_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
       ncol_opt:        [ 1, 2, 3, 4, 5, 6, 7, 8 ]
@@ -179,6 +185,16 @@ MC:
       block: TRUE
      #tooltip: "tooltip"
      #tooltip_position: "right"
+    button_fg_next_pg:
+      size: "sm"
+      block: TRUE
+      tooltip: "Next page"
+      tooltip_position: "top"
+    button_fg_prev_pg:
+      size: "sm"
+      block: TRUE
+      tooltip: "Previous page"
+      tooltip_position: "top"
     button_tb_save:
       size: "sm"
       block: TRUE
@@ -365,12 +381,14 @@ MC:
     # Set urls to NULL to disable
     url_dosing:        "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#dosing-information"
     url_data:          "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#data-format"
+    url_manual:        "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#manually-flagging-data"
     url_intervals:     "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#nca-analysis-intervals"
     url_parameters:    "https://ruminate.ubiquity.tools/articles/noncompartmental_analysis.html#nca-parameters"
     ph:
       text_ana_interval_start: 0
       text_ana_interval_stop:  "number or Inf"
       notes:                   "Optional NCA notes that will be carried over and used in other elements (e.g. reporting)."
+      text_manual:             "Shipment left over the weekend without refrigeration."
   # This controls the figure and table selection for an analysis. The order of
   # the keys (e.g., tb_ind_params, tb_sum_params, etc) controls the
   # order they are dispalyed in the selector and the text controls what's show
@@ -400,6 +418,8 @@ MC:
     del_ana:                         "Delete"
     copy_ana:                        "Copy"
     clip_ana:                        "Code"
+    fg_next_pg:                      NULL #"Next Page"
+    fg_prev_pg:                      NULL #"Previous page"
     fg_save:                         "Apply changes"
     tb_save:                         "Apply changes"
     curr_anas_none:                  "No figures yet created"
@@ -432,7 +452,7 @@ MC:
     select_ana_col_time:             "Time"
     select_ana_col_ntime:            "Nominal Time"
     select_ana_col_dose:             "Dose"
-    select_ana_col_dur:              "Dose Duration"
+    select_ana_col_dur:              "Collection Duration"
     select_ana_col_conc:             "Concentration"
     select_ana_col_route:            "Route"
     select_ana_col_group:            "Other Grouping"

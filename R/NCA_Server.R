@@ -61,6 +61,8 @@ NCA_Server <- function(id,
       input[["button_ana_copy"]]
       input[["select_current_ana"]]
       input[["button_fg_ind_obs_save"]]
+      input[["button_fg_ind_obs_next_pg"]]
+      input[["button_fg_ind_obs_prev_pg"]]
 
       react_internal[["click"]] 
       react_internal[["select"]] 
@@ -100,6 +102,8 @@ NCA_Server <- function(id,
       input[["button_ana_add_int"]]
       input[["button_ana_use_scenario"]]
       input[["button_fg_ind_obs_save"]]
+      input[["button_fg_ind_obs_next_pg"]]
+      input[["button_fg_ind_obs_prev_pg"]]
 
       input[["button_ana_run"]]
       input[["button_ana_new"]]
@@ -769,6 +773,8 @@ NCA_Server <- function(id,
       input[["select_current_ana"]]
       input[["switch_ana_fig"]]
       input[["button_fg_ind_obs_save"]]
+      input[["button_fg_ind_obs_next_pg"]]
+      input[["button_fg_ind_obs_prev_pg"]]
 
 
       state = NCA_fetch_state(id              = id,
@@ -893,6 +899,8 @@ NCA_Server <- function(id,
       input[["switch_ana_fig"]]
 
       input[["button_fg_ind_obs_save"]]
+      input[["button_fg_ind_obs_next_pg"]]
+      input[["button_fg_ind_obs_prev_pg"]]
 
       state = NCA_fetch_state(id              = id,
                              input           = input,
@@ -934,6 +942,8 @@ NCA_Server <- function(id,
       react_internal[["select"]] 
 
       input[["button_fg_ind_obs_save"]]
+      input[["button_fg_ind_obs_next_pg"]]
+      input[["button_fg_ind_obs_prev_pg"]]
 
       state = NCA_fetch_state(id             = id,
                              input           = input,
@@ -1036,51 +1046,43 @@ NCA_Server <- function(id,
       if(current_ana[["isgood"]]){
         if(current_ana[["fig_view"]] == "fg_ind_obs"){
 
-          uiele_save =
-          shinyWidgets::actionBttn(
-            inputId = NS(id, "button_fg_ind_obs_save"),
-            label   = state[["MC"]][["labels"]][["fg_save"]],
-            style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
-            size    = state[["MC"]][["formatting"]][["button_fg_save"]][["size"]],
-            block   = state[["MC"]][["formatting"]][["button_fg_save"]][["block"]],
-            color   = "primary",
-            icon    = icon("arrow-down"))
+          uiele_next_page = shinyWidgets::actionBttn(
+             inputId = NS(id, "button_fg_ind_obs_next_pg"),
+             label   = state[["MC"]][["labels"]][["fg_next_pg"]],
+             style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+             size    = state[["MC"]][["formatting"]][["button_fg_next_pg"]][["size"]],
+             block   = state[["MC"]][["formatting"]][["button_fg_next_pg"]][["block"]],
+             color   = "primary",
+             icon    = icon("caret-right"))
+          uiele_next_page = formods::FM_add_ui_tooltip(state, uiele_next_page,
+                   tooltip     = state[["MC"]][["formatting"]][["button_fg_next_pg"]][["tooltip"]],
+                   position    = state[["MC"]][["formatting"]][["button_fg_next_pg"]][["tooltip_position"]])
 
-          uiele_nrow =
-          shinyWidgets::pickerInput(
-            inputId    = NS(id, "select_fg_ind_obs_nrow"),
-            choices    = state[["MC"]][["formatting"]][["preview"]][["nrow_opt"]],
-            label      = state[["MC"]][["labels"]][["select_fg_ind_obs_nrow"]],
-            selected   = current_ana[["fg_ind_obs_nrow"]],
-            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
-            width      = state[["MC"]][["formatting"]][["select_fg_ind_obs_nrow"]][["width"]],
-            )
-          uiele_ncol =
-          shinyWidgets::pickerInput(
-            inputId    = NS(id, "select_fg_ind_obs_ncol"),
-            choices    = state[["MC"]][["formatting"]][["preview"]][["ncol_opt"]],
-            label      = state[["MC"]][["labels"]][["select_fg_ind_obs_ncol"]],
-            selected   = current_ana[["fg_ind_obs_ncol"]],
-            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
-            width      = state[["MC"]][["formatting"]][["select_fg_ind_obs_ncol"]][["width"]]
-            )
+          uiele_prev_page = shinyWidgets::actionBttn(
+             inputId = NS(id, "button_fg_ind_obs_prev_pg"),
+             label   = state[["MC"]][["labels"]][["fg_prev_pg"]],
+             style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+             size    = state[["MC"]][["formatting"]][["button_fg_prev_pg"]][["size"]],
+             block   = state[["MC"]][["formatting"]][["button_fg_prev_pg"]][["block"]],
+             color   = "primary",
+             icon    = icon("caret-left"))
+          uiele_prev_page = formods::FM_add_ui_tooltip(state, uiele_prev_page,
+                   tooltip     = state[["MC"]][["formatting"]][["button_fg_prev_pg"]][["tooltip"]],
+                   position    = state[["MC"]][["formatting"]][["button_fg_prev_pg"]][["tooltip_position"]])
 
-          uiele_page = htmlOutput(NS(id, "ui_nca_ana_results_fig_pages"))
+          uiele_format        = htmlOutput(NS(id, "ui_nca_ana_results_fig_ind_obs_format"))
+          uiele_page          = htmlOutput(NS(id, "ui_nca_ana_results_fig_pages"))
+          uiele_manual_select = htmlOutput(NS(id, "ui_nca_ana_results_fig_ind_obs_manual_select"))
+          uiele_manual_text   = htmlOutput(NS(id, "ui_nca_ana_results_fig_ind_obs_manual_text"))
 
-          uiele_manual = htmlOutput(NS(id, "ui_nca_ana_results_fig_manual"))
-
-          uiele_logy = shinyWidgets::awesomeCheckbox(
-                   inputId  = NS(id, "check_fg_ind_obs_logy"),
-                   label    = state[["MC"]][["labels"]][["check_fg_ind_obs_logy"]],
-                   width    = state[["MC"]][["formatting"]][["check_fg_ind_obs"]][["width"]],
-                   value    = current_ana[["fg_ind_obs_logy"]])
           dvstyle = "display:inline-block"
-          uiele = tagList(div(style=dvstyle, uiele_save),
-                          div(style=dvstyle, uiele_nrow),
-                          div(style=dvstyle, uiele_ncol),
-                          div(style=dvstyle, uiele_logy),
+          uiele = tagList(
+                          div(style=dvstyle, uiele_format),
                           div(style=dvstyle, uiele_page),
-                          div(style=dvstyle, uiele_manual))
+                          div(style=dvstyle, uiele_prev_page),
+                          div(style=dvstyle, uiele_next_page),
+                          div(style=dvstyle, uiele_manual_select),
+                          div(uiele_manual_text))
         }
       }
 
@@ -1177,6 +1179,59 @@ NCA_Server <- function(id,
       req(input[["select_ana_fig_view"]])
 
       input[["button_fg_ind_obs_save"]]
+      input[["button_fg_ind_obs_next_pg"]]
+      input[["button_fg_ind_obs_prev_pg"]]
+
+      state = NCA_fetch_state(id             = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+      uiele = NULL
+
+      current_ana = NCA_fetch_current_ana(state)
+      #if(current_ana[["fig_type"]]  == "report"){
+        if(current_ana[["isgood"]]){
+          page_values = names(current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]])
+          if(current_ana[["curr_fg_ind_obs"]] %in% page_values){
+            selected_page = current_ana[["curr_fg_ind_obs"]]
+          } else {
+            selected_page = page_values[1]
+          }
+        
+          names(page_values) = 1:length(page_values)
+        
+          uiele =
+          shinyWidgets::pickerInput(
+            inputId    = NS(id, "select_fg_ind_obs_page"),
+            choices    = page_values,
+            label      = state[["MC"]][["labels"]][["select_fg_ind_obs_page"]],
+            selected   = selected_page,
+            options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+            width      = state[["MC"]][["formatting"]][["select_fg_ind_obs_page"]][["width"]]
+            )
+        }
+     #}
+    uiele})
+    # Figure report ui elements            
+    output$ui_nca_ana_results_fig_ind_obs_format             = renderUI({
+      input[["button_ana_run"]]
+      input[["button_ana_new"]]
+      input[["button_ana_save"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["select_current_ana"]]
+      input[["switch_ana_fig"]]
+      # This is dependent on the figure view so
+      # shouldn't build out until that.
+      req(input[["select_ana_fig_view"]])
+
+      #input[["button_fg_ind_obs_save"]]
       state = NCA_fetch_state(id             = id,
                              input           = input,
                              session         = session,
@@ -1191,33 +1246,54 @@ NCA_Server <- function(id,
 
       current_ana = NCA_fetch_current_ana(state)
 
-      if(current_ana[["isgood"]]){
-        page_values = names(current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]])
-        if(current_ana[["curr_fg_ind_obs"]] %in% page_values){
-          selected_page = current_ana[["curr_fg_ind_obs"]]
-        } else {
-          selected_page = page_values[1]
-        }
-        names(page_values) = 1:length(page_values)
+      uiele_save =
+      shinyWidgets::actionBttn(
+        inputId = NS(id, "button_fg_ind_obs_save"),
+        label   = state[["MC"]][["labels"]][["fg_save"]],
+        style   = state[["yaml"]][["FM"]][["ui"]][["button_style"]],
+        size    = state[["MC"]][["formatting"]][["button_fg_save"]][["size"]],
+        block   = state[["MC"]][["formatting"]][["button_fg_save"]][["block"]],
+        color   = "primary",
+        icon    = icon("arrow-down"))
+      dvstyle = "display:inline-block"
 
-        uiele =
+
+      if(current_ana[["fig_type"]]  == "report"){
+        uiele_nrow =
         shinyWidgets::pickerInput(
-          inputId    = NS(id, "select_fg_ind_obs_page"),
-          choices    = page_values,
-          label      = state[["MC"]][["labels"]][["select_fg_ind_obs_page"]],
-          selected   = selected_page,
+          inputId    = NS(id, "select_fg_ind_obs_nrow"),
+          choices    = state[["MC"]][["formatting"]][["preview"]][["nrow_opt"]],
+          label      = state[["MC"]][["labels"]][["select_fg_ind_obs_nrow"]],
+          selected   = current_ana[["fg_ind_obs_nrow"]],
           options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
-          width      = state[["MC"]][["formatting"]][["select_fg_ind_obs_page"]][["width"]]
+          width      = state[["MC"]][["formatting"]][["select_fg_ind_obs_nrow"]][["width"]],
           )
+        uiele_ncol =
+        shinyWidgets::pickerInput(
+          inputId    = NS(id, "select_fg_ind_obs_ncol"),
+          choices    = state[["MC"]][["formatting"]][["preview"]][["ncol_opt"]],
+          label      = state[["MC"]][["labels"]][["select_fg_ind_obs_ncol"]],
+          selected   = current_ana[["fg_ind_obs_ncol"]],
+          options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+          width      = state[["MC"]][["formatting"]][["select_fg_ind_obs_ncol"]][["width"]]
+          )
+        uiele_logy = shinyWidgets::awesomeCheckbox(
+                   inputId  = NS(id, "check_fg_ind_obs_logy"),
+                   label    = state[["MC"]][["labels"]][["check_fg_ind_obs_logy"]],
+                   width    = state[["MC"]][["formatting"]][["check_fg_ind_obs"]][["width"]],
+                   value    = current_ana[["fg_ind_obs_logy"]])
+
+        uiele = tagList(div(style=dvstyle, uiele_save),
+                        div(style=dvstyle, uiele_nrow),
+                        div(style=dvstyle, uiele_ncol),
+                        div(style=dvstyle, uiele_logy))
+      } else {
+        uiele = tagList(div(style=dvstyle, uiele_save))
       }
 
-
-
-
     uiele})
-
-    # Figure manual ui element
-    output$ui_nca_ana_results_fig_manual             = renderUI({
+    # Figure manual select ui element
+    output$ui_nca_ana_results_fig_ind_obs_manual_select      = renderUI({
       input[["button_ana_run"]]
       input[["button_ana_new"]]
       input[["button_ana_save"]]
@@ -1229,7 +1305,7 @@ NCA_Server <- function(id,
       # shouldn't build out until that.
       req(input[["select_ana_fig_view"]])
 
-      input[["button_fg_ind_obs_save"]]
+      #input[["button_fg_ind_obs_save"]]
       state = NCA_fetch_state(id             = id,
                              input           = input,
                              session         = session,
@@ -1272,27 +1348,65 @@ NCA_Server <- function(id,
             selected_flag = as.character(choices[1])
           }
 
+          manual_link = NULL
+          if(!is.null(state[["MC"]][["tooltips"]][["url_manual"]])){
+            manual_link = icon_link(href=state[["MC"]][["tooltips"]][["url_manual"]])}
+
+
           uiele =
           shinyWidgets::pickerInput(
             inputId    = NS(id, "select_fg_ind_obs_manual"),
             choices    = choices,
-            label      = state[["MC"]][["labels"]][["select_fg_ind_obs_manual"]],
+            label      = tagList(state[["MC"]][["labels"]][["select_fg_ind_obs_manual"]], manual_link),
             selected   = selected_flag,
             options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
             width      = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual"]][["width"]],
             choicesOpt = choicesOpt
             )
+          uiele = formods::FM_add_ui_tooltip(state, uiele,
+                   tooltip     = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual"]][["tooltip"]],
+                   position    = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual"]][["tooltip_position"]])
+
         }
       }
 
-    uiele = formods::FM_add_ui_tooltip(state, uiele,
-             tooltip     = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual"]][["tooltip"]],
-             position    = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual"]][["tooltip_position"]])
 
     uiele})
+    # Manual flag text descriptoin
+    output$ui_nca_ana_results_fig_ind_obs_manual_text        = renderUI({
+      req(input[["select_ana_fig_view"]])
+      input[["switch_ana_fig"]]
+
+      #input[["button_fg_ind_obs_save"]]
+      state = NCA_fetch_state(id             = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             id_ASM          = id_ASM,
+                             id_UD           = id_UD,
+                             id_DW           = id_DW,
+                             react_state     = react_state)
+
+      uiele = NULL
+
+      current_ana = NCA_fetch_current_ana(state)
+
+      if(current_ana[["isgood"]]){
+        if(current_ana[["fig_type"]]  == "interactive"){
+           uiele = textAreaInput(inputId     = NS(id, "text_manual"),
+                                width        = state[["MC"]][["formatting"]][["text_manual"]][["width"]],
+                                height       = state[["MC"]][["formatting"]][["text_manual"]][["height"]],
+                                label        = NULL,
+                                placeholder  = state[["MC"]][["tooltips"]][["ph"]][["text_manual"]])
+          uiele = formods::FM_add_ui_tooltip(state, uiele,
+                   tooltip     = state[["MC"]][["formatting"]][["text_manual"]][["tooltip"]],
+                   position    = state[["MC"]][["formatting"]][["text_manual"]][["tooltip_position"]])
+        }
+      }
 
 
-
+    uiele})
     #------------------------------------
     # Tabular Results
     output$ui_nca_ana_results_tab             = renderUI({
@@ -3133,6 +3247,8 @@ NCA_Server <- function(id,
     # Removing holds
     remove_hold_listen  <- reactive({
       list(react_state[[id_ASM]],
+           input$button_fg_ind_obs_prev_pg,
+           input$button_fg_ind_obs_next_pg,
            input$select_current_ana,
            input$select_current_view)
     })
@@ -3470,7 +3586,18 @@ NCA_fetch_state = function(id, input, session,
       # Getting the current manual flag:
       manual_flag = current_ana[["manual_fg_ind_obs"]]
       manual_key = unlist(manual_rows$key)
-      FM_le(state, paste0("  ", manual_key,": ", manual_flag))
+
+      if(is.null(current_ana[["text_manual"]])){
+        manual_note = ""
+      } else {
+        manual_note = current_ana[["text_manual"]]
+      }
+
+      if(is.null(manual_key)){
+        FM_le(state, "no points selected")
+      } else {
+        FM_le(state, paste0("  ", manual_key,": ", manual_flag))
+      }
 
       # Removing records from the manual flag tracking dataframe 
       # that match the current manual key(s):
@@ -3485,26 +3612,24 @@ NCA_fetch_state = function(id, input, session,
         current_ana[["manual_ds_flags"]] = rbind(
            current_ana[["manual_ds_flags"]],
            data.frame('key'  = manual_key,
-                      'flag' = manual_flag)
+                      'flag' = manual_flag,
+                      'note' = manual_note)
         )
       }
 
       if(nrow(current_ana[["manual_ds_flags"]]) > 0){
         FM_le(state, "applying manual flags:")
-        FM_le(state, paste0("  ", current_ana[["manual_ds_flags"]]$key, ": ", current_ana[["manual_ds_flags"]]$flag, "\n"))
+        FM_le(state, paste0("  ", current_ana[["manual_ds_flags"]]$key, ": ", current_ana[["manual_ds_flags"]]$flag, ", note:", current_ana[["manual_ds_flags"]]$note, "\n"))
       } else {
-        FM_le(state, "No manual flags currently set.")
+        FM_le(state, "no manual flags currently set.")
       }
 
       # Saving the current analysis
       state = NCA_set_current_ana(state, current_ana)
 
       # Rebuilding the figure to incorporate any flag changes:
-      state = run_nca_components(state, "fg_ind_obs")
-
-      #current_ana = NCA_fetch_current_ana(state)
-      #fobj = NCA_fetch_current_obj(state, "figure")
-      #browser()
+      # browser()
+      state = run_nca_components(state, "fg_ind_obs_subset")
     }
   }
 
@@ -3523,6 +3648,83 @@ NCA_fetch_state = function(id, input, session,
     # Saving the button state to the counter
     state[["NCA"]][["button_counters"]][["button_fg_ind_obs_save"]] =
       state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]]
+  }
+
+  #---------------------------------------------
+  # Moving to the next or previous figure 
+  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]], init_val=c("", 0)) |
+     has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]], init_val=c("", 0))){
+
+    # Pulling out the current analysis:
+    current_ana = NCA_fetch_current_ana(state)
+
+    # Now we update the selected page based on whether the user has selected
+    # next or previous
+    if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]],
+                   old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]], init_val=c("", 0))){
+       formods::FM_le(state, "switching fg_ind_obs_next_pg")
+       pg_change = "next"
+    }
+    if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]],
+                   old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]], init_val=c("", 0))){
+       formods::FM_le(state, "switching fg_ind_obs_prev_pg")
+       pg_change = "prev"
+    }
+
+    page_values = names(current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]])
+
+    if(length(page_values)>0){
+
+      current_page = current_ana[["curr_fg_ind_obs"]] 
+
+      if(is.null(current_page)){
+        current_page =  page_values[1]
+        FM_le(state, paste0("current page for fg_ind_obs not found defaulting to ", current_page), entry_type="warning")
+      }
+
+      new_page = NULL
+      if(length(page_values)==1){
+        # If there is only 1 page then we just return it again
+        new_page = page_values[1]
+
+      } else if(pg_change == "prev" & which(page_values == current_page) == 1){
+        # Here the previous page is requested but we are currently at the
+        # beginning so we wrap around to the back:
+        new_page = page_values[length(page_values)]
+      } else if(pg_change == "next" & which(page_values == current_page) == length(page_values)){
+        # Here the next page is requested but we are currently at the
+        # end so we wrap around to the front:
+        new_page = page_values[1]
+      } else if(pg_change == "prev"){
+        new_page = page_values[which(page_values == current_page) - 1]
+      } else if(pg_change == "next"){
+        new_page = page_values[which(page_values == current_page) + 1]
+      }
+
+      if(!is.null(new_page)){
+        current_ana[["curr_fg_ind_obs"]] = new_page
+        FM_le(state, paste0("page for fg_ind_obs set to ", new_page))
+      } else {
+        FM_le(state, paste0("failed to set ", pg_change, " for fg_ind_obs new page logic failed"), entry_type="warning")
+      }
+
+    } else {
+      FM_le(state, paste0("failed to set ", pg_change, " for fg_ind_obs no figure pages were found"), entry_type="warning")
+    }
+
+    # Now we save the analysis with the page updated
+    state = NCA_set_current_ana(state, current_ana)
+
+    # Next we need to hold the show page pull down
+    state = set_hold(state)
+
+    # Saving the button states to the counter
+    state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]] =
+      state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]]
+    state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]] =
+      state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]]
   }
   #---------------------------------------------
   # Process scenario button selection here to overwrite
@@ -3657,7 +3859,6 @@ NCA_fetch_state = function(id, input, session,
     # Changing the current view to the one selected in the UI
     state = NCA_mkactive_ana(state, state[["NCA"]][["ui"]][["select_current_ana"]])
     state = set_hold(state)
-    # browser()
   }
   #---------------------------------------------
   # Copy Analysis
@@ -3875,6 +4076,8 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session
                       "button_ana_copy",
                       "button_ana_add_int",
                       "button_ana_use_scenario",
+                      "button_fg_ind_obs_next_pg",
+                      "button_fg_ind_obs_prev_pg",
                       "button_fg_ind_obs_save",
                       "switch_ana_include_units")
 
@@ -3889,6 +4092,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session
     "select_tb_ind_obs_page"         = "curr_tb_ind_obs",
     "select_tb_ind_params_page"      = "curr_tb_ind_params",
     "select_tb_sum_params_page"      = "curr_tb_sum_params",
+    "text_manual"                    = "text_manual",
     "fg_ind_obs_rpt"                 = "fg_ind_obs_rpt",
     "tb_ind_obs_rpt"                 = "tb_ind_obs_rpt",
     "tb_ind_params_rpt"              = "tb_ind_params_rpt",
@@ -4781,6 +4985,7 @@ NCA_new_ana    = function(state){
          col_cycle               = "",
          curr_fg_ind_obs         = "",               # Current figure page
          manual_fg_ind_obs       = first_flag,       # manual selection flag
+         text_manual             = "",               # Default textual description of flags
          curr_tb_ind_obs         = "",               # Current table page
          curr_tb_ind_params      = "",               #
          curr_tb_sum_params      = "",               #
@@ -5561,11 +5766,13 @@ nca_builder = function(state){
   code_pknca         = c()
 
 
-  code_ana_only      = ""
-  code_previous      = ""
-  code_tb_ind_obs    = ""
-  code_tb_ind_params = ""
-  code_fg_ind_obs    = ""
+  code_ana_only             = ""
+  code_previous             = ""
+  code_tb_ind_obs           = ""
+  code_tb_ind_params        = ""
+  code_fg_ind_obs           = ""
+  code_fg_ind_obs_all       = ""
+  code_fg_ind_obs_subset    = ""
 
   # Checking and retrieving the current analysis
   current_ana  = NCA_process_current_ana(state)
@@ -5727,14 +5934,16 @@ nca_builder = function(state){
     if(nrow(current_ana[["manual_ds_flags"]]) > 0){
       row_str = paste0(
             stringr::str_pad("~key, ", width=13),
-            stringr::str_pad("~flag,", width=13)
+            stringr::str_pad("~flag,", width=13),
+            stringr::str_pad("   ~note,", width=13, side="right")
       )
       code_ds_dosing = c(code_ds_dosing,  row_str)
 
       for(ridx in 1:nrow(current_ana[["manual_ds_flags"]])){
         row_str = paste0(
               stringr::str_pad(paste0( deparse(current_ana[["manual_ds_flags"]][ridx, ][["key"]]),", "), width=13),
-              stringr::str_pad(paste0( deparse(current_ana[["manual_ds_flags"]][ridx, ][["flag"]])), width=13)
+              stringr::str_pad(paste0( deparse(current_ana[["manual_ds_flags"]][ridx, ][["flag"]]),","), width=13),
+              stringr::str_pad(paste0("   ", deparse(current_ana[["manual_ds_flags"]][ridx, ][["note"]])),     width=13, side="right")
         )
         if(ridx < nrow(current_ana[["manual_ds_flags"]]) ){
           row_str = paste0(row_str, ",")
@@ -6018,7 +6227,8 @@ nca_builder = function(state){
       time_units = current_ana[["units_time"]]
     }
 
-    code_fg_ind_obs   = c(
+    # This genereates all the figures
+    code_fg_ind_obs_all   = c(
       "",
       "# Generating figures of indiviudal profiles",
       paste0(nca_fg_ind_obs_object_name, " = mk_figure_ind_obs("),
@@ -6029,6 +6239,23 @@ nca_builder = function(state){
       paste0("  flag_map   = ", nca_flag_map_object_name, ", "),
       paste0("  nfrows     = ", current_ana$fg_ind_obs_nrow, ", "),
       paste0("  nfcols     = ", current_ana$fg_ind_obs_ncol, ", "),
+      paste0("  log_scale  = ", current_ana$fg_ind_obs_logy),
+      paste0(")"))
+
+
+    # This only generates the currently selected
+    code_fg_ind_obs_subset   = c(
+      "",
+      "# Generating figures of indiviudal profiles",
+      paste0(nca_fg_ind_obs_object_name, " = mk_figure_ind_obs("),
+      paste0(nca_ds_object_name, ", "),
+      paste0("  time_units = ", deparse(time_units), ", "),
+      paste0("  conc_units = ", deparse(conc_units), ", "),
+      paste0("  col_map    = ", nca_col_map_object_name, ", "),
+      paste0("  flag_map   = ", nca_flag_map_object_name, ", "),
+      paste0("  nfrows     = ", current_ana$fg_ind_obs_nrow, ", "),
+      paste0("  nfcols     = ", current_ana$fg_ind_obs_ncol, ", "),
+      paste0("  only_figs  = ", deparse(current_ana$curr_fg_ind_obs), ", "),
       paste0("  log_scale  = ", current_ana$fg_ind_obs_logy),
       paste0(")"))
 
@@ -6060,9 +6287,15 @@ nca_builder = function(state){
                                  code_ds_dosing, 
                                  code_pknca),
                                collapse="\n")
-    code_fg_ind_obs_sa = paste(c(code_ana_options, 
-                                 code_ds_dosing, 
-                                 code_fg_ind_obs), collapse="\n")
+    code_fg_ind_obs_all = paste(c(
+                        code_ana_options, 
+                        code_ds_dosing, 
+                        code_fg_ind_obs_all), collapse="\n")
+
+    code_fg_ind_obs_subset = paste(c(
+                        code_ana_options, 
+                        code_ds_dosing, 
+                        code_fg_ind_obs_subset), collapse="\n")
 
     code_tb_ind_obs_sa = paste(c(code_ana_options, 
                                  code_ds_dosing, 
@@ -6072,7 +6305,7 @@ nca_builder = function(state){
     code_previous      = ds[["code"]]
     code               = paste(c(code_previous,
                                  code_ana_only,
-                                 code_fg_ind_obs,
+                                 code_fg_ind_obs_all,
                                  code_tb_ind_obs,
                                  code_tb_ind_params),
                                  collapse="\n")
@@ -6112,11 +6345,12 @@ nca_builder = function(state){
   current_ana[["code"]]              = code
   current_ana[["code_sa"]]           = code_sa
   current_ana[["code_components"]]   = list(
-    code_previous      = code_previous,
-    code_ana_only      = code_ana_only,
-    code_fg_ind_obs    = code_fg_ind_obs_sa,
-    code_tb_ind_obs    = code_tb_ind_obs_sa,
-    code_tb_ind_params = code_tb_ind_params
+    code_previous             = code_previous,
+    code_ana_only             = code_ana_only,
+    code_fg_ind_obs           = code_fg_ind_obs_all,
+    code_fg_ind_obs_subset    = code_fg_ind_obs_subset,
+    code_tb_ind_obs           = code_tb_ind_obs_sa,
+    code_tb_ind_params        = code_tb_ind_params
   )
 
   # This stores the object names used in analyses. The values field will be
@@ -6262,24 +6496,47 @@ run_nca_components = function(
     #---------------------------------------------
     # This list maps the component name to the key
     # with the code for that component
+    # - code      is the code component to run
+    # - code      is the code component to run
+    # - reset_all is set to TRUE when the entire object needs to be
+    #             overwritten. FALSE indicates that only a portion is being rebuilt 
+    # - list_name is the name within the object generated where the "pages"
+    #             are stored. For example in when you generate a figure it will be stored
+    #             in "figures"
     fig_tabs = list("fg_ind_obs"   = list(code      = "code_fg_ind_obs",
                                           current   = "curr_fg_ind_obs",
+                                          reset_all = TRUE,
+                                          obj       = "fg_ind_obs",
+                                          list_name = "figures"),
+                    "fg_ind_obs_subset"   = 
+                                     list(code      = "code_fg_ind_obs_subset",
+                                          current   = "curr_fg_ind_obs",
+                                          reset_all = FALSE, 
+                                          obj       = "fg_ind_obs",
                                           list_name = "figures"),
                     "tb_ind_obs"   = list(code      ="code_tb_ind_obs",
                                           current   ="curr_tb_ind_obs",
+                                          reset_all = TRUE,
+                                          obj       = "tb_ind_obs",
                                           list_name = "tables"),
-                    "tb_ind_params" = list(code      ="code_tb_ind_params",
-                                           current   ="curr_tb_ind_params",
-                                           list_name = "tables"))
+                    "tb_ind_params" = list(
+                                          code      ="code_tb_ind_params",
+                                          current   ="curr_tb_ind_params",
+                                          reset_all = TRUE,
+                                          obj       = "tb_ind_params",
+                                          list_name = "tables"))
     for(fig_tab in names(fig_tabs)){
       if(current_ana[["isgood"]]){
         if(fig_tab %in% components){
+
+          # Object name generated when running the code:
+          obj_name = fig_tabs[[fig_tab]][["obj"]]
 
           # Figure or table generation code:
           cmd = current_ana[["code_components"]][[  fig_tabs[[fig_tab]][["code"]]  ]]
 
           # Object name created to capture:
-          capture = current_ana[["objs"]][[fig_tab]][["name"]]
+          capture = current_ana[["objs"]][[ obj_name ]][["name"]]
 
           # In the environment environment we define the dataset,
           # the report template, the nca parameters summary(nps),
@@ -6302,14 +6559,35 @@ run_nca_components = function(
           # is that the code can fail to execute. That should mark the current
           # analysis as bad and pass those failures on to the user.
           if(nca_run_res[["isgood"]]){
+
             # Pulling out the captured object
-            tmp_res = nca_run_res[["capture"]][[  current_ana[["objs"]][[fig_tab]][["name"]]  ]]
+            #tmp_res = nca_run_res[["capture"]][[  obj_name  ]]
+            tmp_res = nca_run_res[["capture"]][[  current_ana[["objs"]][[ obj_name ]][["name"]]  ]]
 
-            # This pulls out any names for figures, tables, etc:
-            list_names = names(tmp_res[[  fig_tabs[[fig_tab]][["list_name"]] ]])
 
-            # We store the result for the current component
-            current_ana[["objs"]][[fig_tab]][["value"]] = tmp_res
+            # This is the name of the list that stores the elemetns. Eg.
+            # figures, tables, etc.
+            list_name = fig_tabs[[fig_tab]][["list_name"]]
+
+            # This pulls out any names for figures, tables, etc. that were
+            # built e.g.  # Figure_1, Figure_2 
+            list_names = names(tmp_res[[  list_name ]])
+
+            # This acocunts for a force rebuild of all components such as when
+            # someone changes the number of columns/rows and forces a rebuild
+            if(fig_tabs[[fig_tab]][["reset_all"]]){
+              # JMH set this up to only update the figures/tables in the object
+              # The commented code below 
+              # We store the result for the current component
+              current_ana[["objs"]][[ obj_name ]][["value"]] = tmp_res
+            } else {
+              # This is triggered by a partial rebuild such as when someone is
+              # doing a manual point selection
+              for(fig_tab_name in list_names ){
+                current_ana[["objs"]][[ obj_name ]][["value"]][[ list_name ]][[fig_tab_name]]  = 
+                     tmp_res[[ list_name ]][[fig_tab_name]]
+              }
+            }
 
             # There should be at least one element here:
             if(!is.null(list_names)){
@@ -6324,12 +6602,12 @@ run_nca_components = function(
               # isn't anything to show:
 
               # If we don't see an element not we set the list name to null
-              current_ana[["objs"]][[fig_tab]][["value"]][[
+              current_ana[["objs"]][[ obj_name ]][["value"]][[
                 fig_tabs[[fig_tab]][["list_name"]] ]] = NULL
 
               # We also attach a message to be returned to the user
-              current_ana[["objs"]][[fig_tab]][["value"]][["msgs"]] = c(
-                current_ana[["objs"]][[fig_tab]][["value"]][["msgs"]],
+              current_ana[["objs"]][[ obj_name ]][["value"]][["msgs"]] = c(
+                current_ana[["objs"]][[ obj_name ]][["value"]][["msgs"]],
                 paste0("No ", fig_tabs[[fig_tab]][["list_name"]],
                        " elements found when generating: ", fig_tab)
               )
@@ -6802,14 +7080,15 @@ mk_figure_ind_obs = function(
   fig_idx=1
   while(length(subs_left) > 0){
 
+    fig_key = paste0("Figure_", fig_idx)
+
     BLD_FIG = TRUE
     if(!is.null(only_figs)){
-      if(!(fig_idx %in% only_figs)){
+      if(!(fig_key %in% only_figs)){
         BLD_FIG = FALSE
       }
     }
     
-    fig_key = paste0("Figure_", fig_idx)
     
     # Figuring out how many subjects to plot on the
     # current figure

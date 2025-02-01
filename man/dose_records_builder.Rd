@@ -58,8 +58,8 @@ if(formods::is_installed("readxl")){
   # This contains flags used in functions below. 
   #  - manual indicates that it can be assinged with manual point selection.
   #    This SHOULD NOT BE CHANGED
-  #  - color  color used when plotting flagged points 
-  #  - flag   internal flag used (SHOULD NOT BE CHANGED).
+  #  - color       color used when plotting flagged points 
+  #  - sn          short name used in table to identify flagged points
   #  - description short description used in figure legends
   #  - notes       notes that go at the bottom of tables
   flag_map = list(
@@ -137,13 +137,14 @@ if(formods::is_installed("readxl")){
     )
 
 
-  # This flags specific rows in the source dataset  based on the row number.
-  # See flag_map for possible flags (those that include  manual="yes"). To
+  # This flags specific rows in the source dataset  based 
+  # on the row number.  See flag_map for possible flags 
+  # (those that include  manual="yes"). To 
   # remove a flag just delete the row.
   ds_flags = dplyr::tribble(
-       ~key,   ~flag,
-    "rec_3",  "censor",
-    "rec_7",    "hlex"
+       ~key,   ~flag,     ~note,
+    "rec_3",  "censor",   "worst point",
+    "rec_7",    "hlex",   "bad point"
     )
   
   

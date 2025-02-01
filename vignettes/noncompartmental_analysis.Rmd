@@ -221,6 +221,30 @@ If your dataset is formatted for NONMEM you can extract the dosing from those ro
 
 Some notes on dosing information. For each interval where you want to calculate dose-dependent parameters, you will need to provide information about dosing in those intervals. In a multiple dose setting where you have intervals where you do not have enough PK data to run NCA it, is not necessary to provide dosing information for those intervals. For example if you have four weekly doses but only have intensive sampling on weeks 1 and 4 but peak and trough on weeks 2 and 3, you do not have to provide dosing information for weeks 2 and 3. However there are certain parameters that `{PKNCA}` will provide if that dosing and intermediate sampling information is provided (e.g. time to steady-state). So if all you are interested in is parameters for intervals with intensive sampling, then you don't need to worry about having dosing information for the other intervals. 
 
+# Manually flagging data
+
+It is possible to manually flag data for the following purposes:
+
+* Censoring: This will remove data from the analysis completely (flag: `censor`)
+* Specifying half-life: For a given interval/analyte combination only these flagged points will be used to determine the half-life (flag: `hlin`)
+* Exclusion from half-life: Records with this flag (`hlex`) will not be used in the half-life calculation but will otherwise be included in the analysis
+
+Note that if you have an interval/analyte combination with points specified to be included in the half-life (`hlin`), any flags for exclusion (`hlex`) in this interval/analyte combination will be ignored. At the scripting level the function `flag_nca_ds()` is used to apply flags to the dataset. See the examples section of that function documentation for an example of how flags are applied. 
+
+In the Shiny App manual flags can be applied by:
+
+* First running the analysis with no flags
+* Navigate to the figures tab 
+* Select the individual profiles
+* Select the interactive view
+* Select the manual flag to apply
+* Add any notes you want to associated with the flagged records
+* Select the points to apply that flag
+
+Once manual flags have been applied it is necessary to rerun the analysis. These points will be carried through to the reported tables.
+
+# NCA details
+
 ## NCA analysis intervals
 
 If you select an interval for analysis, it is necessary that you have observations at the beginning and end of that interval. If you do not have observations at dosing times (e.g. you dose at time zero but your first observation is at 15 minutes post-dose) and you want to use the dosing time as the beginning of your interval, you can have an observation that is BQL or missing (`NA`) at the dosing time (zero).
