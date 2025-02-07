@@ -328,15 +328,21 @@ Parameter Name is the value shown in the app.</p>
     # like table headers.
     text_format: "md"
     # Priority of reporting relative to other modules (higher numbers are
-    # reported first)
+    # reported first). 
     dimensions:
       figures:
-        height: 7.0 # word report figure height in inches
-        width:  6.0 # word report figure width in inches
+        height: 6.5        # word report figure height in inches
+        width:  6.0        # word report figure width in inches
+        start: [.07, .3]   # powerpoint report figure relative starting location
+        stop:  [.93, .99]  # powerpoint report figure relative stopping location
     priority: 10
+    # The figures and tables sections below controls the reporting of tables
+    # that can span multiple pages or slides. The reporting of these is fairly
+    # automated and behaves more or less consistently. 
+    #
     # The order of the figure and table ids (e.g. fg_ind_obs) represents the
     # order in which figures and tables will be reported. Each id should have
-    # the following optoins:
+    # the following options:
     #
     #   caption_single      Caption used when a table or figure needs only a
     #                       single page.
@@ -388,9 +394,20 @@ Parameter Name is the value shown in the app.</p>
       tb_ind_params:
         caption_single:   "===NCADESC=== (Individual Parameters)"
         caption_multiple: "===NCADESC=== (Individual Parameters, ===TABNUM=== of ===TABTOT===)"
+        description:      "===NCADESC=== Individual Parameters"
       tb_ind_obs:
         caption_single:   "===NCADESC===, Individual Data"
         caption_multiple: "===NCADESC===, Individual Data (===TABNUM=== of ===TABTOT===)"
+        description:      "===NCADESC=== Individual Data"
+      tb_ind_obs_flags:
+        caption_single:   "===NCADESC===, Manually Flagged Records "
+        caption_multiple: "===NCADESC===, Manually Flagged Records (===TABNUM=== of ===TABTOT===)"
+        description:      "===NCADESC=== Manually Flagged Records"
+    # This mostly controls how the raw NCA tables are output in xlsx. To
+    # suppress this output just comment out this section.
+    raw_nca_table:
+      tab_id:           "tb_raw_nca"
+      description:      "===NCADESC=== Raw NCA Results"
     # Default number of significant digits
     digits: 3
     # When reporting units the * will be replaced with this value:

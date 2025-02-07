@@ -46,9 +46,15 @@ NCA:
           fg_ind_obs_rpt:
           - docx
           - pptx
-          tb_ind_obs_rpt: docx
-          tb_ind_params_rpt: docx
-          tb_sum_params_rpt: pptx
+          tb_ind_obs_rpt: 
+          - docx
+          - xlsx
+          tb_ind_params_rpt: 
+          - docx
+          - xlsx
+          tb_sum_params_rpt:
+          - pptx
+          - xlsx
           fg_ind_obs_logy: yes
           sampling: serial
           dose_from: cols
@@ -131,9 +137,15 @@ NCA:
           fg_ind_obs_rpt:
           - docx
           - pptx
-          tb_ind_obs_rpt: docx
-          tb_ind_params_rpt: docx
-          tb_sum_params_rpt: pptx
+          tb_ind_obs_rpt:
+          - docx
+          - pptx
+          tb_ind_params_rpt:
+          - docx
+          - pptx
+          tb_sum_params_rpt:
+          - pptx
+          - pptx
           fg_ind_obs_logy: yes
           sampling: serial
           dose_from: cols

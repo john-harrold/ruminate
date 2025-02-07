@@ -4,6 +4,7 @@ library(ruminate)
 library(PKNCA)
 library(formods)
 
+
 if(formods::is_installed("readxl")){
   library(readxl)
 
@@ -207,7 +208,15 @@ if(formods::is_installed("readxl")){
     obnd         = rpt,
     flag_map     = flag_map,
     digits       = 3)
+  table_ind_obs$tables[["Table 1"]]$ft
 
+  # Generating tables of the manual flags applied
+  table_ind_obs_flags = mk_table_ind_obs_flags(
+    nca_res      = nca_res,
+    obnd         = rpt,
+    flag_map     = flag_map,
+    digits       = 3)
+  table_ind_obs_flags$tables[["Table 1"]]$ft
   
   # Generating tables of individual parameters
   table_ind_params = mk_table_nca_params(
@@ -220,6 +229,5 @@ if(formods::is_installed("readxl")){
 
   print(figure_ind_obs$figures$Figure_1$gg)
 
-  table_ind_obs$tables[["Table 1"]]$ft
   table_ind_params$tables[["Table 1"]]$ft
 }

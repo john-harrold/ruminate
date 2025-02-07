@@ -223,18 +223,37 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Code chunk to generate report element</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">rpt_res</span><span class="op">$</span><span class="va">code</span>, collapse<span class="op">=</span><span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_1_RES"]]=NCA_1_table_ind_params[["one_table"]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Reporting NCA results xlsx ==============================================</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ### PK Example ############################################################</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # NCA_1_tb_ind_obs_flags</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nart_res  = </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nca_append_report_tbls(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      rpt               = rpt,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      stres             = NCA_1_table_ind_obs_flags,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      rpttype           = "xlsx",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      text_format       = "md",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      tab_id            = "NCA_1_tb_ind_obs_flags",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      tab_desc          = stringr::str_replace_all(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        string  = "===NCADESC=== Manually Flagged Records",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pattern = "===NCADESC===", "PK Example"),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      caption_single    = stringr::str_replace_all(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        string  = "===NCADESC===, Manually Flagged Records ",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pattern = "===NCADESC===", "PK Example"),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      caption_multiple  = stringr::str_replace_all(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        string  = "===NCADESC===, Manually Flagged Records (===TABNUM=== of ===TABTOT===)",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pattern = "===NCADESC===", "PK Example"),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      flag_map  = NCA_1_flag_map) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # pulling the reporting object out of the result</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt = nart_res[["rpt"]] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Raw NCA results</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_1_tb_raw_nca"]] = as.data.frame(NCA_1_res)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_1_RES",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK Example (indiviudal results)"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["sheets"]][["NCA_1_RAW"]]=as.data.frame(NCA_1_res)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rpt[["summary"]] = rbind(rpt[["summary"]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   data.frame(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name="NCA_1_RAW",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Description="PK Example (raw NCA results)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Sheet_Name  = "NCA_1_tb_raw_nca",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Description = "PK Example Raw NCA Results"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
 </code></pre></div>

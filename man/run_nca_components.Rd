@@ -6,7 +6,7 @@
 \usage{
 run_nca_components(
   state,
-  components = c("nca", "fg_ind_obs", "tb_ind_obs", "tb_ind_params"),
+  components = c("nca", "fg_ind_obs", "tb_ind_obs", "tb_ind_obs_flags", "tb_ind_params"),
   verbose = TRUE
 )
 }

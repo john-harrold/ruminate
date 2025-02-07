@@ -3587,52 +3587,52 @@ NCA_fetch_state = function(id, input, session,
       manual_flag = current_ana[["manual_fg_ind_obs"]]
       manual_key = unlist(manual_rows$key)
 
-      if(is.null(current_ana[["text_manual"]])){
-        manual_note = ""
-      } else {
-        manual_note = current_ana[["text_manual"]]
-      }
 
       if(is.null(manual_key)){
         FM_le(state, "no points selected")
       } else {
         FM_le(state, paste0("  ", manual_key,": ", manual_flag))
+
+        if(is.null(current_ana[["text_manual"]])){
+          manual_note = ""
+        } else {
+          manual_note = current_ana[["text_manual"]]
+        }
+
+        # Removing records from the manual flag tracking dataframe 
+        # that match the current manual key(s):
+        if(nrow(current_ana[["manual_ds_flags"]])>0){
+          current_ana[["manual_ds_flags"]] = 
+            current_ana[["manual_ds_flags"]][!(current_ana[["manual_ds_flags"]]$key %in% manual_key), ] 
+        }
+     
+        # Adding non reset keys to the dataframe tracking manual flags:
+        if(manual_flag != "reset"){
+          # JMH BLQ selection error here
+          current_ana[["manual_ds_flags"]] = rbind(
+             current_ana[["manual_ds_flags"]],
+             data.frame('key'  = manual_key,
+                        'flag' = manual_flag,
+                        'note' = manual_note)
+          )
+        }
+     
+        if(nrow(current_ana[["manual_ds_flags"]]) > 0){
+          FM_le(state, "applying manual flags:")
+          FM_le(state, paste0("  ", current_ana[["manual_ds_flags"]]$key, ": ", current_ana[["manual_ds_flags"]]$flag, ", note:", current_ana[["manual_ds_flags"]]$note, "\n"))
+        } else {
+          FM_le(state, "no manual flags currently set.")
+        }
+     
+        # Saving the current analysis
+        state = NCA_set_current_ana(state, current_ana)
+     
+        # Rebuilding the figure to incorporate any flag changes:
+        # browser()
+        state = run_nca_components(state, "fg_ind_obs_subset")
       }
-
-      # Removing records from the manual flag tracking dataframe 
-      # that match the current manual key(s):
-      if(nrow(current_ana[["manual_ds_flags"]])>0){
-        current_ana[["manual_ds_flags"]] = 
-          current_ana[["manual_ds_flags"]][!(current_ana[["manual_ds_flags"]]$key %in% manual_key), ] 
-      }
-
-      # Adding non reset keys to the dataframe tracking manual flags:
-      if(manual_flag != "reset"){
-        # JMH BLQ selection error here
-        current_ana[["manual_ds_flags"]] = rbind(
-           current_ana[["manual_ds_flags"]],
-           data.frame('key'  = manual_key,
-                      'flag' = manual_flag,
-                      'note' = manual_note)
-        )
-      }
-
-      if(nrow(current_ana[["manual_ds_flags"]]) > 0){
-        FM_le(state, "applying manual flags:")
-        FM_le(state, paste0("  ", current_ana[["manual_ds_flags"]]$key, ": ", current_ana[["manual_ds_flags"]]$flag, ", note:", current_ana[["manual_ds_flags"]]$note, "\n"))
-      } else {
-        FM_le(state, "no manual flags currently set.")
-      }
-
-      # Saving the current analysis
-      state = NCA_set_current_ana(state, current_ana)
-
-      # Rebuilding the figure to incorporate any flag changes:
-      # browser()
-      state = run_nca_components(state, "fg_ind_obs_subset")
     }
   }
-
 
   #---------------------------------------------
   # Process option changes to the fg_ind_obs figure
@@ -4267,10 +4267,11 @@ NCA_fetch_code = function(state){
     current_ana = state[["NCA"]][["anas"]][[ana_id]]
     if(current_ana[["isgood"]]){
       ana_found = TRUE
-      code = c(code, current_ana[["code_components"]][["code_ana_only"]])
-      code = c(code, current_ana[["code_components"]][["code_fg_ind_obs"]])
-      code = c(code, current_ana[["code_components"]][["code_tb_ind_obs"]])
-      code = c(code, current_ana[["code_components"]][["code_tb_ind_params"]])
+      code = c(code, current_ana[["code_fetch"]])
+     #code = c(code, current_ana[["code_components"]][["code_ana_only"]])
+     #code = c(code, current_ana[["code_components"]][["code_fg_ind_obs"]])
+     #code = c(code, current_ana[["code_components"]][["code_tb_ind_obs"]])
+     #code = c(code, current_ana[["code_components"]][["code_tb_ind_params"]])
     }
   }
 
@@ -4334,7 +4335,7 @@ code}
 #'
 #' # Code chunk to generate report element
 #' cat(paste(rpt_res$code, collapse="\n"))
-NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
+NCA_append_report_old = function(state, rpt, rpttype, gen_code_only=FALSE){
 
   isgood    = TRUE
   hasrptele = FALSE
@@ -4367,7 +4368,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
           #----------------------------------------------------------
           # Table of final PKNCA results
           ind_sheet_name = paste0(tmp_ana[["id"]], "_RES")
-
+ 
           # This appends the data frame to the report list
           code_chunk = paste0('rpt[["sheets"]][["',
                               ind_sheet_name,
@@ -4641,7 +4642,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
           }
           
           for(tid in names(state[["MC"]][["reporting"]][["tables"]])){
-            # This is the list name contiaing the selected report outputs for
+            # This is the list name containing the selected report outputs for
             # this table
             tid_rpt = paste0(tid, "_rpt")
 
@@ -4724,7 +4725,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                       tab_caption = stringr::str_replace_all(tab_caption, "===TABTOT===",   as.character(length(names(tmp_tabs))))
 
                       code_chunk = c(
-                      paste0('# Inserting table: ', fig_id),
+                      paste0('# Inserting table: ', tab_id),
                              'rpt = onbrand::report_add_doc_content(rpt,',
                              '        type     = "flextable_object",',
                              '        content  = list(',
@@ -4965,9 +4966,10 @@ NCA_new_ana    = function(state){
          fg_ind_obs_ncol         = "",
          fg_ind_obs_logy         = TRUE,
          fg_ind_obs_rpt          = c("docx", "pptx"),
-         tb_ind_obs_rpt          = c("docx"),
-         tb_ind_params_rpt       = c("docx"),
-         tb_sum_params_rpt       = c("pptx"),
+         tb_ind_obs_rpt          = c("docx", "xlsx"),
+         tb_ind_obs_flags_rpt    = c("docx", "xlsx"),
+         tb_ind_params_rpt       = c("docx", "xlsx"),
+         tb_sum_params_rpt       = c("pptx", "xlsx"),
          tab_view                = "tb_ind_obs",
          tab_type                = "",
          code_components         = NULL,
@@ -5258,6 +5260,7 @@ res}
 #' \itemize{
 #'   \item{rmnt_key} Unique key for each record (eg \code{'rec_n'}, where \code{n} isthe row number)
 #'   \item{rmnt_flag} Flag short name
+#'   \item{rmnt_note} Any notes specified to describe the reason the record was flagged
 #'   \item{rmnt_desc} Flag description used in plot legends
 #'   \item{rmnt_cens} Column used to indicate censoring (NA for not censored or a string indicating the record is censored)
 #'   \item{rmnt_hlex} Column used to indicate manual selection of points to exclude for half-life calculation (TRUE- exclude, FALSE - do not exclude)
@@ -5280,6 +5283,7 @@ flag_nca_ds  = function(DS       = NULL,
     dplyr::mutate(rmnt_cens = NA_character_)                       |>   # By default no censoring
     dplyr::mutate(rmnt_hlex = FALSE)                               |>   # By default no exclusions for  half-life calculations
     dplyr::mutate(rmnt_hlin = NA)                                  |>   # By default no inclusions for  half-life calculations
+    dplyr::mutate(rmnt_note = "")                                  |>   # By default no notes.
     dplyr::mutate(rmnt_flag = ifelse(.data[[col_conc]] == 0, 
                                      "blq", 
                                      .data[["rmnt_flag"]])) |>                     # Lastly we flag all the blq values
@@ -5287,19 +5291,27 @@ flag_nca_ds  = function(DS       = NULL,
                                      flag_map[["blq"]][["description"]], 
                                      .data[["rmnt_desc"]])) 
  
+  # If no notes are present we set them to ""
+  if(!("note" %in% names(ds_flags))){
+    ds_flags[["note"]] = " "
+  }
+
   # Its possible this is being called with no flagging funcions jsut to create
   # placeholders for the columns above.
   if(nrow(ds_flags) > 0){
     for(ridx in 1:nrow(ds_flags)){
       manual_key  = ds_flags[ridx, ][["key"]]
       manual_flag = ds_flags[ridx, ][["flag"]]
+      manual_note = ds_flags[ridx, ][["note"]]
 
       # Row with the record matching the key:
       rec_row = which(DS[["rmnt_key"]] == manual_key)
 
+      DS[rec_row, ][["rmnt_note"]] = manual_note
+
       if(manual_flag == "censor"){
         DS[rec_row, ][["rmnt_flag"]] = "censor"
-        DS[rec_row, ][["rmnt_cens"]] = "censored manually" 
+        DS[rec_row, ][["rmnt_cens"]] = manual_note
         DS[rec_row, ][["rmnt_desc"]] = flag_map[["censor"]][["description"]]
       }
       if(manual_flag == "hlex"){
@@ -5778,21 +5790,22 @@ nca_builder = function(state){
   current_ana  = NCA_process_current_ana(state)
 
   # These are the object names that will be generated with the code
-  nca_ds_object_name             = paste0(current_ana[["id"]], "_DS")
-  nca_col_map_object_name        = paste0(current_ana[["id"]], "_col_map")
-  nca_flag_map_object_name       = paste0(current_ana[["id"]], "_flag_map")
-  nca_ds_flags_object_name       = paste0(current_ana[["id"]], "_ds_flags")
-  nca_rm_object_name             = paste0(current_ana[["id"]], "_route_map")
-  nca_drec_object_name           = paste0(current_ana[["id"]], "_dose_rec")
-  nca_ints_object_name           = paste0(current_ana[["id"]], "_intervals")
-  nca_dose_object_name           = paste0(current_ana[["id"]], "_dose")
-  nca_data_object_name           = paste0(current_ana[["id"]], "_data")
-  nca_conc_object_name           = paste0(current_ana[["id"]], "_conc")
-  nca_res_object_name            = paste0(current_ana[["id"]], "_res")
-  nca_units_object_name          = paste0(current_ana[["id"]], "_units")
-  nca_fg_ind_obs_object_name     = paste0(current_ana[["id"]], "_figure_ind_obs")
-  nca_tb_ind_obs_object_name     = paste0(current_ana[["id"]], "_table_ind_obs")
-  nca_tb_ind_params_object_name  = paste0(current_ana[["id"]], "_table_ind_params")
+  nca_ds_object_name                   = paste0(current_ana[["id"]], "_DS")
+  nca_col_map_object_name              = paste0(current_ana[["id"]], "_col_map")
+  nca_flag_map_object_name             = paste0(current_ana[["id"]], "_flag_map")
+  nca_ds_flags_object_name             = paste0(current_ana[["id"]], "_ds_flags")
+  nca_rm_object_name                   = paste0(current_ana[["id"]], "_route_map")
+  nca_drec_object_name                 = paste0(current_ana[["id"]], "_dose_rec")
+  nca_ints_object_name                 = paste0(current_ana[["id"]], "_intervals")
+  nca_dose_object_name                 = paste0(current_ana[["id"]], "_dose")
+  nca_data_object_name                 = paste0(current_ana[["id"]], "_data")
+  nca_conc_object_name                 = paste0(current_ana[["id"]], "_conc")
+  nca_res_object_name                  = paste0(current_ana[["id"]], "_res")
+  nca_units_object_name                = paste0(current_ana[["id"]], "_units")
+  nca_fg_ind_obs_object_name           = paste0(current_ana[["id"]], "_figure_ind_obs")
+  nca_tb_ind_obs_object_name           = paste0(current_ana[["id"]], "_table_ind_obs")
+  nca_tb_ind_obs_flags_object_name     = paste0(current_ana[["id"]], "_table_ind_obs_flags")
+  nca_tb_ind_params_object_name        = paste0(current_ana[["id"]], "_table_ind_params")
 
   # We only proceed if were able to process the
   # current analysis successfully
@@ -6269,6 +6282,17 @@ nca_builder = function(state){
       paste0('  digits       = ',  state[["MC"]][["reporting"]][["digits"]]),
              ")")
 
+    code_tb_ind_obs_flags   = c(
+      "",
+      "# Generating tables of manual flags in the dataset",
+      paste0(nca_tb_ind_obs_flags_object_name, " = mk_table_ind_obs_flags("),
+      paste0('  nca_res      = ',  nca_res_object_name,','),
+      paste0("  flag_map     = ", nca_flag_map_object_name, ", "),
+             "  obnd         = rpt,",
+      paste0('  digits       = ',  state[["MC"]][["reporting"]][["digits"]]),
+             ")"
+    )
+
     code_tb_ind_params   = c(
       "",
       "# Generating tables of individual NCA parameters",
@@ -6301,12 +6325,25 @@ nca_builder = function(state){
                                  code_ds_dosing, 
                                  code_tb_ind_obs), collapse="\n")
 
+    code_tb_ind_obs_flags_sa = paste(c(code_ana_options, 
+                                 code_ds_dosing, 
+                                 code_tb_ind_obs_flags), collapse="\n")
+
     code_tb_ind_params = paste(code_tb_ind_params, collapse="\n")
     code_previous      = ds[["code"]]
     code               = paste(c(code_previous,
                                  code_ana_only,
                                  code_fg_ind_obs_all,
                                  code_tb_ind_obs,
+                                 code_tb_ind_obs_flags,
+                                 code_tb_ind_params),
+                                 collapse="\n")
+
+
+    code_fetch         = paste(c(code_ana_only,
+                                 code_fg_ind_obs_all,
+                                 code_tb_ind_obs,
+                                 code_tb_ind_obs_flags,
                                  code_tb_ind_params),
                                  collapse="\n")
 
@@ -6344,31 +6381,34 @@ nca_builder = function(state){
   current_ana[["isgood"]]            = isgood
   current_ana[["code"]]              = code
   current_ana[["code_sa"]]           = code_sa
+  current_ana[["code_fetch"]]        = code_fetch
   current_ana[["code_components"]]   = list(
     code_previous             = code_previous,
     code_ana_only             = code_ana_only,
     code_fg_ind_obs           = code_fg_ind_obs_all,
     code_fg_ind_obs_subset    = code_fg_ind_obs_subset,
     code_tb_ind_obs           = code_tb_ind_obs_sa,
+    code_tb_ind_obs_flags     = code_tb_ind_obs_flags_sa,
     code_tb_ind_params        = code_tb_ind_params
   )
 
   # This stores the object names used in analyses. The values field will be
   # updated as the objects are generated.
-  current_ana[["objs"]][["ds"           ]][[ "name" ]]   = nca_ds_object_name
-  current_ana[["objs"]][["rm"           ]][[ "name" ]]   = nca_rm_object_name
-  current_ana[["objs"]][["drec"         ]][[ "name" ]]   = nca_drec_object_name
-  current_ana[["objs"]][["ints"         ]][[ "name" ]]   = nca_ints_object_name
-  current_ana[["objs"]][["dose"         ]][[ "name" ]]   = nca_dose_object_name
-  current_ana[["objs"]][["data"         ]][[ "name" ]]   = nca_data_object_name
-  current_ana[["objs"]][["conc"         ]][[ "name" ]]   = nca_conc_object_name
-  current_ana[["objs"]][["res"          ]][[ "name" ]]   = nca_res_object_name
-  current_ana[["objs"]][["ds_flags"     ]][[ "name" ]]   = nca_ds_flags_object_name
-  current_ana[["objs"]][["col_map"      ]][[ "name" ]]   = nca_col_map_object_name
-  current_ana[["objs"]][["flag_map"     ]][[ "name" ]]   = nca_flag_map_object_name
-  current_ana[["objs"]][["fg_ind_obs"   ]][[ "name" ]]   = nca_fg_ind_obs_object_name
-  current_ana[["objs"]][["tb_ind_obs"   ]][[ "name" ]]   = nca_tb_ind_obs_object_name
-  current_ana[["objs"]][["tb_ind_params"]][[ "name" ]]   = nca_tb_ind_params_object_name
+  current_ana[["objs"]][["ds"                 ]][[ "name" ]]   = nca_ds_object_name
+  current_ana[["objs"]][["rm"                 ]][[ "name" ]]   = nca_rm_object_name
+  current_ana[["objs"]][["drec"               ]][[ "name" ]]   = nca_drec_object_name
+  current_ana[["objs"]][["ints"               ]][[ "name" ]]   = nca_ints_object_name
+  current_ana[["objs"]][["dose"               ]][[ "name" ]]   = nca_dose_object_name
+  current_ana[["objs"]][["data"               ]][[ "name" ]]   = nca_data_object_name
+  current_ana[["objs"]][["conc"               ]][[ "name" ]]   = nca_conc_object_name
+  current_ana[["objs"]][["res"                ]][[ "name" ]]   = nca_res_object_name
+  current_ana[["objs"]][["ds_flags"           ]][[ "name" ]]   = nca_ds_flags_object_name
+  current_ana[["objs"]][["col_map"            ]][[ "name" ]]   = nca_col_map_object_name
+  current_ana[["objs"]][["flag_map"           ]][[ "name" ]]   = nca_flag_map_object_name
+  current_ana[["objs"]][["fg_ind_obs"         ]][[ "name" ]]   = nca_fg_ind_obs_object_name
+  current_ana[["objs"]][["tb_ind_obs"         ]][[ "name" ]]   = nca_tb_ind_obs_object_name
+  current_ana[["objs"]][["tb_ind_obs_flags"   ]][[ "name" ]]   = nca_tb_ind_obs_flags_object_name
+  current_ana[["objs"]][["tb_ind_params"      ]][[ "name" ]]   = nca_tb_ind_params_object_name
 
   # If we don't include units then the object wont be available, so we only
   # add this conditionally:
@@ -6416,6 +6456,7 @@ run_nca_components = function(
   components=c("nca",
                "fg_ind_obs",
                "tb_ind_obs",
+               "tb_ind_obs_flags",
                "tb_ind_params"),
   verbose=TRUE){
 
@@ -6431,8 +6472,9 @@ run_nca_components = function(
   # Pulling out the current analysis to use and update below
   current_ana = NCA_fetch_current_ana(state)
 
-  # Short name for objects created when running NCA.
-  # These are all of the possible names:
+  # Short name for objects created when running NCA.  These are all of the
+  # possible names. Post-processing like figure and table generation is
+  # handled below.
   obs_sns_nca  = c("res", "col_map", "flag_map", "ds_flags", 
                    "ds", "drec", "rm", "ints",
                    "dose", "data", "conc", "units")
@@ -6497,7 +6539,6 @@ run_nca_components = function(
     # This list maps the component name to the key
     # with the code for that component
     # - code      is the code component to run
-    # - code      is the code component to run
     # - reset_all is set to TRUE when the entire object needs to be
     #             overwritten. FALSE indicates that only a portion is being rebuilt 
     # - list_name is the name within the object generated where the "pages"
@@ -6518,6 +6559,12 @@ run_nca_components = function(
                                           current   ="curr_tb_ind_obs",
                                           reset_all = TRUE,
                                           obj       = "tb_ind_obs",
+                                          list_name = "tables"),
+                    "tb_ind_obs_flags"   = list(
+                                          code      ="code_tb_ind_obs_flags",
+                                          current   ="curr_tb_ind_obs_flags",
+                                          reset_all = TRUE,
+                                          obj       = "tb_ind_obs_flags",
                                           list_name = "tables"),
                     "tb_ind_params" = list(
                                           code      ="code_tb_ind_params",
@@ -6591,7 +6638,9 @@ run_nca_components = function(
 
             # There should be at least one element here:
             if(!is.null(list_names)){
-              if(!(current_ana[[ fig_tabs[[fig_tab]][["current"]] ]] %in% list_names)){
+              if(is.null(current_ana[[ fig_tabs[[fig_tab]][["current"]] ]])){
+                current_ana[[ fig_tabs[[fig_tab]][["current"]] ]] = list_names[1]
+              } else if(!(current_ana[[ fig_tabs[[fig_tab]][["current"]] ]] %in% list_names)){
                 current_ana[[ fig_tabs[[fig_tab]][["current"]] ]] = list_names[1]
               }
             } else {
@@ -6969,6 +7018,236 @@ mk_table_ind_obs = function(
 res}
 
 #'@export
+#'@title Creates Tables of Manual Flags for Individual Observations from PKNCA Result
+#'@description Takes the output of PKNCA and creates a tabular view or any
+#'manual flags that were set. This can be spread out of over several tables
+#'(pages) if necessary.
+#'@param nca_res Output of PKNCA.
+#'@param obnd        onbrand reporting object.
+#'@param flag_map    List with flag mapping detials
+#'@param digits      Number of significant figures to report (set to \code{NULL} to disable rounding)
+#'@param text_format      Either \code{"md"} for markdown or \code{"text"} (default) for plain text.
+#'@param max_width   Maximum width of the final table in inches (A value of \code{NULL} will use 100 inches).
+#'@param max_height  Maximum height of the final table in inches (A value of \code{NULL} will use 100 inches).
+#'@param max_col     Maximum number of columns to have on a page. Spillover will be wrapped to multiple pages.
+#'@param max_row     Maximum number of rows to have on a page. Spillover will hang over the side of the page..
+#'@param notes_detect  Vector of strings to detect in output tables (example
+#'                     \code{c("NC", "BLQ")}). If set to NULL it will attempt to
+#'                     extract notes from the flag_map input.
+#'@return List containing the following elements
+#'\itemize{
+#'   \item{isgood:}      Boolean indicating the exit status of the function.
+#'   \item{one_table:}   Dataframe of the entire table with the first lines containing the header.
+#'   \item{one_body:}    Dataframe of the entire table (data only).
+#'   \item{one_header:}  Dataframe of the entire header (row and body, no data).
+#'   \item{tables:}      Named list of tables. Each list element is of the output
+#'   \item{msgs:}        Vector of text messages describing any errors that were found.
+#'   format from \code{\link[onbrand]{build_span}}.
+#'}
+#'@example inst/test_apps/nca_programming_funcs.R
+mk_table_ind_obs_flags = function(
+  nca_res   ,
+  obnd         = NULL,
+  flag_map     = list(),
+  digits       = 3,
+  text_format  = "text",
+  max_height   = 7,
+  max_width    = 6.5,
+  max_row      = 17,
+  max_col      = 9,
+  notes_detect = NULL){
+
+
+
+  # Auto-populating notes detect
+  if(is.null(notes_detect)){
+    for(fname in names(flag_map)){
+      notes_detect = c(notes_detect,
+        flag_map[[fname]][["sn"]])
+    }
+  }
+ 
+  # Extracting the needed column names:
+  col_id      = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
+  col_time    = nca_res[["data"]][["conc"]][["columns"]][["time"]]
+  col_conc    = nca_res[["data"]][["conc"]][["columns"]][["concentration"]]
+  col_analyte = nca_res[["data"]][["conc"]][["columns"]][["groups"]][["group_analyte"]]
+
+  # Plucking out the units for time and conc
+  time_units = ""
+  conc_units = ""
+
+  if(!is.null(nca_res[["data"]][["units"]])){
+    # Perhaps there is a better way to extract these things but this is the
+    # most obvious to me :)
+    time_units = nca_res[["data"]][["units"]][nca_res[["data"]][["units"]][["PPTESTCD"]] == "start", ][["PPORRESU"]]
+    conc_units = nca_res[["data"]][["units"]][nca_res[["data"]][["units"]][["PPTESTCD"]] == "cmax",  ][["PPORRESU"]]
+  }
+
+  # Retaining only the needed columns
+  cols_keep = c(col_id, col_time, col_conc, col_analyte, "rmnt_note")
+
+  # These are the columns that contain the
+  # row headers for the table
+
+  # This is the original dataset along with what looks like
+  # some extra columns added by PKNCA
+  raw_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]])) 
+
+
+  all_data = tibble(
+    ID   = raw_data[[col_id]],
+    TIME = raw_data[[col_time]]
+  )
+  if(!is.null(col_analyte)){
+    if(length(col_analyte) > 0){
+    all_data[["ANALYTE"]] = raw_data[[col_analyte]] }
+  }
+  all_data[["CONC"]]      = raw_data[[col_conc]]
+  all_data[["FLAG_CODE"]] = raw_data[["rmnt_flag"]]
+  all_data[["FLAG"]]      = ""
+  all_data[["NOTE"]]      = raw_data[["rmnt_note"]]
+
+
+  # Only retaining the manually flagged data types:
+  all_data = all_data |>
+    dplyr::filter(.data[["FLAG_CODE"]] %in% c("censor", "hlex", "hlin")) 
+
+  if(nrow(all_data) > 0){
+    # Mapping in the short names
+    for(fname in names(flag_map)){
+      all_data[all_data[["FLAG_CODE"]] == fname, ][["FLAG"]] = flag_map[[fname]][["sn"]]
+    }
+    all_data[["FLAG_CODE"]] = NULL
+
+    # Making sure everything is sorted correctly
+    if(length(col_analyte) == 1){
+      all_data = dplyr::arrange(all_data, !!as.name("ID"), !!as.name("ANALYTE"), as.numeric(!!as.name("TIME")))
+    } else {
+      all_data = dplyr::arrange(all_data, !!as.name("ID"), as.numeric(!!as.name("TIME")))
+    }
+
+    # Applying significant digits
+    if(!is.null(digits)){
+      # For concentration data it is pretty
+      # straight forward
+      all_data[["CONC"]] = as.character(signif(all_data[["CONC"]], digits))
+      all_data[["TIME"]] = as.character(floor(all_data[["TIME"]]) + signif(all_data[["TIME"]] %% 1, digits))
+    } else {
+      all_data[["CONC"]] = as.character(all_data[["CONC"]])
+      all_data[["TIME"]] = as.character(all_data[["TIME"]])
+    }
+
+    # Constructing the table headers
+    # This is the first row:
+    row_common_head = data.frame(
+            ID      = "ID",
+            TIME    = "Time")
+
+    table_body_head  =  data.frame(
+      CONC = "Concentration", 
+      FLAG = "Flag", 
+      NOTE = "Note")
+
+    # If there are units we add a second row with the units:
+    if(time_units != "" | conc_units != ""){
+      if(time_units != ""){
+        time_units_str = paste0("(", time_units, ")")
+      } else{
+        time_units_str = ""
+      }
+
+      row_common_head = 
+        rbind(row_common_head, 
+          data.frame(ID   = "ID", 
+                     TIME = time_units_str))
+
+      if(conc_units != ""){
+        conc_units_str = paste0("(", conc_units, ")")
+      } else{
+        conc_units_str = ""
+      }
+
+      table_body_head = 
+        rbind(table_body_head, 
+          data.frame(CONC   = conc_units_str, 
+                     FLAG   = "Flag",
+                     NOTE   = "Note"))
+       
+    }
+
+    # If there are analytes then we add that to the end of the row common portion
+    if("ANALYTE" %in% names(all_data)){
+      if(nrow(row_common_head) == 1){
+        row_common_head = cbind(row_common_head, 
+               data.frame( ANALYTE = "Analyte"))
+      } else if(nrow(row_common_head) == 2){
+        row_common_head = cbind(row_common_head, 
+               data.frame( ANALYTE = c("Analyte", "Analyte")))
+
+      }
+    }
+   
+    # Splitting the data into header columns and observations
+    row_common   = dplyr::select(all_data,  dplyr::all_of(names(row_common_head)))
+    table_body   = dplyr::select(all_data, -dplyr::all_of(names(row_common_head)))
+   
+    # This converts everything to text:
+    table_body        = dplyr::mutate_all(table_body, as.character)
+   
+    stres = onbrand::span_table(
+               table_body                = table_body,
+               row_common                = row_common,
+               table_body_head           = table_body_head,
+               row_common_head           = row_common_head,
+               obnd                      = obnd,
+               header_format             = text_format,
+               max_width                 = max_width,
+               max_height                = max_height,
+               max_row                   = max_row,
+               max_col                   = max_col,
+               set_header_inner_border_h = FALSE,
+               notes_detect              = notes_detect)
+   
+    # Increasing the width of the notes column
+    if( stres[["isgood"]] ){
+      for(tname in names(stres[["tables"]])){
+        tmpdf = stres[["tables"]][[tname]][["df"]]
+        NOTE_col_idx = which(names(tmpdf) == "NOTE")
+        if(length(NOTE_col_idx) == 1){
+          tmpft = stres[["tables"]][[tname]][["ft"]]
+          stres[["tables"]][[tname]][["ft"]] = 
+            flextable::width(tmpft, j="NOTE", 1.5, unit="in")
+        }
+      }
+    }
+
+    res = list(
+      isgood     = stres[["isgood"]],
+      data_found = TRUE,
+      one_table  = stres[["one_table"]],
+      one_header = stres[["one_header"]],
+      one_body   = stres[["one_body"]],
+      tables     = stres[["tables"]],
+      msgs       = stres[["msgs"]]
+    )
+  } else {
+    res = list(
+      isgood     = TRUE,
+      data_found = FALSE,
+      one_table  = NULL, 
+      one_header = NULL, 
+      one_body   = NULL, 
+      tables     = NULL, 
+      msgs       = NULL 
+    )
+  }
+
+
+
+res}
+
+#'@export
 #'@title Creates Figures of Individual Observations from PKNCA Result
 #'@description Takes the output of PKNCA and creates `ggplot` figures faceted
 #'by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
@@ -7142,7 +7421,7 @@ mk_figure_ind_obs = function(
       }
       p = p + ggplot2::xlab(TIME_LAB)
       p = p + ggplot2::ylab(OBS_LAB)
-      p = p + ggplot2::labs(color="Data Flag", shape="Analyte")
+      p = p + ggplot2::labs(color="Data Type", shape="Analyte")
       p = p + ggplot2::theme(legend.position="bottom", 
                              legend.box="horizontal")
       p = p + scale_color_manual(values = fcolors)
@@ -8329,3 +8608,707 @@ NCA_mk_preload     = function(state){
     yaml_list = yaml_list)
 }
 
+
+#'@export
+#'@title Append Report Elements
+#'@description Takes an NCA state object and appends any reportable elements
+#'for the specified report type. On NCA analyses that are in a "good" state
+#'will be reported. Those not in a good state will be ignored.
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@param rpt Report with the current content of the report which will be appended to in
+#'this function. For details on the structure see the documentation for
+#' \code{\link[formods:FM_generate_report]{formods::FM_generate_report()}}
+#'@param rpttype Type of report to generate (supported "xlsx", "pptx", "docx").
+#'@param gen_code_only Boolean value indicating that only code should be
+#'generated (\code{FALSE}).
+#'@return list containing the following elements
+#'\itemize{
+#'  \item{isgood:}    Return status of the function.
+#'  \item{hasrptele:} Boolean indicator if the module has any reportable elements.
+#'  \item{code:}      Code to create report elements.
+#'  \item{msgs:}      Messages to be passed back to the user.
+#'  \item{rpt:}       Report with any additions passed back to the user.
+#'}
+#'@seealso
+#'\code{\link[formods:FM_generate_report]{formods::FM_generate_report()}}
+#'@examples
+#' # We need a state object to use below
+#' sess_res = NCA_test_mksession()
+#' state = sess_res$state
+#'
+#' # here we need an empty report object for tabular data
+#' rpt = list(summary = list(), sheets=list())
+#'
+#' # Now we append the report indicating we want
+#' # Excel output:
+#' rpt_res = NCA_append_report(state,
+#'   rpt           = rpt,
+#'   rpttype       = "xlsx",
+#'   gen_code_only = TRUE)
+#'
+#' # Shows if report elements are present
+#' rpt_res$hasrptele
+#'
+#' # Code chunk to generate report element
+#' cat(paste(rpt_res$code, collapse="\n"))
+NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
+
+  isgood    = TRUE
+  hasrptele = FALSE
+  code      = c()
+  msgs      = c()
+
+
+  code =  FM_build_comment(2, paste0("Reporting NCA results ", rpttype))
+  # The NCA module supports the following report types:
+  supported_rpttypes = c("xlsx", "pptx", "docx")
+
+  if(rpttype %in% supported_rpttypes){
+    for(ana in names(state[["NCA"]][["anas"]])){
+      # Only the analyses that are in a good state are reported
+      tmp_ana = state[["NCA"]][["anas"]][[ana]]
+      if(tmp_ana[["isgood"]]){
+
+        # This is the code chunk for the current analysis
+        code  = c(code, 
+          FM_build_comment(3, tmp_ana[["key"]]),
+          "")
+
+        # JMH todo
+        # Add any intro/overview stuff here
+        if(rpttype == "docx"){
+          code_chunk = c(
+            paste0('rpt = onbrand::report_add_doc_content(rpt,'),
+            paste0('type     = "text",'),
+            paste0('content  = list('),
+            paste0(' style     = "Heading_1",'),
+            paste0(' text      = ', deparse(tmp_ana[["key"]]),','),
+            paste0(' format    = ', deparse(state[["MC"]][["reporting"]][["text_format"]]),'))'),
+            ""
+          )
+        
+          if(!is.null(tmp_ana[["notes"]])){
+            code_chunk = c(code_chunk,  
+            paste0('rpt = onbrand::report_add_doc_content(rpt,'),
+            paste0('type     = "text",'),
+            paste0('content  = list('),
+            paste0(' style     = "Normal",'),
+            paste0(' text      = ', deparse(tmp_ana[["notes"]]),','),
+            paste0(' format    = ', deparse(state[["MC"]][["reporting"]][["text_format"]]),'))'),
+            ""
+            )
+          }
+
+          code_chunk = c(code_chunk,  
+            'rpt = onbrand::report_add_doc_content(rpt,',
+            '       type    = "break",',
+            '       content = NULL)',
+            ""
+          )
+
+
+          # Running the intro text:
+          tc_env = list(rpt = rpt)
+          tc_res = formods::FM_tc(capture=c("rpt"), cmd=code_chunk, tc_env = tc_env)
+
+          if(tc_res[["isgood"]]){
+            # The try/catch was good and the function call was good so
+            # we capture the reporting object with the changes made to
+            # it:
+            rpt = tc_res[["capture"]][["rpt"]]
+
+            # Appending the analysis code to the main 
+            # block of code being returned 
+            code = c(code, code_chunk)
+          } else {
+            FM_le(state, c(tmp_ana[["key"]], tc_res[["msgs"]]), entry_type="danger")
+            msgs = c(msgs,  tc_res[["msgs"]])
+          }
+        }
+
+        # Adding figures
+        # This walks through each reportable figure in the NCA.yaml file
+        #--[each figure]
+        for(fid in names(state[["MC"]][["reporting"]][["figures"]])){
+            fid_rpt = paste0(fid, "_rpt")
+          # Each reportable table or figure has an analysis level
+          # configuration option to control if it is included in type of
+          # report output (docx, pptx, xlsx)
+          #-------------
+          if(rpttype %in% tmp_ana[[fid_rpt]]){
+            # This makes sure the table object has been built:
+            if(fid %in% names(tmp_ana[["objs"]])){
+              hasrptele = TRUE
+
+              # This is the key that can be used in referencing 
+              # the figure in Word
+              fig_id      = paste0(tmp_ana[["id"]], "_", fid)
+              code_chunk = c( 
+                paste0('# ', fig_id),
+                paste0('narf_res  = '),
+                paste0('  nca_append_report_figs('),
+                paste0('     rpt               = rpt,'),
+                paste0('     mfres             = ', tmp_ana[["objs"]][[fid]][["name"]], ','),
+                paste0('     rpttype           = ', deparse(rpttype), ','),
+                paste0('     fig_id            = ', deparse(fig_id),','),
+                paste0('     fig_desc          = ', deparse(tmp_ana[["key"]]),','),
+                paste0('     fig_height        = ', state[["MC"]][["reporting"]][["dimensions"]][["figures"]][["height"]],','),
+                paste0('     fig_width         = ', state[["MC"]][["reporting"]][["dimensions"]][["figures"]][["width"]],','),
+                paste0('     fig_start         = ', deparse(state[["MC"]][["reporting"]][["dimensions"]][["figures"]][["start"]]),','),
+                paste0('     fig_stop          = ', deparse(state[["MC"]][["reporting"]][["dimensions"]][["figures"]][["stop"]]),','),
+                paste0('     text_format       = ', deparse(state[["MC"]][["reporting"]][["text_format"]]),','),
+                paste0('     caption_single    = stringr::str_replace_all('),
+                paste0('       string  = ', deparse(state[["MC"]][["reporting"]][["figures"]][[fid]][["caption_single"]]),','),
+                paste0('       pattern = "===NCADESC===", ', deparse( tmp_ana[["key"]]),'),'),
+                paste0('     caption_multiple  = stringr::str_replace_all('),
+                paste0('       string  = ', deparse(state[["MC"]][["reporting"]][["figures"]][[fid]][["caption_multiple"]]),','),
+                paste0('       pattern = "===NCADESC===", ', deparse( tmp_ana[["key"]]),'),'),
+                paste0('     title_single    = stringr::str_replace_all('),
+                paste0('       string  = ', deparse(state[["MC"]][["reporting"]][["figures"]][[fid]][["title_single"]]),','),
+                paste0('       pattern = "===NCADESC===", ', deparse( tmp_ana[["key"]]),'),'),
+                paste0('     title_multiple  = stringr::str_replace_all('),
+                paste0('       string  = ', deparse(state[["MC"]][["reporting"]][["figures"]][[fid]][["title_multiple"]]),','),
+                paste0('       pattern = "===NCADESC===", ', deparse( tmp_ana[["key"]]),'),'),
+                paste0('     sub_title_single    = stringr::str_replace_all('),
+                paste0('       string  = ', deparse(state[["MC"]][["reporting"]][["figures"]][[fid]][["sub_title_single"]]),','),
+                paste0('       pattern = "===NCADESC===", ', deparse( tmp_ana[["key"]]),'),'),
+                paste0('     sub_title_multiple  = stringr::str_replace_all('),
+                paste0('       string  = ', deparse(state[["MC"]][["reporting"]][["figures"]][[fid]][["sub_title_multiple"]]),','),
+                paste0('       pattern = "===NCADESC===", ', deparse( tmp_ana[["key"]]),'),'),
+                paste0('     flag_map  = ',tmp_ana[["objs"]][["flag_map"]][["name"]],') '),
+                "",
+                "# pulling the reporting object out of the result",
+                'rpt = narf_res[["rpt"]] ',
+                ""
+              )
+
+              # Evaluating the code if requested:
+              if(!gen_code_only){
+                # We're creating a list to pass into the try/catch enviornment.
+                # This will create the reporting object and all of the NCA-related
+                # objects so that they can be used for reporting.
+                tc_env = list(rpt = rpt)
+                for(obj_key in names(tmp_ana[["objs"]])){
+                  tc_env[[ tmp_ana[["objs"]][[obj_key]][["name"]] ]] =
+                           tmp_ana[["objs"]][[obj_key]][["value"]]
+                }
+                tc_res = formods::FM_tc(capture=c("rpt", "narf_res"), cmd=code_chunk, tc_env = tc_env)
+
+                # This detects any errors found in the figure appending
+                if(tc_res[["isgood"]]){
+
+                  # this checks the actual function call was good:
+                  if(tc_res[["capture"]][["narf_res"]][["isgood"]]){
+                    # The try/catch was good and the function call was good so
+                    # we capture the reporting object with the changes made to
+                    # it:
+                    rpt = tc_res[["capture"]][["rpt"]]
+
+                    # If there were any general messages we log and pass back to the user
+                    if(!is.null(tc_res[["capture"]][["narf_res"]][["msgs"]])){
+                      FM_le(state, c(fig_id, tc_res[["capture"]][["narf_res"]][["msgs"]]))
+                      msgs = c(msgs,  tc_res[["capture"]][["narf_res"]][["msgs"]])
+                    }
+                  } else {
+                    # If there were any failure messages we log and pass back to the user
+                    if(!is.null(tc_res[["capture"]][["narf_res"]][["msgs"]])){
+                      FM_le(state, c(fig_id, tc_res[["capture"]][["narf_res"]][["msgs"]]), entry_type="danger")
+                      msgs = c(msgs,  tc_res[["capture"]][["narf_res"]][["msgs"]])
+                    }
+                  }
+                } else {
+                  # If there were any Try/Catch failure messages we log it and pass it back to the user:
+                  if(!is.null(tc_res[["msgs"]])){
+                    FM_le(state, c(fig_id, tc_res[["msgs"]]), entry_type="danger")
+                    msgs = c(msgs,  tc_res[["msgs"]])
+                  }
+                }
+              }
+              
+              # Appending the analysis code to the main 
+              # block of code being returned 
+              code = c(code, code_chunk)
+            }
+          }
+          #-------------
+        }
+        #-/[each figure]
+
+        # Adding tables
+        # This walks through each reportable table in the NCA.yaml file
+        #--[each table]
+        for(tid in names(state[["MC"]][["reporting"]][["tables"]])){
+            tid_rpt = paste0(tid, "_rpt")
+          # Each reportable table or figure has an analysis level
+          # configuration option to control if it is included in type of
+          # report output (docx, pptx, xlsx)
+          #-------------
+          if(rpttype %in% tmp_ana[[tid_rpt]]){
+            # This makes sure the table object has been built:
+            if(tid %in% names(tmp_ana[["objs"]])){
+              hasrptele = TRUE
+
+              # This is the key that can be used in referencing 
+              # the table in Word
+              tab_id      = paste0(tmp_ana[["id"]], "_", tid)
+              code_chunk = c( 
+                paste0('# ', tab_id),
+                paste0('nart_res  = '),
+                paste0('  nca_append_report_tbls('),
+                paste0('     rpt               = rpt,'),
+                paste0('     stres             = ', tmp_ana[["objs"]][[tid]][["name"]], ','),
+                paste0('     rpttype           = ', deparse(rpttype), ','),
+                paste0('     text_format       = ', deparse(state[["MC"]][["reporting"]][["text_format"]]),','),
+                paste0('     tab_id            = ', deparse(tab_id),','),
+                paste0('     tab_desc          = stringr::str_replace_all('),
+                paste0('       string  = ', deparse(state[["MC"]][["reporting"]][["tables"]][[tid]][["description"]]),','),
+                paste0('       pattern = "===NCADESC===", ', deparse( tmp_ana[["key"]]),'),'),
+                paste0('     caption_single    = stringr::str_replace_all('),
+                paste0('       string  = ', deparse(state[["MC"]][["reporting"]][["tables"]][[tid]][["caption_single"]]),','),
+                paste0('       pattern = "===NCADESC===", ', deparse( tmp_ana[["key"]]),'),'),
+                paste0('     caption_multiple  = stringr::str_replace_all('),
+                paste0('       string  = ', deparse(state[["MC"]][["reporting"]][["tables"]][[tid]][["caption_multiple"]]),','),
+                paste0('       pattern = "===NCADESC===", ', deparse( tmp_ana[["key"]]),'),'),
+                paste0('     flag_map  = ',tmp_ana[["objs"]][["flag_map"]][["name"]],') '),
+                "",
+                "# pulling the reporting object out of the result",
+                'rpt = nart_res[["rpt"]] ',
+                ""
+              )
+
+              # Evaluating the code if requested:
+              if(!gen_code_only){
+                # We're creating a list to pass into the try/catch enviornment.
+                # This will create the reporting object and all of the NCA-related
+                # objects so that they can be used for reporting.
+                tc_env = list(rpt = rpt)
+                for(obj_key in names(tmp_ana[["objs"]])){
+                  tc_env[[ tmp_ana[["objs"]][[obj_key]][["name"]] ]] =
+                           tmp_ana[["objs"]][[obj_key]][["value"]]
+                }
+                tc_res = formods::FM_tc(capture=c("rpt", "nart_res"), cmd=code_chunk, tc_env = tc_env)
+
+                # This detects any errors found in the table appending
+                if(tc_res[["isgood"]]){
+
+                  # this checks the actual function call was good:
+                  if(tc_res[["capture"]][["nart_res"]][["isgood"]]){
+                    # The try/catch was good and the function call was good so
+                    # we capture the reporting object with the changes made to
+                    # it:
+                    rpt = tc_res[["capture"]][["rpt"]]
+
+                    # If there were any general messages we log and pass back to the user
+                    if(!is.null(tc_res[["capture"]][["nart_res"]][["msgs"]])){
+                      FM_le(state, c(tab_id, tc_res[["capture"]][["nart_res"]][["msgs"]]))
+                      msgs = c(msgs,  tc_res[["capture"]][["nart_res"]][["msgs"]])
+                    }
+                  } else {
+                    # If there were any failure messages we log and pass back to the user
+                    if(!is.null(tc_res[["capture"]][["nart_res"]][["msgs"]])){
+                      FM_le(state, c(tab_id, tc_res[["capture"]][["nart_res"]][["msgs"]]), entry_type="danger")
+                      msgs = c(msgs,  tc_res[["capture"]][["nart_res"]][["msgs"]])
+                    }
+                  }
+                } else {
+                  # If there were any Try/Catch failure messages we log it and pass it back to the user:
+                  if(!is.null(tc_res[["msgs"]])){
+                    FM_le(state, c(tab_id, tc_res[["msgs"]]), entry_type="danger")
+                    msgs = c(msgs,  tc_res[["msgs"]])
+                  }
+                }
+              }
+              
+              # Appending the analysis code to the main 
+              # block of code being returned 
+              code = c(code, code_chunk)
+            }
+          }
+          #-------------
+        }
+        #-/[each table]
+        #--[raw nca table]
+        # Adding the raw NCA results
+        if(!is.null(state[["MC"]][["reporting"]][["raw_nca_table"]])){
+          raw_nca_tab_id = paste0(tmp_ana[["id"]], "_", state[["MC"]][["reporting"]][["raw_nca_table"]][["tab_id"]])
+          raw_nca_desc   = state[["MC"]][["reporting"]][["raw_nca_table"]][["description"]]
+          raw_nca_desc   = stringr::str_replace_all(raw_nca_desc, "===NCADESC===",  tmp_ana[["key"]])
+          
+          code_chunk = c(
+            paste0("# Raw NCA results"),
+            paste0('rpt[["sheets"]][[', deparse(raw_nca_tab_id), ']] = as.data.frame(', tmp_ana[["objs"]][["res"]][["name"]],')'),
+            paste0('rpt[["summary"]] = rbind(rpt[["summary"]],'),
+            paste0('  data.frame('),
+            paste0('    Sheet_Name  = ', deparse(raw_nca_tab_id),','),
+            paste0('    Description = ', deparse(raw_nca_desc)),
+            paste0('  )'),
+            paste0(')'),
+            ""
+          )
+          
+          # Running the raw nca saving code:
+          tc_env = list(rpt = rpt)
+          for(obj_key in names(tmp_ana[["objs"]])){
+            tc_env[[ tmp_ana[["objs"]][[obj_key]][["name"]] ]] =
+                     tmp_ana[["objs"]][[obj_key]][["value"]]
+          }
+          tc_res = formods::FM_tc(capture=c("rpt"), cmd=code_chunk, tc_env = tc_env)
+          
+          if(tc_res[["isgood"]]){
+            # The try/catch was good and the function call was good so
+            # we capture the reporting object with the changes made to
+            # it:
+            rpt = tc_res[["capture"]][["rpt"]]
+          
+            # Appending the analysis code to the main 
+            # block of code being returned 
+            code = c(code, code_chunk)
+          } else {
+            FM_le(state, c(tmp_ana[["key"]], tc_res[["msgs"]]), entry_type="danger")
+            msgs = c(msgs,  tc_res[["msgs"]])
+          }
+        }
+        #-/[raw nca table]
+      }
+    }
+  }
+
+
+  res = list(
+    isgood    = isgood,
+    hasrptele = hasrptele,
+    code      = code,
+    msgs      = msgs,
+    rpt       = rpt
+  )
+
+res}
+
+#'@export
+#'@title Append NCA Tables to Report   
+#'@description Takes a table(s) created using \code{onbrand::span_tables()} and appends table(s) to the specified report.
+#'@param rpt              Reporting object (onbrand object for "pptx" and "docx" rpttypes and a list for "xlsx")
+#'@param stres            Output from span tables
+#'@param rpttype          Type of report either ("docx" (default), "pptx", or "xlsx")
+#'@param tab_id           Unique table ID
+#'@param tab_desc         Verbose description of the table
+#'@param text_format      How to format text ("md" for markdown or "text" for regular text (default))
+#'@param caption_single   Caption for a single table
+#'@param caption_multiple Caption for a multiple tables with optional placeholders
+#'for the total number of tables (`===TABTOT===`) and the current table number
+#'(`===TABNUM===`).
+#'@param flag_map  List with flag mapping details.
+#'@return list with the following elements
+#' \itemize{
+#'   \item{isgood:}       Boolean indicating the exit status of the function.
+#'   \item{msgs:}         Messages to be passed back to the user.
+#'   \item{obnd:}         Report with tables added.
+#'}
+#'@example inst/test_apps/nca_app.R
+nca_append_report_tbls  = function(
+  rpt              = NULL,
+  stres            = list(),
+  rpttype          = "docx",
+  tab_id           = paste0("tab_", abs(rnorm(1))),
+  tab_desc         = "Description of table",
+  text_format      = "text",
+  caption_single   = "A Table.",
+  caption_multiple = "Table ===TABNUM=== of ===TABTOT===.",
+  flag_map         = list()){
+
+
+  # Extracting notes from the flag map
+  all_notes = list()
+  for(fname in names(flag_map)){
+    all_notes[[ flag_map[[fname]][["sn"]] ]] = 
+      paste0( flag_map[[fname]][["sn"]], " = ", flag_map[[fname]][["notes"]])
+  }
+
+  # Removes illegal characters from the tab_id
+  tab_id = stringr::str_replace_all(tab_id, "[^[:alnum:]]", "_")
+
+  isgood = TRUE
+  msgs   = c()
+
+
+  if(rpttype %in% c("docx", "pptx")){
+    if(("rpttype" %in% names(rpt))){
+      if(rpttype == "docx" & rpt[["rpttype"]] != "Word"){
+        isgood = FALSE
+        msgs = c(msgs, "docx specified for non-docx report object")
+      } else if(rpttype == "pptx" & rpt[["rpttype"]] != "PowerPoint"){
+        isgood = FALSE
+        msgs = c(msgs, "pptx specified for non-pptx report object")
+      }
+    } else {
+      isgood = FALSE
+      msgs = c(msgs, "rpt should be an onbrand object")
+    }
+  }
+
+  if(isgood){
+    if(length(stres[["tables"]])){
+      # Adding to word reports only right now
+      if(rpttype == "docx"){
+        for(tname in names(stres[["tables"]])){
+
+          # Creating a copy of the current table:
+          tmp_table = stres[["tables"]][[tname]]
+
+          # Choosing the caption based on how many tables we have:
+          if(length(stres[["tables"]]) > 1){
+            tmp_caption = caption_multiple |>
+              stringr::str_replace_all("===TABNUM===",   
+                                       as.character(which(tname == names(stres[["tables"]])))) |>
+              stringr::str_replace_all("===TABTOT===",   as.character(length(names(stres[["tables"]]))))
+          } else {
+            tmp_caption = caption_single
+          }
+
+          # Pulling out notes to use
+          tmp_notes = NULL
+          if(length(tmp_table[["notes"]])>0){
+            tmp_notes_sn = unique(tmp_table[["notes"]])
+
+            if(!all(tmp_notes_sn %in% names(all_notes))){
+              msgs = c(msgs, paste0("The folloing notes were found in ", tname, " but are not available in all notes:"))
+              msgs = c(msgs, paste0("   ", paste0(tmp_notes_sn[!tmp_notes_sn %in% names(all_notes)], collapse="\n")))
+              msgs = c(msgs, paste0(" Unidentified notes will be skipped"))
+              tmp_notes_sn = tmp_notes_sn[tmp_notes_sn %in% names(all_notes)]
+            }
+
+            # This pulls out the notes in this table from all notes:
+            tmp_notes_list = all_notes[which(names(all_notes) %in% tmp_notes_sn)]
+
+            # This will put them together as a single string
+            tmp_notes = paste0(sort(as.character(unlist(tmp_notes_list))), collapse=", ")
+          }
+
+          tmpft = tmp_table[["ft"]]
+
+          tmpft = flextable::autofit(tmpft)
+
+          # Adding the table
+          rpt = onbrand::report_add_doc_content(rpt,
+                  type     = "flextable_object",
+                  content  = list(
+                    ft              = tmpft ,
+                    key             = tab_id, 
+                    notes           = tmp_notes,
+                    caption_format  = text_format,
+                    caption         = tmp_caption))
+          rpt = onbrand::report_add_doc_content(rpt,
+                  type    = "break",
+                  content = NULL)
+        }
+      }
+      if(rpttype == "xlsx"){
+        if(nrow(stres[["one_body"]]) > 0){
+          rpt[["sheets"]][[tab_id]] = stres[["one_body"]] 
+          rpt[["summary"]] = rbind(rpt[["summary"]],
+            data.frame(
+              Sheet_Name  = tab_id,
+              Description = tab_desc
+            )
+          )
+        }
+      }
+    } else {
+      msgs = c(msgs, "no tables found, skipping")
+    }
+  }
+
+  if(!isgood){
+    msgs = c(msgs, "nca_append_report_tbls() error see above.")
+  }
+
+  res = list(
+    isgood = isgood,
+    msgs   = msgs,
+    rpt   = rpt
+  ) 
+res}
+
+#'@export
+#'@title Append NCA Figures to Report   
+#'@description Takes figures created using the make figure functions and appends those figures to the specified report. While it takes all report types, it should act as a pass through for "xlsx"
+#'@param rpt              Reporting object (onbrand object for "pptx" and "docx" rpttypes and a list for "xlsx")
+#'@param mfres            Output from make figure functions (e.g. `mk_figure_ind_obs()`)
+#'@param rpttype          Type of report either ("docx" (default), "pptx", or "xlsx")
+#'@param fig_id           Unique figure ID
+#'@param fig_desc         Verbose description of the figure
+#'@param fig_height       Word report figure height in inches (7)
+#'@param fig_width        Word report figure width in inches (6)
+#'@param fig_start        In PowerPoint the x and y locations to start relateive to the upper left of the slide.
+#'@param fig_stop         In PowerPoint the x and y locations to stop  relateive to the upper left of the slide.
+#'@param text_format      How to format text ("md" for markdown or "text" for regular text (default))
+#'@param caption_single   Caption for a single figure
+#'@param caption_multiple Caption for a multiple figures with optional placeholders
+#'for the total number of figures (`===FIGTOT===`) and the current figure number
+#'(`===FIGNUM===`).
+#'@param title_single     Title   for a single figure
+#'@param title_multiple   title   for a multiple figures with optional placeholders
+#'for the total number of figures (`===FIGTOT===`) and the current figure number
+#'(`===FIGNUM===`).
+#'@param sub_title_single     Title   for a single figure
+#'@param sub_title_multiple   title   for a multiple figures with optional placeholders
+#'for the total number of figures (`===FIGTOT===`) and the current figure number
+#'(`===FIGNUM===`).
+#'@param flag_map  List with flag mapping details.
+#'@return list with the following elements
+#' \itemize{
+#'   \item{isgood:}       Boolean indicating the exit status of the function.
+#'   \item{msgs:}         Messages to be passed back to the user.
+#'   \item{obnd:}         Report with tables added.
+#'}
+#'@example inst/test_apps/nca_app.R
+nca_append_report_figs  = function(
+  rpt                  = NULL,
+  mfres                = list(),
+  rpttype              = "docx",
+  fig_id               = paste0("fig_", abs(rnorm(1))),
+  fig_desc             = "Description of figure",
+  fig_height           = 7,
+  fig_width            = 6,
+  fig_start            = c(0.07, 0.3),
+  fig_stop             = c(0.93, 0.99),
+  text_format          = "text",
+  caption_single       = "A figure.",
+  caption_multiple     = "Figure ===FIGNUM=== of ===FIGTOT===.",
+  title_single         = "A figure title.",
+  title_multiple       = "A figure title ===FIGNUM=== of ===FIGTOT===.",
+  sub_title_single     = "Figure sub titles.",
+  sub_title_multiple   = "Figure sub titles ===FIGNUM=== of ===FIGTOT===.",
+  flag_map             = list()){
+
+  # Extracting notes from the flag map
+  all_notes = list()
+  for(fname in names(flag_map)){
+    all_notes[[ flag_map[[fname]][["sn"]] ]] = 
+      paste0( flag_map[[fname]][["sn"]], " = ", flag_map[[fname]][["notes"]])
+  }
+
+  # Removes illegal characters from the fig_id
+  fig_id = stringr::str_replace_all(fig_id, "[^[:alnum:]]", "_")
+
+  isgood = TRUE
+  msgs   = c()
+
+
+  if(rpttype %in% c("docx", "pptx")){
+    if(("rpttype" %in% names(rpt))){
+      if(rpttype == "docx" & rpt[["rpttype"]] != "Word"){
+        isgood = FALSE
+        msgs = c(msgs, "docx specified for non-docx report object")
+      } else if(rpttype == "pptx" & rpt[["rpttype"]] != "PowerPoint"){
+        isgood = FALSE
+        msgs = c(msgs, "pptx specified for non-pptx report object")
+      }
+    } else {
+      isgood = FALSE
+      msgs = c(msgs, "rpt should be an onbrand object")
+    }
+  }
+
+  if(isgood){
+    if(length(mfres[["figures"]])){
+      # Adding to word reports only right now
+      if(rpttype %in% c("docx", "pptx")){
+        for(fname in names(mfres[["figures"]])){
+
+          # Creating a copy of the current figure:
+          tmp_figure = mfres[["figures"]][[fname]]
+
+          # Choosing the caption based on how many figures we have:
+          if(length(mfres[["figures"]]) > 1){
+            tmp_caption = caption_multiple |>
+              stringr::str_replace_all("===FIGNUM===",   
+                                       as.character(which(fname == names(mfres[["figures"]])))) |>
+              stringr::str_replace_all("===FIGTOT===",   as.character(length(names(mfres[["figures"]]))))
+
+            tmp_title   = title_multiple |>
+              stringr::str_replace_all("===FIGNUM===",   
+                                       as.character(which(fname == names(mfres[["figures"]])))) |>
+              stringr::str_replace_all("===FIGTOT===",   as.character(length(names(mfres[["figures"]]))))
+
+            tmp_sub_title   = sub_title_multiple |>
+              stringr::str_replace_all("===FIGNUM===",   
+                                       as.character(which(fname == names(mfres[["figures"]])))) |>
+              stringr::str_replace_all("===FIGTOT===",   as.character(length(names(mfres[["figures"]]))))
+          } else {
+            tmp_caption   = caption_single
+            tmp_title     = title_single
+            tmp_sub_title = sub_title_single
+          }
+
+          # Pulling out notes to use
+          tmp_notes = NULL
+          if(length(tmp_figure[["notes"]])>0){
+            tmp_notes_sn = unique(tmp_figure[["notes"]])
+
+            if(!all(tmp_notes_sn %in% names(all_notes))){
+              msgs = c(msgs, paste0("The folloing notes were found in ", fname, " but are not available in all notes:"))
+              msgs = c(msgs, paste0("   ", paste0(tmp_notes_sn[!tmp_notes_sn %in% names(all_notes)], collapse="\n")))
+              msgs = c(msgs, paste0(" Unidentified notes will be skipped"))
+              tmp_notes_sn = tmp_notes_sn[tmp_notes_sn %in% names(all_notes)]
+            }
+
+            # This pulls out the notes in this table from all notes:
+            tmp_notes_list = all_notes[which(names(all_notes) %in% tmp_notes_sn)]
+
+            # This will put them together as a single string
+            tmp_notes = paste0(sort(as.character(unlist(tmp_notes_list))), collapse=", ")
+          }
+
+          tmpgg = tmp_figure[["gg"]]
+          if(rpttype == "docx"){
+            # Adding the figure
+            rpt = onbrand::report_add_doc_content(rpt,
+                    type     = "ggplot",
+                    content  = list(
+                      image           = tmpgg ,
+                      key             = fig_id, 
+                      notes           = tmp_notes,
+                      notes_format    = text_format,
+                      height          = fig_height,
+                      width           = fig_width,  
+                      caption_format  = text_format,
+                      caption         = tmp_caption))
+            rpt = onbrand::report_add_doc_content(rpt,
+                    type    = "break",
+                    content = NULL)
+          }
+          if(rpttype == "pptx"){
+            rpt  = onbrand::report_add_slide(rpt,
+              template = "two_content_header_list",
+              elements = list(
+                 title     = list( content      = tmp_title,
+                                   type         = "text"),
+                 sub_title = list( content      = tmp_sub_title,
+                                   type         = "text")),
+              user_location = list(
+                 small_figure  =
+                   list( content        = tmpgg,
+                         type           = "ggplot",
+                         start          = fig_start,
+                         stop           = fig_stop)
+              )
+            )
+          }
+        }
+      }
+    } else {
+      msgs = c(msgs, "no figures found.")
+    }
+  }
+
+  if(!isgood){
+    msgs = c(msgs, "nca_append_report_figs() error see above.")
+  }
+
+  res = list(
+    isgood = isgood,
+    msgs   = msgs,
+    rpt   = rpt
+  ) 
+res}

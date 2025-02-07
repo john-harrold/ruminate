@@ -59,6 +59,7 @@
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_Server.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_add_int.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_append_report.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/NCA_append_report_old.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_PKNCA_meta.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_ana_ds.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/NCA_fetch_ana_pknca.html</loc></url>
@@ -91,7 +92,10 @@
 <url><loc>https://ruminate.ubiquity.tools/reference/mk_rx_obj.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/mk_subjects.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/mk_table_ind_obs.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/mk_table_ind_obs_flags.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/mk_table_nca_params.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/nca_append_report_figs.html</loc></url>
+<url><loc>https://ruminate.ubiquity.tools/reference/nca_append_report_tbls.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/nca_builder.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/plot_sr_ev.html</loc></url>
 <url><loc>https://ruminate.ubiquity.tools/reference/plot_sr_tc.html</loc></url>

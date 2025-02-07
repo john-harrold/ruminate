@@ -26,6 +26,7 @@ Dataset with the following columns added for flagging data.
 \itemize{
 \item{rmnt_key} Unique key for each record (eg \code{'rec_n'}, where \code{n} isthe row number)
 \item{rmnt_flag} Flag short name
+\item{rmnt_note} Any notes specified to describe the reason the record was flagged
 \item{rmnt_desc} Flag description used in plot legends
 \item{rmnt_cens} Column used to indicate censoring (NA for not censored or a string indicating the record is censored)
 \item{rmnt_hlex} Column used to indicate manual selection of points to exclude for half-life calculation (TRUE- exclude, FALSE - do not exclude)
@@ -42,6 +43,7 @@ library(stringr)
 library(ruminate)
 library(PKNCA)
 library(formods)
+
 
 if(formods::is_installed("readxl")){
   library(readxl)
@@ -246,7 +248,15 @@ if(formods::is_installed("readxl")){
     obnd         = rpt,
     flag_map     = flag_map,
     digits       = 3)
+  table_ind_obs$tables[["Table 1"]]$ft
 
+  # Generating tables of the manual flags applied
+  table_ind_obs_flags = mk_table_ind_obs_flags(
+    nca_res      = nca_res,
+    obnd         = rpt,
+    flag_map     = flag_map,
+    digits       = 3)
+  table_ind_obs_flags$tables[["Table 1"]]$ft
   
   # Generating tables of individual parameters
   table_ind_params = mk_table_nca_params(
@@ -259,7 +269,6 @@ if(formods::is_installed("readxl")){
 
   print(figure_ind_obs$figures$Figure_1$gg)
 
-  table_ind_obs$tables[["Table 1"]]$ft
   table_ind_params$tables[["Table 1"]]$ft
 }
 }
