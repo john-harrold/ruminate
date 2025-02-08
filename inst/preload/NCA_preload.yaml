@@ -49,6 +49,9 @@ NCA:
           tb_ind_obs_rpt: 
           - docx
           - xlsx
+          tb_ind_obs_flags_rpt:
+          - docx
+          - xlsx
           tb_ind_params_rpt: 
           - docx
           - xlsx
@@ -139,13 +142,16 @@ NCA:
           - pptx
           tb_ind_obs_rpt:
           - docx
-          - pptx
+          - xlsx
+          tb_ind_obs_flags_rpt:
+          - docx
+          - xlsx
           tb_ind_params_rpt:
           - docx
-          - pptx
+          - xlsx
           tb_sum_params_rpt:
           - pptx
-          - pptx
+          - xlsx
           fg_ind_obs_logy: yes
           sampling: serial
           dose_from: cols

@@ -4095,6 +4095,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session
     "text_manual"                    = "text_manual",
     "fg_ind_obs_rpt"                 = "fg_ind_obs_rpt",
     "tb_ind_obs_rpt"                 = "tb_ind_obs_rpt",
+    "tb_ind_obs_flags_rpt"           = "tb_ind_obs_flags_rpt",
     "tb_ind_params_rpt"              = "tb_ind_params_rpt",
     "tb_sum_params_rpt"              = "tb_sum_params_rpt",
     "check_fg_ind_obs_logy"          = "fg_ind_obs_logy",
@@ -4965,11 +4966,11 @@ NCA_new_ana    = function(state){
          fg_ind_obs_nrow         = "",
          fg_ind_obs_ncol         = "",
          fg_ind_obs_logy         = TRUE,
-         fg_ind_obs_rpt          = c("docx", "pptx"),
-         tb_ind_obs_rpt          = c("docx", "xlsx"),
-         tb_ind_obs_flags_rpt    = c("docx", "xlsx"),
-         tb_ind_params_rpt       = c("docx", "xlsx"),
-         tb_sum_params_rpt       = c("pptx", "xlsx"),
+         fg_ind_obs_rpt          = c(), # These defaults are controlled below based on the yaml 
+         tb_ind_obs_rpt          = c(), #
+         tb_ind_obs_flags_rpt    = c(), #
+         tb_ind_params_rpt       = c(), #
+         tb_sum_params_rpt       = c(), # Placeholder not currently used
          tab_view                = "tb_ind_obs",
          tab_type                = "",
          code_components         = NULL,
@@ -5005,6 +5006,19 @@ NCA_new_ana    = function(state){
          notes                   = "",
          isgood                  = FALSE)
 
+
+  # Walking through each of the reportable output types and assigning the
+  # default to the current analysis. E.g. fg_ind_obs has an entry
+  # fg_ind_obs_rpt.
+  # 
+  for(tmp_tab_fig in c("figures", "tables")){
+    for(tmp_tf_id in names(state[["MC"]][["reporting"]][[tmp_tab_fig]])){
+      tmp_tf_id_rpt = paste0(tmp_tf_id, "_rpt")
+      if(!is.null(state[["MC"]][["reporting"]][[tmp_tab_fig]][[tmp_tf_id]][["rpt_outputs"]])){
+        nca_def[[tmp_tf_id_rpt]] = state[["MC"]][["reporting"]][[tmp_tab_fig]][[tmp_tf_id]][["rpt_outputs"]]
+      }
+    }
+  }
 
 # I think these were really only needed for the figure
 #        page            = 1,
