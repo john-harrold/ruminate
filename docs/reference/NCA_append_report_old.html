@@ -226,6 +226,50 @@ generated (<code>FALSE</code>).</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Reporting NCA results xlsx ==============================================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ### PK Example ############################################################</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # NCA_1_tb_ind_params</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nart_res  = </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nca_append_report_tbls(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      rpt               = rpt,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      stres             = NCA_1_table_ind_params,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      rpttype           = "xlsx",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      text_format       = "md",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      tab_id            = "NCA_1_tb_ind_params",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      tab_desc          = stringr::str_replace_all(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        string  = "===NCADESC=== Individual Parameters",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pattern = "===NCADESC===", "PK Example"),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      caption_single    = stringr::str_replace_all(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        string  = "===NCADESC=== (Individual Parameters)",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pattern = "===NCADESC===", "PK Example"),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      caption_multiple  = stringr::str_replace_all(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        string  = "===NCADESC=== (Individual Parameters, ===TABNUM=== of ===TABTOT===)",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pattern = "===NCADESC===", "PK Example"),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      flag_map  = NCA_1_flag_map) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # pulling the reporting object out of the result</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt = nart_res[["rpt"]] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # NCA_1_tb_ind_obs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nart_res  = </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nca_append_report_tbls(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      rpt               = rpt,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      stres             = NCA_1_table_ind_obs,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      rpttype           = "xlsx",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      text_format       = "md",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      tab_id            = "NCA_1_tb_ind_obs",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      tab_desc          = stringr::str_replace_all(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        string  = "===NCADESC=== Individual Data",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pattern = "===NCADESC===", "PK Example"),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      caption_single    = stringr::str_replace_all(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        string  = "===NCADESC===, Individual Data",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pattern = "===NCADESC===", "PK Example"),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      caption_multiple  = stringr::str_replace_all(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        string  = "===NCADESC===, Individual Data (===TABNUM=== of ===TABTOT===)",</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        pattern = "===NCADESC===", "PK Example"),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      flag_map  = NCA_1_flag_map) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # pulling the reporting object out of the result</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rpt = nart_res[["rpt"]] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # NCA_1_tb_ind_obs_flags</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> nart_res  = </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   nca_append_report_tbls(</span>

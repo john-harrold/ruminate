@@ -344,6 +344,13 @@ Parameter Name is the value shown in the app.</p>
     # order in which figures and tables will be reported. Each id should have
     # the following options:
     #
+    #   rpt_outputs         This is reporting outputs where this figure or
+    #                       table should be included. This shows the
+    #                       _possible_ outputs types. So you can remove
+    #                       outputs types but not add. For example if a table
+    #                       shows Word and Excel you can remove the Word
+    #                       option but _not_ add PowerPoint
+    #
     #   caption_single      Caption used when a table or figure needs only a
     #                       single page.
     #
@@ -384,6 +391,7 @@ Parameter Name is the value shown in the app.</p>
     #
     figures:
       fg_ind_obs:
+        rpt_outputs:        ["docx", "pptx"]
         caption_single:     "===NCADESC=== (Individual Observations)"
         caption_multiple:   "===NCADESC=== (Individual Observations, ===FIGNUM=== of ===FIGTOT===)"
         title_single:       " Individual Observations"
@@ -392,14 +400,17 @@ Parameter Name is the value shown in the app.</p>
         sub_title_multiple: "===NCADESC=== (===FIGNUM=== of ===FIGTOT===)"
     tables:
       tb_ind_params:
+        rpt_outputs:        ["docx", "xlsx"]
         caption_single:   "===NCADESC=== (Individual Parameters)"
         caption_multiple: "===NCADESC=== (Individual Parameters, ===TABNUM=== of ===TABTOT===)"
         description:      "===NCADESC=== Individual Parameters"
       tb_ind_obs:
+        rpt_outputs:        ["docx", "xlsx"]
         caption_single:   "===NCADESC===, Individual Data"
         caption_multiple: "===NCADESC===, Individual Data (===TABNUM=== of ===TABTOT===)"
         description:      "===NCADESC=== Individual Data"
       tb_ind_obs_flags:
+        rpt_outputs:        ["docx", "xlsx"]
         caption_single:   "===NCADESC===, Manually Flagged Records "
         caption_multiple: "===NCADESC===, Manually Flagged Records (===TABNUM=== of ===TABTOT===)"
         description:      "===NCADESC=== Manually Flagged Records"
