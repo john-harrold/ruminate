@@ -386,6 +386,7 @@ NCA_Server <- function(id,
            # analysis is fresh and in a good state or now.
            if(!tmp_ana[["isgood"]] | !tmp_ana[["isfresh"]]){
 
+             # This will highlight any analyses that have issues:
              HL_COLOR = "#FFC108"
              if(!is.null(state[["yaml"]][["FM"]][["ui"]][["color_orange"]])){
                HL_COLOR = state[["yaml"]][["FM"]][["ui"]][["color_orange"]]
