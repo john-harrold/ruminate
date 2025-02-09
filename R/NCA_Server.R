@@ -385,10 +385,15 @@ NCA_Server <- function(id,
            # This will format the options differently depending on whether the
            # analysis is fresh and in a good state or now.
            if(!tmp_ana[["isgood"]] | !tmp_ana[["isfresh"]]){
+
+             HL_COLOR = "#FFC108"
+             if(!is.null(state[["yaml"]][["FM"]][["ui"]][["color_orange"]])){
+               HL_COLOR = state[["yaml"]][["FM"]][["ui"]][["color_orange"]]
+             }
              use_content = TRUE
              content = c(content, 
-               paste0("<div style='font-style:bold; background: #FFC108; color: black;'>", tmp_ana[["key"]],"</div>"))
-             cstyle = c(cstyle, "color: #FFC108")
+               paste0("<div style='font-style:bold; background: ", HL_COLOR ,"; color: black;'>", tmp_ana[["key"]],"</div>"))
+             cstyle = c(cstyle, paste0("color: ", HL_COLOR))
            } else {
              content = c(content, paste0("<div>", tmp_ana[["key"]], "</div>"))
              cstyle = c(cstyle, "color: black")
