@@ -3460,35 +3460,55 @@ NCA_fetch_state = function(id, input, session,
     }
   }
 
-
-# # This is changes in the wrangled data views
-# if("checksum" %in% names(isolate(react_state[[id_DW]][["DW"]]))){
-#   if(!is.null(isolate(react_state[[id_DW]][["DW"]][["checksum"]]))){
-#     if(is.null(state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]])){
-#       # If the DW checksum isn't NULL but the stored value in DSV is then we
-#       # need to update the dataset
-#       UPDATE_DS = TRUE
-#     } else if(isolate(react_state[[id_DW]][["DW"]][["checksum"]]) !=
-#               state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]]){
-#       # If the stored checksum in DSV is different than the currently
-#       # uploaded dataset in DW then we force a reset as well:
-#       UPDATE_DS = TRUE
-#     }
-#   }
-# }
-
   if(UPDATE_DS){
     formods::FM_le(state, "Updating DS")
     # updating the "DSV" components
     if(state[["NCA"]][["isgood"]]){
+      OLD_DSV = state[["NCA"]][["DSV"]] 
       state[["NCA"]][["DSV"]] = formods::FM_fetch_ds(state, session, c(id_UD, id_DW))
     } else {
+      OLD_DSV = NULL
       state = NCA_init_state(FM_yaml_file,
                              MOD_yaml_file,
                              id,
                              id_UD,
                              id_DW,
                              session)
+    }
+
+    # Walking through the analyses and updating the freshness based on the 
+    # updated DSV field:
+    for(ana in names(state[["NCA"]][["anas"]])){
+      tmp_ana = state[["NCA"]][["anas"]][[ana]]
+
+      # Updating the freshness of the current analyses based 
+      # on how the old DS views compare to the new ones
+      if(is.null(OLD_DSV)){
+        # If OLD_DSV was NULL then we had no views for some reason 
+        # so everything should be out of sync:)
+        tmp_ana[["isfresh"]] = FALSE
+      } else {
+        # Otherwise we need to compare the previous DSV to the current one
+        tmp_ana_ds     = state[["NCA"]][["DSV"]][["ds"]][[ tmp_ana[["ana_dsview"]] ]]
+        tmp_ana_ds_old = OLD_DSV[["ds"]][[ tmp_ana[["ana_dsview"]] ]]
+        if(is.null(tmp_ana_ds) | is.null(tmp_ana_ds_old)){
+          # If there is no dataset in the new (tmp_ana_ds) or the old
+          # (tmp_ana_ds_old) then it's likely the data view has been deleted
+          # and we need to set this to not fresh:
+          tmp_ana[["isfresh"]] = FALSE
+        } else {
+          # If we get here then the analysis data view exists and we need to
+          # check to see if there are any changes
+          if(tmp_ana_ds$DSchecksum != tmp_ana_ds_old$DSchecksum){
+            tmp_ana[["isfresh"]] = FALSE
+          }
+        }
+      }
+      # Saving the analysis
+      if(!tmp_ana[["isfresh"]]){
+        FM_le(state, paste0("change in data view for ", ana, " and is no longer fresh"))
+        state[["NCA"]][["anas"]][[ana]] = tmp_ana
+      }
     }
   }
 
@@ -4061,6 +4081,7 @@ NCA_fetch_state = function(id, input, session,
       if(nrow(current_ana[["manual_ds_flags"]])){
         notify_text = "Data source change detected: You will need to rerun the analysis. Manual flags reset."
         state = FM_set_notification(state, notify_text, "Manual Flags Reset", "warning") }
+      current_ana[["isfresh"]] = FALSE
       current_ana[["manual_ds_flags"]] = data.frame()
     }
     # updating the view id
