@@ -37,8 +37,8 @@ NCA:
           interval_range:
           - '0'
           - Inf
-          fg_ind_obs_ncol: 4
-          fg_ind_obs_nrow: 4
+          fg_ind_obs_ncol: 3
+          fg_ind_obs_nrow: 3
           curr_fg_ind_obs: Figure_1
           curr_tb_ind_obs: Table 1
           curr_tb_ind_params: Table 1

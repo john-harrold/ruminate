@@ -341,6 +341,13 @@ NCA_Server <- function(id,
       input[["button_ana_save"]]
       input[["button_ana_del"]]
       input[["button_ana_copy"]]
+
+      # Forcing updates to warning status
+      input[["button_ana_run"]]
+      react_internal[["click"]] 
+      react_internal[["select"]] 
+
+
       state = NCA_fetch_state(id              = id,
                              input           = input,
                              session         = session,
@@ -359,9 +366,13 @@ NCA_Server <- function(id,
         current_ana_id = state[["NCA"]][["current_ana"]]
 
         choices     = c()
+        content     = c()
         cnames      = c()
         subtext     = c()
+        cstyle      = c()
 
+
+        use_content = FALSE
         for(ana_id in names(state[["NCA"]][["anas"]])){
            tmp_ana = state[["NCA"]][["anas"]][[ana_id]]
            # Creating the select subtext from the caption
@@ -371,11 +382,28 @@ NCA_Server <- function(id,
              subtext = c(subtext, strtrim(tmp_ana[["notes"]], 20))
            }
 
+           # This will format the options differently depending on whether the
+           # analysis is fresh and in a good state or now.
+           if(!tmp_ana[["isgood"]] | !tmp_ana[["isfresh"]]){
+             use_content = TRUE
+             content = c(content, 
+               paste0("<div style='font-style:bold; background: #FFC108; color: black;'>", tmp_ana[["key"]],"</div>"))
+             cstyle = c(cstyle, "color: #FFC108")
+           } else {
+             content = c(content, paste0("<div>", tmp_ana[["key"]], "</div>"))
+             cstyle = c(cstyle, "color: black")
+           }
+
            choices = c(choices, ana_id)
            cnames  = c(cnames,  tmp_ana[["key"]])
         }
 
-        choicesOpt = list( subtext = subtext)
+        # If there is a problem we use the content 
+        if(use_content){
+          choicesOpt = list( content = content)
+        } else {
+          choicesOpt = list( subtext = subtext)
+        }
         names(choices) = cnames
 
         uiele =
@@ -385,7 +413,13 @@ NCA_Server <- function(id,
           label      = state[["MC"]][["labels"]][["select_current_ana"]],
           choices    = choices,
           width      = state[["MC"]][["formatting"]][["select_current_ana"]][["width"]],
+          options    = shinyWidgets::pickerOptions(container = "body"),
           choicesOpt = choicesOpt)
+
+        uiele = formods::FM_add_ui_tooltip(state, uiele,
+                 tooltip     = state[["MC"]][["formatting"]][["select_current_ana"]][["tooltip"]],
+                 position    = state[["MC"]][["formatting"]][["select_current_ana"]][["tooltip_position"]])
+
       }
 
       uiele})
@@ -3623,6 +3657,8 @@ NCA_fetch_state = function(id, input, session,
         } else {
           FM_le(state, "no manual flags currently set.")
         }
+        
+
      
         # Saving the current analysis
         state = NCA_set_current_ana(state, current_ana)
@@ -3630,6 +3666,14 @@ NCA_fetch_state = function(id, input, session,
         # Rebuilding the figure to incorporate any flag changes:
         # browser()
         state = run_nca_components(state, "fg_ind_obs_subset")
+
+        # Setting the good status to bad to indicate that we need to update
+        # the current analysis:
+        current_ana = NCA_fetch_current_ana(state)
+        current_ana[["isfresh"]] = FALSE
+        state = NCA_set_current_ana(state, current_ana)
+        FM_le(state, "analysis fresh flag set to FALSE")
+
       }
     }
   }
@@ -5004,6 +5048,7 @@ NCA_new_ana    = function(state){
          units_amt               = "",
          units_time              = "",
          notes                   = "",
+         isfresh                 = FALSE,
          isgood                  = FALSE)
 
 
@@ -6513,6 +6558,7 @@ run_nca_components = function(
         # Source to run
         cmd = current_ana[["code_components"]][["code_ana_only"]]
 
+
         # NCA environment environment:
         tc_env = list()
         tc_env[[dsview]] = DS
@@ -6539,6 +6585,10 @@ run_nca_components = function(
             current_ana[["objs"]][[obs_sn]][["value"]] =
             nca_run_res[["capture"]][[  current_ana[["objs"]][[obs_sn]][["name"]]  ]]
           }
+
+          # resetting the freshness flag
+          current_ana[["isfresh"]] = TRUE 
+
         } else {
           # If the run failed we capture the error messages to be passed back to the
           # user:

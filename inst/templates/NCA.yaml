@@ -179,6 +179,10 @@ MC:
       default:          "cols"
       tooltip:          "Dosing information can be found in either columns (column for dose, dose cycle, nominal time) or rows (one row for each dose event distinguished by an event ID (EVID) column)."
       tooltip_position: "top"
+    select_current_ana:
+      width:            200
+      tooltip:          "If there is an analysis that is highlighted there is an issue with it. First run the analysis and see if that resolves it. If not check for any errors that are shown."
+      tooltip_position: "top"
     intervals:
       width:  600
       height: 175
@@ -349,7 +353,7 @@ MC:
       reset:
         manual:       "yes"
         sn:           "NF"     
-        description:  "No Flag"     
+        description:  "Remove Flag"     
         color:        "black"
         notes:        "reset point/selection to dataset default"
       obs:
