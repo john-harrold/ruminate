@@ -5808,7 +5808,15 @@ NCA_process_current_ana = function(state){
     unique_cols = c(unique_cols,  current_ana[["col_analyte"]]  )
   }
 
-  tmp_ds =  ds[["DS"]] |>
+  tmp_ds =  ds[["DS"]] 
+  # Keeping only observations for the test below because dosing can occur at
+  # the same time as an observation and trigger a false-positive:
+  if(current_ana[["col_evid"]] != ""){
+    tmp_ds = tmp_ds|>
+      dplyr::filter(.data[[ current_ana[["col_evid"]] ]] == 0)
+  }
+
+  tmp_ds =  tmp_ds |>
     dplyr::group_by_at(unique_cols) |>
     dplyr::mutate(NUNIQUE = length(!!as.name(current_ana[["col_id"]])))
 
@@ -5866,7 +5874,10 @@ nca_builder = function(state){
 
   code_ana_only             = ""
   code_previous             = ""
+  code_fetch                = ""
   code_tb_ind_obs           = ""
+  code_tb_ind_obs_sa        = ""
+  code_tb_ind_obs_flags_sa  = ""
   code_tb_ind_params        = ""
   code_fg_ind_obs           = ""
   code_fg_ind_obs_all       = ""
