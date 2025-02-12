@@ -47,6 +47,7 @@ jobs:
           extra-packages: |
             any::rcmdcheck
             nlmixr2/nlmixr2lib
+            billdenney/pknca
             john-harrold/onbrand
             john-harrold/formods
           needs: check
