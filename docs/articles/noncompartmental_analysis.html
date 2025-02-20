@@ -306,9 +306,10 @@ Parameter Name is the value shown in the app.</p>
 <pre><code>MC:
   # Module informaiton
   module:
+    description: "Non-Compartmental Analysis"
     type: "NCA"
     # internal R Object: module ID used in deployment
-    depends: 
+    depends:
       id_ASM: "ASM"
       id_UD:  "UD"
       id_DW:  "DW"
@@ -328,7 +329,7 @@ Parameter Name is the value shown in the app.</p>
     # like table headers.
     text_format: "md"
     # Priority of reporting relative to other modules (higher numbers are
-    # reported first). 
+    # reported first).
     dimensions:
       figures:
         height: 6.5        # word report figure height in inches
@@ -338,7 +339,7 @@ Parameter Name is the value shown in the app.</p>
     priority: 10
     # The figures and tables sections below controls the reporting of tables
     # that can span multiple pages or slides. The reporting of these is fairly
-    # automated and behaves more or less consistently. 
+    # automated and behaves more or less consistently.
     #
     # The order of the figure and table ids (e.g. fg_ind_obs) represents the
     # order in which figures and tables will be reported. Each id should have
@@ -644,7 +645,7 @@ Parameter Name is the value shown in the app.</p>
     # This contains flags used to flag data/results
     #  - manual indicates that it can be assinged with manual point selection.
     #    This generally this SHOULD NOT BE CHANGED. However, you can set the "yes"
-    #    values to "no" to prevent them from being being options in 
+    #    values to "no" to prevent them from being being options in
     #    manual point selection. But do not change "no" values to "yes".
     #  - flag   internal flag used (SHOULD NOT BE CHANGED).
     #  - color       This can be a color (black) or a hex (#000000). The only
@@ -657,49 +658,49 @@ Parameter Name is the value shown in the app.</p>
     flags:
       reset:
         manual:       "yes"
-        sn:           "NF"     
-        description:  "Remove Flag"     
+        sn:           "NF"
+        description:  "Remove Flag"
         color:        "black"
         notes:        "reset point/selection to dataset default"
       obs:
-        manual:       "no" 
-        sn:           "OBS"     
+        manual:       "no"
+        sn:           "OBS"
         description:  "Observation"
         color:        "black"
         notes:        "normal observation"
-      blq:           
+      blq:
         manual:       "no"
-        sn:           "BLQ"     
+        sn:           "BLQ"
         description:  "BLQ"
         color:        "#56B4E9"
         notes:        "below the level of quantification"
-      hlex:          
+      hlex:
         manual:       "yes"
-        sn:           "HX"    
+        sn:           "HX"
         description:  "Exclude Half-life"
         notes:        "exclude from half-life calculation"
         color:        "#F0E441"
-      hlin:         
+      hlin:
         manual:       "yes"
-        sn:           "HI"    
+        sn:           "HI"
         description:  "Specify Half-life"
         notes:        "specified for use in half-life calculation"
         color:        "#029E73"
-      censor:        
+      censor:
         manual:       "yes"
-        sn:           "C"    
+        sn:           "C"
         description:  "Censored"
         notes:        "censored from NCA analysis"
         color:        "#D65E00"
-      ns:            
+      ns:
         manual:       "no"
-        sn:           "NS"    
+        sn:           "NS"
         description:  "Not Sampled"
         notes:        "not calculated"
         color:        "black"
-      nc:            
+      nc:
         manual:       "no"
-        sn:           "NC"    
+        sn:           "NC"
         description:  "Not Calclated"
         notes:        "not calculated"
         color:        "black"

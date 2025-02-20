@@ -132,12 +132,11 @@ create as many entries as you want.</p>
 <div class="section level2">
 <h2 id="configuration-file">Configuration File<a class="anchor" aria-label="anchor" href="#configuration-file"></a>
 </h2>
-<pre><code>Error in get(paste0(generic, ".", class), envir = get_method_env()) : 
-  object 'type_sum.accel' not found</code></pre>
 <pre><code># The MC field is a skeleton for constructing new modules
 MC:
   # Module informaiton
   module:
+    description: "Model Builder"
     type: "MB"
     # internal R Object: module ID used in deployment
     depends:

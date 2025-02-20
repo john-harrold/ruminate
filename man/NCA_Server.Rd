@@ -255,7 +255,7 @@ ui <- shinydashboard::dashboardPage(
                  htmlOutput(NS("ASM", "ui_asm_sys_options"))
                  ),
                  shiny::tabPanel(id="sys_deps",
-                          title=tagList(shiny::icon("sliders"),
+                          title=tagList(shiny::icon("box-open"),
                                         "Dependencies"),
                  htmlOutput("ui_sys_deps")
                  )
@@ -360,10 +360,9 @@ server <- function(input, output, session) {
         ))
     }
 
-    browser()
+    uiele = DT::datatable(dep_sum)
 
-
-  })
+  uiele})
 
 }
 
