@@ -4,6 +4,8 @@
   from half-life calculation, or specyfing points to use in 
   half-life calcualtion.
 - Fixed typos in PKNCA parameters (`sparse_se` -> `sparse_auc_se` and `sparse_df` -> `sparse_auc_df`)
+- Updated model selection in MDL to include grouping.
+- Added searchable dependencies table under the App Info tab. 
 
 # ruminate 0.3.1 
 

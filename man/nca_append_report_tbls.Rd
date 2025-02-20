@@ -247,6 +247,11 @@ ui <- shinydashboard::dashboardPage(
                           title=tagList(shiny::icon("sliders"),
                                         "R Options"),
                  htmlOutput(NS("ASM", "ui_asm_sys_options"))
+                 ),
+                 shiny::tabPanel(id="sys_deps",
+                          title=tagList(shiny::icon("sliders"),
+                                        "Dependencies"),
+                 htmlOutput("ui_sys_deps")
                  )
          #       )
                ))
@@ -310,6 +315,49 @@ server <- function(input, output, session) {
                        react_state      = react_FM,
                        MOD_yaml_file    = NCA.yaml,
                        FM_yaml_file     = formods.yaml)
+
+  output$ui_sys_deps = renderUI({
+    pcf = formods_check(verbose = FALSE)
+    pcr = ruminate_check(verbose = FALSE)
+
+    dep_sum = NULL
+    if(!is.null(pcf[["found_pkgs"]])){
+      dep_sum = rbind(dep_sum, 
+        data.frame(
+          Package      = "formods",
+          Dependency   = pcf[["found_pkgs"]],
+          Status       = "found"
+        ))
+    }
+    if(!is.null(pcf[["missing_pkgs"]])){
+      dep_sum = rbind(dep_sum, 
+        data.frame(
+          Package      = "formods",
+          Dependency   = pcf[["missing_pkgs"]],
+          Status       = "missing"
+        ))
+    }
+    if(!is.null(pcr[["found_pkgs"]])){
+      dep_sum = rbind(dep_sum, 
+        data.frame(
+          Package      = "ruminate",
+          Dependency   = pcr[["found_pkgs"]],
+          Status       = "found"
+        ))
+    }
+    if(!is.null(pcr[["missing_pkgs"]])){
+      dep_sum = rbind(dep_sum, 
+        data.frame(
+          Package      = "ruminate",
+          Dependency   = pcr[["missing_pkgs"]],
+          Status       = "missing"
+        ))
+    }
+
+    browser()
+
+
+  })
 
 }
 

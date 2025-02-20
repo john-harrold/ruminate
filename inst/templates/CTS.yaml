@@ -2,6 +2,7 @@
 MC:
   # Module informaiton
   module:
+    description: "Clinical Trial Simulator"
     type: "CTS"
     # internal R Object: module ID used in deployment
     depends:

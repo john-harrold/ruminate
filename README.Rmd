@@ -42,8 +42,11 @@ You can install the released version of ``ruminate`` from [CRAN](https://cran.r-
 
 ``` r
 # Actual package
+install.packages("formods",   dependencies=TRUE)
 install.packages("ruminate",  dependencies=TRUE)
 ```
+
+Make sure you install `{formods}` first and make sure to set dependencies to `TRUE` for both. 
 
 ## Development version
 

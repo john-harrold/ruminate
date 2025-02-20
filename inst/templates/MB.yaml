@@ -2,6 +2,7 @@
 MC:
   # Module informaiton
   module:
+    description: "Model Builder"
     type: "MB"
     # internal R Object: module ID used in deployment
     depends:

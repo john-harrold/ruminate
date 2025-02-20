@@ -497,8 +497,12 @@ NCA_Server <- function(id,
       if(state[["NCA"]][["isgood"]]){
         # If this is triggered before datasets have been loaded the state will
         # be bad:
+
         # Pulling out the data set views catalog
         ds_catalog = state[["NCA"]][["DSV"]][["catalog"]]
+
+        # Pulling out the select choices list:
+        all_choices = state[["NCA"]][["DSV"]][["choices"]]
 
         if(current_ana[["ana_dsview"]] %in% ds_catalog[["object"]]){
           current_view_id= current_ana[["ana_dsview"]]
@@ -510,8 +514,12 @@ NCA_Server <- function(id,
           formods::FM_le(state, paste0("switching to view:", current_view_id ))
         }
 
-        choices        = ds_catalog[["object"]]
-        names(choices) = ds_catalog[["label"]]
+        #choices        = ds_catalog[["object"]]
+        #names(choices) = ds_catalog[["label"]]
+
+        # Using choices grouped by module
+        choices = all_choices[["grouped"]]
+        
 
         choicesOpt = NULL
         shinyWidgets::updatePickerInput(

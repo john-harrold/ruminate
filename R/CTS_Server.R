@@ -1673,6 +1673,10 @@ CTS_Server <- function(id,
 
           catalog = state[["CTS"]][["MDL"]][["catalog"]]
 
+          # Pulling out the select choices list:
+          all_choices = state[["CTS"]][["MDL"]][["choices"]]
+
+
           if(current_cht[["ui"]][["source_model"]] %in% catalog[["object"]]){
             current_source_model =  current_cht[["ui"]][["source_model"]]
           } else {
@@ -1683,8 +1687,10 @@ CTS_Server <- function(id,
             FM_le(state, paste0("switching model:", current_source_model ))
           }
 
-          choices        = catalog[["object"]]
-          names(choices) = catalog[["label"]]
+          # choices        = catalog[["object"]]
+          # names(choices) = catalog[["label"]]
+          # Using choices grouped by module
+          choices = all_choices[["grouped"]]
 
           choicesOpt = NULL
           shinyWidgets::updatePickerInput(
