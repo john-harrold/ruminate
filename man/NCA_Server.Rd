@@ -8,9 +8,6 @@ NCA_Server(
   id,
   FM_yaml_file = system.file(package = "formods", "templates", "formods.yaml"),
   MOD_yaml_file = system.file(package = "ruminate", "templates", "NCA.yaml"),
-  id_ASM = "ASM",
-  id_UD = "UD",
-  id_DW = "DW",
   deployed = FALSE,
   react_state = NULL
 )
@@ -21,12 +18,6 @@ NCA_Server(
 \item{FM_yaml_file}{App configuration file with FM as main section.}
 
 \item{MOD_yaml_file}{Module configuration file with MC as main section.}
-
-\item{id_ASM}{ID string for the app state management module used to save and load app states}
-
-\item{id_UD}{ID string for the upload data module used to save and load app states}
-
-\item{id_DW}{ID string for the data wrangling module used to save and load app states}
 
 \item{deployed}{Boolean variable indicating whether the app is deployed or not.}
 
@@ -298,25 +289,22 @@ server <- function(input, output, session) {
                        FM_yaml_file  = formods.yaml,
                        MOD_yaml_file = ASM.yaml,
                        mod_ids       = mod_ids)
-  formods::UD_Server(  id ="UD", id_ASM = "ASM",
+  formods::UD_Server(  id ="UD", 
                        deployed         = deployed,
                        react_state      = react_FM,
                        MOD_yaml_file    = UD.yaml,
                        FM_yaml_file     = formods.yaml)
-  formods::DW_Server(  id="DW",       id_ASM = "ASM",
-                       id_UD = "UD",
+  formods::DW_Server(  id="DW", 
                        deployed         = deployed,
                        react_state      = react_FM,
                        MOD_yaml_file    = DW.yaml,
                        FM_yaml_file     = formods.yaml)
-  formods::FG_Server(  id="FG",     id_ASM = "ASM",
-                       id_UD = "UD", id_DW = "DW",
+  formods::FG_Server(  id="FG",  
                        deployed         = deployed,
                        react_state      = react_FM,
                        MOD_yaml_file    = FG.yaml,
                        FM_yaml_file     = formods.yaml)
-  ruminate::NCA_Server(id    ="NCA", id_ASM = "ASM",
-                       id_UD = "UD", id_DW  = "DW",
+  ruminate::NCA_Server(id    ="NCA",
                        deployed         = deployed,
                        react_state      = react_FM,
                        MOD_yaml_file    = NCA.yaml,

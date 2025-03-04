@@ -10,8 +10,6 @@ sess_res = MB_test_mksession()
 session = sess_res[["session"]]
 
 id     = "CTS"
-id_ASM = "ASM"
-id_MB  = "MB"
 input  = list()
 
 # Configuration files
@@ -19,8 +17,6 @@ FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml")
 MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml")
 
 state = CTS_fetch_state(id              = id,
-                        id_ASM          = id_ASM,
-                        id_MB           = id_MB,
                         input           = input,
                         session         = session,
                         FM_yaml_file    = FM_yaml_file,

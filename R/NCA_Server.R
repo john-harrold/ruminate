@@ -16,9 +16,6 @@
 #'@param id An ID string that corresponds with the ID used to call the modules UI elements
 #'@param FM_yaml_file App configuration file with FM as main section.
 #'@param MOD_yaml_file  Module configuration file with MC as main section.
-#'@param id_ASM ID string for the app state management module used to save and load app states
-#'@param id_UD ID string for the upload data module used to save and load app states
-#'@param id_DW ID string for the data wrangling module used to save and load app states
 #'@param deployed Boolean variable indicating whether the app is deployed or not.
 #'@param react_state Variable passed to server to allow reaction outside of module (\code{NULL})
 #'@return list containing the current state of the app including default
@@ -42,13 +39,14 @@
 NCA_Server <- function(id,
                       FM_yaml_file  = system.file(package = "formods",   "templates", "formods.yaml"),
                       MOD_yaml_file = system.file(package = "ruminate",  "templates", "NCA.yaml"),
-                      id_ASM        = "ASM",
-                      id_UD         = "UD",
-                      id_DW         = "DW",
                       deployed      = FALSE,
                       react_state   = NULL) {
   moduleServer(id, function(input, output, session) {
 
+   MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+   id_ASM = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_ASM"]]
+   id_UD  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_UD"]]
+   id_DW  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_DW"]]
 
     #------------------------------------
     # Generated data reading code
@@ -64,17 +62,14 @@ NCA_Server <- function(id,
       input[["button_fg_ind_obs_next_pg"]]
       input[["button_fg_ind_obs_prev_pg"]]
 
-      react_internal[["click"]] 
-      react_internal[["select"]] 
+      react_internal[["click"]]
+      react_internal[["select"]]
 
       state = NCA_fetch_state(id              = id,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -118,9 +113,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       uiele = state[["NCA"]][["ui_msg"]]
@@ -135,9 +127,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
       uiele = shinyWidgets::actionBttn(
                 inputId = NS(id, "button_ana_new"),
@@ -163,9 +152,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
       uiele = shinyWidgets::actionBttn(
                 inputId = NS(id, "button_ana_save"),
@@ -190,9 +176,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
       uiele = NULL
       if((system.file(package="clipr") != "") & !deployed){
@@ -218,9 +201,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
       uiele = shinyWidgets::actionBttn(
                 inputId = NS(id, "button_ana_del"),
@@ -244,9 +224,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
       uiele = shinyWidgets::actionBttn(
                 inputId = NS(id, "button_ana_copy"),
@@ -280,9 +257,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -312,9 +286,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -344,8 +315,8 @@ NCA_Server <- function(id,
 
       # Forcing updates to warning status
       input[["button_ana_run"]]
-      react_internal[["click"]] 
-      react_internal[["select"]] 
+      react_internal[["click"]]
+      react_internal[["select"]]
 
 
       state = NCA_fetch_state(id              = id,
@@ -353,9 +324,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       if(is.null(names(state[["NCA"]][["anas"]]))){
@@ -392,7 +360,7 @@ NCA_Server <- function(id,
                HL_COLOR = state[["yaml"]][["FM"]][["ui"]][["color_orange"]]
              }
              use_content = TRUE
-             content = c(content, 
+             content = c(content,
                paste0("<div style='font-style:bold; background: ", HL_COLOR ,"; color: black;'>", tmp_ana[["key"]],"</div>"))
              cstyle = c(cstyle, paste0("color: ", HL_COLOR))
            } else {
@@ -404,7 +372,7 @@ NCA_Server <- function(id,
            cnames  = c(cnames,  tmp_ana[["key"]])
         }
 
-        # If there is a problem we use the content 
+        # If there is a problem we use the content
         if(use_content){
           choicesOpt = list( content = content)
         } else {
@@ -445,9 +413,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
       if(!is.null(state[["MC"]][["tooltips"]][["url_data"]])){
         data_link = icon_link(href=state[["MC"]][["tooltips"]][["url_data"]])
@@ -487,9 +452,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -519,7 +481,7 @@ NCA_Server <- function(id,
 
         # Using choices grouped by module
         choices = all_choices[["grouped"]]
-        
+
 
         choicesOpt = NULL
         shinyWidgets::updatePickerInput(
@@ -552,9 +514,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -610,9 +569,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -654,9 +610,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -684,9 +637,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -743,9 +693,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -795,9 +742,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -830,9 +774,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -867,9 +808,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -955,9 +893,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -986,8 +921,8 @@ NCA_Server <- function(id,
       input[["button_ana_copy"]]
       input[["select_current_ana"]]
       input[["switch_ana_fig"]]
-      react_internal[["click"]] 
-      react_internal[["select"]] 
+      react_internal[["click"]]
+      react_internal[["select"]]
 
       input[["button_fg_ind_obs_save"]]
       input[["button_fg_ind_obs_next_pg"]]
@@ -998,9 +933,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -1033,9 +965,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state,
                              react_internal  = react_internal)
       react_internal[["click"]] = NULL
@@ -1050,9 +979,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state,
                              react_internal  = react_internal)
 
@@ -1080,9 +1006,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       uiele = NULL
@@ -1156,9 +1079,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       uiele = NULL
@@ -1235,9 +1155,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       uiele = NULL
@@ -1251,9 +1168,9 @@ NCA_Server <- function(id,
           } else {
             selected_page = page_values[1]
           }
-        
+
           names(page_values) = 1:length(page_values)
-        
+
           uiele =
           shinyWidgets::pickerInput(
             inputId    = NS(id, "select_fg_ind_obs_page"),
@@ -1266,7 +1183,7 @@ NCA_Server <- function(id,
         }
      #}
     uiele})
-    # Figure report ui elements            
+    # Figure report ui elements
     output$ui_nca_ana_results_fig_ind_obs_format             = renderUI({
       input[["button_ana_run"]]
       input[["button_ana_new"]]
@@ -1285,9 +1202,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       uiele = NULL
@@ -1359,9 +1273,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       uiele = NULL
@@ -1431,9 +1342,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       uiele = NULL
@@ -1465,9 +1373,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       uiele = tagList(
@@ -1496,9 +1401,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       uiele = NULL
@@ -1578,9 +1480,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -1680,9 +1579,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -1750,9 +1646,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -1819,9 +1712,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -1890,9 +1780,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -1959,9 +1846,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -2033,9 +1917,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -2102,9 +1983,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -2172,9 +2050,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -2245,9 +2120,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -2317,9 +2189,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -2388,9 +2257,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -2461,9 +2327,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -2510,9 +2373,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
 
@@ -2546,9 +2406,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
      current_ana = NCA_fetch_current_ana(state)
@@ -2588,9 +2445,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
      current_ana = NCA_fetch_current_ana(state)
@@ -2630,9 +2484,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
      current_ana = NCA_fetch_current_ana(state)
@@ -2672,9 +2523,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
      current_ana = NCA_fetch_current_ana(state)
@@ -2703,9 +2551,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
       # Pulling out the current analysis
       current_ana = NCA_fetch_current_ana(state)
@@ -2736,9 +2581,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       uiele = shinyWidgets::actionBttn(
@@ -2758,9 +2600,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       uiele = shinyWidgets::actionBttn(
@@ -2788,9 +2627,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       # Pulling out the current analysis
@@ -2907,9 +2743,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
       # Pulling out the current analysis
       current_ana = NCA_fetch_current_ana(state)
@@ -2983,9 +2816,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       # Triggering optional notifications
@@ -3006,9 +2836,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       current_ana = NCA_fetch_current_ana(state)
@@ -3246,9 +3073,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
         formods::FM_le(state, "reaction state updated")
@@ -3268,9 +3092,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       formods::FM_le(state, "clipping code")
@@ -3308,9 +3129,6 @@ NCA_Server <- function(id,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
                              MOD_yaml_file   = MOD_yaml_file,
-                             id_ASM          = id_ASM,
-                             id_UD           = id_UD,
-                             id_DW           = id_DW,
                              react_state     = react_state)
 
       formods::FM_le(state, "removing holds")
@@ -3332,9 +3150,6 @@ NCA_Server <- function(id,
 #'@param session Shiny session variable
 #'@param FM_yaml_file App configuration file with FM as main section.
 #'@param MOD_yaml_file  Module configuration file with MC as main section.
-#'@param id_ASM ID string for the app state management module used to save and load app states
-#'@param id_UD ID string for the upload data module used to save and load app states
-#'@param id_DW ID string for the data wrangling module used to save and load app states
 #'@param react_state Variable used within server to handle non-standard reactions  (e.g. reacting to plotly)
 #'@param react_internal Variable passed to server to allow reaction outside of module (\code{NULL})
 #'@return list containing the current state of the app including default
@@ -3415,7 +3230,7 @@ NCA_Server <- function(id,
 #'@example inst/test_apps/NCA_funcs.R
 NCA_fetch_state = function(id, input, session,
                            FM_yaml_file, MOD_yaml_file,
-                           id_ASM, id_UD, id_DW, react_state, react_internal = NULL){
+                           react_state, react_internal = NULL){
 
   # Template for an empty dataset
   #---------------------------------------------
@@ -3425,8 +3240,12 @@ NCA_fetch_state = function(id, input, session,
   # initialize it
   if(is.null(state)){
     # General state information
-    state = NCA_init_state(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session)
+    state = NCA_init_state(FM_yaml_file, MOD_yaml_file, id, session)
   }
+
+  id_ASM = state[["MC"]][["module"]][["depends"]][["id_ASM"]]
+  id_UD  = state[["MC"]][["module"]][["depends"]][["id_UD"]]
+  id_DW  = state[["MC"]][["module"]][["depends"]][["id_DW"]]
 
   # Detecting changes in the datasets
   # JMH Test this update in full app. Test the following:
@@ -3478,27 +3297,25 @@ NCA_fetch_state = function(id, input, session,
     formods::FM_le(state, "Updating DS")
     # updating the "DSV" components
     if(state[["NCA"]][["isgood"]]){
-      OLD_DSV = state[["NCA"]][["DSV"]] 
+      OLD_DSV = state[["NCA"]][["DSV"]]
       state[["NCA"]][["DSV"]] = formods::FM_fetch_ds(state, session, c(id_UD, id_DW))
     } else {
       OLD_DSV = NULL
       state = NCA_init_state(FM_yaml_file,
                              MOD_yaml_file,
                              id,
-                             id_UD,
-                             id_DW,
                              session)
     }
 
-    # Walking through the analyses and updating the freshness based on the 
+    # Walking through the analyses and updating the freshness based on the
     # updated DSV field:
     for(ana in names(state[["NCA"]][["anas"]])){
       tmp_ana = state[["NCA"]][["anas"]][[ana]]
 
-      # Updating the freshness of the current analyses based 
+      # Updating the freshness of the current analyses based
       # on how the old DS views compare to the new ones
       if(is.null(OLD_DSV)){
-        # If OLD_DSV was NULL then we had no views for some reason 
+        # If OLD_DSV was NULL then we had no views for some reason
         # so everything should be out of sync:)
         tmp_ana[["isfresh"]] = FALSE
       } else {
@@ -3647,7 +3464,7 @@ NCA_fetch_state = function(id, input, session,
 
     if(!is.null(manual_rows)){
 
-      # Opening up the current analysis 
+      # Opening up the current analysis
       current_ana = NCA_fetch_current_ana(state)
 
       FM_le(state, "updating manual flag")
@@ -3667,13 +3484,13 @@ NCA_fetch_state = function(id, input, session,
           manual_note = current_ana[["text_manual"]]
         }
 
-        # Removing records from the manual flag tracking dataframe 
+        # Removing records from the manual flag tracking dataframe
         # that match the current manual key(s):
         if(nrow(current_ana[["manual_ds_flags"]])>0){
-          current_ana[["manual_ds_flags"]] = 
-            current_ana[["manual_ds_flags"]][!(current_ana[["manual_ds_flags"]]$key %in% manual_key), ] 
+          current_ana[["manual_ds_flags"]] =
+            current_ana[["manual_ds_flags"]][!(current_ana[["manual_ds_flags"]]$key %in% manual_key), ]
         }
-     
+
         # Adding non reset keys to the dataframe tracking manual flags:
         if(manual_flag != "reset"){
           # JMH BLQ selection error here
@@ -3684,19 +3501,19 @@ NCA_fetch_state = function(id, input, session,
                         'note' = manual_note)
           )
         }
-     
+
         if(nrow(current_ana[["manual_ds_flags"]]) > 0){
           FM_le(state, "applying manual flags:")
           FM_le(state, paste0("  ", current_ana[["manual_ds_flags"]]$key, ": ", current_ana[["manual_ds_flags"]]$flag, ", note:", current_ana[["manual_ds_flags"]]$note, "\n"))
         } else {
           FM_le(state, "no manual flags currently set.")
         }
-        
 
-     
+
+
         # Saving the current analysis
         state = NCA_set_current_ana(state, current_ana)
-     
+
         # Rebuilding the figure to incorporate any flag changes:
         # browser()
         state = run_nca_components(state, "fg_ind_obs_subset")
@@ -3729,7 +3546,7 @@ NCA_fetch_state = function(id, input, session,
   }
 
   #---------------------------------------------
-  # Moving to the next or previous figure 
+  # Moving to the next or previous figure
   if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]],
                  old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]], init_val=c("", 0)) |
      has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]],
@@ -3755,7 +3572,7 @@ NCA_fetch_state = function(id, input, session,
 
     if(length(page_values)>0){
 
-      current_page = current_ana[["curr_fg_ind_obs"]] 
+      current_page = current_ana[["curr_fg_ind_obs"]]
 
       if(is.null(current_page)){
         current_page =  page_values[1]
@@ -4142,11 +3959,14 @@ NCA_fetch_state = function(id, input, session,
 #'@param FM_yaml_file App configuration file with FM as main section.
 #'@param MOD_yaml_file  Module configuration file with MC as main section.
 #'@param id ID string for the module.
-#'@param id_UD  ID string for the upload data module used to handle uploads or the name of the list element in react_state where the data set is stored.
-#'@param id_DW  ID string for the data wrangling module to process any uploaded data
 #'@param session Shiny session variable (in app) or a list (outside of app)
 #'@return list containing an empty NCA state
-NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, id_UD, id_DW, session){
+NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, session){
+
+  MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+  id_ASM = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_ASM"]]
+  id_UD  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_UD"]]
+  id_DW  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_DW"]]
 
   button_counters = c("button_ana_new",
                       "button_ana_del",
@@ -4448,7 +4268,7 @@ NCA_append_report_old = function(state, rpt, rpttype, gen_code_only=FALSE){
           #----------------------------------------------------------
           # Table of final PKNCA results
           ind_sheet_name = paste0(tmp_ana[["id"]], "_RES")
- 
+
           # This appends the data frame to the report list
           code_chunk = paste0('rpt[["sheets"]][["',
                               ind_sheet_name,
@@ -4718,9 +4538,9 @@ NCA_append_report_old = function(state, rpt, rpttype, gen_code_only=FALSE){
           flag_map = state[["MC"]][["formatting"]][["flags"]]
           note_map = list()
           for(fname in sort(names(flag_map))){
-            note_map [[ flag_map[[fname]][["sn"]] ]] = flag_map[[fname]][["notes"]] 
+            note_map [[ flag_map[[fname]][["sn"]] ]] = flag_map[[fname]][["notes"]]
           }
-          
+
           for(tid in names(state[["MC"]][["reporting"]][["tables"]])){
             # This is the list name containing the selected report outputs for
             # this table
@@ -5045,7 +4865,7 @@ NCA_new_ana    = function(state){
          fg_ind_obs_nrow         = "",
          fg_ind_obs_ncol         = "",
          fg_ind_obs_logy         = TRUE,
-         fg_ind_obs_rpt          = c(), # These defaults are controlled below based on the yaml 
+         fg_ind_obs_rpt          = c(), # These defaults are controlled below based on the yaml
          tb_ind_obs_rpt          = c(), #
          tb_ind_obs_flags_rpt    = c(), #
          tb_ind_params_rpt       = c(), #
@@ -5090,7 +4910,7 @@ NCA_new_ana    = function(state){
   # Walking through each of the reportable output types and assigning the
   # default to the current analysis. E.g. fg_ind_obs has an entry
   # fg_ind_obs_rpt.
-  # 
+  #
   for(tmp_tab_fig in c("figures", "tables")){
     for(tmp_tf_id in names(state[["MC"]][["reporting"]][[tmp_tab_fig]])){
       tmp_tf_id_rpt = paste0(tmp_tf_id, "_rpt")
@@ -5365,26 +5185,26 @@ flag_nca_ds  = function(DS       = NULL,
                         flag_map = list(),
                         col_map  = list(),
                         ds_flags = data.frame()){
- 
+
   # Observation column in the dataset
   col_conc = col_map[["col_conc"]]
- 
+
   # Creating columns with default values
   DS = DS |>
     dplyr::mutate(rmnt_key  = paste0("rec_", 1:nrow(DS)))          |>
     dplyr::mutate(rmnt_flag = "obs")                               |>   # By default everything is an observation
-    dplyr::mutate(rmnt_desc = flag_map[["obs"]][["description"]])  |>   
+    dplyr::mutate(rmnt_desc = flag_map[["obs"]][["description"]])  |>
     dplyr::mutate(rmnt_cens = NA_character_)                       |>   # By default no censoring
     dplyr::mutate(rmnt_hlex = FALSE)                               |>   # By default no exclusions for  half-life calculations
     dplyr::mutate(rmnt_hlin = NA)                                  |>   # By default no inclusions for  half-life calculations
     dplyr::mutate(rmnt_note = "")                                  |>   # By default no notes.
-    dplyr::mutate(rmnt_flag = ifelse(.data[[col_conc]] == 0, 
-                                     "blq", 
+    dplyr::mutate(rmnt_flag = ifelse(.data[[col_conc]] == 0,
+                                     "blq",
                                      .data[["rmnt_flag"]])) |>                     # Lastly we flag all the blq values
-    dplyr::mutate(rmnt_desc = ifelse(.data[[col_conc]] == 0, 
-                                     flag_map[["blq"]][["description"]], 
-                                     .data[["rmnt_desc"]])) 
- 
+    dplyr::mutate(rmnt_desc = ifelse(.data[[col_conc]] == 0,
+                                     flag_map[["blq"]][["description"]],
+                                     .data[["rmnt_desc"]]))
+
   # If no notes are present we set them to ""
   if(!("note" %in% names(ds_flags))){
     ds_flags[["note"]] = " "
@@ -5463,7 +5283,7 @@ DS}
 NCA_fetch_data_format = function(
   MOD_yaml_file = system.file(package="ruminate","templates","NCA.yaml")){
 
-  MC = yaml::read_yaml(MOD_yaml_file)
+  MC = FM_read_yaml(MOD_yaml_file)
 
   res = NULL
 
@@ -5497,7 +5317,7 @@ NCA_fetch_np_meta = function(
   MOD_yaml_file = system.file(package="ruminate","templates","NCA.yaml")){
 
   # Reading in the yaml file
-  MOD_config = yaml::read_yaml(MOD_yaml_file)
+  MOD_config = FM_read_yaml(MOD_yaml_file)
 
   # This table summarizes the NCA parameters
   np_summary = NULL
@@ -5816,7 +5636,7 @@ NCA_process_current_ana = function(state){
     unique_cols = c(unique_cols,  current_ana[["col_analyte"]]  )
   }
 
-  tmp_ds =  ds[["DS"]] 
+  tmp_ds =  ds[["DS"]]
   # Keeping only observations for the test below because dosing can occur at
   # the same time as an observation and trigger a false-positive:
   if(current_ana[["col_evid"]] != ""){
@@ -5874,7 +5694,7 @@ nca_builder = function(state){
 
   # Defins the analysis options
   code_ana_options   = c()
-  # Processes the dataset and extracts dosing. 
+  # Processes the dataset and extracts dosing.
   code_ds_dosing     = c()
   # Building the PKNCA objects and running the analysi
   code_pknca         = c()
@@ -6022,11 +5842,11 @@ nca_builder = function(state){
     col_args = c()
     for(cname in all_cols){
       if(all(get(cname) %in% names(ds[["DS"]]))){
-        col_args =  c(col_args, 
+        col_args =  c(col_args,
           paste0(stringr::str_pad(side="right", pad=" ", string = paste0('  ', cname), width=14),
                  ' = c("', paste0(get(cname),collapse='", "'), '")'))
       } else {
-        col_args =  c(col_args, 
+        col_args =  c(col_args,
           paste0(stringr::str_pad(side="right", pad=" ", string = paste0('  ', cname), width=14),
                  ' = NULL'))
 
@@ -6041,7 +5861,7 @@ nca_builder = function(state){
             ""
     )
 
-    code_ds_dosing = c(code_ds_dosing, 
+    code_ds_dosing = c(code_ds_dosing,
             "# This flags specific rows in the source dataset  based on the row number. See",
             '# flag_map for possible flags (those that include  manual="yes"). To remove a',
             "# flag just delete the row.",
@@ -6077,10 +5897,10 @@ nca_builder = function(state){
     # Creating the flag map components (fmc)
     fmc = c()
     fnames = names(state[["MC"]][["formatting"]][["flags"]])
-    
+
     for(fnidx in 1:length(fnames)){
       fname = fnames[fnidx]
-      fmc = 
+      fmc =
       c( fmc,
          paste0("  ", fname," = list("),
          paste0("    manual      = ", deparse(state[["MC"]][["formatting"]][["flags"]][[fname]][["manual"]]), ","),
@@ -6102,7 +5922,7 @@ nca_builder = function(state){
             '#    This SHOULD NOT BE CHANGED',
             '#  - flag   internal flag used (SHOULD NOT BE CHANGED).',
             '#  - description short description used in figure legends',
-            '#  - sn          short name used in tables', 
+            '#  - sn          short name used in tables',
             '#  - notes       notes that go at the bottom of tables',
             paste0(nca_flag_map_object_name, " = list("),
             fmc,
@@ -6139,7 +5959,7 @@ nca_builder = function(state){
       }
       code_ds_dosing = c(code_ds_dosing, "  )")
       code_ds_dosing = c(code_ds_dosing, "")
-      code_ds_dosing = c(code_ds_dosing, 
+      code_ds_dosing = c(code_ds_dosing,
                "# This will apply the route patterns specified above. ",
                paste0(nca_ds_object_name, " = apply_route_map("),
                paste0("  route_map = ", nca_rm_object_name, ", "),
@@ -6412,26 +6232,26 @@ nca_builder = function(state){
       paste0('  mult_str     = "', state[["MC"]][["reporting"]][["mult_str"]] ,'")'))
 
     # Working out the little code elements:
-    code_ana_only      = paste(c(code_ana_options, 
-                                 code_ds_dosing, 
+    code_ana_only      = paste(c(code_ana_options,
+                                 code_ds_dosing,
                                  code_pknca),
                                collapse="\n")
     code_fg_ind_obs_all = paste(c(
-                        code_ana_options, 
-                        code_ds_dosing, 
+                        code_ana_options,
+                        code_ds_dosing,
                         code_fg_ind_obs_all), collapse="\n")
 
     code_fg_ind_obs_subset = paste(c(
-                        code_ana_options, 
-                        code_ds_dosing, 
+                        code_ana_options,
+                        code_ds_dosing,
                         code_fg_ind_obs_subset), collapse="\n")
 
-    code_tb_ind_obs_sa = paste(c(code_ana_options, 
-                                 code_ds_dosing, 
+    code_tb_ind_obs_sa = paste(c(code_ana_options,
+                                 code_ds_dosing,
                                  code_tb_ind_obs), collapse="\n")
 
-    code_tb_ind_obs_flags_sa = paste(c(code_ana_options, 
-                                 code_ds_dosing, 
+    code_tb_ind_obs_flags_sa = paste(c(code_ana_options,
+                                 code_ds_dosing,
                                  code_tb_ind_obs_flags), collapse="\n")
 
     code_tb_ind_params = paste(code_tb_ind_params, collapse="\n")
@@ -6580,7 +6400,7 @@ run_nca_components = function(
   # Short name for objects created when running NCA.  These are all of the
   # possible names. Post-processing like figure and table generation is
   # handled below.
-  obs_sns_nca  = c("res", "col_map", "flag_map", "ds_flags", 
+  obs_sns_nca  = c("res", "col_map", "flag_map", "ds_flags",
                    "ds", "drec", "rm", "ints",
                    "dose", "data", "conc", "units")
 
@@ -6633,7 +6453,7 @@ run_nca_components = function(
           }
 
           # resetting the freshness flag
-          current_ana[["isfresh"]] = TRUE 
+          current_ana[["isfresh"]] = TRUE
 
         } else {
           # If the run failed we capture the error messages to be passed back to the
@@ -6650,7 +6470,7 @@ run_nca_components = function(
     # with the code for that component
     # - code      is the code component to run
     # - reset_all is set to TRUE when the entire object needs to be
-    #             overwritten. FALSE indicates that only a portion is being rebuilt 
+    #             overwritten. FALSE indicates that only a portion is being rebuilt
     # - list_name is the name within the object generated where the "pages"
     #             are stored. For example in when you generate a figure it will be stored
     #             in "figures"
@@ -6659,10 +6479,10 @@ run_nca_components = function(
                                           reset_all = TRUE,
                                           obj       = "fg_ind_obs",
                                           list_name = "figures"),
-                    "fg_ind_obs_subset"   = 
+                    "fg_ind_obs_subset"   =
                                      list(code      = "code_fg_ind_obs_subset",
                                           current   = "curr_fg_ind_obs",
-                                          reset_all = FALSE, 
+                                          reset_all = FALSE,
                                           obj       = "fg_ind_obs",
                                           list_name = "figures"),
                     "tb_ind_obs"   = list(code      ="code_tb_ind_obs",
@@ -6727,21 +6547,21 @@ run_nca_components = function(
             list_name = fig_tabs[[fig_tab]][["list_name"]]
 
             # This pulls out any names for figures, tables, etc. that were
-            # built e.g.  # Figure_1, Figure_2 
+            # built e.g.  # Figure_1, Figure_2
             list_names = names(tmp_res[[  list_name ]])
 
             # This acocunts for a force rebuild of all components such as when
             # someone changes the number of columns/rows and forces a rebuild
             if(fig_tabs[[fig_tab]][["reset_all"]]){
               # JMH set this up to only update the figures/tables in the object
-              # The commented code below 
+              # The commented code below
               # We store the result for the current component
               current_ana[["objs"]][[ obj_name ]][["value"]] = tmp_res
             } else {
               # This is triggered by a partial rebuild such as when someone is
               # doing a manual point selection
               for(fig_tab_name in list_names ){
-                current_ana[["objs"]][[ obj_name ]][["value"]][[ list_name ]][[fig_tab_name]]  = 
+                current_ana[["objs"]][[ obj_name ]][["value"]][[ list_name ]][[fig_tab_name]]  =
                      tmp_res[[ list_name ]][[fig_tab_name]]
               }
             }
@@ -6872,10 +6692,10 @@ mk_table_ind_obs = function(
 
   # Auto-populating notes detect
   if(is.null(notes_detect)){
-    notes_detect = c(notes_detect, 
+    notes_detect = c(notes_detect,
       flag_map[["ns"]][["sn"]],
       flag_map[["nc"]][["sn"]],
-      flag_map[["blq"]][["sn"]]) 
+      flag_map[["blq"]][["sn"]])
   }
 
   # Defining note for not sampled
@@ -6917,7 +6737,7 @@ mk_table_ind_obs = function(
 
   # This is the original dataset along with what looks like
   # some extra columns added by PKNCA
-  raw_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]])) 
+  raw_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]]))
 
   all_data = tibble(
     rmnt_flag = raw_data[["rmnt_flag"]],
@@ -6960,20 +6780,20 @@ mk_table_ind_obs = function(
   all_data[is.na(all_data[["CONC"]]), ][["CONC"]] = not_sampled
   all_data[all_data[["CONC"]] == "0", ][["CONC"]] = blq
   all_data = all_data |>
-    dplyr::mutate(CONC = 
+    dplyr::mutate(CONC =
       ifelse(
-        .data[["rmnt_flag"]] == "censor", 
-        paste0(.data[["CONC"]], flag_map[["censor"]][["snmd"]]), 
+        .data[["rmnt_flag"]] == "censor",
+        paste0(.data[["CONC"]], flag_map[["censor"]][["snmd"]]),
         .data[["CONC"]]))                                          |>
-    dplyr::mutate(CONC = 
+    dplyr::mutate(CONC =
       ifelse(
-        .data[["rmnt_flag"]] == "hlex", 
-        paste0(.data[["CONC"]], flag_map[["hlex"]][["snmd"]]), 
+        .data[["rmnt_flag"]] == "hlex",
+        paste0(.data[["CONC"]], flag_map[["hlex"]][["snmd"]]),
         .data[["CONC"]]))                                          |>
-    dplyr::mutate(CONC = 
+    dplyr::mutate(CONC =
       ifelse(
-        .data[["rmnt_flag"]] == "hlin", 
-        paste0(.data[["CONC"]], flag_map[["hlin"]][["snmd"]]), 
+        .data[["rmnt_flag"]] == "hlin",
+        paste0(.data[["CONC"]], flag_map[["hlin"]][["snmd"]]),
         .data[["CONC"]]))                                          |>
     dplyr::select(-.data[["rmnt_flag"]])
 
@@ -7081,16 +6901,16 @@ mk_table_ind_obs = function(
       # These are the indices of the columns where there is subject data
       sub_cols = which(!(names(tmpdf)  %in% c("TIME", "ANALYTE")))
 
-      stres[["tables"]][[tname]][["ft"]] = 
+      stres[["tables"]][[tname]][["ft"]] =
         onbrand::ft_apply_md(
-          ft    = stres[["tables"]][[tname]][["ft"]], 
+          ft    = stres[["tables"]][[tname]][["ft"]],
           pcols = sub_cols,
-          obnd  = obnd, 
+          obnd  = obnd,
           part  = "body")
 
 
       #-------------
-      # Now detecting any flags present in the table. These are the flags that 
+      # Now detecting any flags present in the table. These are the flags that
       # are not replacing observations. So NA would be replaced with NS or
       # whatever the short name is for not sampled. Similarly 0 would be
       # replaced with the short name for blq. The others can appear as
@@ -7176,7 +6996,7 @@ mk_table_ind_obs_flags = function(
         flag_map[[fname]][["sn"]])
     }
   }
- 
+
   # Extracting the needed column names:
   col_id      = nca_res[["data"]][["conc"]][["columns"]][["subject"]]
   col_time    = nca_res[["data"]][["conc"]][["columns"]][["time"]]
@@ -7202,7 +7022,7 @@ mk_table_ind_obs_flags = function(
 
   # This is the original dataset along with what looks like
   # some extra columns added by PKNCA
-  raw_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]])) 
+  raw_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]]))
 
 
   all_data = tibble(
@@ -7221,7 +7041,7 @@ mk_table_ind_obs_flags = function(
 
   # Only retaining the manually flagged data types:
   all_data = all_data |>
-    dplyr::filter(.data[["FLAG_CODE"]] %in% c("censor", "hlex", "hlin")) 
+    dplyr::filter(.data[["FLAG_CODE"]] %in% c("censor", "hlex", "hlin"))
 
   if(nrow(all_data) > 0){
     # Mapping in the short names
@@ -7255,8 +7075,8 @@ mk_table_ind_obs_flags = function(
             TIME    = "Time")
 
     table_body_head  =  data.frame(
-      CONC = "Concentration", 
-      FLAG = "Flag", 
+      CONC = "Concentration",
+      FLAG = "Flag",
       NOTE = "Note")
 
     # If there are units we add a second row with the units:
@@ -7267,9 +7087,9 @@ mk_table_ind_obs_flags = function(
         time_units_str = ""
       }
 
-      row_common_head = 
-        rbind(row_common_head, 
-          data.frame(ID   = "ID", 
+      row_common_head =
+        rbind(row_common_head,
+          data.frame(ID   = "ID",
                      TIME = time_units_str))
 
       if(conc_units != ""){
@@ -7278,33 +7098,33 @@ mk_table_ind_obs_flags = function(
         conc_units_str = ""
       }
 
-      table_body_head = 
-        rbind(table_body_head, 
-          data.frame(CONC   = conc_units_str, 
+      table_body_head =
+        rbind(table_body_head,
+          data.frame(CONC   = conc_units_str,
                      FLAG   = "Flag",
                      NOTE   = "Note"))
-       
+
     }
 
     # If there are analytes then we add that to the end of the row common portion
     if("ANALYTE" %in% names(all_data)){
       if(nrow(row_common_head) == 1){
-        row_common_head = cbind(row_common_head, 
+        row_common_head = cbind(row_common_head,
                data.frame( ANALYTE = "Analyte"))
       } else if(nrow(row_common_head) == 2){
-        row_common_head = cbind(row_common_head, 
+        row_common_head = cbind(row_common_head,
                data.frame( ANALYTE = c("Analyte", "Analyte")))
 
       }
     }
-   
+
     # Splitting the data into header columns and observations
     row_common   = dplyr::select(all_data,  dplyr::all_of(names(row_common_head)))
     table_body   = dplyr::select(all_data, -dplyr::all_of(names(row_common_head)))
-   
+
     # This converts everything to text:
     table_body        = dplyr::mutate_all(table_body, as.character)
-   
+
     stres = onbrand::span_table(
                table_body                = table_body,
                row_common                = row_common,
@@ -7318,7 +7138,7 @@ mk_table_ind_obs_flags = function(
                max_col                   = max_col,
                set_header_inner_border_h = FALSE,
                notes_detect              = notes_detect)
-   
+
     # Increasing the width of the notes column
     if( stres[["isgood"]] ){
       for(tname in names(stres[["tables"]])){
@@ -7326,7 +7146,7 @@ mk_table_ind_obs_flags = function(
         NOTE_col_idx = which(names(tmpdf) == "NOTE")
         if(length(NOTE_col_idx) == 1){
           tmpft = stres[["tables"]][[tname]][["ft"]]
-          stres[["tables"]][[tname]][["ft"]] = 
+          stres[["tables"]][[tname]][["ft"]] =
             flextable::width(tmpft, j="NOTE", 1.5, unit="in")
         }
       }
@@ -7345,11 +7165,11 @@ mk_table_ind_obs_flags = function(
     res = list(
       isgood     = TRUE,
       data_found = FALSE,
-      one_table  = NULL, 
-      one_header = NULL, 
-      one_body   = NULL, 
-      tables     = NULL, 
-      msgs       = NULL 
+      one_table  = NULL,
+      one_header = NULL,
+      one_body   = NULL,
+      tables     = NULL,
+      msgs       = NULL
     )
   }
 
@@ -7427,7 +7247,7 @@ mk_figure_ind_obs = function(
 
   # This is the original dataset along with what looks like
   # some extra columns added by PKNCA
-  all_data = ana_ds                                                       |> 
+  all_data = ana_ds                                                       |>
     dplyr::select(dplyr::all_of(cols_keep))                               |>
     dplyr::rename(CONC = dplyr::all_of(col_conc))                         |>   # Renaming columns to standard values
     dplyr::rename(TIME = dplyr::all_of(col_time))                         |>
@@ -7477,8 +7297,8 @@ mk_figure_ind_obs = function(
         BLD_FIG = FALSE
       }
     }
-    
-    
+
+
     # Figuring out how many subjects to plot on the
     # current figure
     if(length(subs_left) < subs_pp){
@@ -7497,19 +7317,19 @@ mk_figure_ind_obs = function(
     }
 
     names(fcolors) = flevels
-      
+
     if(BLD_FIG){
       # This dataset contains the subset of the current subjects for plotting.
       plot_ds = dplyr::filter(all_data, .data[[col_id]] %in% subs_current)
-      
-      
+
+
       p = ggplot2::ggplot(data = plot_ds, ggplot2::aes( key   = .data[["rmnt_key"]]))
-      
+
       p = p + ggplot2::geom_line( ggplot2::aes(x=.data[["TIME"]],
                                                y=.data[["CONC"]],
                                                group=.data[["GROUP_ALL"]]),
                                                linetype='solid', color='cornsilk4')
-      
+
       if(length(col_analyte) == 1){
         # If there is an analyte we set the shape based on the analyte column
         p = p + ggplot2::geom_point(ggplot2::aes(x     = .data[["TIME"]],
@@ -7517,7 +7337,7 @@ mk_figure_ind_obs = function(
                                                  shape = !!as.name(col_analyte),
                                                  group = .data[["GROUP_ALL"]],
                                                  color = .data[["rmnt_desc"]]), size=1.8)
-      
+
       } else {
         p = p + ggplot2::geom_point(ggplot2::aes(x     = .data[["TIME"]],
                                                  y     = .data[["CONC"]],
@@ -7532,7 +7352,7 @@ mk_figure_ind_obs = function(
       p = p + ggplot2::xlab(TIME_LAB)
       p = p + ggplot2::ylab(OBS_LAB)
       p = p + ggplot2::labs(color="Data Type", shape="Analyte")
-      p = p + ggplot2::theme(legend.position="bottom", 
+      p = p + ggplot2::theme(legend.position="bottom",
                              legend.box="horizontal")
       p = p + scale_color_manual(values = fcolors)
       p = p + guides(colour = guide_legend(title.position = "top", ncol=3))
@@ -7751,10 +7571,10 @@ mk_table_nca_params = function(
 
   # Auto-populating notes detect
   if(is.null(notes_detect)){
-    notes_detect = c(notes_detect, 
+    notes_detect = c(notes_detect,
       flag_map[["ns"]][["sn"]],
       flag_map[["nc"]][["sn"]],
-      flag_map[["blq"]][["sn"]]) 
+      flag_map[["blq"]][["sn"]])
   }
 
   # Defining note for not calculated
@@ -8326,10 +8146,12 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
                          session         = session,
                          FM_yaml_file    = FM_yaml_file,
                          MOD_yaml_file   = MOD_yaml_file,
-                         id_ASM          = id_ASM,
-                         id_UD           = id_UD,
-                         id_DW           = id_DW,
                          react_state     = react_state)
+
+  # Some functions require the state to be in the session object:
+  if(!formods::is_shiny(session)){
+    session = FM_set_mod_state(session, mod_ID, state)
+  }
 
   elements = src_list[[mod_ID]][["elements"]]
 
@@ -8456,10 +8278,10 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         }
       }
 
-      # Converting the manual flags from a list to a data.frame 
+      # Converting the manual flags from a list to a data.frame
       # and storing it in the current element.
       if("manual_ds_flags" %in% names(elements[[ele_idx]][["element"]][["ana_options"]])){
-        current_ele[["manual_ds_flags"]] = 
+        current_ele[["manual_ds_flags"]] =
           as.data.frame(
             elements[[ele_idx]][["element"]][["ana_options"]][["manual_ds_flags"]] )
       }
@@ -8780,7 +8602,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
       if(tmp_ana[["isgood"]]){
 
         # This is the code chunk for the current analysis
-        code  = c(code, 
+        code  = c(code,
           FM_build_comment(3, tmp_ana[["key"]]),
           "")
 
@@ -8796,9 +8618,9 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
             paste0(' format    = ', deparse(state[["MC"]][["reporting"]][["text_format"]]),'))'),
             ""
           )
-        
+
           if(!is.null(tmp_ana[["notes"]])){
-            code_chunk = c(code_chunk,  
+            code_chunk = c(code_chunk,
             paste0('rpt = onbrand::report_add_doc_content(rpt,'),
             paste0('type     = "text",'),
             paste0('content  = list('),
@@ -8809,7 +8631,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
             )
           }
 
-          code_chunk = c(code_chunk,  
+          code_chunk = c(code_chunk,
             'rpt = onbrand::report_add_doc_content(rpt,',
             '       type    = "break",',
             '       content = NULL)',
@@ -8827,8 +8649,8 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
             # it:
             rpt = tc_res[["capture"]][["rpt"]]
 
-            # Appending the analysis code to the main 
-            # block of code being returned 
+            # Appending the analysis code to the main
+            # block of code being returned
             code = c(code, code_chunk)
           } else {
             FM_le(state, c(tmp_ana[["key"]], tc_res[["msgs"]]), entry_type="danger")
@@ -8850,10 +8672,10 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
             if(fid %in% names(tmp_ana[["objs"]])){
               hasrptele = TRUE
 
-              # This is the key that can be used in referencing 
+              # This is the key that can be used in referencing
               # the figure in Word
               fig_id      = paste0(tmp_ana[["id"]], "_", fid)
-              code_chunk = c( 
+              code_chunk = c(
                 paste0('# ', fig_id),
                 paste0('narf_res  = '),
                 paste0('  nca_append_report_figs('),
@@ -8934,9 +8756,9 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                   }
                 }
               }
-              
-              # Appending the analysis code to the main 
-              # block of code being returned 
+
+              # Appending the analysis code to the main
+              # block of code being returned
               code = c(code, code_chunk)
             }
           }
@@ -8958,10 +8780,10 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
             if(tid %in% names(tmp_ana[["objs"]])){
               hasrptele = TRUE
 
-              # This is the key that can be used in referencing 
+              # This is the key that can be used in referencing
               # the table in Word
               tab_id      = paste0(tmp_ana[["id"]], "_", tid)
-              code_chunk = c( 
+              code_chunk = c(
                 paste0('# ', tab_id),
                 paste0('nart_res  = '),
                 paste0('  nca_append_report_tbls('),
@@ -9028,9 +8850,9 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                   }
                 }
               }
-              
-              # Appending the analysis code to the main 
-              # block of code being returned 
+
+              # Appending the analysis code to the main
+              # block of code being returned
               code = c(code, code_chunk)
             }
           }
@@ -9043,7 +8865,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
           raw_nca_tab_id = paste0(tmp_ana[["id"]], "_", state[["MC"]][["reporting"]][["raw_nca_table"]][["tab_id"]])
           raw_nca_desc   = state[["MC"]][["reporting"]][["raw_nca_table"]][["description"]]
           raw_nca_desc   = stringr::str_replace_all(raw_nca_desc, "===NCADESC===",  tmp_ana[["key"]])
-          
+
           code_chunk = c(
             paste0("# Raw NCA results"),
             paste0('rpt[["sheets"]][[', deparse(raw_nca_tab_id), ']] = as.data.frame(', tmp_ana[["objs"]][["res"]][["name"]],')'),
@@ -9055,7 +8877,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
             paste0(')'),
             ""
           )
-          
+
           # Running the raw nca saving code:
           tc_env = list(rpt = rpt)
           for(obj_key in names(tmp_ana[["objs"]])){
@@ -9063,15 +8885,15 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
                      tmp_ana[["objs"]][[obj_key]][["value"]]
           }
           tc_res = formods::FM_tc(capture=c("rpt"), cmd=code_chunk, tc_env = tc_env)
-          
+
           if(tc_res[["isgood"]]){
             # The try/catch was good and the function call was good so
             # we capture the reporting object with the changes made to
             # it:
             rpt = tc_res[["capture"]][["rpt"]]
-          
-            # Appending the analysis code to the main 
-            # block of code being returned 
+
+            # Appending the analysis code to the main
+            # block of code being returned
             code = c(code, code_chunk)
           } else {
             FM_le(state, c(tmp_ana[["key"]], tc_res[["msgs"]]), entry_type="danger")
@@ -9095,7 +8917,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 res}
 
 #'@export
-#'@title Append NCA Tables to Report   
+#'@title Append NCA Tables to Report
 #'@description Takes a table(s) created using \code{onbrand::span_tables()} and appends table(s) to the specified report.
 #'@param rpt              Reporting object (onbrand object for "pptx" and "docx" rpttypes and a list for "xlsx")
 #'@param stres            Output from span tables
@@ -9130,7 +8952,7 @@ nca_append_report_tbls  = function(
   # Extracting notes from the flag map
   all_notes = list()
   for(fname in names(flag_map)){
-    all_notes[[ flag_map[[fname]][["sn"]] ]] = 
+    all_notes[[ flag_map[[fname]][["sn"]] ]] =
       paste0( flag_map[[fname]][["sn"]], " = ", flag_map[[fname]][["notes"]])
   }
 
@@ -9168,7 +8990,7 @@ nca_append_report_tbls  = function(
           # Choosing the caption based on how many tables we have:
           if(length(stres[["tables"]]) > 1){
             tmp_caption = caption_multiple |>
-              stringr::str_replace_all("===TABNUM===",   
+              stringr::str_replace_all("===TABNUM===",
                                        as.character(which(tname == names(stres[["tables"]])))) |>
               stringr::str_replace_all("===TABTOT===",   as.character(length(names(stres[["tables"]]))))
           } else {
@@ -9203,7 +9025,7 @@ nca_append_report_tbls  = function(
                   type     = "flextable_object",
                   content  = list(
                     ft              = tmpft ,
-                    key             = tab_id, 
+                    key             = tab_id,
                     notes           = tmp_notes,
                     caption_format  = text_format,
                     caption         = tmp_caption))
@@ -9214,7 +9036,7 @@ nca_append_report_tbls  = function(
       }
       if(rpttype == "xlsx"){
         if(nrow(stres[["one_body"]]) > 0){
-          rpt[["sheets"]][[tab_id]] = stres[["one_body"]] 
+          rpt[["sheets"]][[tab_id]] = stres[["one_body"]]
           rpt[["summary"]] = rbind(rpt[["summary"]],
             data.frame(
               Sheet_Name  = tab_id,
@@ -9236,11 +9058,11 @@ nca_append_report_tbls  = function(
     isgood = isgood,
     msgs   = msgs,
     rpt   = rpt
-  ) 
+  )
 res}
 
 #'@export
-#'@title Append NCA Figures to Report   
+#'@title Append NCA Figures to Report
 #'@description Takes figures created using the make figure functions and appends those figures to the specified report. While it takes all report types, it should act as a pass through for "xlsx"
 #'@param rpt              Reporting object (onbrand object for "pptx" and "docx" rpttypes and a list for "xlsx")
 #'@param mfres            Output from make figure functions (e.g. `mk_figure_ind_obs()`)
@@ -9294,7 +9116,7 @@ nca_append_report_figs  = function(
   # Extracting notes from the flag map
   all_notes = list()
   for(fname in names(flag_map)){
-    all_notes[[ flag_map[[fname]][["sn"]] ]] = 
+    all_notes[[ flag_map[[fname]][["sn"]] ]] =
       paste0( flag_map[[fname]][["sn"]], " = ", flag_map[[fname]][["notes"]])
   }
 
@@ -9332,17 +9154,17 @@ nca_append_report_figs  = function(
           # Choosing the caption based on how many figures we have:
           if(length(mfres[["figures"]]) > 1){
             tmp_caption = caption_multiple |>
-              stringr::str_replace_all("===FIGNUM===",   
+              stringr::str_replace_all("===FIGNUM===",
                                        as.character(which(fname == names(mfres[["figures"]])))) |>
               stringr::str_replace_all("===FIGTOT===",   as.character(length(names(mfres[["figures"]]))))
 
             tmp_title   = title_multiple |>
-              stringr::str_replace_all("===FIGNUM===",   
+              stringr::str_replace_all("===FIGNUM===",
                                        as.character(which(fname == names(mfres[["figures"]])))) |>
               stringr::str_replace_all("===FIGTOT===",   as.character(length(names(mfres[["figures"]]))))
 
             tmp_sub_title   = sub_title_multiple |>
-              stringr::str_replace_all("===FIGNUM===",   
+              stringr::str_replace_all("===FIGNUM===",
                                        as.character(which(fname == names(mfres[["figures"]])))) |>
               stringr::str_replace_all("===FIGTOT===",   as.character(length(names(mfres[["figures"]]))))
           } else {
@@ -9377,11 +9199,11 @@ nca_append_report_figs  = function(
                     type     = "ggplot",
                     content  = list(
                       image           = tmpgg ,
-                      key             = fig_id, 
+                      key             = fig_id,
                       notes           = tmp_notes,
                       notes_format    = text_format,
                       height          = fig_height,
-                      width           = fig_width,  
+                      width           = fig_width,
                       caption_format  = text_format,
                       caption         = tmp_caption))
             rpt = onbrand::report_add_doc_content(rpt,
@@ -9420,5 +9242,5 @@ nca_append_report_figs  = function(
     isgood = isgood,
     msgs   = msgs,
     rpt   = rpt
-  ) 
+  )
 res}

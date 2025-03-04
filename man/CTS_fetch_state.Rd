@@ -4,23 +4,10 @@
 \alias{CTS_fetch_state}
 \title{Fetch Clinical Trial Simulator State}
 \usage{
-CTS_fetch_state(
-  id,
-  id_ASM,
-  id_MB,
-  input,
-  session,
-  FM_yaml_file,
-  MOD_yaml_file,
-  react_state
-)
+CTS_fetch_state(id, input, session, FM_yaml_file, MOD_yaml_file, react_state)
 }
 \arguments{
 \item{id}{Shiny module ID}
-
-\item{id_ASM}{ID string for the app state management module used to save and load app states}
-
-\item{id_MB}{An ID string that corresponds with the ID used to call the MB modules}
 
 \item{input}{Shiny input variable}
 
@@ -67,8 +54,6 @@ MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml")
 
 # Creating an empty state object
 state = CTS_fetch_state(id              = "CTS",
-                       id_ASM          = "ASM",
-                       id_MB           = "MB",
                        input           = input,
                        session         = session,
                        FM_yaml_file    = FM_yaml_file,

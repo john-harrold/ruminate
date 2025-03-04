@@ -7,7 +7,6 @@
 #'@title Model Builder State Server
 #'@description Server function for the Model Builder  Shiny Module
 #'@param id An ID string that corresponds with the ID used to call the modules UI elements
-#'@param id_ASM ID string for the app state managment module used to save and load app states
 #'@param FM_yaml_file App configuration file with FM as main section.
 #'@param MOD_yaml_file  Module configuration file with MC as main section.
 #'@param deployed Boolean variable indicating whether the app is deployed or not.
@@ -15,13 +14,14 @@
 #'@return MB Server object
 # JMH Add example
 MB_Server <- function(id,
-               id_ASM        = "ASM",
                FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml"),
                MOD_yaml_file = system.file(package = "ruminate",  "templates", "MB.yaml"),
                deployed      = FALSE,
                react_state   = NULL) {
   moduleServer(id, function(input, output, session) {
 
+   MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+   id_ASM = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_ASM"]]
 
     #------------------------------------
     # Generating the model selection catalog
@@ -31,7 +31,6 @@ MB_Server <- function(id,
       uiele = NULL
       if(input[["base_from"]] == "catalog"){
         state = MB_fetch_state(id              = id,
-                               id_ASM          = id_ASM,
                                input           = input,
                                session         = session,
                                FM_yaml_file    = FM_yaml_file,
@@ -91,7 +90,6 @@ MB_Server <- function(id,
         input[["element_name"]]
         input[["ui_mb_model"]]
         state = MB_fetch_state(id              = id,
-                               id_ASM          = id_ASM,
                                input           = input,
                                session         = session,
                                FM_yaml_file    = FM_yaml_file,
@@ -124,7 +122,6 @@ MB_Server <- function(id,
       uiele = NULL
       if(input[["base_from"]] == "user"){
         state = MB_fetch_state(id              = id,
-                               id_ASM          = id_ASM,
                                input           = input,
                                session         = session,
                                FM_yaml_file    = FM_yaml_file,
@@ -142,7 +139,6 @@ MB_Server <- function(id,
       uiele = NULL
       if(input[["base_from"]] == "user"){
         state = MB_fetch_state(id              = id,
-                               id_ASM          = id_ASM,
                                input           = input,
                                session         = session,
                                FM_yaml_file    = FM_yaml_file,
@@ -173,7 +169,6 @@ MB_Server <- function(id,
       input[["element_name"]]
       input[["ui_mb_model"]]
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -217,7 +212,6 @@ MB_Server <- function(id,
       input$button_clk_copy
       input$button_clk_new
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -248,7 +242,6 @@ MB_Server <- function(id,
       input$element_selection
       input$catalog_selection
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -274,7 +267,6 @@ MB_Server <- function(id,
       req(input[["element_selection"]])
       #input[["ui_mb_model"]]
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -299,7 +291,6 @@ MB_Server <- function(id,
       req(input[["element_selection"]])
       #input[["ui_mb_model"]]
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -330,7 +321,6 @@ MB_Server <- function(id,
         # This is the default filename the user is prompted with when the
         # download starts:
         state = MB_fetch_state(id              = id,
-                               id_ASM          = id_ASM,
                                input           = input,
                                session         = session,
                                FM_yaml_file    = FM_yaml_file,
@@ -342,7 +332,6 @@ MB_Server <- function(id,
        dlfn},
       content = function(file) {
         state = MB_fetch_state(id              = id,
-                               id_ASM          = id_ASM,
                                input           = input,
                                session         = session,
                                FM_yaml_file    = FM_yaml_file,
@@ -408,7 +397,6 @@ MB_Server <- function(id,
       req(input[["element_selection"]])
       #input[["ui_mb_model"]]
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -439,7 +427,6 @@ MB_Server <- function(id,
         # This is the default filename the user is prompted with when the
         # download starts:
         state = MB_fetch_state(id              = id,
-                               id_ASM          = id_ASM,
                                input           = input,
                                session         = session,
                                FM_yaml_file    = FM_yaml_file,
@@ -451,7 +438,6 @@ MB_Server <- function(id,
        dlfn},
       content = function(file) {
         state = MB_fetch_state(id              = id,
-                               id_ASM          = id_ASM,
                                input           = input,
                                session         = session,
                                FM_yaml_file    = FM_yaml_file,
@@ -521,7 +507,6 @@ MB_Server <- function(id,
       req(input[["element_selection"]])
       req(input[["ui_mb_model"]])
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -560,7 +545,6 @@ MB_Server <- function(id,
       input[["uploaded_model"]]
 
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -611,7 +595,6 @@ MB_Server <- function(id,
 
 
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -643,7 +626,6 @@ MB_Server <- function(id,
     # new
     output$ui_mb_new_btn = renderUI({
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -670,7 +652,6 @@ MB_Server <- function(id,
     # Save
     output$ui_mb_save_btn = renderUI({
       state = MB_fetch_state(id        = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -696,7 +677,6 @@ MB_Server <- function(id,
     # clip code
     output$ui_mb_clip_code = renderUI({
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -722,7 +702,6 @@ MB_Server <- function(id,
     # delete
     output$ui_mb_del_btn   = renderUI({
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -746,7 +725,6 @@ MB_Server <- function(id,
     # copy
     output$ui_mb_copy_btn   = renderUI({
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -773,7 +751,6 @@ MB_Server <- function(id,
       req(input[["element_selection"]])
       req(input[["ui_mb_model"]])
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -818,7 +795,6 @@ MB_Server <- function(id,
       input[["button_clk_save"]]
       input[["uploaded_model"]]
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -833,7 +809,6 @@ MB_Server <- function(id,
     # Compact ui
     output$MB_ui_compact  =  renderUI({
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -987,7 +962,6 @@ MB_Server <- function(id,
       # This updates the reaction state:
       observeEvent(toListen(), {
         state = MB_fetch_state(id        = id,
-                               id_ASM          = id_ASM,
                                input           = input,
                                session         = session,
                                FM_yaml_file    = FM_yaml_file,
@@ -1003,7 +977,6 @@ MB_Server <- function(id,
     # Copying element code to the clipboard
     observeEvent(input$button_clk_clip, {
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1047,7 +1020,6 @@ MB_Server <- function(id,
     })
     observeEvent(toNotify(), {
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1077,7 +1049,6 @@ MB_Server <- function(id,
       # Once the UI has been regenerated we
       # remove any holds for this module
       state = MB_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1100,7 +1071,6 @@ MB_Server <- function(id,
 #'@title Fetch Model Builder State
 #'@description Merges default app options with the changes made in the UI
 #'@param id Shiny module ID
-#'@param id_ASM ID string for the app state management module used to save and load app states
 #'@param input Shiny input variable
 #'@param session Shiny session variable
 #'@param FM_yaml_file App configuration file with FM as main section.
@@ -1136,13 +1106,12 @@ MB_Server <- function(id,
 #'
 #' # Creating an empty state object
 #' state = MB_fetch_state(id              = "MB",
-#'                        id_ASM          = "ASM",
 #'                        input           = input,
 #'                        session         = session,
 #'                        FM_yaml_file    = FM_yaml_file,
 #'                        MOD_yaml_file   = MOD_yaml_file,
 #'                        react_state     = NULL)
-MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_file, react_state){
+MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react_state){
 
     # Template for an empty dataset
   #---------------------------------------------
@@ -1154,6 +1123,9 @@ MB_fetch_state = function(id, id_ASM, input, session, FM_yaml_file, MOD_yaml_fil
     # General state information
     state = MB_init_state(FM_yaml_file, MOD_yaml_file, id, session)
   }
+
+  MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+  id_ASM = state[["MC"]][["module"]][["depends"]][["id_ASM"]]
 
   #---------------------------------------------
   # Here we update the state based on user input
@@ -3079,12 +3051,16 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
   id_ASM        = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_ASM"]]
 
   state = MB_fetch_state(id              = mod_ID,
-                         id_ASM          = id_ASM,
                          input           = input,
                          session         = session,
                          FM_yaml_file    = FM_yaml_file,
                          MOD_yaml_file   = MOD_yaml_file,
                          react_state     = react_state)
+
+  # Some functions require the state to be in the session object:
+  if(!formods::is_shiny(session)){
+    session = FM_set_mod_state(session, mod_ID, state)
+  }
 
   elements = src_list[[mod_ID]][["elements"]]
 

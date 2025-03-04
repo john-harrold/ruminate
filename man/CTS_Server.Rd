@@ -6,8 +6,6 @@
 \usage{
 CTS_Server(
   id,
-  id_ASM = "ASM",
-  id_MB = "MB",
   FM_yaml_file = system.file(package = "formods", "templates", "formods.yaml"),
   MOD_yaml_file = system.file(package = "ruminate", "templates", "CTS.yaml"),
   deployed = FALSE,
@@ -16,10 +14,6 @@ CTS_Server(
 }
 \arguments{
 \item{id}{An ID string that corresponds with the ID used to call the modules UI elements}
-
-\item{id_ASM}{ID string for the app state managment module used to save and load app states}
-
-\item{id_MB}{An ID string that corresponds with the ID used to call the MB modules}
 
 \item{FM_yaml_file}{App configuration file with FM as main section.}
 

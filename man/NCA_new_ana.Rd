@@ -20,9 +20,6 @@ Creates a new NCA analysis in an NCA module
 library(ruminate)
 # Module IDs                                                                   
 id     = "NCA"                                                                 
-id_UD  = "UD"                                                                  
-id_DW  = "DW"                                                                  
-id_ASM = "ASM"  
 # We need session and input variables to be define                             
  sess_res = NCA_test_mksession()
                                                                                
@@ -41,9 +38,6 @@ state = NCA_fetch_state(id             = id,
                        session         = session,                              
                        FM_yaml_file    = FM_yaml_file,                         
                        MOD_yaml_file   = MOD_yaml_file,                        
-                       id_ASM          = id_ASM,                               
-                       id_UD           = id_UD,                                
-                       id_DW           = id_DW,                                
                        react_state     = react_state)                          
                                                                                
 # Pulls out the active analysis                                                

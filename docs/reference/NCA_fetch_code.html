@@ -202,33 +202,42 @@
 <span class="r-in"><span>                       id_UD           <span class="op">=</span> <span class="va">id_UD</span>,                                </span></span>
 <span class="r-in"><span>                       id_DW           <span class="op">=</span> <span class="va">id_DW</span>,                                </span></span>
 <span class="r-in"><span>                       react_state     <span class="op">=</span> <span class="va">react_state</span><span class="op">)</span>                          </span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_fetch_state(id = id, input = input, session = session, FM_yaml_file = FM_yaml_file,     MOD_yaml_file = MOD_yaml_file, id_ASM = id_ASM, id_UD = id_UD,     id_DW = id_DW, react_state = react_state):</span> unused arguments (id_ASM = id_ASM, id_UD = id_UD, id_DW = id_DW)</span>
 <span class="r-in"><span>                                                                               </span></span>
 <span class="r-in"><span><span class="co"># Pulls out the active analysis                                                </span></span></span>
 <span class="r-in"><span><span class="va">current_ana</span> <span class="op">=</span> <span class="fu"><a href="NCA_fetch_current_ana.html">NCA_fetch_current_ana</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will get the dataset associated with this analysis</span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">=</span> <span class="fu"><a href="NCA_fetch_ana_ds.html">NCA_fetch_ana_ds</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ana</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'current_ana' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># After making changes you can update those in the state</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="NCA_set_current_ana.html">NCA_set_current_ana</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ana</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can use this to check the current analysis</span></span></span>
 <span class="r-in"><span><span class="va">current_ana</span> <span class="op">=</span> <span class="fu"><a href="NCA_process_current_ana.html">NCA_process_current_ana</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will pull out the code for the module</span></span></span>
 <span class="r-in"><span><span class="va">fc_res</span> <span class="op">=</span> <span class="fu">NCA_fetch_code</span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will use patterns defined for the site to detect</span></span></span>
 <span class="r-in"><span><span class="co"># columns. In this example we are detecting the id column:</span></span></span>
 <span class="r-in"><span><span class="va">id_col</span> <span class="op">=</span> <span class="fu"><a href="NCA_find_col.html">NCA_find_col</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  patterns <span class="op">=</span> <span class="va">state</span><span class="op">[[</span><span class="st">"MC"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"detect_col"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"id"</span><span class="op">]</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>  dscols   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This creates a new analysis</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="NCA_new_ana.html">NCA_new_ana</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Switching back to the previous analysis</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="NCA_mkactive_ana.html">NCA_mkactive_ana</a></span><span class="op">(</span><span class="va">state</span>, <span class="st">"NCA_1"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

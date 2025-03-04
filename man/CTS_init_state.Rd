@@ -4,7 +4,7 @@
 \alias{CTS_init_state}
 \title{Initialize CTS Module State}
 \usage{
-CTS_init_state(FM_yaml_file, MOD_yaml_file, id, id_MB, session)
+CTS_init_state(FM_yaml_file, MOD_yaml_file, id, session)
 }
 \arguments{
 \item{FM_yaml_file}{App configuration file with FM as main section}
@@ -13,9 +13,9 @@ CTS_init_state(FM_yaml_file, MOD_yaml_file, id, id_MB, session)
 
 \item{id}{ID string for the module}
 
-\item{id_MB}{An ID string that corresponds with the ID used to call the MB modules}
-
 \item{session}{Shiny session variable}
+
+\item{id_MB}{An ID string that corresponds with the ID used to call the MB modules}
 }
 \value{
 list containing an empty CTS state
@@ -38,7 +38,6 @@ state = CTS_init_state(
                                "templates",
                                "CTS.yaml"),
    id              = "CTS",
-   id_MB           = "MB",
    session         = session)
 
 state

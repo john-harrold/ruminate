@@ -31,7 +31,6 @@ Imports:
   stringr,
   tidyr,
   utils,
-  yaml,
   zip
 Suggests:
   babelmixr2,

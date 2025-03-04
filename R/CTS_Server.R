@@ -7,8 +7,6 @@
 #'@title Clinical Trial Simulator State Server
 #'@description Server function for the Clinical Trial Simulator  Shiny Module
 #'@param id An ID string that corresponds with the ID used to call the modules UI elements
-#'@param id_ASM ID string for the app state managment module used to save and load app states
-#'@param id_MB An ID string that corresponds with the ID used to call the MB modules
 #'@param FM_yaml_file App configuration file with FM as main section.
 #'@param MOD_yaml_file  Module configuration file with MC as main section.
 #'@param deployed Boolean variable indicating whether the app is deployed or not.
@@ -16,13 +14,15 @@
 #'@return UD Server object
 # JMH Add example
 CTS_Server <- function(id,
-               id_ASM        = "ASM",
-               id_MB         = "MB",
                FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml"),
                MOD_yaml_file = system.file(package = "ruminate",  "templates", "CTS.yaml"),
                deployed      = FALSE,
                react_state   = NULL) {
   moduleServer(id, function(input, output, session) {
+
+   MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+   id_ASM = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_ASM"]]
+   id_MB  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_MB"]]
 
 
     #------------------------------------
@@ -33,8 +33,6 @@ CTS_Server <- function(id,
       input$button_clk_copy
       input$button_clk_new
       state = CTS_fetch_state(id             = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -59,8 +57,6 @@ CTS_Server <- function(id,
     output$CTS_ui_select_rule_type = renderUI({
       input$element_selection
       state = CTS_fetch_state(id             = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -94,8 +90,6 @@ CTS_Server <- function(id,
     output$CTS_ui_rule_condition = renderUI({
       input$element_selection
       state = CTS_fetch_state(id             = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -123,8 +117,6 @@ CTS_Server <- function(id,
       input$button_clk_save
       req(input$rule_type)
       state = CTS_fetch_state(id             = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -163,8 +155,6 @@ CTS_Server <- function(id,
       input$button_clk_save
       req(input$rule_type)
       state = CTS_fetch_state(id             = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -200,8 +190,6 @@ CTS_Server <- function(id,
       input$button_clk_save
       req(input$rule_type)
       state = CTS_fetch_state(id             = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -238,8 +226,6 @@ CTS_Server <- function(id,
       input$button_clk_save
       req(input$rule_type)
       state = CTS_fetch_state(id             = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -337,8 +323,6 @@ CTS_Server <- function(id,
       input$button_clk_save
       req(input$rule_type)
       state = CTS_fetch_state(id             = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -374,8 +358,6 @@ CTS_Server <- function(id,
       input$button_clk_save
       req(input$rule_type)
       state = CTS_fetch_state(id             = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -413,8 +395,6 @@ CTS_Server <- function(id,
       input$button_clk_save
       req(input$rule_type)
       state = CTS_fetch_state(id             = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -449,8 +429,6 @@ CTS_Server <- function(id,
     output$CTS_ui_text_element_name = renderUI({
       input$element_selection
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -477,8 +455,6 @@ CTS_Server <- function(id,
     output$CTS_ui_source_model = renderUI({
       #input$element_selection
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -502,8 +478,6 @@ CTS_Server <- function(id,
       react_state[[id_MB]]
       react_state[[id_ASM]]
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -536,8 +510,6 @@ CTS_Server <- function(id,
       input$button_clk_save
       input$button_clk_runsim
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -706,8 +678,6 @@ CTS_Server <- function(id,
       input$element_selection
       input$button_clk_save
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -805,8 +775,6 @@ CTS_Server <- function(id,
       input$button_clk_runsim
       input$button_clk_update_plot
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -863,8 +831,6 @@ CTS_Server <- function(id,
     output$ui_res_tc_figure      = renderUI({
       input$switch_output
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -924,8 +890,6 @@ CTS_Server <- function(id,
       input$button_clk_update_plot
       input$switch_output
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -959,8 +923,6 @@ CTS_Server <- function(id,
       input$button_clk_update_plot
       input$switch_output
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -990,8 +952,6 @@ CTS_Server <- function(id,
     output$ui_res_events_figure      = renderUI({
       input$switch_output
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1051,8 +1011,6 @@ CTS_Server <- function(id,
       input$button_clk_update_plot
       input$switch_output
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1086,8 +1044,6 @@ CTS_Server <- function(id,
       input$button_clk_update_plot
       input$switch_output
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1117,8 +1073,6 @@ CTS_Server <- function(id,
     output$CTS_ui_sim_cfg   = renderUI({
       input$element_selection
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1208,8 +1162,6 @@ CTS_Server <- function(id,
     # Configuration options
     output$CTS_ui_add_rule_btn   = renderUI({
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1236,8 +1188,6 @@ CTS_Server <- function(id,
       input$element_selection
       input$hot_current_rules
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1279,8 +1229,6 @@ CTS_Server <- function(id,
   #   input$button_clk_save
   #   input$button_clk_add_cov
   #   state = CTS_fetch_state(id              = id,
-  #                          id_ASM          = id_ASM,
-  #                          id_MB           = id_MB,
   #                          input           = input,
   #                          session         = session,
   #                          FM_yaml_file    = FM_yaml_file,
@@ -1328,8 +1276,6 @@ CTS_Server <- function(id,
     output$CTS_ui_trial_end =  renderUI({
       input$element_selection
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1352,8 +1298,6 @@ CTS_Server <- function(id,
     output$CTS_ui_visit_times =  renderUI({
       input$element_selection
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1376,8 +1320,6 @@ CTS_Server <- function(id,
     output$CTS_ui_nsub        =  renderUI({
       input$element_selection
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1405,8 +1347,6 @@ CTS_Server <- function(id,
       input$button_clk_add_cov
 
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1425,8 +1365,6 @@ CTS_Server <- function(id,
       input$button_clk_save
 
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1457,8 +1395,6 @@ CTS_Server <- function(id,
       input$button_clk_save
 
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1499,8 +1435,6 @@ CTS_Server <- function(id,
       input$covariate_type_selected
 
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1537,8 +1471,6 @@ CTS_Server <- function(id,
       input$button_clk_save
 
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1567,8 +1499,6 @@ CTS_Server <- function(id,
       input$button_clk_add_cov
 
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1605,8 +1535,6 @@ CTS_Server <- function(id,
       input$element_selection
       input$button_clk_add_rule
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1648,8 +1576,6 @@ CTS_Server <- function(id,
       react_state[[id_ASM]]
       # Forcing a reaction to changes in other modules
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1708,8 +1634,6 @@ CTS_Server <- function(id,
     # Creates the time scale picker input witha  placeholder
     output$CTS_time_scale_PH = renderUI({
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1735,8 +1659,6 @@ CTS_Server <- function(id,
       react_state[[id_ASM]]
       # Forcing a reaction to changes in other modules
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1810,8 +1732,6 @@ CTS_Server <- function(id,
       input$evplot
       # Reacting to file changes
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1840,8 +1760,6 @@ CTS_Server <- function(id,
     # Copying element code to the clipboard
     observeEvent(input$button_clk_clip, {
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1865,8 +1783,6 @@ CTS_Server <- function(id,
     # new
     output$ui_cts_new_btn = renderUI({
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1893,8 +1809,6 @@ CTS_Server <- function(id,
     # Save
     output$ui_cts_save_btn = renderUI({
       state = CTS_fetch_state(id        = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1920,8 +1834,6 @@ CTS_Server <- function(id,
     # run simulation
     output$ui_cts_runsim_btn = renderUI({
       state = CTS_fetch_state(id        = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1947,8 +1859,6 @@ CTS_Server <- function(id,
     # clip code
     output$ui_cts_clip_code = renderUI({
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1974,8 +1884,6 @@ CTS_Server <- function(id,
     # delete
     output$ui_cts_del_btn   = renderUI({
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -1999,8 +1907,6 @@ CTS_Server <- function(id,
     # copy
     output$ui_cts_copy_btn   = renderUI({
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -2043,8 +1949,6 @@ CTS_Server <- function(id,
       input$switch_output
 
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -2061,8 +1965,6 @@ CTS_Server <- function(id,
       react_state[[id_MB]]
       react_state[[id_ASM]]
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -2268,8 +2170,6 @@ CTS_Server <- function(id,
       # This updates the reaction state:
       observeEvent(toListen(), {
         state = CTS_fetch_state(id        = id,
-                               id_ASM          = id_ASM,
-                               id_MB           = id_MB,
                                input           = input,
                                session         = session,
                                FM_yaml_file    = FM_yaml_file,
@@ -2297,8 +2197,6 @@ CTS_Server <- function(id,
     })
     observeEvent(toNotify(), {
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -2330,8 +2228,6 @@ CTS_Server <- function(id,
       # Once the UI has been regenerated we
       # remove any holds for this module
       state = CTS_fetch_state(id              = id,
-                             id_ASM          = id_ASM,
-                             id_MB           = id_MB,
                              input           = input,
                              session         = session,
                              FM_yaml_file    = FM_yaml_file,
@@ -2352,8 +2248,6 @@ CTS_Server <- function(id,
 #'@title Fetch Clinical Trial Simulator State
 #'@description Merges default app options with the changes made in the UI
 #'@param id Shiny module ID
-#'@param id_ASM ID string for the app state management module used to save and load app states
-#'@param id_MB An ID string that corresponds with the ID used to call the MB modules
 #'@param input Shiny input variable
 #'@param session Shiny session variable
 #'@param FM_yaml_file App configuration file with FM as main section.
@@ -2389,14 +2283,12 @@ CTS_Server <- function(id,
 #'
 #' # Creating an empty state object
 #' state = CTS_fetch_state(id              = "CTS",
-#'                        id_ASM          = "ASM",
-#'                        id_MB           = "MB",
 #'                        input           = input,
 #'                        session         = session,
 #'                        FM_yaml_file    = FM_yaml_file,
 #'                        MOD_yaml_file   = MOD_yaml_file,
 #'                        react_state     = NULL)
-CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_yaml_file, react_state){
+CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react_state){
 
   # Template for an empty dataset
   #---------------------------------------------
@@ -2407,8 +2299,11 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
 
   if(is.null(state)){
     # General state information
-    state = CTS_init_state(FM_yaml_file, MOD_yaml_file, id, id_MB, session)
+    state = CTS_init_state(FM_yaml_file, MOD_yaml_file, id, session)
   }
+
+  id_ASM = state[["MC"]][["module"]][["depends"]][["id_ASM"]]
+  id_MB  = state[["MC"]][["module"]][["depends"]][["id_MB"]]
 
   #---------------------------------------------
   # Detecting changes in the models avaliable
@@ -2840,7 +2735,6 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
 #'@param FM_yaml_file App configuration file with FM as main section
 #'@param MOD_yaml_file  Module configuration file with MC as main section
 #'@param id ID string for the module
-#'@param id_MB An ID string that corresponds with the ID used to call the MB modules
 #'@param session Shiny session variable
 #'@return list containing an empty CTS state
 #'@examples
@@ -2858,11 +2752,14 @@ CTS_fetch_state = function(id, id_ASM, id_MB, input, session, FM_yaml_file, MOD_
 #'                                "templates",
 #'                                "CTS.yaml"),
 #'    id              = "CTS",
-#'    id_MB           = "MB",
 #'    session         = session)
 #'
 #' state
-CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, id_MB, session){
+CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
+
+  MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+  id_ASM = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_ASM"]]
+  id_MB  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_MB"]]
 
   sc_meta = CTS_fetch_sc_meta(MOD_yaml_file)
 
@@ -4583,7 +4480,7 @@ CTS_fetch_sc_meta = function(
   cfg_summary = NULL
 
   # Reading in the yaml file
-  MOD_config = yaml::read_yaml(MOD_yaml_file)
+  MOD_config = FM_read_yaml(MOD_yaml_file)
   sim_config = MOD_config[["MC"]][["sim_config"]]
   for(cname in names(sim_config)){
     tmp_ui    = paste0("cts_config_", cname)
@@ -4712,16 +4609,18 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
   # Creating an empty state object
   state = CTS_fetch_state(id             = mod_ID,
-                         id_ASM          = id_ASM,
-                         id_MB           = id_MB,
                          input           = input,
                          session         = session,
                          FM_yaml_file    = FM_yaml_file,
                          MOD_yaml_file   = MOD_yaml_file,
                          react_state     = react_state)
 
-  elements = src_list[[mod_ID]][["elements"]]
+  # Some functions require the state to be in the session object:
+  if(!formods::is_shiny(session)){
+    session = FM_set_mod_state(session, mod_ID, state)
+  }
 
+  elements = src_list[[mod_ID]][["elements"]]
 
   # Mapping between rule elements in preload and ui element names
   rule_ui_map = state[["CTS"]][["rule_ui_map"]]

@@ -10,9 +10,6 @@ NCA_fetch_state(
   session,
   FM_yaml_file,
   MOD_yaml_file,
-  id_ASM,
-  id_UD,
-  id_DW,
   react_state,
   react_internal = NULL
 )
@@ -27,12 +24,6 @@ NCA_fetch_state(
 \item{FM_yaml_file}{App configuration file with FM as main section.}
 
 \item{MOD_yaml_file}{Module configuration file with MC as main section.}
-
-\item{id_ASM}{ID string for the app state management module used to save and load app states}
-
-\item{id_UD}{ID string for the upload data module used to save and load app states}
-
-\item{id_DW}{ID string for the data wrangling module used to save and load app states}
 
 \item{react_state}{Variable used within server to handle non-standard reactions  (e.g. reacting to plotly)}
 
@@ -121,9 +112,6 @@ Merges default app options with the changes made in the UI
 library(ruminate)
 # Module IDs                                                                   
 id     = "NCA"                                                                 
-id_UD  = "UD"                                                                  
-id_DW  = "DW"                                                                  
-id_ASM = "ASM"  
 # We need session and input variables to be define                             
  sess_res = NCA_test_mksession()
                                                                                
@@ -142,9 +130,6 @@ state = NCA_fetch_state(id             = id,
                        session         = session,                              
                        FM_yaml_file    = FM_yaml_file,                         
                        MOD_yaml_file   = MOD_yaml_file,                        
-                       id_ASM          = id_ASM,                               
-                       id_UD           = id_UD,                                
-                       id_DW           = id_DW,                                
                        react_state     = react_state)                          
                                                                                
 # Pulls out the active analysis                                                
