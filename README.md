@@ -45,8 +45,12 @@ You can install the released version of `ruminate` from
 
 ``` r
 # Actual package
+install.packages("formods",   dependencies=TRUE)
 install.packages("ruminate",  dependencies=TRUE)
 ```
+
+Make sure you install `{formods}` first and make sure to set
+dependencies to `TRUE` for both.
 
 ## Development version
 
@@ -70,7 +74,7 @@ and `{formods}`.
 
 # Running ruminate
 
-## In RStudio
+## In R or RStudio
 
 This will run the default/stable version of ruminate:
 

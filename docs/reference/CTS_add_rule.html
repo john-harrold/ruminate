@@ -111,8 +111,6 @@ RULE_UPDATED is FALSE then a new rule was added.</p></li>
 <span class="r-in"><span><span class="va">session</span> <span class="op">=</span> <span class="va">sess_res</span><span class="op">[[</span><span class="st">"session"</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">id</span>     <span class="op">=</span> <span class="st">"CTS"</span></span></span>
-<span class="r-in"><span><span class="va">id_ASM</span> <span class="op">=</span> <span class="st">"ASM"</span></span></span>
-<span class="r-in"><span><span class="va">id_MB</span>  <span class="op">=</span> <span class="st">"MB"</span></span></span>
 <span class="r-in"><span><span class="va">input</span>  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Configuration files</span></span></span>
@@ -120,8 +118,6 @@ RULE_UPDATED is FALSE then a new rule was added.</p></li>
 <span class="r-in"><span><span class="va">MOD_yaml_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"ruminate"</span>, <span class="st">"templates"</span>, <span class="st">"CTS.yaml"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="CTS_fetch_state.html">CTS_fetch_state</a></span><span class="op">(</span>id              <span class="op">=</span> <span class="va">id</span>,</span></span>
-<span class="r-in"><span>                        id_ASM          <span class="op">=</span> <span class="va">id_ASM</span>,</span></span>
-<span class="r-in"><span>                        id_MB           <span class="op">=</span> <span class="va">id_MB</span>,</span></span>
 <span class="r-in"><span>                        input           <span class="op">=</span> <span class="va">input</span>,</span></span>
 <span class="r-in"><span>                        session         <span class="op">=</span> <span class="va">session</span>,</span></span>
 <span class="r-in"><span>                        FM_yaml_file    <span class="op">=</span> <span class="va">FM_yaml_file</span>,</span></span>
@@ -236,41 +232,86 @@ RULE_UPDATED is FALSE then a new rule was added.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: a2d2addaea94d643f8ee6bae6ac356e0</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:69c64ad86b1de3bc723ca9ecd6f17326</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 41fe9ee621c1b4474e42c96447d93ca3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:e5d202dda031b0b5d1e27bee2fc26178</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 4a7daad0431fd394b08490ef75bfd0c1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:390fda0d0133aa64373d82a6cddb7224</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: ae34d319bf07de5bdc7bb3a297895044</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:2c87e4d6bbaf13cd6e28f913a91d480b</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting name: One compartment model</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting time scale: hours</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting base from: user</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting catalog selection: </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting base model id: manual</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting base model name: manual</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 48fe90bffd2caf87282ebceb82aeb3ae</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:e3f9681c420b7a620cd96b7611871922</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 4d0aabce45397027ce3f05b40a0e0c0e</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:1a15599f0cecb560c1e3ff74630e991e</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: added element idx: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: loading model idx: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> parameter labels from comments are typically ignored in non-interactive mode</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Need to run with the source intact to parse comments</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: b847c3d8cca57ac608d9831956c79dc4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:61daf98540399972d85b3f5ffb0d7f51</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: f761aef1f56e7b143782e761168f508a</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:7abcb99edc1a62bc9b06b8887b247a17</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting name: PK Biomarker</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting time scale: days</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting base from: user</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting catalog selection: </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting base model id: manual</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB:   -&gt; setting base model name: manual</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: e63d76ea08aa8cff865583abbe4477b0</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:43e5aea9d6c2060af7b3b03520a89379</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: model checksum updated: 89d3b43e7e2dccfce5f9a5c939c43e60</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module checksum updated:3e37a6ca9ba495ffbc0570b757194e09</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: added element idx: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → MB: module isgood: TRUE</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in CTS_fetch_state(id = id, id_ASM = id_ASM, id_MB = id_MB, input = input,     session = session, FM_yaml_file = FM_yaml_file, MOD_yaml_file = MOD_yaml_file,     react_state = NULL):</span> unused arguments (id_ASM = id_ASM, id_MB = id_MB)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → # preload_complete is good: TRUE ------------------------------------------</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   source: file.path(system.file(package="onbrand"), "templates", "report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   dest:   file.path("config","report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: source model change detected</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:  &gt; covariates reset</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 6048854e9749d49a6a32f58e8589c14b</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 74445b3547e3d69f02e466dcb50b8dc7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: add rule success</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: rule added</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 035ffcb0bd1e76a074b68b0b2f0aeec2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: a30f11122c328d05bcd915b1f5f2b89d</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_plot_element()</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Plotting timecourse</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_fgtc =                                 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   plot_sr_tc(sro = CTS_obj_1_simres,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     xcol         = "time",         </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     xlab_str     = "Time",         </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fncol        = 4,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fnrow        = 2,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     dvcols       = "Cc",</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fpage        = 1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: # Plotting events</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: CTS_obj_1_fgev =                                 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:   plot_sr_ev(sro = CTS_obj_1_simres,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     xcol         = "time",         </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     xlab_str     = "Time",         </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fncol        = 4,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fnrow        = 2,                       </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     evplot       = 1,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:     fpage        = 1)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: No simulation available, you need to run the simulation first.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: 16873a3a222151391e4b7ebf75a74f1e</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: 976444db13fd7d1609a6dc2eb8219c3c</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: source model change detected</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS:  &gt; covariates reset</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: cohort checksum updated: a26981e9032bdd9243e80380981be933</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → CTS: module checksum updated: a82bc3447b8c56684a080e799e1257b7</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

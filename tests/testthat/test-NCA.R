@@ -51,9 +51,6 @@ if(formods::is_installed("readxl")){
     dose_from  = "rows")
 
   expect_true(drb_res[["isgood"]])
-
-
-
   })
 
   test_that("Test session examples", {

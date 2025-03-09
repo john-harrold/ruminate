@@ -7835,11 +7835,13 @@ NCA_test_mksession = function(session=list(), full=FALSE){
   if(full){
     sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
                 system.file(package="formods",  "preload", "UD_preload.yaml"),
+                system.file(package="formods",  "preload", "DM_preload.yaml"),
                 system.file(package="formods",  "preload", "DW_preload.yaml"),
                 system.file(package="ruminate", "preload", "NCA_preload.yaml"))
   } else {
     sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
                 system.file(package="formods",  "preload", "UD_preload.yaml"),
+                system.file(package="formods",  "preload", "DM_preload.yaml"),
                 system.file(package="formods",  "preload", "DW_preload.yaml"),
                 system.file(package="ruminate", "preload", "NCA_preload_minimal.yaml"))
   }
@@ -8305,16 +8307,19 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       }
 
       # Attaching data source
-      if(!is.null(elements[[ele_idx]][["element"]][["data_source"]][["id"]]) &
-         !is.null(elements[[ele_idx]][["element"]][["data_source"]][["idx"]])){
-        tmp_DSV = DSV[["catalog"]][c(DSV[["catalog"]][["id"]]  == elements[[ele_idx]][["element"]][["data_source"]][["id"]] &
-                                     DSV[["catalog"]][["idx"]] == elements[[ele_idx]][["element"]][["data_source"]][["idx"]]), ]
-        if(nrow(tmp_DSV) == 1){
-          formods::FM_le(state, paste0("  -> setting data source: ", tmp_DSV[["object"]][1]) )
-          current_ele[["ana_dsview"]] = tmp_DSV[["object"]][1]
-        } else {
-          formods::FM_le(state, paste0("error locating data source, expecting 1 source found ", nrow(tmp_DSV)), entry_type="danger")
-        }
+      fr_res = 
+        fetch_resource(
+          catalog   = DSV[["catalog"]], 
+          id        = elements[[ele_idx]][["element"]][["data_source"]][["id"]],
+          idx       = elements[[ele_idx]][["element"]][["data_source"]][["idx"]],
+          res_label = elements[[ele_idx]][["element"]][["data_source"]][["res_label"]])
+      
+      # Attaching data source
+      if(fr_res[["isgood"]]){
+ 
+        formods::FM_le(state, paste0("  -> setting data source: ", fr_res[["res_obj"]]) )
+        current_ele[["ana_dsview"]] = fr_res[["res_obj"]]
+
       } else {
         formods::FM_le(state, paste0("error missing either data source id or idx"), entry_type="danger")
         ele_isgood = FALSE
@@ -8445,8 +8450,10 @@ NCA_mk_preload     = function(state){
         dsv_row =
         DSV[["catalog"]][
           DSV[["catalog"]][["object"]] == tmp_source_ele[["ana_dsview"]], ]
-        ds_id  = dsv_row[["id"]]
-        ds_idx = dsv_row[["idx"]]
+        ds_id        = dsv_row[["id"]]
+        ds_idx       = dsv_row[["idx"]]
+        ds_res_label = dsv_row[["res_label"]]
+        
 
         FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["key"]]))
 
@@ -8456,8 +8463,9 @@ NCA_mk_preload     = function(state){
           name  = tmp_source_ele[["key"]],
           notes = tmp_source_ele[["notes"]],
           data_source = list(
-            id  = ds_id,
-            idx = ds_idx),
+            id        = ds_id,
+            idx       = ds_idx,
+            res_label = ds_res_label),
           nca_config  = list(),
           ana_options = list(),
           components  = list())

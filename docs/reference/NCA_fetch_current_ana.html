@@ -75,9 +75,6 @@ of this list is the same as the structure of <code>state$NCA$anas</code> in the 
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ruminate.ubiquity.tools/">ruminate</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Module IDs                                                                   </span></span></span>
 <span class="r-in"><span><span class="va">id</span>     <span class="op">=</span> <span class="st">"NCA"</span>                                                                 </span></span>
-<span class="r-in"><span><span class="va">id_UD</span>  <span class="op">=</span> <span class="st">"UD"</span>                                                                  </span></span>
-<span class="r-in"><span><span class="va">id_DW</span>  <span class="op">=</span> <span class="st">"DW"</span>                                                                  </span></span>
-<span class="r-in"><span><span class="va">id_ASM</span> <span class="op">=</span> <span class="st">"ASM"</span>  </span></span>
 <span class="r-in"><span><span class="co"># We need session and input variables to be define                             </span></span></span>
 <span class="r-in"><span> <span class="va">sess_res</span> <span class="op">=</span> <span class="fu"><a href="NCA_test_mksession.html">NCA_test_mksession</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → ASM: including file</span>
@@ -107,6 +104,45 @@ of this list is the same as the structure of <code>state$NCA$anas</code> in the 
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → UD: State initialized</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → UD: module checksum updated:897d952fecbc804999396a96f9df4b20</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → UD: module isgood: TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM:   dest:   file.path("config","report.docx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM:   source: file.path(system.file(package="onbrand"), "templates", "report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM:   dest:   file.path("config","report.pptx")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: including file</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM:   source: file.path(system.file(package="onbrand"), "templates", "report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM:   dest:   file.path("config","report.yaml")</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: 441abbd92e02d893eb5136ccdfcc717d</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: State initialized</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: 641fcbc6616d24d05acded4317a3bb12</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: 5c077c5702479f330bf233040eb4a51b</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: adding preload sources</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM:  - file added: TEST_DATA.xlsx</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: added: TEST_DATA.xlsx</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM:  - url added: https://raw.githubusercontent.com/john-harrold/formods/refs/heads/master/inst/test_data/SDTM_PC.csv</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: url added: https://raw.githubusercontent.com/john-harrold/formods/refs/heads/master/inst/test_data/SDTM_PC.csv</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM:  - url added: https://raw.githubusercontent.com/john-harrold/formods/refs/heads/master/inst/test_data/SDTM_EX.csv</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: url added: https://raw.githubusercontent.com/john-harrold/formods/refs/heads/master/inst/test_data/SDTM_EX.csv</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM:  - url added: https://raw.githubusercontent.com/john-harrold/formods/refs/heads/master/inst/test_data/SDTM_DM.csv</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: url added: https://raw.githubusercontent.com/john-harrold/formods/refs/heads/master/inst/test_data/SDTM_DM.csv</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: loading element idx: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: 195704908ee59dbb44872d92c6cb1f7e</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: 8285902f9fed2bb4ca4525fe915fb3ac</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: added element idx: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: loading element idx: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: 4773c31a326806e540a64ec5b9184888</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: 9e685bce80b662b53d5cce1f79c134e2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: added element idx: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: loading element idx: 3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: 481071b31f8e6705c0e05dfb5a84dd01</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: 6cdda27353538453d2259aa90df7eef9</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: added element idx: 3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: loading element idx: 4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: 0f4fa8be6e237cd05bed5b438576f12c</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: 9bafbdba8be3da350ae134932e1573b2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: added element idx: 4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module isgood: TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: including file</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW:   source: file.path(system.file(package="onbrand"), "templates", "report.docx")</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW:   dest:   file.path("config","report.docx")</span>
@@ -119,6 +155,8 @@ of this list is the same as the structure of <code>state$NCA$anas</code> in the 
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: State initialized</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:a9496b622f92f683cc8c69f65ac1ece4</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: loading data view idx: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: setting data source: myDS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:dfec3d5aa14c2716ccf367706931693f</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: setting name: Observations</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:4d9fd3d913355669d14e0ac710b0b5dc</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW:   -&gt; filter</span>
@@ -128,6 +166,8 @@ of this list is the same as the structure of <code>state$NCA$anas</code> in the 
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW:   -&gt; mutate</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:048df4e8afa9494121e72808981c842c</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: loading data view idx: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: setting data source: myDS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:048df4e8afa9494121e72808981c842c</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: setting name: PK 3mg SD IV</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:c54c6fc20ff13fd14fbb61c786f65078</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW:   -&gt; filter</span>
@@ -139,6 +179,8 @@ of this list is the same as the structure of <code>state$NCA$anas</code> in the 
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW:   -&gt; filter</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:452fc9d9131592650a93b4b49de961d1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: loading data view idx: 3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: setting data source: myDS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:452fc9d9131592650a93b4b49de961d1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: setting name: PK 3mg SD IV (NCA)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:3b177ed09a80dfaf15c9f3dde8b9a8fb</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW:   -&gt; filter</span>
@@ -148,6 +190,8 @@ of this list is the same as the structure of <code>state$NCA$anas</code> in the 
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW:   -&gt; filter</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:2cf968d6e72262f9274ea0389f717e84</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: loading data view idx: 4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: setting data source: myDS</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:2cf968d6e72262f9274ea0389f717e84</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: setting name: PKPD 3mg SD IV (NCA)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: module checksum updated:67e9d6e6b2e085808be155613f8efe20</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW:   -&gt; filter</span>
@@ -184,6 +228,7 @@ of this list is the same as the structure of <code>state$NCA$anas</code> in the 
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: NCA_add_int: append</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: added element idx: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module isgood: TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → # preload_complete is good: TRUE ------------------------------------------</span>
 <span class="r-in"><span>                                                                               </span></span>
 <span class="r-in"><span><span class="co"># Extracting the session and input variables                                   </span></span></span>
 <span class="r-in"><span><span class="va">session</span>      <span class="op">=</span> <span class="va">sess_res</span><span class="op">$</span><span class="va">session</span>                                                </span></span>
@@ -200,46 +245,34 @@ of this list is the same as the structure of <code>state$NCA$anas</code> in the 
 <span class="r-in"><span>                       session         <span class="op">=</span> <span class="va">session</span>,                              </span></span>
 <span class="r-in"><span>                       FM_yaml_file    <span class="op">=</span> <span class="va">FM_yaml_file</span>,                         </span></span>
 <span class="r-in"><span>                       MOD_yaml_file   <span class="op">=</span> <span class="va">MOD_yaml_file</span>,                        </span></span>
-<span class="r-in"><span>                       id_ASM          <span class="op">=</span> <span class="va">id_ASM</span>,                               </span></span>
-<span class="r-in"><span>                       id_UD           <span class="op">=</span> <span class="va">id_UD</span>,                                </span></span>
-<span class="r-in"><span>                       id_DW           <span class="op">=</span> <span class="va">id_DW</span>,                                </span></span>
 <span class="r-in"><span>                       react_state     <span class="op">=</span> <span class="va">react_state</span><span class="op">)</span>                          </span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in NCA_fetch_state(id = id, input = input, session = session, FM_yaml_file = FM_yaml_file,     MOD_yaml_file = MOD_yaml_file, id_ASM = id_ASM, id_UD = id_UD,     id_DW = id_DW, react_state = react_state):</span> unused arguments (id_ASM = id_ASM, id_UD = id_UD, id_DW = id_DW)</span>
 <span class="r-in"><span>                                                                               </span></span>
 <span class="r-in"><span><span class="co"># Pulls out the active analysis                                                </span></span></span>
 <span class="r-in"><span><span class="va">current_ana</span> <span class="op">=</span> <span class="fu">NCA_fetch_current_ana</span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will get the dataset associated with this analysis</span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">=</span> <span class="fu"><a href="NCA_fetch_ana_ds.html">NCA_fetch_ana_ds</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ana</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'current_ana' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># After making changes you can update those in the state</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="NCA_set_current_ana.html">NCA_set_current_ana</a></span><span class="op">(</span><span class="va">state</span>, <span class="va">current_ana</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can use this to check the current analysis</span></span></span>
 <span class="r-in"><span><span class="va">current_ana</span> <span class="op">=</span> <span class="fu"><a href="NCA_process_current_ana.html">NCA_process_current_ana</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will pull out the code for the module</span></span></span>
 <span class="r-in"><span><span class="va">fc_res</span> <span class="op">=</span> <span class="fu"><a href="NCA_fetch_code.html">NCA_fetch_code</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This will use patterns defined for the site to detect</span></span></span>
 <span class="r-in"><span><span class="co"># columns. In this example we are detecting the id column:</span></span></span>
 <span class="r-in"><span><span class="va">id_col</span> <span class="op">=</span> <span class="fu"><a href="NCA_find_col.html">NCA_find_col</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  patterns <span class="op">=</span> <span class="va">state</span><span class="op">[[</span><span class="st">"MC"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"detect_col"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"id"</span><span class="op">]</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>  dscols   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># This creates a new analysis</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="NCA_new_ana.html">NCA_new_ana</a></span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Switching back to the previous analysis</span></span></span>
 <span class="r-in"><span><span class="va">state</span> <span class="op">=</span> <span class="fu"><a href="NCA_mkactive_ana.html">NCA_mkactive_ana</a></span><span class="op">(</span><span class="va">state</span>, <span class="st">"NCA_1"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'state' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

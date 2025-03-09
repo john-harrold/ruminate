@@ -240,21 +240,25 @@ server <- function(input, output, session) {
                        FM_yaml_file  = formods.yaml,
                        MOD_yaml_file = ASM.yaml,
                        mod_ids       = mod_ids)
+
   formods::UD_Server(  id ="UD", 
                        deployed         = deployed,
                        react_state      = react_FM,
                        MOD_yaml_file    = UD.yaml,
                        FM_yaml_file     = formods.yaml)
+
   formods::DW_Server(  id="DW", 
                        deployed         = deployed,
                        react_state      = react_FM,
                        MOD_yaml_file    = DW.yaml,
                        FM_yaml_file     = formods.yaml)
+
   formods::FG_Server(  id="FG",  
                        deployed         = deployed,
                        react_state      = react_FM,
                        MOD_yaml_file    = FG.yaml,
                        FM_yaml_file     = formods.yaml)
+
   ruminate::NCA_Server(id    ="NCA",
                        deployed         = deployed,
                        react_state      = react_FM,

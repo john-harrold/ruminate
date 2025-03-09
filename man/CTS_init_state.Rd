@@ -14,8 +14,6 @@ CTS_init_state(FM_yaml_file, MOD_yaml_file, id, session)
 \item{id}{ID string for the module}
 
 \item{session}{Shiny session variable}
-
-\item{id_MB}{An ID string that corresponds with the ID used to call the MB modules}
 }
 \value{
 list containing an empty CTS state

@@ -45,7 +45,7 @@ if(file.exists("NCA_presim.RData")){
   presim_loaded = TRUE
 }
 
-NCA_yaml = yaml::read_yaml(system.file(package="ruminate", "templates","NCA.yaml"))
+NCA_yaml = formods::FM_read_yaml(system.file(package="ruminate", "templates","NCA.yaml"))
 ```
 
 
