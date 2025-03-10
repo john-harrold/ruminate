@@ -3378,8 +3378,9 @@ NCA_fetch_state = function(id, input, session,
       if(SAVE_ANA_NAME){
         ana_name = state[["NCA"]][["ui_ana_map"]][[ui_name]]
         # Messaging detected change
-        if(has_changed(ui_val  = state[["NCA"]][["ui"]][[ui_name]],
-                       old_val = current_ana[[ana_name]])){
+        if(has_updated(ui_val   = state[["NCA"]][["ui"]][[ui_name]],
+                       old_val  = current_ana[[ana_name]],
+                       init_val = c(""))){
 
 
           formods::FM_le(state, paste0("setting analysis: ", ana_name, " = ", paste(state[["NCA"]][["ui"]][[ui_name]], collapse=", ")))
@@ -3532,8 +3533,9 @@ NCA_fetch_state = function(id, input, session,
   #---------------------------------------------
   # Process option changes to the fg_ind_obs figure
   # the current selection in the UI:
-  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_save"]])){
+  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_save"]],
+                 init_val = c("", "0"))){
 
     formods::FM_le(state, "updating fg_ind_obs")
 
@@ -3624,8 +3626,9 @@ NCA_fetch_state = function(id, input, session,
   #---------------------------------------------
   # Process scenario button selection here to overwrite
   # the current selection in the UI:
-  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_use_scenario"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_use_scenario"]])){
+  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_use_scenario"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_use_scenario"]],
+                 init_val = c("", "0"))){
     # Empty messages:
     msgs = c()
 
@@ -3644,8 +3647,9 @@ NCA_fetch_state = function(id, input, session,
   #---------------------------------------------
   # Process scenario button selection here to overwrite
   # the current selection in the UI:
-  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_add_int"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_add_int"]])){
+  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_add_int"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_add_int"]],
+                 init_val = c("", "0"))){
 
     # Default to adding the interval
     ADD_INTERVAL = TRUE
@@ -3723,8 +3727,9 @@ NCA_fetch_state = function(id, input, session,
   }
   #---------------------------------------------
   # Run Analysis
-  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_run"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_run"]])){
+  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_run"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_run"]],
+                 init_val = c("", "0"))){
 
     formods::FM_le(state, "running nca and generating subsequent figures and tables")
 
@@ -3747,8 +3752,9 @@ NCA_fetch_state = function(id, input, session,
   }
   #---------------------------------------------
   # Here we react to changes between the UI and the current state
-  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["select_current_ana"]],
-                 old_val  = state[["NCA"]][["current_ana"]]) &
+  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["select_current_ana"]],
+                 old_val  = state[["NCA"]][["current_ana"]],
+                 init_val = c("", "0")) &
       (!fetch_hold(state, "select_current_ana"))){
 
     # Changing the current view to the one selected in the UI
@@ -3757,8 +3763,9 @@ NCA_fetch_state = function(id, input, session,
   }
   #---------------------------------------------
   # Copy Analysis
-  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_copy"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_copy"]])){
+  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_copy"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_copy"]],
+                 init_val = c("", "0"))){
 
     formods::FM_le(state, "copying current analysis")
 
@@ -3817,8 +3824,9 @@ NCA_fetch_state = function(id, input, session,
   }
   #---------------------------------------------
   # New Analysis
-  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_new"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_new"]])){
+  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_new"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_new"]],
+                 init_val = c("", "0"))){
 
     formods::FM_le(state, "creating new analysis")
     msgs = c()
@@ -3840,8 +3848,9 @@ NCA_fetch_state = function(id, input, session,
   }
   #---------------------------------------------
   # Delete analysis
-  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_del"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_del"]])){
+  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_del"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_del"]],
+                 init_val = c("", "0"))){
 
     formods::FM_le(state, "deleting analysis")
     msgs = c()
@@ -3873,8 +3882,9 @@ NCA_fetch_state = function(id, input, session,
   }
   #---------------------------------------------
   # Save analysis
-  if(has_changed(ui_val   = state[["NCA"]][["ui"]][["button_ana_save"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_save"]])){
+  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_save"]],
+                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_save"]],
+                 init_val = c("", "0"))){
 
     formods::FM_le(state, "saving changes to current analysis")
 

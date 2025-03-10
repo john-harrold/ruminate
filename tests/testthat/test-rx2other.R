@@ -17,7 +17,6 @@ if( Sys.getenv("ruminate_rxfamily_found")){
     state   = sess_res$state
     catalog = suppressMessages(suppressWarnings(MB_fetch_catalog(state)))
     for(ridx in 1:nrow(catalog$summary)){
-    #for(ridx in 16){
       tmp_ana_sol = catalog$summary[ridx, ]$ana_sol
       # We're only testing ODE models here
       if(tmp_ana_sol == "no"){
