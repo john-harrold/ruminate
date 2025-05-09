@@ -32,4 +32,4 @@ install.packages(c('dparser',     'nlmixr2data',  'lotri',        'rxode2ll',
 remotes::install_github('john-harrold/onbrand',  dependencies=TRUE)
 remotes::install_github('john-harrold/formods',  dependencies=TRUE)
 remotes::install_github('john-harrold/ruminate', dependencies=TRUE)
-remotes::install_github('billdenney/pknca',      dependencies=TRUE)
+remotes::install_github('humanpred/pknca',      dependencies=TRUE)

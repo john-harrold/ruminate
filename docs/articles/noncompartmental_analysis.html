@@ -150,10 +150,10 @@ beyond the observations at hand. The subsequent values of clearance,
 volumes of distribution, etc can also change with extrapolation.</p>
 <p>There is a lot of nuance associated with these calculations, and it
 is good to rely on software that focuses on this type of analysis. The
-<a href="https://billdenney.github.io/pknca/" class="external-link">PKNCA</a> package has been developed with this in mind. The
+<a href="https://humanpred.github.io/pknca/" class="external-link">PKNCA</a> package has been developed with this in mind. The
 ruminate app provides an interface to functionality found in
-<a href="https://billdenney.github.io/pknca/" class="external-link">PKNCA</a> and will generate code you can use to get started
-with <a href="https://billdenney.github.io/pknca/" class="external-link">PKNCA</a>.</p>
+<a href="https://humanpred.github.io/pknca/" class="external-link">PKNCA</a> and will generate code you can use to get started
+with <a href="https://humanpred.github.io/pknca/" class="external-link">PKNCA</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="data-format">Data format<a class="anchor" aria-label="anchor" href="#data-format"></a>
@@ -233,7 +233,7 @@ it, is not necessary to provide dosing information for those intervals.
 For example if you have four weekly doses but only have intensive
 sampling on weeks 1 and 4 but peak and trough on weeks 2 and 3, you do
 not have to provide dosing information for weeks 2 and 3. However there
-are certain parameters that <a href="https://billdenney.github.io/pknca/" class="external-link">PKNCA</a> will provide if that
+are certain parameters that <a href="https://humanpred.github.io/pknca/" class="external-link">PKNCA</a> will provide if that
 dosing and intermediate sampling information is provided (e.g. time to
 steady-state). So if all you are interested in is parameters for
 intervals with intensive sampling, then you don’t need to worry about
@@ -830,7 +830,7 @@ Parameter Name is the value shown in the app.</p>
       exclude:                       "Reason for parameter exclusion (NA when parameter was calculated)."
       PPORRESU:                      "Parameter units."
   # For details on the PKNCA options see this vignette:
-  # https://billdenney.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html
+  # https://humanpred.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html
   # This section contains information about different options, metadata about
   # them, default values, etc. Using this, the options UI for an analysis is
   # generated automatically. Each configuration option has the following:
@@ -1663,7 +1663,7 @@ Parameter Name is the value shown in the app.</p>
   units:
     # For reference this is the units vignette from PKNCA
     #
-    # http://billdenney.github.io/pknca/articles/v07-unit-conversion.html
+    # http://humanpred.github.io/pknca/articles/v07-unit-conversion.html
     #
     # Default value for whether or not to include units. This can
     # be overwritten in the app.

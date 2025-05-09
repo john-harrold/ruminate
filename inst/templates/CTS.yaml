@@ -370,7 +370,7 @@ MC:
     uiele = tagList(uiele, tags$br())
     uiele = tagList(uiele, rx_details[["ht_info"]])
   # For details on the simulation options see the help rxode2::rxSolve
-  # https://billdenney.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html
+  # https://humanpred.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html
   # This section contains information about different options, metadata about
   # them, default values, etc. Using this, the options UI for an analysis is
   # generated automatically. Each configuration option has the following:
