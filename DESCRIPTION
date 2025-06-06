@@ -1,7 +1,7 @@
 Package: ruminate
 Title: A Pharmacometrics Data Transformation and Analysis Tool
 Version: 0.3.2
-Authors@R: 
+Authors@R:
     person("John", "Harrold", , "john.m.harrold@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2052-4373"))
 Description: Exploration of pharmacometrics data involves both general tools (transformation and plotting) and specific techniques (non-compartmental analysis). This kind of exploration is generally accomplished by utilizing different packages. The purpose of 'ruminate' is to create a 'shiny' interface to make these tools more broadly available while creating reproducible results.
@@ -40,7 +40,7 @@ Suggests:
   knitr,
   nlmixr2lib(>= 0.3.0),
   nonmem2rx,
-  nlmixr2(>= 3.0.0),
+  nlmixr2est(>= 3.0.0),
   prompter,
   rmarkdown,
   readxl,
