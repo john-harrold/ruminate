@@ -1249,13 +1249,13 @@ fetch_rxinfo <- function(object){
     }
 
     # If an output or secondary parameter is defined after it has been used it
-    # can be misinterpreted as a covaraite. This checks for that. 
+    # can be misinterpreted as a covaraite. This checks for that.
     if(any(elements[["covariates"]] %in% c(elements[["outputs"]], elements[["secondary"]]))){
       isgood = FALSE
       bad_covs = elements[["covariates"]][ elements[["covariates"]] %in% c(elements[["outputs"]], elements[["secondary"]])]
       msgs = c(msgs, paste0("The following covariate(s) were found in either outputs or secondary parameters: ", paste0(bad_covs, collapse=", ")))
     }
-    
+
 
     # Output details
     txt_info = c(txt_info, "Outputs\n")
@@ -1731,10 +1731,10 @@ rx2other <- function(object,
             dataset = dataset |> rxode2::et(id=c(1,2), time=c(0,1), evid=0, cmt=tmp_output)
           }
 
-          # Making sure the dataset is a dataframe so we can manipulate 
+          # Making sure the dataset is a dataframe so we can manipulate
           # it like a dataframe below:
           dataset = as.data.frame(dataset)
-          
+
           # Adding default values for covariates
           if(length(rx_details[["elements"]][["covariates"]]) > 0){
             for(tmp_cov in rx_obj$allCovs){
@@ -1755,9 +1755,9 @@ rx2other <- function(object,
         setwd(export_wd)
 
         if(out_type == "nonmem"){
-          #res = nlmixr2::nlmixr2(rx_obj, dataset, "nonmem",  babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))
+          #res = nlmixr2est::nlmixr2(rx_obj, dataset, "nonmem",  babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))
 
-          cmd = 'res = suppressMessages(suppressWarnings(nlmixr2::nlmixr2(rx_obj, dataset, "nonmem", babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))))'
+          cmd = 'res = suppressMessages(suppressWarnings(nlmixr2est::nlmixr2(rx_obj, dataset, "nonmem", babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))))'
           tcres = FM_tc(
             cmd     = cmd,
             capture = c("res"),
@@ -1779,7 +1779,7 @@ rx2other <- function(object,
         }
 
         if(out_type == "monolix"){
-          cmd = 'res = suppressMessages(suppressWarnings(nlmixr2::nlmixr2(rx_obj, dataset, "monolix", babelmixr2::monolixControl(modelName=export_name, runCommand=NA))))'
+          cmd = 'res = suppressMessages(suppressWarnings(nlmixr2est::nlmixr2(rx_obj, dataset, "monolix", babelmixr2::monolixControl(modelName=export_name, runCommand=NA))))'
           tcres = FM_tc(
             cmd     = cmd,
             capture = c("res"),
@@ -1854,4 +1854,3 @@ rx2other <- function(object,
     msgs      = msgs,
     files     = files)
 res}
-
