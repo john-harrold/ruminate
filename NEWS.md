@@ -6,6 +6,8 @@
 - Fixed typos in PKNCA parameters (`sparse_se` -> `sparse_auc_se` and `sparse_df` -> `sparse_auc_df`)
 - Updated model selection in MDL to include grouping.
 - Added searchable dependencies table under the App Info tab. 
+- Adding DM module elements to default apps.
+- NCA: Moving checksum calculation to separate functions.
 
 # ruminate 0.3.1 
 

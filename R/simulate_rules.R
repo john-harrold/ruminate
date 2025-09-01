@@ -1757,7 +1757,7 @@ rx2other <- function(object,
         if(out_type == "nonmem"){
           #res = nlmixr2::nlmixr2(rx_obj, dataset, "nonmem",  babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))
 
-          cmd = 'res = suppressMessages(suppressWarnings(nlmixr2::nlmixr2(rx_obj, dataset, "nonmem", babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))))'
+          cmd = 'res = suppressMessages(suppressWarnings(nlmixr2est::nlmixr2(rx_obj, dataset, "nonmem", babelmixr2::nonmemControl(modelName=export_name, runCommand=NA))))'
           tcres = FM_tc(
             cmd     = cmd,
             capture = c("res"),
@@ -1779,7 +1779,7 @@ rx2other <- function(object,
         }
 
         if(out_type == "monolix"){
-          cmd = 'res = suppressMessages(suppressWarnings(nlmixr2::nlmixr2(rx_obj, dataset, "monolix", babelmixr2::monolixControl(modelName=export_name, runCommand=NA))))'
+          cmd = 'res = suppressMessages(suppressWarnings(nlmixr2est::nlmixr2(rx_obj, dataset, "monolix", babelmixr2::monolixControl(modelName=export_name, runCommand=NA))))'
           tcres = FM_tc(
             cmd     = cmd,
             capture = c("res"),

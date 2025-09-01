@@ -21,6 +21,7 @@ tags$style("@import url(https://use.fontawesome.com/releases/v6.4.0/css/all.css)
 formods.yaml  = system.file(package="formods",  "templates",  "formods.yaml")
 ASM.yaml      = system.file(package="formods",  "templates",  "ASM.yaml")
 UD.yaml       = system.file(package="formods",  "templates",  "UD.yaml")
+DM.yaml       = system.file(package="formods",  "templates",  "DM.yaml")
 DW.yaml       = system.file(package="formods",  "templates",  "DW.yaml")
 FG.yaml       = system.file(package="formods",  "templates",  "FG.yaml")
 MB.yaml       = system.file(package="ruminate", "templates",  "MB.yaml")
@@ -165,6 +166,16 @@ ui <- shinydashboard::dashboardPage(
                                     htmlOutput(NS("UD", "ui_ud_data_preview")))
                           ))
                  ),
+                 shiny::tabPanel(id="data_management",
+                          title=tagList(shiny::icon("folder-tree"),
+                                        "Data Management"),
+                 fluidRow(
+                   column(width=12,
+                          div(style="display:inline-block;vertical-align:top",
+                   htmlOutput(NS("DM", "DM_ui_compact"))
+                   ))
+                   )
+                 ),
                  shiny::tabPanel(id="save_state",
                           title=tagList(shiny::icon("arrow-down-up-across-line"),
                                         "Save or Load Analysis"),
@@ -231,12 +242,14 @@ server <- function(input, output, session) {
   react_FM = reactiveValues()
 
   # Module IDs and the order they are needed for code generation
-  mod_ids = c("UD", "DW", "FG", "NCA", "MB", "CTS")
+  mod_ids = c("UD", "DM", "DW", "FG", "NCA", "MB", "CTS")
+
 
   # If the ftmptest file is present we load test data
   if(file.exists(ftmptest)){
     sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
                 system.file(package="formods",  "preload", "UD_preload.yaml"),
+                system.file(package="formods",  "preload", "DM_preload.yaml"),
                 system.file(package="formods",  "preload", "FG_preload.yaml"),
                 system.file(package="formods",  "preload", "DW_preload.yaml"),
                 system.file(package="ruminate", "preload", "NCA_preload.yaml"),
@@ -264,6 +277,12 @@ server <- function(input, output, session) {
                        deployed         = deployed,
                        react_state      = react_FM,
                        MOD_yaml_file    = UD.yaml,
+                       FM_yaml_file     = formods.yaml)
+
+  formods::DM_Server(  id="DM",      
+                       deployed         = deployed,
+                       react_state      = react_FM,
+                       MOD_yaml_file    = DM.yaml,
                        FM_yaml_file     = formods.yaml)
 
   formods::DW_Server(  id="DW",      

@@ -5,7 +5,7 @@
 \title{Creates Figures of Individual Observations from PKNCA Result}
 \usage{
 mk_figure_ind_obs(
-  ana_ds,
+  nca_res,
   OBS_LAB = "Concentration ===CONCUNITS===",
   TIME_LAB = "Time ===TIMEUNITS===",
   time_units = "",
@@ -20,7 +20,7 @@ mk_figure_ind_obs(
 )
 }
 \arguments{
-\item{ana_ds}{Analysis dataset.}
+\item{nca_res}{Output of pk.nca()}
 
 \item{OBS_LAB}{Label of the observation axis with optional ===CONCUNITS=== placeholder for units.}
 

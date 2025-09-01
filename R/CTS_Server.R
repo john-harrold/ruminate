@@ -18,9 +18,9 @@ CTS_Server <- function(id,
                MOD_yaml_file = system.file(package = "ruminate",  "templates", "CTS.yaml"),
                deployed      = FALSE,
                react_state   = NULL) {
-  moduleServer(id, function(input, output, session) {
+  shiny::moduleServer(id, function(input, output, session) {
 
-   MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+   MOD_yaml_cont = formods::FM_read_yaml(MOD_yaml_file)
    id_ASM = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_ASM"]]
    id_MB  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_MB"]]
 
@@ -856,9 +856,9 @@ CTS_Server <- function(id,
         }
 
         output_type = state[["CTS"]][["ui"]][["switch_output"]]
-        FM_le(state, "Updating timecourse")
-        FM_le(state, paste0("  output_type: ", output_type))
-        FM_le(state, paste0("  figs_found: ", figs_found))
+        formods::FM_le(state, "Updating timecourse")
+        formods::FM_le(state, paste0("  output_type: ", output_type))
+        formods::FM_le(state, paste0("  figs_found: ", figs_found))
 
         if(figs_found){
 
@@ -978,9 +978,9 @@ CTS_Server <- function(id,
         }
 
         output_type = state[["CTS"]][["ui"]][["switch_output"]]
-        FM_le(state, "Updating timecourse")
-        FM_le(state, paste0("  output_type: ", output_type))
-        FM_le(state, paste0("  figs_found: ", figs_found))
+        formods::FM_le(state, "Updating timecourse")
+        formods::FM_le(state, paste0("  output_type: ", output_type))
+        formods::FM_le(state, paste0("  figs_found: ", figs_found))
 
         if(figs_found){
           pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
@@ -1130,7 +1130,7 @@ CTS_Server <- function(id,
                 value       = tmp_cfg_val)
 
           } else{
-            FM_le(state, paste0("Uknown config uitype: ",
+            formods::FM_le(state, paste0("Uknown config uitype: ",
                                 sc_meta[["config"]][[cname]][["uitype"]],
                                 " for config option: ",
                                 cname
@@ -1586,9 +1586,9 @@ CTS_Server <- function(id,
 
 
       UPDATE_PI = FALSE
-      if(isolate(input$source_model) == "PH"){
+      if(shiny::isolate(input$source_model) == "PH"){
         UPDATE_PI = TRUE }
-      if(isolate(input$source_model) != "PH" & !fetch_hold(state, "source_model")){
+      if(shiny::isolate(input$source_model) != "PH" & !formods::fetch_hold(state, "source_model")){
         UPDATE_PI = TRUE }
 
 
@@ -1607,10 +1607,10 @@ CTS_Server <- function(id,
             current_source_model =  current_cht[["ui"]][["source_model"]]
           } else {
             current_source_model = catalog[["object"]][1]
-            FM_le(state, paste0("source_model: model missing missing."   ))
-            FM_le(state, paste0("key: ",            current_cht[["id"]]       ))
-            FM_le(state, paste0("source_model: ",   current_cht[["ui"]][["source_model"]]))
-            FM_le(state, paste0("switching model:", current_source_model ))
+            formods::FM_le(state, paste0("source_model: model missing missing."   ))
+            formods::FM_le(state, paste0("key: ",            current_cht[["id"]]       ))
+            formods::FM_le(state, paste0("source_model: ",   current_cht[["ui"]][["source_model"]]))
+            formods::FM_le(state, paste0("switching model:", current_source_model ))
           }
 
           # choices        = catalog[["object"]]
@@ -1702,9 +1702,9 @@ CTS_Server <- function(id,
            choices    = choices,
            choicesOpt = choicesOpt)
       } else {
-        FM_le(state, paste0("source_model: model missing missing."   ))
-        FM_le(state, paste0("key: ",            current_cht[["id"]]       ))
-        FM_le(state, paste0("source_model: ",   current_cht[["ui"]][["source_model"]]))
+        formods::FM_le(state, paste0("source_model: model missing missing."   ))
+        formods::FM_le(state, paste0("key: ",            current_cht[["id"]]       ))
+        formods::FM_le(state, paste0("source_model: ",   current_cht[["ui"]][["source_model"]]))
       }
     })
     #------------------------------------
@@ -2176,7 +2176,7 @@ CTS_Server <- function(id,
                                MOD_yaml_file   = MOD_yaml_file,
                                react_state     = react_state)
 
-        FM_le(state, "reaction state updated")
+        formods::FM_le(state, "reaction state updated")
         #react_state[[id]] = state
         react_state[[id]][["CTS"]][["checksum"]] = state[["CTS"]][["checksum"]]
       }, priority=99)
@@ -2234,7 +2234,7 @@ CTS_Server <- function(id,
                              MOD_yaml_file   = MOD_yaml_file,
                              react_state     = react_state)
 
-      FM_le(state, "removing holds")
+      formods::FM_le(state, "removing holds")
       # Removing all holds
       for(hname in names(state[["CTS"]][["ui_hold"]])){
         remove_hold(state, session, hname)
@@ -2293,7 +2293,7 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
   # Template for an empty dataset
   #---------------------------------------------
   # Getting the current state
-  state = FM_fetch_mod_state(session, id)
+  state = formods::FM_fetch_mod_state(session, id)
   # If the state has not yet been defined then we
   # initialize it
 
@@ -2308,32 +2308,32 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
   #---------------------------------------------
   # Detecting changes in the models avaliable
   UPDATE_MDL = FALSE
-  if("checksum" %in% names(isolate(react_state[[id_MB]][["MB"]]))){
-    if(!is.null(isolate(react_state[[id_MB]][["MB"]][["checksum"]]))){
+  if("checksum" %in% names(shiny::isolate(react_state[[id_MB]][["MB"]]))){
+    if(!is.null(shiny::isolate(react_state[[id_MB]][["MB"]][["checksum"]]))){
       if(is.null(state[["CTS"]][["MDL"]][["modules"]][["MB"]][[id_MB]])){
         # If the MB checksum isn't NULL but the stored value in MDL is then we
         # need to update the dataset
         UPDATE_MDL = TRUE
-        FM_le(state, "models found not prevously avaliable.")
-      } else if(isolate(react_state[[id_MB]][["MB"]][["checksum"]]) !=
+        formods::FM_le(state, "models found not prevously avaliable.")
+      } else if(shiny::isolate(react_state[[id_MB]][["MB"]][["checksum"]]) !=
                 state[["CTS"]][["MDL"]][["modules"]][["MB"]][[id_MB]]){
 
         # If the stored checksum in MDL is different than the currently
         # models from MD then we force a reset as well:
         UPDATE_MDL = TRUE
-        FM_le(state, "model source checksum has changed.")
+        formods::FM_le(state, "model source checksum has changed.")
       }
     }
   }
 
   if(UPDATE_MDL){
-    FM_le(state, "updating models")
+    formods::FM_le(state, "updating models")
 
-    #message(paste0("mb module: ", isolate(react_state[[id_MB]][["MB"]][["checksum"]])))
+    #message(paste0("mb module: ", shiny::isolate(react_state[[id_MB]][["MB"]][["checksum"]])))
     #message(paste0("stored:    ",    state[["CTS"]][["MDL"]][["modules"]][["MB"]][[id_MB]]))
-    #message(paste0("source:    ", isolate(input$source_model)))
+    #message(paste0("source:    ", shiny::isolate(input$source_model)))
 
-    state[["CTS"]][["MDL"]]  = FM_fetch_mdl(state, session, ids = id_MB)
+    state[["CTS"]][["MDL"]]  = formods::FM_fetch_mdl(state, session, ids = id_MB)
 
 
     if(state[["CTS"]][["MDL"]][["hasmdl"]]){
@@ -2343,13 +2343,13 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
       # Current source model
       csm = current_ele[["ui"]][["source_model"]]
       if(!(csm %in% names(state[["CTS"]][["MDL"]][["mdl"]]))){
-        FM_le(state, "Source model for current cohort not found:")
-        FM_le(state, paste0(" -> ", current_ele[["model_label"]]))
-        FM_le(state, paste0(" -> ", csm))
+        formods::FM_le(state, "Source model for current cohort not found:")
+        formods::FM_le(state, paste0(" -> ", current_ele[["model_label"]]))
+        formods::FM_le(state, paste0(" -> ", csm))
         csm = names(state[["CTS"]][["MDL"]][["mdl"]])[1]
-        FM_le(state, "Defaulting to: ")
-        FM_le(state, paste0(" -> ", state[["CTS"]][["MDL"]][["mdl"]][[csm]][["label"]]))
-        FM_le(state, paste0(" -> ", csm))
+        formods::FM_le(state, "Defaulting to: ")
+        formods::FM_le(state, paste0(" -> ", state[["CTS"]][["MDL"]][["mdl"]][[csm]][["label"]]))
+        formods::FM_le(state, paste0(" -> ", csm))
       }
 
       state[["CTS"]][["ui"]][["source_model"]] = csm
@@ -2363,8 +2363,8 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
   #---------------------------------------------
   # Here we update the state based on user input
   for(ui_name in state[["CTS"]][["ui_ids"]]){
-    if(!is.null(isolate(input[[ui_name]]))){
-       state[["CTS"]][["ui"]][[ui_name]] = isolate(input[[ui_name]])
+    if(!is.null(shiny::isolate(input[[ui_name]]))){
+       state[["CTS"]][["ui"]][[ui_name]] = shiny::isolate(input[[ui_name]])
      } else {
        if(ui_name %in% names(state[["CTS"]][["button_counters"]])){
          state[["CTS"]][["ui"]][[ui_name]] = 0
@@ -2397,11 +2397,11 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
   # only update below conditionally.
 
   for(ui_name in state[["CTS"]][["ui_ids"]]){
-    if(!fetch_hold(state, ui_name)){
+    if(!formods::fetch_hold(state, ui_name)){
       if(ui_name %in% names(state[["CTS"]][["button_counters"]])){
         # Button changes are compared to the button click tracking values
-        change_detected =
-          has_updated(ui_val    = state[["CTS"]][["ui"]][[ui_name]],
+        change_detected = formods::has_updated(
+                      ui_val    = state[["CTS"]][["ui"]][[ui_name]],
                       old_val   = state[["CTS"]][["button_counters"]][[ui_name]],
                       init_val  = c("", "0"))
 
@@ -2416,7 +2416,7 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
         }
       }else{
         change_detected =
-          has_updated(ui_val    = state[["CTS"]][["ui"]][[ui_name]],
+          formods::has_updated(ui_val    = state[["CTS"]][["ui"]][[ui_name]],
                       old_val   = state[["CTS"]][["ui_old"]][[ui_name]],
                       init_val  = c(""))
 
@@ -2448,7 +2448,7 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
   # Here we react to changes between the UI and the current state
   # save cohort
   if("button_clk_save" %in% changed_uis){
-    FM_le(state, "save cohort")
+    formods::FM_le(state, "save cohort")
     current_ele = CTS_fetch_current_element(state)
 
     # Saving the name
@@ -2466,11 +2466,11 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
   #---------------------------------------------
   # runing simulation of current cohort
   if("button_clk_runsim" %in% changed_uis){
-    FM_le(state, "run simulation")
+    formods::FM_le(state, "run simulation")
     current_ele = CTS_fetch_current_element(state)
 
 
-    FM_pause_screen(
+    formods::FM_pause_screen(
         state   = state,
         session = session,
         message = state[["MC"]][["labels"]][["running_sim"]])
@@ -2482,7 +2482,7 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
 
       if(!current_ele[["plotres"]][["isgood"]]){
         msgs = c(msgs, current_ele[["plotres"]][["msgs"]])
-        state = FM_set_notification(
+        state = formods::FM_set_notification(
           state       = state,
           notify_text = state[["MC"]][["errors"]][["bad_plot"]],
           notify_id   = "Element plotting failed",
@@ -2490,7 +2490,7 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
       }
     } else {
       msgs = c(msgs, current_ele[["simres"]][["msgs"]])
-        state = FM_set_notification(
+        state = formods::FM_set_notification(
           state       = state,
           notify_text = state[["MC"]][["errors"]][["bad_sim"]],
           notify_id   = "Element simulation failed",
@@ -2501,19 +2501,19 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
       state   = state,
       element = current_ele)
 
-    FM_resume_screen(state, session)
+    formods::FM_resume_screen(state, session)
 
 
   }
   #---------------------------------------------
   # clip cohort
   if("button_clk_clip" %in% changed_uis){
-    FM_le(state, "clip cohort")
+    formods::FM_le(state, "clip cohort")
   }
   #---------------------------------------------
   # copy cohort
   if("button_clk_copy" %in% changed_uis){
-    FM_le(state, "copy cohort")
+    formods::FM_le(state, "copy cohort")
 
     # First we pull out the current element:
     old_ele = CTS_fetch_current_element(state)
@@ -2545,19 +2545,19 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
   #---------------------------------------------
   # del cohort
   if("button_clk_del" %in% changed_uis){
-    FM_le(state, "delete cohort")
+    formods::FM_le(state, "delete cohort")
     state = CTS_del_current_element(state)
   }
   #---------------------------------------------
   # new cohort
   if("button_clk_new" %in% changed_uis){
-    FM_le(state, "new cohort")
+    formods::FM_le(state, "new cohort")
     state = CTS_new_element(state)
   }
   #---------------------------------------------
   # save cohort
   if("button_clk_update_plot" %in% changed_uis){
-    FM_le(state, "update plot")
+    formods::FM_le(state, "update plot")
     # Pull out the current element
     current_ele = CTS_fetch_current_element(state)
 
@@ -2572,7 +2572,7 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
   #---------------------------------------------
   # rule table clicked
   if("hot_current_rules" %in% changed_uis){
-    FM_le(state, "current rules changed")
+    formods::FM_le(state, "current rules changed")
     hdf = rhandsontable::hot_to_r(state[["CTS"]][["ui"]][["hot_current_rules"]])
     if("Delete" %in% names(hdf)){
       if(any(hdf[["Delete"]])){
@@ -2580,7 +2580,7 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
         current_ele = CTS_fetch_current_element(state)
 
         # Getting the rule id(s) to delete:
-        del_rule_ids  = unfactor(hdf[which(hdf[["Delete"]]), ][["rule_id"]])
+        del_rule_ids  = formods::unfactor(hdf[which(hdf[["Delete"]]), ][["rule_id"]])
         for(del_rule_id in del_rule_ids){
           # This pulls out the corresponding hash
           del_rule_hash =
@@ -2599,7 +2599,7 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
             current_ele[["components_list"]][[del_rule_hash]] = NULL
           }else{
             # This shouldn't happen so we need to throw a message if it does.
-            FM_le(state, paste0("Unable to delete rule id: ", del_rule_id), entry_type="danger")
+            formods::FM_le(state, paste0("Unable to delete rule id: ", del_rule_id), entry_type="danger")
           }
         }
 
@@ -2613,7 +2613,7 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
   #---------------------------------------------
   # add covariate
   if("button_clk_add_cov" %in% changed_uis){
-    FM_le(state, "adding covariate")
+    formods::FM_le(state, "adding covariate")
 
     #Pulling out the current element
     current_ele = CTS_fetch_current_element(state)
@@ -2643,7 +2643,7 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
   #---------------------------------------------
   # changing source model
   if(("source_model" %in% changed_uis)){
-    FM_le(state, "changing selected source model")
+    formods::FM_le(state, "changing selected source model")
 
     # Pulling out the current element
     current_ele = CTS_fetch_current_element(state)
@@ -2656,12 +2656,12 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
       state   = state,
       element = current_ele)
 
-    state = set_hold(state, "source_model")
+    state = formods::set_hold(state, "source_model")
   }
   #---------------------------------------------
   # add rule
   if("button_clk_add_rule" %in% changed_uis){
-    FM_le(state, "adding rule")
+    formods::FM_le(state, "adding rule")
 
     #Pulling out the current element
     current_ele = CTS_fetch_current_element(state)
@@ -2692,19 +2692,19 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
        state[["CTS"]][["ui"]][["element_selection"]]
 
     # Setting the hold for all the other UI elements
-    state = set_hold(state, "element_selection")
+    state = formods::set_hold(state, "element_selection")
   }
   #---------------------------------------------
   # clip cohort
   if("covariate_type" %in% changed_uis){
-    FM_le(state, "covariate type changed")
-    state = set_hold(state, "covariate_type")
+    formods::FM_le(state, "covariate type changed")
+    state = formods::set_hold(state, "covariate_type")
   }
   #---------------------------------------------
   # time scale updated
   if("time_scale" %in% changed_uis){
-    FM_le(state, "time_scale changed")
-    state = set_hold(state, "time_scale")
+    formods::FM_le(state, "time_scale changed")
+    state = formods::set_hold(state, "time_scale")
   }
 
   # Appending any messages in the current element (these are errors and
@@ -2718,13 +2718,13 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
   # NOTE: this only occurs when ui changes have been detected you may need to
   # add additional logic for a given module
   if(!is.null(changed_uis)){
-    state = FM_set_ui_msg(state, msgs)
+    state = formods::FM_set_ui_msg(state, msgs)
   }
 
 
   #---------------------------------------------
   # Saving the state
-  FM_set_mod_state(session, id, state)
+  formods::FM_set_mod_state(session, id, state)
 
   # Returning the state
   state}
@@ -2757,7 +2757,7 @@ CTS_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, reac
 #' state
 CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
 
-  MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+  MOD_yaml_cont = formods::FM_read_yaml(MOD_yaml_file)
   id_ASM = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_ASM"]]
   id_MB  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_MB"]]
 
@@ -2811,7 +2811,7 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
   # Making all the ui_ids holdable
   ui_hold         = ui_ids
 
-  state = FM_init_state(
+  state = formods::FM_init_state(
     FM_yaml_file    = FM_yaml_file,
     MOD_yaml_file   = MOD_yaml_file,
     id              = id,
@@ -2824,7 +2824,7 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
     session         = session)
 
   # Getting the currently defined models
-  MDL = FM_fetch_mdl(state, session, ids = id_MB)
+  MDL = formods::FM_fetch_mdl(state, session, ids = id_MB)
 
   rule_ui_map = list(
     dose = list(
@@ -2871,7 +2871,7 @@ CTS_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
   # initializing the module checksum:
   state = CTS_update_checksum(state)
 
-  FM_le(state, "State initialized")
+  formods::FM_le(state, "State initialized")
 state}
 
 #'@export
@@ -3054,7 +3054,7 @@ CTS_add_rule  = function(state, element){
   }
 
   if(RULE_IS_GOOD){
-    FM_le(state, "add rule success")
+    formods::FM_le(state, "add rule success")
 
     # Checking to see if the rule name has already been used. If so we just
     # replace it and flag a message. So first we delete it from the
@@ -3113,7 +3113,7 @@ CTS_add_rule  = function(state, element){
 
   if(RULE_IS_GOOD){
     if(RULE_UPDATED){
-      FM_le(state, "rule updated")
+      formods::FM_le(state, "rule updated")
       notify_text = paste0("Rule ", rule_name, " updated.")
       notify_id   = "RULE_UPDATED"
       notify_type = "warning"
@@ -3121,7 +3121,7 @@ CTS_add_rule  = function(state, element){
       notify_text = paste0("Rule ", rule_name, " added.")
       notify_id   = "RULE_IS_GOOD"
       notify_type = "success"
-      FM_le(state, "rule added")
+      formods::FM_le(state, "rule added")
     }
   } else {
     notify_text = "Unable to add rule."
@@ -3171,14 +3171,15 @@ CTS_add_covariate   = function(state, element){
   selected_covariate = state[["CTS"]][["ui"]][["selected_covariate"]]
   if(covariate_value == ""){
     tmp_msg = paste0("No value specified for covariate: ", selected_covariate, ".")
-    FM_le(state, tmp_msg)
+    formods::FM_le(state, tmp_msg)
     msgs = c(msgs, tmp_msg)
     COV_IS_GOOD = FALSE
   }else{
     covariate_value = paste0("c(", covariate_value, ")")
     cmd = paste0("cvval = ", covariate_value)
     tcres =
-      FM_tc(cmd     = cmd,
+      formods::FM_tc(
+            cmd     = cmd,
             tc_env  = list(),
             capture = "cvval")
 
@@ -3193,7 +3194,7 @@ CTS_add_covariate   = function(state, element){
       element[["covariates_ui_type"]][[selected_covariate]] = covariate_type
     } else {
       tmp_msg = paste0("Unable to evaluate value for covariate: ", selected_covariate, ".")
-      FM_le(state, tmp_msg)
+      formods::FM_le(state, tmp_msg)
       msgs = c(msgs, tmp_msg)
       msgs = c(msgs, paste0("  -> ", covariate_value))
       msgs = c(msgs, tcres[["msgs"]])
@@ -3657,9 +3658,9 @@ CTS_update_checksum     = function(state){
   old_chk = state[["CTS"]][["checksum"]]
   new_chk = digest::digest(chk_str, algo=c("md5"))
 
-  if(has_updated(old_chk, new_chk)){
+  if(formods::has_updated(old_chk, new_chk)){
     state[["CTS"]][["checksum"]] = new_chk
-    FM_le(state, paste0("module checksum updated: ", state[["CTS"]][["checksum"]]))
+    formods::FM_le(state, paste0("module checksum updated: ", state[["CTS"]][["checksum"]]))
   }
 
 state}
@@ -3691,7 +3692,7 @@ CTS_test_mksession = function(session=list(), full=FALSE){
                 system.file(package="ruminate", "preload", "CTS_preload_minimal.yaml"))
   }
 
-  res = FM_app_preload(session=session, sources=sources)
+  res = formods::FM_app_preload(session=session, sources=sources)
   res = res[["all_sess_res"]][["CTS"]]
 
 res}
@@ -3941,8 +3942,8 @@ CTS_simulate_element    = function(state, element){
       # This will run the simulation only:
       cmd = element[["code_sim_only"]]
 
-      tcres =
-        FM_tc(cmd     = cmd,
+      tcres = formods::FM_tc(
+              cmd     = cmd,
               tc_env  = tc_env,
               capture = capture)
 
@@ -3966,9 +3967,9 @@ CTS_simulate_element    = function(state, element){
   }
 
   if(!ELE_ISGOOD){
-    FM_le(state, "CTS_simulate_element()")
-    FM_le(state, unlist(strsplit(element[["code_sim_only"]], split="\n")))
-    FM_le(state, msgs)
+    formods::FM_le(state, "CTS_simulate_element()")
+    formods::FM_le(state, unlist(strsplit(element[["code_sim_only"]], split="\n")))
+    formods::FM_le(state, msgs)
   }
   element[["simres"]] = list(
     capture = capture,
@@ -4008,8 +4009,8 @@ CTS_plot_element    = function(state, element){
 
 
   if(ELE_ISGOOD){
-    tcres =
-    FM_tc(cmd     = element[["code_figtcev"]],
+    tcres = formods::FM_tc(
+          cmd     = element[["code_figtcev"]],
           tc_env  = element[["simres"]][["capture"]],
           capture = c(element$fgtc_object_name,
                       element$fgev_object_name))
@@ -4023,9 +4024,9 @@ CTS_plot_element    = function(state, element){
   }
 
   if(!ELE_ISGOOD){
-    FM_le(state, "CTS_plot_element()")
-    FM_le(state, unlist(strsplit(element[["code_figtcev"]], split="\n")))
-    FM_le(state, msgs)
+    formods::FM_le(state, "CTS_plot_element()")
+    formods::FM_le(state, unlist(strsplit(element[["code_figtcev"]], split="\n")))
+    formods::FM_le(state, msgs)
   }
   element[["plotres"]] = list(
     capture = capture,
@@ -4191,7 +4192,7 @@ CTS_set_current_element    = function(state, element){
       } else if ( opt_type == "character"   ){
         opt_str = paste0(opt_str, opt_name, ' = "', opt_value, '"')
       } else {
-        FM_le(state, paste0("Unknown option type: ", opt_type, ", for option: ", opt_name), entry_type="danger")
+        formods::FM_le(state, paste0("Unknown option type: ", opt_type, ", for option: ", opt_name), entry_type="danger")
       }
 
       if(optidx < length(opt_names)){
@@ -4213,7 +4214,7 @@ CTS_set_current_element    = function(state, element){
   # JMH todo
   # Code to define output_times
   # We check the trial_end input
-  tmp_trial_end = autocast(element[["ui"]][["trial_end"]])
+  tmp_trial_end = formods::autocast(element[["ui"]][["trial_end"]])
   TEND_ISGOOD = TRUE
   if(is.numeric(tmp_trial_end)){
     if(tmp_trial_end <=0){
@@ -4229,7 +4230,7 @@ CTS_set_current_element    = function(state, element){
 
 
   # We check the nsteps input
-  tmp_nsteps    = autocast(element[["ui"]][["cts_config_nsteps"]])
+  tmp_nsteps    = formods::autocast(element[["ui"]][["cts_config_nsteps"]])
   NSTEPS_ISGOOD = TRUE
   if(is.numeric(tmp_nsteps)){
     if(tmp_nsteps <=1){
@@ -4417,8 +4418,8 @@ CTS_set_current_element    = function(state, element){
  #tmp_ele[["ui"]][["action_manual_code"]]      = ""
 
   tmp_checksum  = digest::digest(tmp_ele, algo=c("md5"))
-  if(has_updated(element[["checksum"]], tmp_checksum)){
-    FM_le(state, paste0("cohort checksum updated: ", tmp_checksum))
+  if(formods::has_updated(element[["checksum"]], tmp_checksum)){
+    formods::FM_le(state, paste0("cohort checksum updated: ", tmp_checksum))
     element[["checksum"]]  = tmp_checksum
   }
 
@@ -4480,7 +4481,7 @@ CTS_fetch_sc_meta = function(
   cfg_summary = NULL
 
   # Reading in the yaml file
-  MOD_config = FM_read_yaml(MOD_yaml_file)
+  MOD_config = formods::FM_read_yaml(MOD_yaml_file)
   sim_config = MOD_config[["MC"]][["sim_config"]]
   for(cname in names(sim_config)){
     tmp_ui    = paste0("cts_config_", cname)
@@ -4556,8 +4557,8 @@ CTS_change_source_model   = function(state, element){
     # If the source model has actually changed we zero out the covariates as
     # well.
     if(state[["CTS"]][["ui"]][["source_model"]] != element[["ui"]][["source_model"]]){
-      FM_le(state, "source model change detected")
-      FM_le(state, " > covariates reset")
+      formods::FM_le(state, "source model change detected")
+      formods::FM_le(state, " > covariates reset")
       element[["covariates"]] = list()
     }
 
@@ -4601,8 +4602,8 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
   res     = c()
   err_msg = c()
 
-  FM_yaml_file  = render_str(src_list[[mod_ID]][["fm_yaml"]])
-  MOD_yaml_file = render_str(src_list[[mod_ID]][["mod_yaml"]])
+  FM_yaml_file  = formods::render_str(src_list[[mod_ID]][["fm_yaml"]])
+  MOD_yaml_file = formods::render_str(src_list[[mod_ID]][["mod_yaml"]])
   id_ASM        = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_ASM"]]
   id_MB         = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_MB"]]
 # id_DW         = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_DW"]]
@@ -4617,7 +4618,7 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
   # Some functions require the state to be in the session object:
   if(!formods::is_shiny(session)){
-    session = FM_set_mod_state(session, mod_ID, state)
+    session = formods::FM_set_mod_state(session, mod_ID, state)
   }
 
   elements = src_list[[mod_ID]][["elements"]]
@@ -4686,7 +4687,7 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
       #-------------------------------------------------------
       # Defining general options
-      FM_le(state, paste0("loading element idx: ", ele_idx ))
+      formods::FM_le(state, paste0("loading element idx: ", ele_idx ))
 
       # Pulling out the current element to update it below
       current_ele = CTS_fetch_current_element(state)
@@ -4746,7 +4747,7 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
       # Defining subject covariates
       if("covariates" %in% names(elements[[ele_idx]][["element"]][["subjects"]])){
-        FM_le(state, "adding covariates:")
+        formods::FM_le(state, "adding covariates:")
         for(cname in names(elements[[ele_idx]][["element"]][["subjects"]][["covariates"]])){
           req_cov_opts   = c("type", "value")
           found_cov_opts = names(elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]])
@@ -4761,11 +4762,12 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
             # Here we check for any errors:
             if(current_ele[["cares"]][["COV_IS_GOOD"]]){
-              FM_le(state, paste0("  - ", cname, ": ",
+              formods::FM_le(state, 
+                           paste0("  - ", cname, ": ",
                            elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]][["type"]], " (",
                            elements[[ele_idx]][["element"]][["subjects"]][["covariates"]][[cname]][["value"]], ")"))
             } else {
-              FM_le(state, paste0("  - ", cname, ": failed to add"))
+              formods::FM_le(state, paste0("  - ", cname, ": failed to add"))
               ele_isgood = FALSE
               ele_err_msg = c(ele_err_msg,
                 paste0("failed to add covariate: ", cname),
@@ -4875,9 +4877,9 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         }
         current_ele = CTS_simulate_element(state, current_ele)
         if(current_ele[["simres"]][["isgood"]]){
-          FM_le(state, "simulation complete")
+          formods::FM_le(state, "simulation complete")
         } else {
-          FM_le(state, "simulate failed")
+          formods::FM_le(state, "simulate failed")
           ele_isgood = FALSE
           ele_err_msg = c(ele_err_msg,
             "simulation failed",
@@ -4887,9 +4889,9 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         # Next we plot the element
         current_ele = CTS_plot_element(state, current_ele)
         if(current_ele[["plotres"]][["isgood"]]){
-          FM_le(state, "plot complete")
+          formods::FM_le(state, "plot complete")
         } else {
-          FM_le(state, "simulate failed")
+          formods::FM_le(state, "simulate failed")
           ele_isgood = FALSE
           ele_err_msg = c(ele_err_msg,
             "plot failed",
@@ -4924,9 +4926,9 @@ CTS_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
   formods::FM_le(state,paste0("module isgood: ",isgood))
 
   if(formods::is_shiny(session)){
-    FM_set_mod_state(session, mod_ID, state)
+    formods::FM_set_mod_state(session, mod_ID, state)
   } else {
-    session = FM_set_mod_state(session, mod_ID, state)
+    session = formods::FM_set_mod_state(session, mod_ID, state)
   }
 
   res = list(isgood      = isgood,
@@ -4980,11 +4982,11 @@ CTS_mk_preload     = function(state){
       add_ele = TRUE
       if(is.null(tmp_source_ele[["components_table"]])){
         add_ele = FALSE
-        FM_le(state, paste0("skipping element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
-        FM_le(state, paste0("  -> no rules found"))
+        formods::FM_le(state, paste0("skipping element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
+        formods::FM_le(state, paste0("  -> no rules found"))
       }
       if(add_ele){
-        FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
+        formods::FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
 
         # Model for the current element
         SMR = MDL[["catalog"]][MDL[["catalog"]][["object"]] == tmp_source_ele[["ui"]][["source_model"]], ]
@@ -5037,7 +5039,7 @@ CTS_mk_preload     = function(state){
               tmp_comp[["condition"]] = tmp_comp_list[[tmp_comp_name]][["condition"]]
 
               tmp_element[["components"]][[comp_idx]] = list(component=tmp_comp)
-              FM_le(state, paste0("  -> rule ", tmp_comp[["type"]]))
+              formods::FM_le(state, paste0("  -> rule ", tmp_comp[["type"]]))
               comp_idx = comp_idx + 1
             }
           }

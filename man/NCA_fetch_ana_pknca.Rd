@@ -68,4 +68,6 @@ state = NCA_new_ana(state)
 # Switching back to the previous analysis
 state = NCA_mkactive_ana(state, "NCA_1")
 
+# Forcing a checksum update
+state = NCA_update_checksum(state)
 }

@@ -8,6 +8,7 @@ MC:
       id_ASM: "ASM"
       id_UD:  "UD"
       id_DW:  "DW"
+      id_DM:  "DM"
   code: # module specific code options
     packages: ["PKNCA", "dplyr", "stringr", "formods", "ruminate", "onbrand"]
     readOnly: TRUE
@@ -139,6 +140,7 @@ MC:
    #--------
   notifications:
     ana_add_int_success: "Interval added: ===DETAILS==="
+    reset_manual_flag:   "Manual flags reset for current analysis"
   # Put different formatting options (widths, heights,
   # shinyWidgets button sizes, etc) here.
   formatting:
@@ -154,8 +156,22 @@ MC:
     text_manual:
       width:  "520px"
       height: "75px"
-      tooltip:          "Place any notes here about subsequent flags. These notes will be carried through in the reporting."
+      tooltip:          "Any notes placed here will be attached to subsequent flags that are manually set. These notes will be carried through in the reporting."
       tooltip_position: "top"
+    select_fg_ind_obs_manual_notes:
+      width:  "520px"
+      tooltip:          "If you want to attach notes to the flagged data points you can either select from a defined list or choose User defined to create your own notes."
+      tooltip_position: "top"
+      choices:
+        no_notes:    "No notes"
+        # Comment out manual to prevent manual entry
+        manual:      "User defined"
+        # List any notes here just give them a unique name that is not
+        # no_notes or manual
+        pre_defined:
+          note_1: "Predose concentration above the BLQ"
+          note_2: "Elimination phase concentration unexpectedly high"
+          note_3: "Apparent sample swap for subject XXX"
     # Width of textInput and selectInput UI elements in the
     # nca configuration
     nca_config_option:
@@ -227,6 +243,10 @@ MC:
       size: "sm"
       block: TRUE
       tooltip: "Previous page"
+      tooltip_position: "top"
+    action_fg_reset_manual:
+
+      tooltip: "Click to reset all manual flags for the current analysis."
       tooltip_position: "top"
     button_tb_save:
       size: "sm"
@@ -338,23 +358,27 @@ MC:
     select_tb_page:
       width: 100
     # This contains flags used to flag data/results
-    #  - manual indicates that it can be assinged with manual point selection.
-    #    This generally this SHOULD NOT BE CHANGED. However, you can set the "yes"
-    #    values to "no" to prevent them from being being options in
-    #    manual point selection. But do not change "no" values to "yes".
-    #  - flag   internal flag used (SHOULD NOT BE CHANGED).
+    #  - manual      indicates that it can be assinged with manual point
+    #                selection.  This generally this SHOULD NOT BE CHANGED.
+    #                However, you can set the "yes" values to "no" to prevent
+    #                them from being being options in manual point selection.
+    #                But do not change "no" values to "yes".
+    #  - sn          is the short name used to identify this flag and is the subscript
+    #                used in reporting.
+    #  - flag        internal flag used (SHOULD NOT BE CHANGED).
     #  - color       This can be a color (black) or a hex (#000000). The only
     #                ones that are really necessary are: obs, blq, hlex, hlin,
     #                and censor. The values below were taken from the Wong
     #                pallet to make the points more distinguishable for folks
-    #                with colorblindness (https://www.nature.com/articles/nmeth.1618)
+    #                with colorblindness
+    #                (https://www.nature.com/articles/nmeth.1618)
     #  - description short description used in figure legends
     #  - notes       notes that go at the bottom of tables
     flags:
       reset:
         manual:       "yes"
         sn:           "NF"
-        description:  "Remove Flag"
+        description:  "Clear Flagging"
         color:        "black"
         notes:        "reset point/selection to dataset default"
       obs:
@@ -384,8 +408,8 @@ MC:
       censor:
         manual:       "yes"
         sn:           "C"
-        description:  "Censored"
-        notes:        "censored from NCA analysis"
+        description:  "Exclude"
+        notes:        "excluded from NCA analysis"
         color:        "#D65E00"
       ns:
         manual:       "no"
@@ -421,7 +445,7 @@ MC:
       text_ana_interval_start: 0
       text_ana_interval_stop:  "number or Inf"
       notes:                   "Optional NCA notes that will be carried over and used in other elements (e.g. reporting)."
-      text_manual:             "Shipment left over the weekend without refrigeration."
+      text_manual:             "For example: Apparent sample swap for subject XXX, Shipment left out over the weekend, etc."
   # This controls the figure and table selection for an analysis. The order of
   # the keys (e.g., tb_ind_params, tb_sum_params, etc) controls the
   # order they are dispalyed in the selector and the text controls what's show
@@ -451,6 +475,7 @@ MC:
     del_ana:                         "Delete"
     copy_ana:                        "Copy"
     clip_ana:                        "Code"
+    fg_reset_manual:                 "Reset manual flags"
     fg_next_pg:                      NULL #"Next Page"
     fg_prev_pg:                      NULL #"Previous page"
     fg_save:                         "Apply changes"
@@ -501,6 +526,7 @@ MC:
     select_fg_ind_obs_ncol:          "Columns"
     select_fg_ind_obs_page:          "Show Page"
     select_fg_ind_obs_manual:        "Manually flag as"
+    select_fg_ind_obs_manual_notes:  # Select predefined or user defined label for flagged data
     select_tb_page:                  "Show Page"
     check_fg_ind_obs_logy:           "Log 10 y-scale"
     switch_ana_include_units:        "Include Units"
@@ -525,7 +551,7 @@ MC:
       exclude:                       "Reason for parameter exclusion (NA when parameter was calculated)."
       PPORRESU:                      "Parameter units."
   # For details on the PKNCA options see this vignette:
-  # https://billdenney.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html
+  # https://humanpred.github.io/pknca/articles/v40-options-for-controlling-PKNCA.html
   # This section contains information about different options, metadata about
   # them, default values, etc. Using this, the options UI for an analysis is
   # generated automatically. Each configuration option has the following:
@@ -1358,7 +1384,7 @@ MC:
   units:
     # For reference this is the units vignette from PKNCA
     #
-    # http://billdenney.github.io/pknca/articles/v07-unit-conversion.html
+    # http://humanpred.github.io/pknca/articles/v07-unit-conversion.html
     #
     # Default value for whether or not to include units. This can
     # be overwritten in the app.

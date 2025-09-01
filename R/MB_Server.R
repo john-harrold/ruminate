@@ -18,9 +18,9 @@ MB_Server <- function(id,
                MOD_yaml_file = system.file(package = "ruminate",  "templates", "MB.yaml"),
                deployed      = FALSE,
                react_state   = NULL) {
-  moduleServer(id, function(input, output, session) {
+  shiny::moduleServer(id, function(input, output, session) {
 
-   MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+   MOD_yaml_cont = formods::FM_read_yaml(MOD_yaml_file)
    id_ASM = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_ASM"]]
 
     #------------------------------------
@@ -340,9 +340,10 @@ MB_Server <- function(id,
         current_element = MB_fetch_current_element(state)
         component   = MB_fetch_component(state, current_element)
 
-        FM_pause_screen(state   = state,
-                        message = state[["MC"]][["labels"]][["export_pause"]],
-                        session = session)
+        formods::FM_pause_screen(
+          state   = state,
+          message = state[["MC"]][["labels"]][["export_pause"]],
+          session = session)
 
 
         ex_sub_dir = paste0(state[["MC"]][["element_object_name"]], "_", current_element[["idx"]])
@@ -373,12 +374,12 @@ MB_Server <- function(id,
           FM_le(state, rtores[["msgs"]])
 
           # Setting notification and saving the state.
-          state = FM_set_notification(
+          state = formods::FM_set_notification(
             state       = state,
             notify_text = rtores[["msgs"]],
             notify_id   = "NONMEM export messages",
             type        = notification_type)
-          FM_set_mod_state(session, id, state)
+          formods::FM_set_mod_state(session, id, state)
         }
 
         zip::zip(zipfile=file,
@@ -388,8 +389,7 @@ MB_Server <- function(id,
                  include_directories = TRUE)
 
 
-        FM_resume_screen(state   = state,
-                         session = session)
+        formods::FM_resume_screen(state   = state, session = session)
         }
     )
     # Monolix
@@ -446,9 +446,10 @@ MB_Server <- function(id,
         current_element = MB_fetch_current_element(state)
         component   = MB_fetch_component(state, current_element)
 
-        FM_pause_screen(state   = state,
-                        message = state[["MC"]][["labels"]][["export_pause"]],
-                        session = session)
+        formods::FM_pause_screen(
+          state   = state,
+          message = state[["MC"]][["labels"]][["export_pause"]],
+          session = session)
 
 
         ex_sub_dir = paste0(state[["MC"]][["element_object_name"]], "_", current_element[["idx"]])
@@ -479,12 +480,12 @@ MB_Server <- function(id,
           FM_le(state, rtores[["msgs"]])
 
           # Setting notification and saving the state.
-          state = FM_set_notification(
+          state = formods::FM_set_notification(
             state       = state,
             notify_text = rtores[["msgs"]],
             notify_id   = "Monolix export messages",
             type        = notification_type)
-          FM_set_mod_state(session, id, state)
+          formods::FM_set_mod_state(session, id, state)
         }
 
         zip::zip(zipfile=file,
@@ -494,8 +495,7 @@ MB_Server <- function(id,
                  include_directories = TRUE)
 
 
-        FM_resume_screen(state   = state,
-                         session = session)
+        formods::FM_resume_screen(state   = state, session = session)
         }
     )
 
@@ -568,7 +568,7 @@ MB_Server <- function(id,
         state = MB_set_current_element(
           state   = state,
           element = current_element)
-        FM_set_mod_state(session, id, state)
+        formods::FM_set_mod_state(session, id, state)
 
         shinyAce::updateAceEditor(
           session         = session,
@@ -1116,7 +1116,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
     # Template for an empty dataset
   #---------------------------------------------
   # Getting the current state
-  state = FM_fetch_mod_state(session, id)
+  state = formods::FM_fetch_mod_state(session, id)
   # If the state has not yet been defined then we
   # initialize it
   if(is.null(state)){
@@ -1124,14 +1124,14 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
     state = MB_init_state(FM_yaml_file, MOD_yaml_file, id, session)
   }
 
-  MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+  MOD_yaml_cont = formods::FM_read_yaml(MOD_yaml_file)
   id_ASM = state[["MC"]][["module"]][["depends"]][["id_ASM"]]
 
   #---------------------------------------------
   # Here we update the state based on user input
   for(ui_name in state[["MB"]][["ui_ids"]]){
-    if(!is.null(isolate(input[[ui_name]]))){
-       state[["MB"]][["ui"]][[ui_name]] = isolate(input[[ui_name]])
+    if(!is.null(shiny::isolate(input[[ui_name]]))){
+       state[["MB"]][["ui"]][[ui_name]] = shiny::isolate(input[[ui_name]])
      } else {
        if(ui_name %in% names(state[["MB"]][["button_counters"]])){
          state[["MB"]][["ui"]][[ui_name]] = 0
@@ -1166,13 +1166,14 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
   # only update below conditionally.
 
   for(ui_name in state[["MB"]][["ui_ids"]]){
-    if(!fetch_hold(state, ui_name)){
+    if(!formods::fetch_hold(state, ui_name)){
       if(ui_name %in% names(state[["MB"]][["button_counters"]])){
         # Button changes are compared to the button click tracking values
         change_detected =
-          has_updated(ui_val    = state[["MB"]][["ui"]][[ui_name]],
-                      old_val   = state[["MB"]][["button_counters"]][[ui_name]],
-                      init_val  = c("", "0"))
+          formods::has_updated(
+            ui_val    = state[["MB"]][["ui"]][[ui_name]],
+            old_val   = state[["MB"]][["button_counters"]][[ui_name]],
+            init_val  = c("", "0"))
 
         if(change_detected){
           formods::FM_le(state, paste0("button click: ", ui_name, " = ", state[["MB"]][["ui"]][[ui_name]]))
@@ -1189,9 +1190,10 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
         }
       }else{
         change_detected =
-          has_updated(ui_val    = state[["MB"]][["ui"]][[ui_name]],
-                      old_val   = state[["MB"]][["ui_old"]][[ui_name]],
-                      init_val  = c(""))
+          formods::has_updated(
+            ui_val    = state[["MB"]][["ui"]][[ui_name]],
+            old_val   = state[["MB"]][["ui_old"]][[ui_name]],
+            init_val  = c(""))
 
         if(change_detected){
           formods::FM_le(state, paste0("setting model: ", ui_name, " = ", paste(state[["MB"]][["ui"]][[ui_name]], collapse=", ")))
@@ -1223,7 +1225,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
   # Here we react to changes between the UI and the current state
   # save model
   if("button_clk_save" %in% changed_uis){
-    FM_le(state, "save model")
+    formods::FM_le(state, "save model")
     current_ele = MB_fetch_current_element(state)
 
     current_ele[["ui"]][["element_name"]] =
@@ -1232,7 +1234,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
     if(current_ele[["ui"]][["ui_mb_model"]]  !=
       state[["MB"]][["ui"]][["ui_mb_model"]]){
 
-      FM_pause_screen(
+      formods::FM_pause_screen(
           state   = state,
           session = session,
           message = state[["MC"]][["labels"]][["building_model"]])
@@ -1244,7 +1246,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
                      fcn_def = paste0("fcn_obj = ", state[["MB"]][["ui"]][["ui_mb_model"]]),
                      fcn_obj = "fcn_obj"))
 
-      FM_resume_screen(state, session)
+      formods::FM_resume_screen(state   = state, session = session)
 
       if(mk_rx_res[["isgood"]]){
         # Pulling out the current output
@@ -1260,7 +1262,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
           note        = note_str,
           reset       = FALSE)
 
-        state = FM_set_notification(
+        state = formods::FM_set_notification(
           state       = state,
           notify_text = note_str,
           notify_id   = "Manual model update done",
@@ -1271,9 +1273,9 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
           state   = state,
           element = current_ele)
 
-        FM_le(state, note_str)
+        formods::FM_le(state, note_str)
       }else{
-        state = FM_set_notification(
+        state = formods::FM_set_notification(
           state       = state,
           notify_text = state[["MC"]][["errors"]][["manual_model_update_failed"]],
           notify_id   = "Manual update failed",
@@ -1283,8 +1285,8 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
                  state[["MC"]][["errors"]][["manual_model_update_failed"]],
                  mk_rx_res[["msgs"]])
 
-        FM_le(state, state[["MC"]][["errors"]][["manual_model_update_failed"]])
-        FM_le(state, mk_rx_res[["msgs"]])
+        formods::FM_le(state, state[["MC"]][["errors"]][["manual_model_update_failed"]])
+        formods::FM_le(state, mk_rx_res[["msgs"]])
       }
 
     }
@@ -1292,7 +1294,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
   #---------------------------------------------
   # clip model
   if("button_clk_clip" %in% changed_uis){
-    FM_le(state, "clip model")
+    formods::FM_le(state, "clip model")
   }
   #---------------------------------------------
   # time scale changes
@@ -1305,7 +1307,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
     # We only update the model if there is an object. This prevents updates
     # during initialization.
     if(!is.null(component[["rx_obj"]])){
-      FM_le(state, "time scale changed")
+      formods::FM_le(state, "time scale changed")
       current_ele = MB_update_model(
         state       = state,
         session     = session,
@@ -1323,7 +1325,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
   #---------------------------------------------
   # copy model
   if("button_clk_copy" %in% changed_uis){
-    FM_le(state, "copy model")
+    formods::FM_le(state, "copy model")
 
     # First we pull out the current element:
     old_ele = MB_fetch_current_element(state)
@@ -1396,7 +1398,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
   #---------------------------------------------
   # del model
   if("button_clk_del" %in% changed_uis){
-    FM_le(state, "delete model")
+    formods::FM_le(state, "delete model")
     state = MB_del_current_element(state)
   }
   #---------------------------------------------
@@ -1412,12 +1414,12 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
       state   = state,
       element = current_ele)
     # Setting the hold for all the other UI elements
-    state = set_hold(state)
+    state = formods::set_hold(state)
   }
   #---------------------------------------------
   # Appending model
   if("button_clk_append_model" %in% changed_uis){
-    FM_le(state, "append model")
+    formods::FM_le(state, "append model")
 
     # The counter is getting reset to zero and triggering a second append that
     # fails. This will prevent that from happening
@@ -1425,7 +1427,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
       current_ele = MB_fetch_current_element(state)
       component   = MB_fetch_component(state, current_ele)
 
-      FM_pause_screen(
+      formods::FM_pause_screen(
           state   = state,
           session = session,
           message = state[["MC"]][["labels"]][["building_model"]])
@@ -1475,14 +1477,14 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
                   state[["MC"]][["errors"]][["append_failed"]],
                   tc_res[["msgs"]])
 
-        state = FM_set_notification(
+        state = formods::FM_set_notification(
           state       = state,
           notify_text = state[["MC"]][["errors"]][["append_failed"]],
           notify_id   = "Append failed",
           type        = "failure")
 
       }
-      FM_resume_screen(state, session)
+      formods::FM_resume_screen(state   = state, session = session)
     }
 
 
@@ -1495,7 +1497,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
     # new model was clicked so we create a new empty model
     # and it will be set as the current element:
     if("button_clk_new" %in% changed_uis){
-      FM_le(state, "new model")
+      formods::FM_le(state, "new model")
       state = MB_new_element(state)
     }
 
@@ -1529,7 +1531,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
     if(update_basemodel){
       note_str    = paste0("base model: ", model_row[["Name"]])
 
-      FM_pause_screen(
+      formods::FM_pause_screen(
           state   = state,
           session = session,
           message = state[["MC"]][["labels"]][["building_model"]])
@@ -1553,7 +1555,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
          )
       }
 
-      FM_resume_screen(state, session)
+      formods::FM_resume_screen(state   = state, session = session)
 
 
       if(mk_rx_res[["isgood"]]){
@@ -1570,16 +1572,16 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
         current_ele[["base_model_name"]] =  model_row[["Name"]]
 
         # Holding elements to prevent update from current ui
-        state = set_hold(state)
+        state = formods::set_hold(state)
 
-        state = FM_set_notification(
+        state = formods::FM_set_notification(
           state       = state,
           notify_text = paste0("base model: ", model_row[["Name"]] ),
           notify_id   = "creating base model",
           type        = "success")
 
       }else{
-        state = FM_set_notification(
+        state = formods::FM_set_notification(
           state       = state,
           notify_text = state[["MC"]][["errors"]][["base_model_build_failed"]],
           notify_id   = "creating base model",
@@ -1601,7 +1603,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
     model_type = state[["MB"]][["ui"]][["model_type_selection"]]
     model_file = state[["MB"]][["ui"]][["uploaded_model"]]
 
-    FM_pause_screen(
+    formods::FM_pause_screen(
         state   = state,
         session = session,
         message = state[["MC"]][["labels"]][["building_model"]])
@@ -1622,7 +1624,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
        )
     }
 
-    FM_resume_screen(state, session)
+    formods::FM_resume_screen(state   = state, session = session)
 
     if(mk_rx_res[["isgood"]]){
       # Pulling out the current output
@@ -1638,7 +1640,7 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
         note        = note_str,
         reset       = FALSE)
 
-      state = FM_set_notification(
+      state = formods::FM_set_notification(
         state       = state,
         notify_text = note_str,
         notify_id   = "User-file upload",
@@ -1648,10 +1650,10 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
         state   = state,
         element = current_ele)
 
-      FM_le(state, note_str)
+      formods::FM_le(state, note_str)
 
     }else{
-      state = FM_set_notification(
+      state = formods::FM_set_notification(
         state       = state,
         notify_text = state[["MC"]][["errors"]][["user_file_upload_failed"]],
         notify_id   = "User-file upload failed",
@@ -1661,8 +1663,8 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
                state[["MC"]][["errors"]][["user_file_upload_failed"]],
                mk_rx_res[["msgs"]])
 
-      FM_le(state, state[["MC"]][["errors"]][["user_file_upload_failed"]])
-      FM_le(state, mk_rx_res[["msgs"]])
+      formods::FM_le(state, state[["MC"]][["errors"]][["user_file_upload_failed"]])
+      formods::FM_le(state, mk_rx_res[["msgs"]])
     }
 
   }
@@ -1693,12 +1695,12 @@ MB_fetch_state = function(id, input, session, FM_yaml_file, MOD_yaml_file, react
   #---------------------------------------------
   # Passing any messages back to the user
   if(!is.null(changed_uis)){
-    state = FM_set_ui_msg(state, msgs)
+    state = formods::FM_set_ui_msg(state, msgs)
   }
 
   #---------------------------------------------
   # Saving the state
-  FM_set_mod_state(session, id, state)
+  formods::FM_set_mod_state(session, id, state)
 
   # Returning the state
   state}
@@ -1761,7 +1763,7 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
 
 
 
-  state = FM_init_state(
+  state = formods::FM_init_state(
     FM_yaml_file    = FM_yaml_file,
     MOD_yaml_file   = MOD_yaml_file,
     dep_mod_ids     = c(),
@@ -1792,7 +1794,7 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
 
   pkgs = c("rxode2", "nonmem2rx", "nlmixr2lib")
   for(pkg in pkgs){
-    if(!is_installed(pkg)){
+    if(!formods::is_installed(pkg)){
       state[["MB"]][["suggested"]][["pkgs"]][[pkg]][["found"]] =  FALSE
       state[["MB"]][["suggested"]][["pkgs"]][[pkg]][["msg"]]   =  paste0(pkg, " package was not found.")
       state[["MB"]][["suggested"]][["found"]]                  =  FALSE
@@ -1801,7 +1803,7 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
       pkg_file = file.path(tempdir(), paste0("MB_pkg_not_found_", pkg))
 
       if(!file.exists(pkg_file)){
-        FM_message(paste0("The package ", pkg, " is not installed"), entry_type="warning")
+        formods::FM_message(paste0("The package ", pkg, " is not installed"), entry_type="warning")
         file.create(pkg_file)
       }
     } else {
@@ -1827,7 +1829,7 @@ MB_init_state = function(FM_yaml_file, MOD_yaml_file,  id, session){
 
   state = MB_update_checksum(state)
 
-  FM_le(state, "State initialized")
+  formods::FM_le(state, "State initialized")
 state}
 
 #'@export
@@ -2068,7 +2070,7 @@ MB_test_mksession = function(session=list()){
   sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
               system.file(package="ruminate", "preload", "MB_preload.yaml"))
 
-  res = FM_app_preload(session=session, sources=sources)
+  res = formods::FM_app_preload(session=session, sources=sources)
   res = res[["all_sess_res"]][["MB"]]
 res}
 
@@ -2181,9 +2183,9 @@ MB_update_checksum     = function(state){
   old_chk = state[["MB"]][["checksum"]]
   new_chk = digest::digest(chk_str, algo=c("md5"))
 
-  if(has_updated(old_chk, new_chk)){
+  if(formods::has_updated(old_chk, new_chk)){
     state[["MB"]][["checksum"]] = new_chk
-    FM_le(state, paste0("module checksum updated:", state[["MB"]][["checksum"]]))
+    formods::FM_le(state, paste0("module checksum updated:", state[["MB"]][["checksum"]]))
   }
 
 state}
@@ -2224,8 +2226,8 @@ MB_set_current_element    = function(state, element){
   tmp_ele = element
   tmp_ele[["checksum"]]  = ""
   tmp_checksum  = digest::digest(tmp_ele, algo=c("md5"))
-  if(has_updated(element[["checksum"]], tmp_checksum)){
-    FM_le(state, paste0("model checksum updated: ", tmp_checksum))
+  if(formods::has_updated(element[["checksum"]], tmp_checksum)){
+    formods::FM_le(state, paste0("model checksum updated: ", tmp_checksum))
     element[["checksum"]]  = tmp_checksum
   }
 
@@ -2315,9 +2317,10 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
       # String for creating model function in R
       cmd = 'fcn_def    = paste0(deparse(as.function(rx_obj$fun)), collapse="\n")'
       tcres =
-        FM_tc(cmd     = cmd,
-              tc_env  = list(rx_obj=rx_obj),
-              capture = c("fcn_def"))
+        formods::FM_tc(
+          cmd     = cmd,
+          tc_env  = list(rx_obj=rx_obj),
+          capture = c("fcn_def"))
 
       if(tcres[["isgood"]]){
         fcn_def = tcres[["capture"]][["fcn_def"]]
@@ -2341,9 +2344,10 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
 
         # Pulling out the time scale code and building the object
         tcres_ts =
-          FM_tc(cmd     = bcres[["ts_code"]],
-                tc_env  = list(),
-                capture = c( current_ele[["ts_obj_name"]]))
+          formods::FM_tc(
+            cmd     = bcres[["ts_code"]],
+            tc_env  = list(),
+            capture = c( current_ele[["ts_obj_name"]]))
         ts_obj = tcres_ts[["capture"]][[ current_ele[["ts_obj_name"]] ]]
 
         tmpdf =
@@ -2373,8 +2377,8 @@ MB_update_model   = function(state, session, current_ele, rx_obj, note, reset=FA
         current_ele[["selected_component_id"]]  = component_id
       } else {
         isgood = FALSE
-        FM_le(state, "MB_update_model() failed", entry_type="danger")
-        FM_le(state, tcres[["msgs"]], entry_type="danger")
+        formods::FM_le(state, "MB_update_model() failed", entry_type="danger")
+        formods::FM_le(state, tcres[["msgs"]], entry_type="danger")
       }
     }
   } else {
@@ -2511,7 +2515,7 @@ MB_build_code  = function(state, session, fcn_def, time_scale, fcn_obj_name, rx_
     model_code  = "# rxode2 package was not found."
   }
 
-  deps          = FM_fetch_deps(state = state, session = session)
+  deps          = formods::FM_fetch_deps(state = state, session = session)
   model_code_sa = c(deps[["package_code"]],
                    "",
                    model_code)
@@ -2631,10 +2635,10 @@ MB_fetch_catalog   = function(state){
       if(mod_src[["type"]] == "rxode2"){
 
         file_cmd = paste0("file_name = ", mod_src[["file"]])
-        tcres =
-          FM_tc(cmd     = file_cmd,
-                tc_env  = NULL,
-                capture = c("file_name"))
+        tcres = formods::FM_tc(
+          cmd     = file_cmd,
+          tc_env  = NULL,
+          capture = c("file_name"))
 
         if(tcres[["isgood"]]){
           # This is the name of the user define model file
@@ -2662,11 +2666,11 @@ MB_fetch_catalog   = function(state){
 
             mod_idx  = mod_idx + 1
           } else {
-            FM_le(state, paste0("User-defined model: ", user_filename, " not found (skipping)"), entry_type="warning")
+            formods::FM_le(state, paste0("User-defined model: ", user_filename, " not found (skipping)"), entry_type="warning")
           }
         } else {
-          FM_le(state, paste0("Unable to process: ", mod_src[["file"]]), entry_type="danger")
-          FM_le(state, tcres[["msgs"]], entry_type="danger")
+          formods::FM_le(state, paste0("Unable to process: ", mod_src[["file"]]), entry_type="danger")
+          formods::FM_le(state, tcres[["msgs"]], entry_type="danger")
 
         }
       }
@@ -2676,10 +2680,10 @@ MB_fetch_catalog   = function(state){
       if(mod_src[["type"]] == "NONMEM"){
 
         file_cmd = paste0("file_name = ", mod_src[["file"]])
-        tcres =
-          FM_tc(cmd     = file_cmd,
-                tc_env  = NULL,
-                capture = c("file_name"))
+        tcres = formods::FM_tc(
+          cmd     = file_cmd,
+          tc_env  = NULL,
+          capture = c("file_name"))
 
         if(tcres[["isgood"]]){
           # This is the name of the user define model file
@@ -2707,11 +2711,11 @@ MB_fetch_catalog   = function(state){
 
             mod_idx  = mod_idx + 1
           } else {
-            FM_le(state, paste0("User-defined model: ", user_filename, " not found (skipping)"), entry_type="warning")
+            formods::FM_le(state, paste0("User-defined model: ", user_filename, " not found (skipping)"), entry_type="warning")
           }
         } else {
-          FM_le(state, paste0("Unable to process: ", mod_src[["file"]]), entry_type="danger")
-          FM_le(state, tcres[["msgs"]], entry_type="danger")
+          formods::FM_le(state, paste0("Unable to process: ", mod_src[["file"]]), entry_type="danger")
+          formods::FM_le(state, tcres[["msgs"]], entry_type="danger")
         }
       }
       # NONMEM
@@ -2905,7 +2909,7 @@ mk_rx_obj   = function(type, model){
           paste0("rx_obj  = rxode2::rxode2(fcn_obj)")
         )
 
-        tcres = FM_tc(
+        tcres = formods::FM_tc(
           cmd     = paste0(mc, collapse="\n"),
           tc_env  = NULL,
           capture = c("rx_obj", "fcn_obj"))
@@ -2915,10 +2919,10 @@ mk_rx_obj   = function(type, model){
           'rx_obj = nonmem2rx::nonmem2rx(model_file, save=FALSE, determineError=FALSE)',
           'fun_obj = rx_obj$fun')
 
-        tcres =
-          FM_tc(cmd = paste0(cmds, collapse="\n"),
-                tc_env = list(model_file = model[["model_file"]]),
-                capture = c("rx_obj", "fun_obj"))
+        tcres = formods::FM_tc(
+          cmd     = paste0(cmds, collapse="\n"),
+          tc_env  = list(model_file = model[["model_file"]]),
+          capture = c("rx_obj", "fun_obj"))
       }
     }else{
       tcres = list(
@@ -2988,12 +2992,12 @@ MB_test_catalog   = function(state, as_cran=FALSE, verbose=TRUE){
         rx_res   = mk_rx_obj(mod_type, model)
         if(rx_res[["isgood"]]){
           if(verbose){
-            FM_le(state, model_summary[ridx,][["Name"]], entry_type="success")
+            formods::FM_le(state, model_summary[ridx,][["Name"]], entry_type="success")
           }
         }else{
           isgood = FALSE
           if(verbose){
-            FM_le(state, model_summary[ridx,][["Name"]], entry_type="failure")
+            formods::FM_le(state, model_summary[ridx,][["Name"]], entry_type="failure")
           }
         }
       }
@@ -3009,7 +3013,7 @@ MB_test_catalog   = function(state, as_cran=FALSE, verbose=TRUE){
 
   if(!is.null(msgs)){
     if(verbose){
-      FM_le(state, msgs)
+      formods::FM_le(state, msgs)
     }
   }
   res = list(
@@ -3046,8 +3050,8 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
   err_msg = c()
 
 
-  FM_yaml_file  = render_str(src_list[[mod_ID]][["fm_yaml"]])
-  MOD_yaml_file = render_str(src_list[[mod_ID]][["mod_yaml"]])
+  FM_yaml_file  = formods::render_str(src_list[[mod_ID]][["fm_yaml"]])
+  MOD_yaml_file = formods::render_str(src_list[[mod_ID]][["mod_yaml"]])
   id_ASM        = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_ASM"]]
 
   state = MB_fetch_state(id              = mod_ID,
@@ -3059,7 +3063,7 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
 
   # Some functions require the state to be in the session object:
   if(!formods::is_shiny(session)){
-    session = FM_set_mod_state(session, mod_ID, state)
+    session = formods::FM_set_mod_state(session, mod_ID, state)
   }
 
   elements = src_list[[mod_ID]][["elements"]]
@@ -3108,7 +3112,7 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
 
       #-------------------------------------------------------
       # Defining general options
-      FM_le(state, paste0("loading model idx: ", ele_idx ))
+      formods::FM_le(state, paste0("loading model idx: ", ele_idx ))
 
       req_ele_opts =c("name", "time_scale", "base_from", "base_model_id", "base_model_name")
       if(!all(req_ele_opts    %in% names( elements[[ele_idx]][["element"]]))){
@@ -3191,22 +3195,22 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
 
         # Setting element options:
         current_ele = MB_fetch_current_element(state)
-        FM_le(state, paste0("  -> setting name: ", elements[[ele_idx]][["element"]][["name"]]))
+        formods::FM_le(state, paste0("  -> setting name: ", elements[[ele_idx]][["element"]][["name"]]))
         current_ele[["ui"]][["element_name"]] = elements[[ele_idx]][["element"]][["name"]]
 
-        FM_le(state, paste0("  -> setting time scale: ", elements[[ele_idx]][["element"]][["time_scale"]]))
+        formods::FM_le(state, paste0("  -> setting time scale: ", elements[[ele_idx]][["element"]][["time_scale"]]))
         current_ele[["ui"]][["time_scale"]] = elements[[ele_idx]][["element"]][["time_scale"]]
 
-        FM_le(state, paste0("  -> setting base from: ", elements[[ele_idx]][["element"]][["base_from"]]))
+        formods::FM_le(state, paste0("  -> setting base from: ", elements[[ele_idx]][["element"]][["base_from"]]))
         current_ele[["ui"]][["base_from"]]    = elements[[ele_idx]][["element"]][["base_from"]]
 
-        FM_le(state, paste0("  -> setting catalog selection: ", elements[[ele_idx]][["element"]][["catalog_selection"]]))
+        formods::FM_le(state, paste0("  -> setting catalog selection: ", elements[[ele_idx]][["element"]][["catalog_selection"]]))
         current_ele[["ui"]][["catalog_selection"]]    = elements[[ele_idx]][["element"]][["catalog_selection"]]
 
-        FM_le(state, paste0("  -> setting base model id: ", elements[[ele_idx]][["element"]][["base_model_id"]]))
+        formods::FM_le(state, paste0("  -> setting base model id: ", elements[[ele_idx]][["element"]][["base_model_id"]]))
         current_ele[["base_model"]]           = elements[[ele_idx]][["element"]][["base_model_id"]]
 
-        FM_le(state, paste0("  -> setting base model name: ", elements[[ele_idx]][["element"]][["base_model_name"]]))
+        formods::FM_le(state, paste0("  -> setting base model name: ", elements[[ele_idx]][["element"]][["base_model_name"]]))
         current_ele[["base_model_name"]]      = elements[[ele_idx]][["element"]][["base_model_name"]]
         state = MB_set_current_element(state, current_ele)
 
@@ -3232,9 +3236,9 @@ MB_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = l
   formods::FM_le(state,paste0("module isgood: ",isgood))
 
   if(formods::is_shiny(session)){
-    FM_set_mod_state(session, mod_ID, state)
+    formods::FM_set_mod_state(session, mod_ID, state)
   } else {
-    session = FM_set_mod_state(session, mod_ID, state)
+    session = formods::FM_set_mod_state(session, mod_ID, state)
   }
 
   res = list(isgood      = isgood,
@@ -3280,7 +3284,7 @@ MB_mk_preload     = function(state){
     tmp_source_ele = state[["MB"]][["elements"]][[element_id]]
     if(tmp_source_ele[["isgood"]]){
 
-      FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
+      formods::FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["ui"]][["element_name"]]))
 
       # Creates the empty element:
       tmp_element = list(

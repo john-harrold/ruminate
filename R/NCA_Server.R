@@ -41,12 +41,13 @@ NCA_Server <- function(id,
                       MOD_yaml_file = system.file(package = "ruminate",  "templates", "NCA.yaml"),
                       deployed      = FALSE,
                       react_state   = NULL) {
-  moduleServer(id, function(input, output, session) {
+  shiny::moduleServer(id, function(input, output, session) {
 
-   MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+   MOD_yaml_cont = formods::FM_read_yaml(MOD_yaml_file)
    id_ASM = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_ASM"]]
    id_UD  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_UD"]]
    id_DW  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_DW"]]
+   id_DM  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_DM"]]
 
     #------------------------------------
     # Generated data reading code
@@ -99,6 +100,7 @@ NCA_Server <- function(id,
       input[["button_fg_ind_obs_save"]]
       input[["button_fg_ind_obs_next_pg"]]
       input[["button_fg_ind_obs_prev_pg"]]
+      input[["action_fg_ind_obs_reset_manual"]]
 
       input[["button_ana_run"]]
       input[["button_ana_new"]]
@@ -243,9 +245,7 @@ NCA_Server <- function(id,
     # Captions
     # name
     output$ui_nca_ana_name       = renderUI({
-      #react_state[[id_UD]]
-      #react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_save"]]
@@ -272,9 +272,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # notes
     output$ui_nca_ana_notes      = renderUI({
-      #react_state[[id_UD]]
-      #react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_save"]]
@@ -304,9 +302,7 @@ NCA_Server <- function(id,
       uiele})
     #------------------------------------
     output$ui_nca_curr_anas = renderUI({
-      #react_state[[id_UD]]
-      #react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_save"]]
@@ -315,9 +311,12 @@ NCA_Server <- function(id,
 
       # Forcing updates to warning status
       input[["button_ana_run"]]
+      input[["button_ana_add_int"]]
+      input[["hot_nca_intervals"]]
       react_internal[["click"]]
       react_internal[["select"]]
 
+      message("select current ana")
 
       state = NCA_fetch_state(id              = id,
                              input           = input,
@@ -338,7 +337,6 @@ NCA_Server <- function(id,
         cnames      = c()
         subtext     = c()
         cstyle      = c()
-
 
         use_content = FALSE
         for(ana_id in names(state[["NCA"]][["anas"]])){
@@ -399,15 +397,6 @@ NCA_Server <- function(id,
       uiele})
     # Data Sources
     output$ui_nca_curr_views    = renderUI({
-      #react_state[[id_UD]]
-      #react_state[[id_DW]]
-      react_state[[id_ASM]]
-
-      input[["button_ana_new"]]
-      input[["button_ana_del"]]
-      input[["button_ana_copy"]]
-      input[["button_ana_save"]]
-      input[["select_current_ana"]]
       state = NCA_fetch_state(id              = id,
                              input           = input,
                              session         = session,
@@ -442,10 +431,9 @@ NCA_Server <- function(id,
       input$button_ana_copy
       input$button_ana_del
       input$select_current_ana
-      #req(input$select_current_view)
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      req(input$select_current_view)
+
+      force_mod_update[["triggered"]]
       # Forcing a reaction to changes in other modules
       state = NCA_fetch_state(id              = id,
                              input           = input,
@@ -495,10 +483,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # interval range
     output$ui_nca_ana_int_range = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -664,7 +649,9 @@ NCA_Server <- function(id,
       uiele = tagList(
              htmlOutput(  NS(id, "ui_nca_ana_results_fig_general")),
              htmlOutput(  NS(id, "ui_nca_ana_results_fig_controls")),
-             htmlOutput(  NS(id, "ui_nca_ana_results_fig_plot")))
+             htmlOutput(  NS(id, "ui_nca_ana_results_fig_plot")),
+             htmlOutput(  NS(id, "ui_nca_ana_results_fig_reset_manual"))
+             )
 
 
 
@@ -699,23 +686,73 @@ NCA_Server <- function(id,
 
       uiele = NULL
       if(current_ana[["isgood"]]){
-        fobj = NCA_fetch_current_obj(state, "table")
+        tobj = NCA_fetch_current_obj(state, "table")
 
        #pvw          = state[["MC"]][["formatting"]][["preview"]][["width"]]
        #pvh          = state[["MC"]][["formatting"]][["preview"]][["height"]]
        #pv_div_style = paste0("height:",pvh,";width:",pvw,";display:inline-block;vertical-align:top")
         # If we fetched everything then we return the table
-        if(fobj[["isgood"]]){
+        if(tobj[["isgood"]]){
           if(current_ana[["tab_type"]] == "report"){
-            uiele = flextable::htmltools_value(fobj[["ft"]])
+            uiele = flextable::htmltools_value(tobj[["ft"]])
           } else {
             uiele = DT::DTOutput(NS(id, "ui_nca_ana_results_tab_table_dt"))
           }
         } else {
           # Otherwise we return messages to the user
-          uiele = fobj[["msgs"]]
+          uiele = tobj[["msgs"]]
         }
       }
+
+    uiele})
+    #------------------------------------
+    # Table Results (show table)
+    output$ui_nca_ana_results_tab_notes              = renderUI({
+      input[["button_ana_run"]]
+      input[["button_ana_new"]]
+      input[["button_ana_save"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["select_current_ana"]]
+      input[["switch_ana_tab"]]
+
+      # Update on save
+      input[["button_tb_ind_obs_save"]]
+      input[["button_tb_ind_params_save"]]
+      input[["button_tb_sum_params_save"]]
+
+      # Don't build out the table until the tab_view has been created
+      req(input[["select_ana_tab_view"]])
+
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      current_ana = NCA_fetch_current_ana(state)
+
+      uiele = NULL
+      if(current_ana[["isgood"]]){
+        tobj = NCA_fetch_current_obj(state, "table")
+        if(tobj[["isgood"]]){
+          if(current_ana[["tab_view"]] == "tb_ind_obs"  & !is.null(tobj[["notes"]])){
+            flag_map = state[["MC"]][["formatting"]][["flags"]]
+            note_strs = c()
+            for(fmname in names(flag_map)){
+              if(flag_map[[fmname]][["sn"]] %in% tobj[["notes"]]){
+                note_strs = c(note_strs, paste0(flag_map[[fmname]][["sn"]], ": ", flag_map[[fmname]][["notes"]]))
+              }
+            }
+            if(!is.null(note_strs)){
+              note_strs = sort(note_strs)
+              uiele = paste(note_strs, collapse=", ")
+            }
+          }
+        }
+      }
+
 
     uiele})
     #------------------------------------
@@ -767,6 +804,7 @@ NCA_Server <- function(id,
       input[["button_fg_ind_obs_save"]]
       input[["button_fg_ind_obs_next_pg"]]
       input[["button_fg_ind_obs_prev_pg"]]
+      input[["action_fg_ind_obs_reset_manual"]]
 
 
       state = NCA_fetch_state(id              = id,
@@ -793,6 +831,58 @@ NCA_Server <- function(id,
            div(style=pv_div_style, plotOutput(  NS(id, "ui_nca_ana_results_fig_ggplot"), width=pvw, height=pvh)))
       }
     uiele})
+    # Figure Results (reset manual button)
+    output$ui_nca_ana_results_fig_reset_manual       = renderUI({
+      input[["button_ana_run"]]
+      input[["button_ana_new"]]
+      input[["button_ana_save"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["select_current_ana"]]
+      input[["switch_ana_fig"]]
+      input[["button_fg_ind_obs_save"]]
+
+      react_internal[["click"]]
+      react_internal[["select"]]
+
+      #input[["action_fg_ind_obs_reset_manual"]]
+
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      current_ana = NCA_fetch_current_ana(state)
+
+      uiele = shinyWidgets::materialSwitch(
+         inputId = NS(id, "action_fg_ind_obs_reset_manual"),
+         label   = state[["MC"]][["labels"]][["fg_reset_manual"]],
+         value   = FALSE,
+         status  = "success",
+         right   = TRUE
+          )
+
+      uiele = formods::FM_add_ui_tooltip(state, uiele,
+               tooltip     = state[["MC"]][["formatting"]][["action_fg_reset_manual"]][["tooltip"]],
+               position    = state[["MC"]][["formatting"]][["action_fg_reset_manual"]][["tooltip_position"]])
+
+    uiele})
+    # Forcing a reset to false:
+    observe({
+      input[["action_fg_ind_obs_reset_manual"]]
+
+      state = NCA_fetch_state(id              = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+      shinyWidgets::updateMaterialSwitch(session,
+               inputId = "action_fg_ind_obs_reset_manual",
+               value = FALSE)
+    })
     #------------------------------------
     # Figure Results (select figure)
     output$ui_nca_ana_results_fig_general            = renderUI({
@@ -888,6 +978,8 @@ NCA_Server <- function(id,
       input[["button_fg_ind_obs_next_pg"]]
       input[["button_fg_ind_obs_prev_pg"]]
 
+      input[["action_fg_ind_obs_reset_manual"]]
+
       state = NCA_fetch_state(id              = id,
                              input           = input,
                              session         = session,
@@ -928,6 +1020,8 @@ NCA_Server <- function(id,
       input[["button_fg_ind_obs_next_pg"]]
       input[["button_fg_ind_obs_prev_pg"]]
 
+      input[["action_fg_ind_obs_reset_manual"]]
+
       state = NCA_fetch_state(id             = id,
                              input           = input,
                              session         = session,
@@ -946,7 +1040,7 @@ NCA_Server <- function(id,
       if(current_ana[["isgood"]]){
          fobj = NCA_fetch_current_obj(state, "figure")
         if(!is.null(fobj)){
-          uiele = plotly::ggplotly(fobj[["ggplot"]], source=paste0(id, "-results_fig"))
+          uiele = plotly::ggplotly(fobj[["ggplot"]], source=paste0(id, "-results_fig"), tooltip=c("text"))
           uiele = plotly::event_register(uiele, "plotly_click")
           uiele = plotly::event_register(uiele, "plotly_selected")
           uiele = plotly::layout(uiele, dragmode="select")
@@ -1044,6 +1138,7 @@ NCA_Server <- function(id,
           uiele_format        = htmlOutput(NS(id, "ui_nca_ana_results_fig_ind_obs_format"))
           uiele_page          = htmlOutput(NS(id, "ui_nca_ana_results_fig_pages"))
           uiele_manual_select = htmlOutput(NS(id, "ui_nca_ana_results_fig_ind_obs_manual_select"))
+          uiele_manual_reason = htmlOutput(NS(id, "ui_nca_ana_results_fig_ind_obs_manual_reason"))
           uiele_manual_text   = htmlOutput(NS(id, "ui_nca_ana_results_fig_ind_obs_manual_text"))
 
           dvstyle = "display:inline-block"
@@ -1052,8 +1147,9 @@ NCA_Server <- function(id,
                           div(style=dvstyle, uiele_page),
                           div(style=dvstyle, uiele_prev_page),
                           div(style=dvstyle, uiele_next_page),
-                          div(style=dvstyle, uiele_manual_select),
-                          div(uiele_manual_text))
+                          div(style=dvstyle, uiele_manual_select), tags$br(),
+                          div(style=dvstyle, uiele_manual_reason), tags$br(),
+                          div(style=dvstyle, uiele_manual_text))
         }
       }
 
@@ -1331,10 +1427,19 @@ NCA_Server <- function(id,
 
 
     uiele})
-    # Manual flag text descriptoin
-    output$ui_nca_ana_results_fig_ind_obs_manual_text        = renderUI({
-      req(input[["select_ana_fig_view"]])
+    # Figure manual select ui element
+    output$ui_nca_ana_results_fig_ind_obs_manual_reason      = renderUI({
+      input[["button_ana_run"]]
+      input[["button_ana_new"]]
+      input[["button_ana_save"]]
+      input[["button_ana_del"]]
+      input[["button_ana_copy"]]
+      input[["select_current_ana"]]
       input[["switch_ana_fig"]]
+      # This is dependent on the figure view so
+      # shouldn't build out until that.
+      req(input[["select_ana_fig_view"]])
+      req(input[["select_fg_ind_obs_manual"]])
 
       #input[["button_fg_ind_obs_save"]]
       state = NCA_fetch_state(id             = id,
@@ -1350,14 +1455,87 @@ NCA_Server <- function(id,
 
       if(current_ana[["isgood"]]){
         if(current_ana[["fig_type"]]  == "interactive"){
-           uiele = textAreaInput(inputId     = NS(id, "text_manual"),
-                                width        = state[["MC"]][["formatting"]][["text_manual"]][["width"]],
-                                height       = state[["MC"]][["formatting"]][["text_manual"]][["height"]],
-                                label        = NULL,
-                                placeholder  = state[["MC"]][["tooltips"]][["ph"]][["text_manual"]])
-          uiele = formods::FM_add_ui_tooltip(state, uiele,
-                   tooltip     = state[["MC"]][["formatting"]][["text_manual"]][["tooltip"]],
-                   position    = state[["MC"]][["formatting"]][["text_manual"]][["tooltip_position"]])
+          if(current_ana[["manual_fg_ind_obs"]] != "reset"){
+            choices   = "no_notes"
+            cnames    = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual_notes"]][["choices"]][["no_notes"]]
+            sel_style = paste0("background: ", state[["yaml"]][["FM"]][["ui"]][["color_red"]] ,"; color: white;")
+
+            for(pdname in names(state[["MC"]][["formatting"]][["select_fg_ind_obs_manual_notes"]][["choices"]][["pre_defined"]])){
+              choices   = c(choices, pdname)
+              cnames    = c(cnames , state[["MC"]][["formatting"]][["select_fg_ind_obs_manual_notes"]][["choices"]][["pre_defined"]][[pdname]])
+              sel_style = c(sel_style, "")
+            }
+
+            if(!is.null(state[["MC"]][["formatting"]][["select_fg_ind_obs_manual_notes"]][["choices"]][["manual"]])){
+              choices = c(choices, "manual")
+              cnames  = c(cnames, state[["MC"]][["formatting"]][["select_fg_ind_obs_manual_notes"]][["choices"]][["manual"]])
+              sel_style      = c(sel_style,
+                  paste0("background: ", state[["yaml"]][["FM"]][["ui"]][["color_blue"]] ,"; color: white;"))
+            }
+
+            # Applying names
+            names(choices) = cnames
+
+            choicesOpt = list( style   = sel_style)
+
+            uiele =
+            shinyWidgets::pickerInput(
+              inputId    = NS(id, "select_fg_ind_obs_manual_notes"),
+              choices    = choices,
+              label      = state[["MC"]][["labels"]][["select_fg_ind_obs_manual_notes"]],
+              options    = list(size = state[["yaml"]][["FM"]][["ui"]][["select_size"]]),
+              width      = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual_notes"]][["width"]],
+              choicesOpt = choicesOpt
+              )
+            uiele = formods::FM_add_ui_tooltip(state, uiele,
+                     tooltip     = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual_notes"]][["tooltip"]],
+                     position    = state[["MC"]][["formatting"]][["select_fg_ind_obs_manual_notes"]][["tooltip_position"]])
+
+          }
+        }
+      }
+
+
+    uiele})
+    # Manual flag text descriptoin
+    output$ui_nca_ana_results_fig_ind_obs_manual_text        = renderUI({
+      req(input[["select_ana_fig_view"]])
+      input[["switch_ana_fig"]]
+      req(input[["select_fg_ind_obs_manual_notes"]])
+      req(input[["select_fg_ind_obs_manual"]])
+
+      #input[["button_fg_ind_obs_save"]]
+      state = NCA_fetch_state(id             = id,
+                             input           = input,
+                             session         = session,
+                             FM_yaml_file    = FM_yaml_file,
+                             MOD_yaml_file   = MOD_yaml_file,
+                             react_state     = react_state)
+
+      uiele = NULL
+
+      current_ana = NCA_fetch_current_ana(state)
+
+      if(current_ana[["isgood"]]){
+        if(current_ana[["fig_type"]]  == "interactive"){
+          if((current_ana[["manual_notes_fg_ind_obs"]] != "no_notes") &
+             (current_ana[["manual_fg_ind_obs"]]       != "reset")){
+            if(current_ana[["manual_notes_fg_ind_obs"]] == "manual"){
+              default_note = ""
+            } else {
+              default_note =
+                state[["MC"]][["formatting"]][["select_fg_ind_obs_manual_notes"]][["choices"]][["pre_defined"]][[ current_ana[["manual_notes_fg_ind_obs"]] ]]
+            }
+            uiele = textAreaInput(inputId     = NS(id, "text_manual"),
+                     value        = default_note,
+                     width        = state[["MC"]][["formatting"]][["text_manual"]][["width"]],
+                     height       = state[["MC"]][["formatting"]][["text_manual"]][["height"]],
+                     label        = NULL,
+                     placeholder  = state[["MC"]][["tooltips"]][["ph"]][["text_manual"]])
+            uiele = formods::FM_add_ui_tooltip(state, uiele,
+                     tooltip     = state[["MC"]][["formatting"]][["text_manual"]][["tooltip"]],
+                     position    = state[["MC"]][["formatting"]][["text_manual"]][["tooltip_position"]])
+          }
         }
       }
 
@@ -1378,7 +1556,8 @@ NCA_Server <- function(id,
       uiele = tagList(
              htmlOutput(NS(id, "ui_nca_ana_results_tab_general")),
              htmlOutput(NS(id, "ui_nca_ana_results_tab_controls")),
-             htmlOutput(NS(id, "ui_nca_ana_results_tab_table"))
+             htmlOutput(NS(id, "ui_nca_ana_results_tab_table")),
+             htmlOutput(NS(id, "ui_nca_ana_results_tab_notes"))
         )
       uiele})
 
@@ -1564,10 +1743,7 @@ NCA_Server <- function(id,
     # Column Mapping
     # id column
     output$ui_nca_ana_col_id = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -1630,10 +1806,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # nominal time column
     output$ui_nca_ana_col_ntime = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -1697,10 +1870,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # time column
     output$ui_nca_ana_col_time = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -1764,10 +1934,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # dose column
     output$ui_nca_ana_col_dose = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -1831,10 +1998,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # dur  column
     output$ui_nca_ana_col_dur  = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -1902,10 +2066,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # rotue column
     output$ui_nca_ana_col_route = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -1968,10 +2129,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # conc column
     output$ui_nca_ana_col_conc = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -2034,10 +2192,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # dose cycle column
     output$ui_nca_ana_col_cycle = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -2104,10 +2259,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # evid column
     output$ui_nca_ana_col_evid  = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -2174,10 +2326,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # group column
     output$ui_nca_ana_col_group = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -2242,10 +2391,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # analyte column
     output$ui_nca_ana_col_analyte = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -2310,10 +2456,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # Selecting how dosing should be inferred
     output$ui_nca_ana_dose_from = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -2359,10 +2502,7 @@ NCA_Server <- function(id,
     # Specifying Units
     # include units checkbox
     output$ui_nca_ana_check_units = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -2389,10 +2529,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # amt units
     output$ui_nca_ana_units_amt = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -2428,10 +2565,7 @@ NCA_Server <- function(id,
     #------------------------------------
     #  units
     output$ui_nca_ana_units_dose = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -2467,10 +2601,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # conc units
     output$ui_nca_ana_units_conc = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -2506,10 +2637,7 @@ NCA_Server <- function(id,
     #------------------------------------
     # time units
     output$ui_nca_ana_units_time = renderUI({
-
-      react_state[[id_UD]]
-      react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       input[["button_ana_new"]]
       input[["button_ana_del"]]
@@ -2808,6 +2936,7 @@ NCA_Server <- function(id,
            input$button_ana_copy,
            input$button_ana_del,
            input$button_ana_new,
+           input$action_fg_ind_obs_reset_manual,
            input$button_ana_use_scenario)
     })
     observeEvent(toNotify(), {
@@ -2827,9 +2956,7 @@ NCA_Server <- function(id,
     #------------------------------------
     output$NCA_ui_compact  =  renderUI({
       # Forcing a reaction to changes in other modules
-      #react_state[[id_UD]]
-      #react_state[[id_DW]]
-      react_state[[id_ASM]]
+      force_mod_update[["triggered"]]
 
       state = NCA_fetch_state(id              = id,
                              input           = input,
@@ -3054,11 +3181,33 @@ NCA_Server <- function(id,
 
     uiele})
     #------------------------------------
+    # This will be used to trigger a response when the dependent modules have
+    # changed
+    force_mod_update = reactiveValues()
+    if(!is.null(react_state)){
+      observe({
+        react_state[[id_UD]]
+        react_state[[id_DW]]
+        react_state[[id_DM]]
+        react_state[[id_ASM]]
+        state = NCA_fetch_state(id              = id,
+                               input           = input,
+                               session         = session,
+                               FM_yaml_file    = FM_yaml_file,
+                               MOD_yaml_file   = MOD_yaml_file,
+                               react_state     = react_state)
+
+        formods::FM_le(state, "upstream modules forcing update")
+        force_mod_update[["triggered"]] = format(Sys.time(), "%Y-%m-%d %H:%M:%OS3")
+      }, priority = 100)
+    }
+    #------------------------------------
     # Creating reaction if a variable has been specified
     if(!is.null(react_state)){
       # Here we list the ui inputs that will result in a state change:
       toListen <- reactive({
         list(
+             force_mod_update[["triggered"]],
              input$button_ana_run,
              input$button_ana_new,
              input$button_ana_save,
@@ -3115,9 +3264,12 @@ NCA_Server <- function(id,
     #------------------------------------
     # Removing holds
     remove_hold_listen  <- reactive({
-      list(react_state[[id_ASM]],
+      list(force_mod_update[["triggered"]],
+           #react_state[[id_ASM]],
            input$button_fg_ind_obs_prev_pg,
            input$button_fg_ind_obs_next_pg,
+           input$action_fg_ind_obs_reset_manual,
+           input$hot_nca_intervals, 
            input$select_current_ana,
            input$select_current_view)
     })
@@ -3246,59 +3398,22 @@ NCA_fetch_state = function(id, input, session,
   id_ASM = state[["MC"]][["module"]][["depends"]][["id_ASM"]]
   id_UD  = state[["MC"]][["module"]][["depends"]][["id_UD"]]
   id_DW  = state[["MC"]][["module"]][["depends"]][["id_DW"]]
+  id_DM  = state[["MC"]][["module"]][["depends"]][["id_DM"]]
 
-  # Detecting changes in the datasets
-  # JMH Test this update in full app. Test the following:
-  #  - new uploaded dataset
-  #  - data view in use changes
-  #  - data view in use is deleted
-  UPDATE_DS = FALSE
-  # The main uploaded dataset
-  if("checksum" %in% names(isolate(react_state[[id_UD]][["UD"]]))){
-    if(!is.null(isolate(react_state[[id_UD]][["UD"]][["checksum"]]))){
-      if(is.null(state[["NCA"]][["DSV"]][["modules"]][["UD"]][[id_UD]])){
-        # If the UD checksum isn't NULL but the stored value in DSV is then we
-        # need to update the dataset
-        UPDATE_DS = TRUE
-      } else if(isolate(react_state[[id_UD]][["UD"]][["checksum"]]) !=
-                state[["NCA"]][["DSV"]][["modules"]][["UD"]][[id_UD]]){
-        # If the stored checksum in DSV is different than the currently
-        # uploaded dataset in UD then we force a reset as well:
-        UPDATE_DS = TRUE
-      }
-    }
-  }
-
-  # Changes in data views from data wrangling module
-  if("checksum" %in% names(isolate(react_state[[id_DW]][["DW"]]))){
-    if(!is.null(isolate(react_state[[id_DW]][["DW"]][["checksum"]]))){
-      if(isolate(react_state[[id_DW]][["DW"]][["hasds"]])){
-        if(is.null(state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]])){
-          # If the DW checksum isn't NULL but the stored value in DSV is then we
-          # need to update the dataset
-          UPDATE_DS = TRUE
-        } else if(isolate(react_state[[id_DW]][["DW"]][["checksum"]]) !=
-                  state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]]){
-          # If the stored checksum in DSV is different than the currently
-          # uploaded dataset in DW then we force a reset as well:
-          UPDATE_DS = TRUE
-        }
-      } else {
-        # If there is no dataset but there was one once before we also
-        # trigger a dataset update:
-        if(!is.null(state[["NCA"]][["DSV"]][["modules"]][["DW"]][[id_DW]])){
-          UPDATE_DS = TRUE
-        }
-      }
-    }
-  }
+  # detecting changes in the datasets
+  UPDATE_DS =
+    formods::FM_has_ds_changed(
+      state = state,
+      ids         = c(id_UD, id_DW, id_DM),
+      fdres       =  state[["NCA"]][["DSV"]] ,
+      react_state = react_state)
 
   if(UPDATE_DS){
     formods::FM_le(state, "Updating DS")
     # updating the "DSV" components
     if(state[["NCA"]][["isgood"]]){
       OLD_DSV = state[["NCA"]][["DSV"]]
-      state[["NCA"]][["DSV"]] = formods::FM_fetch_ds(state, session, c(id_UD, id_DW))
+      state[["NCA"]][["DSV"]] = formods::FM_fetch_ds(state, session, c(id_UD, id_DW, id_DM))
     } else {
       OLD_DSV = NULL
       state = NCA_init_state(FM_yaml_file,
@@ -3337,7 +3452,7 @@ NCA_fetch_state = function(id, input, session,
       }
       # Saving the analysis
       if(!tmp_ana[["isfresh"]]){
-        FM_le(state, paste0("change in data view for ", ana, " and is no longer fresh"))
+        formods::FM_le(state, paste0("change in data view for ", ana, " and is no longer fresh"))
         state[["NCA"]][["anas"]][[ana]] = tmp_ana
       }
     }
@@ -3346,10 +3461,10 @@ NCA_fetch_state = function(id, input, session,
   #---------------------------------------------
   # Here we update the state based on user input
   for(ui_name in state[["NCA"]][["ui_ids"]]){
-    if(!is.null(isolate(input[[ui_name]]))){
+    if(!is.null(shiny::isolate(input[[ui_name]]))){
       # Prevents updating when the ui is being held.
-      if(!fetch_hold(state, ui_name)){
-         state[["NCA"]][["ui"]][[ui_name]] = isolate(input[[ui_name]])
+      if(!formods::fetch_hold(state, ui_name)){
+         state[["NCA"]][["ui"]][[ui_name]] = shiny::isolate(input[[ui_name]])
       }
      } else {
        state[["NCA"]][["ui"]][[ui_name]] = ""
@@ -3362,7 +3477,7 @@ NCA_fetch_state = function(id, input, session,
   for(ui_name in names(state[["NCA"]][["ui_ana_map"]])){
     # We only update if there are no holds set:
     # for the current ui_name
-    if(!fetch_hold(state, ui_name)){
+    if(!formods::fetch_hold(state, ui_name)){
       # Pulling out the current analysis
       current_ana = NCA_fetch_current_ana(state)
 
@@ -3378,9 +3493,10 @@ NCA_fetch_state = function(id, input, session,
       if(SAVE_ANA_NAME){
         ana_name = state[["NCA"]][["ui_ana_map"]][[ui_name]]
         # Messaging detected change
-        if(has_updated(ui_val   = state[["NCA"]][["ui"]][[ui_name]],
-                       old_val  = current_ana[[ana_name]],
-                       init_val = c(""))){
+        if(formods::has_updated(
+             ui_val   = state[["NCA"]][["ui"]][[ui_name]],
+             old_val  = current_ana[[ana_name]],
+             init_val = c(""))){
 
 
           formods::FM_le(state, paste0("setting analysis: ", ana_name, " = ", paste(state[["NCA"]][["ui"]][[ui_name]], collapse=", ")))
@@ -3404,7 +3520,7 @@ NCA_fetch_state = function(id, input, session,
     # We only update the nca option if it exists in the UI
     if(!is.null(state[["NCA"]][["ui"]][[ui_name]])){
       # We only update the nca option of there is no hold
-      if(!fetch_hold(state, ui_name)){
+      if(!formods::fetch_hold(state, ui_name)){
         if(state[["NCA"]][["ui"]][[ui_name]] != ""){
 
           # We compare the values in the ui to the nca_config and if they are
@@ -3426,7 +3542,8 @@ NCA_fetch_state = function(id, input, session,
   #---------------------------------------------
   # Here we're processing any element delete requests
   # - first we only do this if the hot_nca_intervals has been defined
-  if(!fetch_hold(state,"hot_nca_intervals")){
+  if(!formods::fetch_hold(state,"hot_nca_intervals")){
+    proc_int_del = FALSE
     if(is.list(state[["NCA"]][["ui"]][["hot_nca_intervals"]])){
       # - If that's the case we get the data frame for it:
       hot_df = rhandsontable::hot_to_r(state[["NCA"]][["ui"]][["hot_nca_intervals"]])
@@ -3434,23 +3551,37 @@ NCA_fetch_state = function(id, input, session,
       # to make sure there is a delete column
       if("Delete" %in% names(hot_df)){
         # - lastly we check to see if any have been selected for deletion:
-        if(any(hot_df$Delete == TRUE)){
-          # Pulling out the current analysis
-          current_ana = NCA_fetch_current_ana(state)
-
-          # Just keeping the rows that are _not_ marked for deletion:
-          current_ana[["intervals"]] = current_ana[["intervals"]][!hot_df$Delete, ]
-
-          # If we delete the last entry we set it to NULL so it will display
-          # the empty intervals message:
-          if(nrow(current_ana[["intervals"]]) == 0){
-            current_ana[["intervals"]] = NULL
+        if(!any(is.na(hot_df$Delete))){
+          if(any(hot_df$Delete == TRUE)){
+            proc_int_del = TRUE
           }
-
-          # Storing any changes here:
-          state = NCA_set_current_ana(state, current_ana)
-
         }
+      }
+
+      if(proc_int_del){
+        # Pulling out the current analysis
+        current_ana = NCA_fetch_current_ana(state)
+     
+        # Just keeping the rows that are _not_ marked for deletion:
+        current_ana[["intervals"]] = current_ana[["intervals"]][!hot_df$Delete, ]
+     
+        # If we delete the last entry we set it to NULL so it will display
+        # the empty intervals message:
+        if(nrow(current_ana[["intervals"]]) == 0){
+          current_ana[["intervals"]] = NULL
+        }
+
+        # Changing the fresh status
+        current_ana[["isfresh"]] = FALSE
+        formods::FM_le(state, "analysis fresh flag set to FALSE")
+
+        # Storing any changes here:
+        state = NCA_set_current_ana(state, current_ana)
+
+        # Preventing further deletes
+        state = formods::set_hold(state)
+
+        formods::FM_le(state, "interval deleted")
       }
     }
   }
@@ -3458,31 +3589,36 @@ NCA_fetch_state = function(id, input, session,
   # Checking for internal reaction changes
   if(!is.null(react_internal)){
       manual_rows = NULL
-      if(!is.null(isolate(react_internal[["select"]]))){
-        manual_rows = rbind(manual_rows, isolate(react_internal[["select"]])) }
-      if(!is.null(isolate(react_internal[["click"]]))){
-        manual_rows = rbind(manual_rows, isolate(react_internal[["click"]])) }
+      if(!is.null(shiny::isolate(react_internal[["select"]]))){
+        manual_rows = rbind(manual_rows, shiny::isolate(react_internal[["select"]])) }
+      if(!is.null(shiny::isolate(react_internal[["click"]]))){
+        manual_rows = rbind(manual_rows, shiny::isolate(react_internal[["click"]])) }
 
     if(!is.null(manual_rows)){
 
       # Opening up the current analysis
       current_ana = NCA_fetch_current_ana(state)
 
-      FM_le(state, "updating manual flag")
+      formods::FM_le(state, "updating manual flag")
       # Getting the current manual flag:
       manual_flag = current_ana[["manual_fg_ind_obs"]]
       manual_key = unlist(manual_rows$key)
 
 
       if(is.null(manual_key)){
-        FM_le(state, "no points selected")
+        formods::FM_le(state, "no points selected")
       } else {
-        FM_le(state, paste0("  ", manual_key,": ", manual_flag))
+        formods::FM_le(state, paste0("  ", manual_key,": ", manual_flag))
 
-        if(is.null(current_ana[["text_manual"]])){
-          manual_note = ""
-        } else {
-          manual_note = current_ana[["text_manual"]]
+        manual_note = ""
+        # We only set the note of no_notes has not been selected and the
+        # text_manual has a value. Otherwise we set an empty note ""
+        if(!is.null(current_ana[["manual_notes_fg_ind_obs"]])){
+          if(current_ana[["manual_notes_fg_ind_obs"]] != "no_notes"){
+            if(!is.null(current_ana[["text_manual"]])){
+              manual_note = current_ana[["text_manual"]]
+            }
+          }
         }
 
         # Removing records from the manual flag tracking dataframe
@@ -3504,10 +3640,10 @@ NCA_fetch_state = function(id, input, session,
         }
 
         if(nrow(current_ana[["manual_ds_flags"]]) > 0){
-          FM_le(state, "applying manual flags:")
-          FM_le(state, paste0("  ", current_ana[["manual_ds_flags"]]$key, ": ", current_ana[["manual_ds_flags"]]$flag, ", note:", current_ana[["manual_ds_flags"]]$note, "\n"))
+          formods::FM_le(state, "applying manual flags:")
+          formods::FM_le(state, paste0("  ", current_ana[["manual_ds_flags"]]$key, ": ", current_ana[["manual_ds_flags"]]$flag, ", note: ", current_ana[["manual_ds_flags"]]$note, "\n"))
         } else {
-          FM_le(state, "no manual flags currently set.")
+          formods::FM_le(state, "no manual flags currently set.")
         }
 
 
@@ -3516,7 +3652,7 @@ NCA_fetch_state = function(id, input, session,
         state = NCA_set_current_ana(state, current_ana)
 
         # Rebuilding the figure to incorporate any flag changes:
-        # browser()
+        formods::FM_le(state, "rebuilding fg_ind_obs_subset")
         state = run_nca_components(state, "fg_ind_obs_subset")
 
         # Setting the good status to bad to indicate that we need to update
@@ -3524,7 +3660,7 @@ NCA_fetch_state = function(id, input, session,
         current_ana = NCA_fetch_current_ana(state)
         current_ana[["isfresh"]] = FALSE
         state = NCA_set_current_ana(state, current_ana)
-        FM_le(state, "analysis fresh flag set to FALSE")
+        formods::FM_le(state, "analysis fresh flag set to FALSE")
 
       }
     }
@@ -3533,9 +3669,10 @@ NCA_fetch_state = function(id, input, session,
   #---------------------------------------------
   # Process option changes to the fg_ind_obs figure
   # the current selection in the UI:
-  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_save"]],
-                 init_val = c("", "0"))){
+  if(formods::has_updated(
+        ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]],
+        old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_save"]],
+        init_val = c("", "0"))){
 
     formods::FM_le(state, "updating fg_ind_obs")
 
@@ -3547,25 +3684,83 @@ NCA_fetch_state = function(id, input, session,
       state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]]
   }
 
+
+  #---------------------------------------------
+  # resetting manual flags
+# if(formods::has_updated(
+#      ui_val   = state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]],
+#      old_val  = state[["NCA"]][["reset_manual_fg_ind_obs"]],
+#      init_val=c("", FALSE)) &
+  if((state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]] == TRUE) &
+      (!formods::fetch_hold(state, "action_fg_ind_obs_reset_manual"))){
+
+    if(!is.null(state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]])){
+      if(is.logical(state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]])){
+        if(state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]] == TRUE){
+
+
+          formods::FM_le(state, "removing manual flags")
+
+          # Pulling out the current analysis:
+          current_ana = NCA_fetch_current_ana(state)
+
+          # Zeroing out any manual flags
+          current_ana[["manual_ds_flags"]] = data.frame()
+
+          # Now we save the analysis with the page updated
+          state = NCA_set_current_ana(state, current_ana)
+
+          # Setting notification
+          notify_text = state[["MC"]][["notifications"]][["reset_manual_flag"]]
+          state = formods::FM_set_notification(state, notify_text, "Manual flags reset", "success")
+
+          # Regenerating figure after removal of flags
+          formods::FM_le(state, "rebuilding fg_ind_obs_subset")
+          state = run_nca_components(state, "fg_ind_obs_subset")
+
+         ## Setting the good status to bad to indicate that we need to update
+         ## the current analysis:
+         #current_ana = NCA_fetch_current_ana(state)
+         #current_ana[["isfresh"]] = FALSE
+         #state = NCA_set_current_ana(state, current_ana)
+         #formods::FM_le(state, "analysis fresh flag set to FALSE")
+
+        }
+      }
+    }
+
+    state = formods::set_hold(state)
+    # Saving the button state to the counter
+    state[["NCA"]][["reset_manual_fg_ind_obs"]]                =
+      state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]]
+  }
   #---------------------------------------------
   # Moving to the next or previous figure
-  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]], init_val=c("", 0)) |
-     has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]], init_val=c("", 0))){
+  if(formods::has_updated(
+        ui_val  = state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]],
+        old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]], 
+        init_val =c("", 0)) |
+     formods::has_updated(
+        ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]],
+        old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]], 
+        init_val =c("", 0))){
 
     # Pulling out the current analysis:
     current_ana = NCA_fetch_current_ana(state)
 
     # Now we update the selected page based on whether the user has selected
     # next or previous
-    if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]],
-                   old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]], init_val=c("", 0))){
+    if(formods::has_updated(
+         ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]],
+         old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]], 
+         init_val = c("", 0))){
        formods::FM_le(state, "switching fg_ind_obs_next_pg")
        pg_change = "next"
     }
-    if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]],
-                   old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]], init_val=c("", 0))){
+    if(formods::has_updated(
+         ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]],
+         old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]], 
+         init_val=c("", 0))){
        formods::FM_le(state, "switching fg_ind_obs_prev_pg")
        pg_change = "prev"
     }
@@ -3578,7 +3773,7 @@ NCA_fetch_state = function(id, input, session,
 
       if(is.null(current_page)){
         current_page =  page_values[1]
-        FM_le(state, paste0("current page for fg_ind_obs not found defaulting to ", current_page), entry_type="warning")
+        formods::FM_le(state, paste0("current page for fg_ind_obs not found defaulting to ", current_page), entry_type="warning")
       }
 
       new_page = NULL
@@ -3602,20 +3797,20 @@ NCA_fetch_state = function(id, input, session,
 
       if(!is.null(new_page)){
         current_ana[["curr_fg_ind_obs"]] = new_page
-        FM_le(state, paste0("page for fg_ind_obs set to ", new_page))
+        formods::FM_le(state, paste0("page for fg_ind_obs set to ", new_page))
       } else {
-        FM_le(state, paste0("failed to set ", pg_change, " for fg_ind_obs new page logic failed"), entry_type="warning")
+        formods::FM_le(state, paste0("failed to set ", pg_change, " for fg_ind_obs new page logic failed"), entry_type="warning")
       }
 
     } else {
-      FM_le(state, paste0("failed to set ", pg_change, " for fg_ind_obs no figure pages were found"), entry_type="warning")
+      formods::FM_le(state, paste0("failed to set ", pg_change, " for fg_ind_obs no figure pages were found"), entry_type="warning")
     }
 
     # Now we save the analysis with the page updated
     state = NCA_set_current_ana(state, current_ana)
 
     # Next we need to hold the show page pull down
-    state = set_hold(state)
+    state = formods::set_hold(state)
 
     # Saving the button states to the counter
     state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]] =
@@ -3626,9 +3821,10 @@ NCA_fetch_state = function(id, input, session,
   #---------------------------------------------
   # Process scenario button selection here to overwrite
   # the current selection in the UI:
-  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_use_scenario"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_use_scenario"]],
-                 init_val = c("", "0"))){
+  if(formods::has_updated(
+       ui_val   = state[["NCA"]][["ui"]][["button_ana_use_scenario"]],
+       old_val  = state[["NCA"]][["button_counters"]][["button_ana_use_scenario"]],
+       init_val = c("", "0"))){
     # Empty messages:
     msgs = c()
 
@@ -3647,9 +3843,10 @@ NCA_fetch_state = function(id, input, session,
   #---------------------------------------------
   # Process scenario button selection here to overwrite
   # the current selection in the UI:
-  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_add_int"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_add_int"]],
-                 init_val = c("", "0"))){
+  if(formods::has_updated(
+        ui_val   = state[["NCA"]][["ui"]][["button_ana_add_int"]],
+        old_val  = state[["NCA"]][["button_counters"]][["button_ana_add_int"]],
+        init_val = c("", "0"))){
 
     # Default to adding the interval
     ADD_INTERVAL = TRUE
@@ -3710,11 +3907,11 @@ NCA_fetch_state = function(id, input, session,
       notify_text = stringr::str_replace(notify_text, "===DETAILS===", details)
       notify_type = "success"
       formods::FM_le(state, notify_text)
-      state = FM_set_notification(state, notify_text, "Interval Added", "success")
+      state = formods::FM_set_notification(state, notify_text, "Interval Added", "success")
     } else {
       notify_text = paste(msgs, collapse="\n")
       notify_type = "failure"
-      state = FM_set_notification(state, notify_text, "Interval Not Added", "failure")
+      state = formods::FM_set_notification(state, notify_text, "Interval Not Added", "failure")
       formods::FM_le(state, "interval was not added")
     }
 
@@ -3727,9 +3924,10 @@ NCA_fetch_state = function(id, input, session,
   }
   #---------------------------------------------
   # Run Analysis
-  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_run"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_run"]],
-                 init_val = c("", "0"))){
+  if(formods::has_updated(
+       ui_val   = state[["NCA"]][["ui"]][["button_ana_run"]],
+       old_val  = state[["NCA"]][["button_counters"]][["button_ana_run"]],
+       init_val = c("", "0"))){
 
     formods::FM_le(state, "running nca and generating subsequent figures and tables")
 
@@ -3743,8 +3941,9 @@ NCA_fetch_state = function(id, input, session,
     state = run_nca_components(state)
 
     # Removing the pause
-    FM_resume_screen(state   = state,
-                     session = session)
+    formods::FM_resume_screen(
+      state   = state,
+      session = session)
 
     # Saving the button state to the counter
     state[["NCA"]][["button_counters"]][["button_ana_run"]] =
@@ -3752,20 +3951,22 @@ NCA_fetch_state = function(id, input, session,
   }
   #---------------------------------------------
   # Here we react to changes between the UI and the current state
-  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["select_current_ana"]],
-                 old_val  = state[["NCA"]][["current_ana"]],
-                 init_val = c("", "0")) &
-      (!fetch_hold(state, "select_current_ana"))){
+  if(formods::has_updated(
+        ui_val   = state[["NCA"]][["ui"]][["select_current_ana"]],
+        old_val  = state[["NCA"]][["current_ana"]],
+        init_val = c("", "0")) &
+      (!formods::fetch_hold(state, "select_current_ana"))){
 
     # Changing the current view to the one selected in the UI
     state = NCA_mkactive_ana(state, state[["NCA"]][["ui"]][["select_current_ana"]])
-    state = set_hold(state)
+    state = formods::set_hold(state)
   }
   #---------------------------------------------
   # Copy Analysis
-  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_copy"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_copy"]],
-                 init_val = c("", "0"))){
+  if(formods::has_updated(
+        ui_val   = state[["NCA"]][["ui"]][["button_ana_copy"]],
+        old_val  = state[["NCA"]][["button_counters"]][["button_ana_copy"]],
+        init_val = c("", "0"))){
 
     formods::FM_le(state, "copying current analysis")
 
@@ -3811,11 +4012,12 @@ NCA_fetch_state = function(id, input, session,
     state = run_nca_components(state)
 
     # Setting hold for all the elements
-    state = set_hold(state, inputId = NULL)
+    state = formods::set_hold(state, inputId = NULL)
 
     # Removing the pause
-    FM_resume_screen(state   = state,
-                     session = session)
+    formods::FM_resume_screen(
+      state   = state,
+      session = session)
 
     # Saving the button state to the counter
     state[["NCA"]][["button_counters"]][["button_ana_copy"]] =
@@ -3824,9 +4026,10 @@ NCA_fetch_state = function(id, input, session,
   }
   #---------------------------------------------
   # New Analysis
-  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_new"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_new"]],
-                 init_val = c("", "0"))){
+  if(formods::has_updated(
+        ui_val   = state[["NCA"]][["ui"]][["button_ana_new"]],
+        old_val  = state[["NCA"]][["button_counters"]][["button_ana_new"]],
+        init_val = c("", "0"))){
 
     formods::FM_le(state, "creating new analysis")
     msgs = c()
@@ -3835,9 +4038,9 @@ NCA_fetch_state = function(id, input, session,
     state = NCA_new_ana(state)
 
     # Setting hold for all the elements
-    state = set_hold(state, inputId = NULL)
-    #state = set_hold(state, inputId = "select_current_ana")
-    #state = set_hold(state, inputId = "select_current_view")
+    state = formods::set_hold(state, inputId = NULL)
+    #state = formods::set_hold(state, inputId = "select_current_ana")
+    #state = formods::set_hold(state, inputId = "select_current_view")
 
     # Saving the button state to the counter
     state[["NCA"]][["button_counters"]][["button_ana_new"]] =
@@ -3848,9 +4051,10 @@ NCA_fetch_state = function(id, input, session,
   }
   #---------------------------------------------
   # Delete analysis
-  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_del"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_del"]],
-                 init_val = c("", "0"))){
+  if(formods::has_updated(
+        ui_val   = state[["NCA"]][["ui"]][["button_ana_del"]],
+        old_val  = state[["NCA"]][["button_counters"]][["button_ana_del"]],
+        init_val = c("", "0"))){
 
     formods::FM_le(state, "deleting analysis")
     msgs = c()
@@ -3870,8 +4074,8 @@ NCA_fetch_state = function(id, input, session,
     }
 
     # Setting hold for analysis select
-    state = set_hold(state, inputId = "select_current_ana")
-    state = set_hold(state, inputId = "select_current_view")
+    state = formods::set_hold(state, inputId = "select_current_ana")
+    state = formods::set_hold(state, inputId = "select_current_view")
 
     # Saving the button state to the counter
     state[["NCA"]][["button_counters"]][["button_ana_del"]] =
@@ -3882,9 +4086,10 @@ NCA_fetch_state = function(id, input, session,
   }
   #---------------------------------------------
   # Save analysis
-  if(has_updated(ui_val   = state[["NCA"]][["ui"]][["button_ana_save"]],
-                 old_val  = state[["NCA"]][["button_counters"]][["button_ana_save"]],
-                 init_val = c("", "0"))){
+  if(formods::has_updated(
+        ui_val   = state[["NCA"]][["ui"]][["button_ana_save"]],
+        old_val  = state[["NCA"]][["button_counters"]][["button_ana_save"]],
+        init_val = c("", "0"))){
 
     formods::FM_le(state, "saving changes to current analysis")
 
@@ -3921,7 +4126,7 @@ NCA_fetch_state = function(id, input, session,
     if(current_ana[["ana_dsview"]] != state[["NCA"]][["ui"]][["select_current_view"]]){
       if(nrow(current_ana[["manual_ds_flags"]])){
         notify_text = "Data source change detected: You will need to rerun the analysis. Manual flags reset."
-        state = FM_set_notification(state, notify_text, "Manual Flags Reset", "warning") }
+        state = formods::FM_set_notification(state, notify_text, "Manual Flags Reset", "warning") }
       current_ana[["isfresh"]] = FALSE
       current_ana[["manual_ds_flags"]] = data.frame()
     }
@@ -3934,7 +4139,7 @@ NCA_fetch_state = function(id, input, session,
     state = NCA_set_current_ana(state, current_ana)
 
     # Setting holds to ensure any key changes are made
-    state = set_hold(state)
+    state = formods::set_hold(state)
 
     notify_text = paste(
            tagList(paste0("Caption: ", current_ana[["key"]], ", " ),
@@ -3943,7 +4148,7 @@ NCA_fetch_state = function(id, input, session,
                         collapse="\n")
 
 
-    state = FM_set_notification(state, notify_text, "Analysis saved", "info")
+    state = formods::FM_set_notification(state, notify_text, "Analysis saved", "info")
 
 
     # Saving the button state to the counter
@@ -3960,7 +4165,7 @@ NCA_fetch_state = function(id, input, session,
 
   #---------------------------------------------
   # Saving the state
-  FM_set_mod_state(session, id, state)
+  formods::FM_set_mod_state(session, id, state)
   # Returning the state
   state}
 
@@ -3973,10 +4178,11 @@ NCA_fetch_state = function(id, input, session,
 #'@return list containing an empty NCA state
 NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, session){
 
-  MOD_yaml_cont = FM_read_yaml(MOD_yaml_file)
+  MOD_yaml_cont = formods::FM_read_yaml(MOD_yaml_file)
   id_ASM = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_ASM"]]
   id_UD  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_UD"]]
   id_DW  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_DW"]]
+  id_DM  = MOD_yaml_cont[["MC"]][["module"]][["depends"]][["id_DM"]]
 
   button_counters = c("button_ana_new",
                       "button_ana_del",
@@ -3998,6 +4204,8 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, session){
     "select_fg_ind_obs_nrow"         = "fg_ind_obs_nrow",
     "select_fg_ind_obs_page"         = "curr_fg_ind_obs",
     "select_fg_ind_obs_manual"       = "manual_fg_ind_obs",
+    "select_fg_ind_obs_manual_notes" = "manual_notes_fg_ind_obs",
+    "action_fg_ind_obs_reset_manual" = "reset_manual_fg_ind_obs",
     "select_tb_ind_obs_page"         = "curr_tb_ind_obs",
     "select_tb_ind_params_page"      = "curr_tb_ind_params",
     "select_tb_sum_params_page"      = "curr_tb_sum_params",
@@ -4094,7 +4302,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, session){
   ui_hold = ui_ids
 
   # Now we recreate the initialized state with all of the ui_ids
-  state = FM_init_state(
+  state = formods::FM_init_state(
     FM_yaml_file    = FM_yaml_file,
     MOD_yaml_file   = MOD_yaml_file,
     id              = id,
@@ -4116,13 +4324,16 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, session){
   # Storing the analysis map
   state[["NCA"]][["ui_ana_map"]]              = ui_ana_map
 
+  # Storing the analysis map
+  state[["NCA"]][["reset_manual_fg_ind_obs"]] = FALSE
+
   # Creating an empty docx report. It has the style information
   # needed for building tables
   init_cmd = state[["yaml"]][["FM"]][["reporting"]][["content_init"]][["docx"]]
 
   # Changing to the user directory to create the report object:
   current_dir = getwd()
-  user_dir    = FM_fetch_user_files_path(state)
+  user_dir    = formods::FM_fetch_user_files_path(state)
   setwd(user_dir)
   on.exit( setwd(current_dir))
 
@@ -4134,7 +4345,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, session){
 
 
   # Finding the dataset
-  DSV = formods::FM_fetch_ds(state, session, c(id_UD, id_DW))
+  DSV = formods::FM_fetch_ds(state, session, c(id_UD, id_DW, id_DM))
 
   # If the dataset isn't good then we need to
   # flag the whole module as not being good
@@ -4149,7 +4360,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, session){
   state[["NCA"]][["ana_cntr"]]      = 0
   state[["NCA"]][["current_ana"]]   = NULL
 
-  state[["NCA"]][["mod_deps"]]      =  FM_fetch_deps(state = state, session = session)
+  state[["NCA"]][["mod_deps"]]      =  formods::FM_fetch_deps(state = state, session = session)
 
   formods::FM_le(state, "State initialized")
 
@@ -4874,6 +5085,8 @@ NCA_new_ana    = function(state){
          dose_from               = "",
          fg_ind_obs_nrow         = "",
          fg_ind_obs_ncol         = "",
+         manual_notes_fg_ind_obs = c(), 
+         reset_manual_fg_ind_obs = c(),
          fg_ind_obs_logy         = TRUE,
          fg_ind_obs_rpt          = c(), # These defaults are controlled below based on the yaml
          tb_ind_obs_rpt          = c(), #
@@ -5025,13 +5238,21 @@ state}
 #'@example inst/test_apps/NCA_funcs.R
 NCA_set_current_ana    = function(state, ana){
 
+  old_chk = ana[["checksum"]]
+  new_chk = digest::digest(ana[["code_sa"]], algo=c("md5"))
+
+  if(has_updated(old_chk, new_chk)){
+    ana[["checksum"]] = new_chk
+    formods::FM_le(state, paste0("analysis checksum updated:", ana[["checksum"]]))
+  }
+
   # Current analysis ID
   ana_id = state[["NCA"]][["current_ana"]]
 
   # Current analysis
   state[["NCA"]][["anas"]][[ana_id]] = ana
 
-state}
+  state}
 
 
 #'@export
@@ -5293,7 +5514,7 @@ DS}
 NCA_fetch_data_format = function(
   MOD_yaml_file = system.file(package="ruminate","templates","NCA.yaml")){
 
-  MC = FM_read_yaml(MOD_yaml_file)
+  MC = formods::FM_read_yaml(MOD_yaml_file)
 
   res = NULL
 
@@ -5327,7 +5548,7 @@ NCA_fetch_np_meta = function(
   MOD_yaml_file = system.file(package="ruminate","templates","NCA.yaml")){
 
   # Reading in the yaml file
-  MOD_config = FM_read_yaml(MOD_yaml_file)
+  MOD_config = formods::FM_read_yaml(MOD_yaml_file)
 
   # This table summarizes the NCA parameters
   np_summary = NULL
@@ -5377,7 +5598,7 @@ NCA_fetch_np_meta = function(
       if(system.file(package="cli")==""){
         message(msg)
       } else {
-        FM_message(msg, entry_type="warning")
+        formods::FM_message(msg, entry_type="warning")
       }
     }
   }
@@ -5408,8 +5629,7 @@ NCA_add_int = function(state, interval_start, interval_stop, nca_parameters){
 
   # Pulling out the current analysis
   current_ana = NCA_fetch_current_ana(state)
-
-
+  state = NCA_update_checksum(state)
 
   # This determines if the new interval already exists:
   int_exists = FALSE
@@ -5439,6 +5659,10 @@ NCA_add_int = function(state, interval_start, interval_stop, nca_parameters){
                  "delete"       = FALSE))
     formods::FM_le(state, "NCA_add_int: append")
   }
+
+  # Changing the fresh status
+  current_ana[["isfresh"]] = FALSE
+  formods::FM_le(state, "analysis fresh flag set to FALSE")
 
   # Saving the current analysis with the interval added/updated
   state = NCA_set_current_ana(state, current_ana)
@@ -5796,9 +6020,9 @@ nca_builder = function(state){
     # These are the options that control PKNCA
     blq_cmd = c(
     "  conc.blq = list(",
-    paste0("    first  = ", autocast(current_ana[["nca_config"]][["conc_blq_first"]] [["value"]]), ","),
-    paste0("    middle = ", autocast(current_ana[["nca_config"]][["conc_blq_middle"]][["value"]]), ","),
-    paste0("    last   = ", autocast(current_ana[["nca_config"]][["conc_blq_last"]]  [["value"]])),
+    paste0("    first  = ", formods::autocast(current_ana[["nca_config"]][["conc_blq_first"]] [["value"]]), ","),
+    paste0("    middle = ", formods::autocast(current_ana[["nca_config"]][["conc_blq_middle"]][["value"]]), ","),
+    paste0("    last   = ", formods::autocast(current_ana[["nca_config"]][["conc_blq_last"]]  [["value"]])),
     "    )"
     )
 
@@ -5817,7 +6041,7 @@ nca_builder = function(state){
         nca_opt_value = current_ana[["nca_config"]][[nca_opt]] [["value"]]
         nca_opt_type  = current_ana[["nca_config"]][[nca_opt]] [["type"]]
         if(nca_opt_type %in% c("character", "mixed")){
-          nca_opt_value = autocast(nca_opt_value)
+          nca_opt_value = formods::autocast(nca_opt_value)
         }
         code_ana_options = c(code_ana_options,
           paste0("  ", pknca_option, " = ", nca_opt_value, ",")
@@ -6180,7 +6404,7 @@ nca_builder = function(state){
       "",
       "# Generating figures of indiviudal profiles",
       paste0(nca_fg_ind_obs_object_name, " = mk_figure_ind_obs("),
-      paste0(nca_ds_object_name, ", "),
+      paste0("  nca_res    = ", nca_res_object_name, ", "),
       paste0("  time_units = ", deparse(time_units), ", "),
       paste0("  conc_units = ", deparse(conc_units), ", "),
       paste0("  col_map    = ", nca_col_map_object_name, ", "),
@@ -6191,7 +6415,7 @@ nca_builder = function(state){
       paste0(")"))
 
 
-    # This only generates the currently selected
+    # This only generates the currently selected figure in the UI
     code_fg_ind_obs_subset   = c(
       "",
       "# Generating figures of indiviudal profiles",
@@ -6246,9 +6470,12 @@ nca_builder = function(state){
                                  code_ds_dosing,
                                  code_pknca),
                                collapse="\n")
+
+    # JMH I don't think code_ana_options and code_ds_dosing are needed here. 
+    # Commenting them out on 2025.08.03 
     code_fg_ind_obs_all = paste(c(
-                        code_ana_options,
-                        code_ds_dosing,
+                      # code_ana_options,
+                      # code_ds_dosing,
                         code_fg_ind_obs_all), collapse="\n")
 
     code_fg_ind_obs_subset = paste(c(
@@ -6629,28 +6856,60 @@ run_nca_components = function(
   if(!current_ana[["isgood"]]){
     state = formods::FM_set_ui_msg(state, msgs)
     if(verbose){
-      FM_le(state, msgs, entry_type="danger")
+      formods::FM_le(state, msgs, entry_type="danger")
     }
   }
 
   # Storing the messages
   current_ana[["msgs"]] = msgs
 
-  # Setting the analysis checksum based on the objs portion.
-  current_ana[["checksum"]] = digest::digest(current_ana[["objs"]], algo=c("md5"))
-
-
   # Saving any changes to the analysis
   state = NCA_set_current_ana(state, current_ana)
+
+  state = NCA_update_checksum(state)
+
+# JMH Moving checksum calcualtion into the NCA_set_current_ana and NCA_update_checksum
+# 2025.08.03
+# # Setting the analysis checksum based on the objs portion.
+# current_ana[["checksum"]] = digest::digest(current_ana[["objs"]], algo=c("md5"))
+# state = NCA_update_checksum(state)
+# Moving checksum updating to a separate function
+# # Creating a checksum for the entire module:
+# all_checksum = ":"
+# for(ana_id in names(state[["NCA"]][["anas"]])){
+#   all_checksum = paste0(all_checksum, ana_id, ":", state[["NCA"]][["anas"]][[ana_id]][["checksum"]], ":")
+# }
+# state[["NCA"]][["checksum"]] = digest::digest(all_checksum, algo=c("md5"))
+# if(verbose){
+#   formods::FM_le(state, paste0("module checksum updated:", state[["NCA"]][["checksum"]]))
+# }
+
+  state}
+
+
+#'@export
+#'@title Updates NCA Module Checksum
+#'@description Takes a NCA state and updates the checksum used to trigger
+#'downstream updates
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@return NCA state object with the checksum updated
+#'@example inst/test_apps/NCA_funcs.R
+NCA_update_checksum     = function(state){
+
+  # Previous checksum value
+  old_chk = state[["NCA"]][["checksum"]]
 
   # Creating a checksum for the entire module:
   all_checksum = ":"
   for(ana_id in names(state[["NCA"]][["anas"]])){
     all_checksum = paste0(all_checksum, ana_id, ":", state[["NCA"]][["anas"]][[ana_id]][["checksum"]], ":")
   }
-  state[["NCA"]][["checksum"]] = digest::digest(all_checksum, algo=c("md5"))
-  if(verbose){
-    FM_le(state, paste0("module checksum updated:", state[["NCA"]][["checksum"]]))
+
+  new_chk = digest::digest(all_checksum, algo=c("md5"))
+
+  if(has_updated(old_chk, new_chk)){
+    state[["NCA"]][["checksum"]] = digest::digest(all_checksum, algo=c("md5"))
+    formods::FM_le(state, paste0("module checksum updated:", state[["NCA"]][["checksum"]]))
   }
 
 state}
@@ -6749,7 +7008,7 @@ mk_table_ind_obs = function(
   # some extra columns added by PKNCA
   raw_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]]))
 
-  all_data = tibble(
+  all_data = dplyr::tibble(
     rmnt_flag = raw_data[["rmnt_flag"]],
     CONC = raw_data[[col_conc]],
     TIME = raw_data[[col_time]],
@@ -7032,10 +7291,11 @@ mk_table_ind_obs_flags = function(
 
   # This is the original dataset along with what looks like
   # some extra columns added by PKNCA
-  raw_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]]))
+  # raw_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]]))
+  raw_data =  as.data.frame(as_PKNCAconc(nca_res))
 
 
-  all_data = tibble(
+  all_data = dplyr::tibble(
     ID   = raw_data[[col_id]],
     TIME = raw_data[[col_time]]
   )
@@ -7191,7 +7451,7 @@ res}
 #'@title Creates Figures of Individual Observations from PKNCA Result
 #'@description Takes the output of PKNCA and creates `ggplot` figures faceted
 #'by subject id highlighting of certain NCA aspects (e.g. points used for half-life)
-#'@param ana_ds      Analysis dataset.
+#'@param nca_res     Output of pk.nca()
 #'@param OBS_LAB     Label of the observation axis with optional ===CONCUNITS=== placeholder for units.
 #'@param TIME_LAB    Label of the time axis with optional ===TIMEUNITS=== placeholder for units.
 #'@param time_units  Time units (default \code{""})
@@ -7212,7 +7472,7 @@ res}
 #'}
 #'@example inst/test_apps/nca_programming_funcs.R
 mk_figure_ind_obs = function(
-  ana_ds        ,
+  nca_res       ,
   OBS_LAB         = "Concentration ===CONCUNITS===",
   TIME_LAB        = "Time ===TIMEUNITS===",
   time_units      = "",
@@ -7224,6 +7484,9 @@ mk_figure_ind_obs = function(
   nfrows          = 4,
   nfcols          = 3,
   only_figs       = NULL){
+
+  # Extracting the original data set from the PKNCA results
+  ana_ds =  as.data.frame(as_PKNCAconc(nca_res))
 
   if(conc_units == ""){
     OBS_LAB  = stringr::str_replace(OBS_LAB,  "===CONCUNITS===", "")
@@ -7252,20 +7515,24 @@ mk_figure_ind_obs = function(
   cols_keep = unique(c(col_id, col_time, col_conc, col_group, col_analyte,
                        "rmnt_key", "rmnt_flag", "rmnt_desc"))
 
-  # If this value is NULL it will be set to the lowest value for that
-  # individual
+  if(log_scale){
+    BLQMULT = 0.8
+  } else {
+    BLQMULT = 0.0
+  }
 
   # This is the original dataset along with what looks like
   # some extra columns added by PKNCA
+  #browser()
   all_data = ana_ds                                                       |>
     dplyr::select(dplyr::all_of(cols_keep))                               |>
     dplyr::rename(CONC = dplyr::all_of(col_conc))                         |>   # Renaming columns to standard values
     dplyr::rename(TIME = dplyr::all_of(col_time))                         |>
 #   dplyr::rename(ID   = dplyr::all_of(col_id))                           |>
-    dplyr::group_by(!!as.name(col_group))                                 |>
+#   dplyr::group_by(!!as.name(col_group))                                 |>
     dplyr::mutate(NONOBS = min(.data[["CONC"]][.data[["CONC"]]>0 &
-                               !is.na(.data[["CONC"]])]))                 |>   # Creating a concentration for non-observations (0 and NA below)
-    dplyr::ungroup()                                                      |>
+                               !is.na(.data[["CONC"]])])*BLQMULT)         |>   # Creating a concentration for non-observations (0 and NA below)
+#   dplyr::ungroup()                                                      |>
     dplyr::mutate(CONC            = ifelse(is.na(.data[["CONC"]]),             # Setting missing values to values for plotting
                                            .data[["NONOBS"]],
                                            .data[["CONC"]]))       |>
@@ -7333,7 +7600,28 @@ mk_figure_ind_obs = function(
       plot_ds = dplyr::filter(all_data, .data[[col_id]] %in% subs_current)
 
 
-      p = ggplot2::ggplot(data = plot_ds, ggplot2::aes( key   = .data[["rmnt_key"]]))
+      #-------------------------------------------
+      # Creating label text for the plotly figure
+      plot_ds[["rmnt_hover_text"]] = ""
+
+      if(!is.null(plot_ds[["rmnt_desc"]])){
+        plot_ds[["rmnt_hover_text"]] = paste0( plot_ds[["rmnt_hover_text"]],
+          plot_ds[["rmnt_desc"]], "<br>"
+        )
+      }
+
+      plot_ds[["rmnt_hover_text"]] = paste0( plot_ds[["rmnt_hover_text"]],
+        "Time:  ", plot_ds[["TIME"]], "<br>",
+        "Value: ", plot_ds[["CONC"]]
+      )
+
+      if(length(col_analyte) == 1){
+        plot_ds[["rmnt_hover_text"]] = paste0( plot_ds[["rmnt_hover_text"]],
+          "<br>", "Analyte: ", plot_ds[[col_analyte]]
+        )
+      }
+      #-------------------------------------------
+      p = ggplot2::ggplot(data = plot_ds, ggplot2::aes( key   = .data[["rmnt_key"]], text=.data[["rmnt_hover_text"]]))
 
       p = p + ggplot2::geom_line( ggplot2::aes(x=.data[["TIME"]],
                                                y=.data[["CONC"]],
@@ -7364,11 +7652,11 @@ mk_figure_ind_obs = function(
       p = p + ggplot2::labs(color="Data Type", shape="Analyte")
       p = p + ggplot2::theme(legend.position="bottom",
                              legend.box="horizontal")
-      p = p + scale_color_manual(values = fcolors)
-      p = p + guides(colour = guide_legend(title.position = "top", ncol=3))
-      p = p + guides(shape  = guide_legend(title.position = "top", ncol=3))
-      p = p + theme(legend.spacing.x      = unit(.01, "cm"))
-      p = p + theme(legend.key.spacing.x  = unit(.01, "cm"))
+      p = p + ggplot2::scale_color_manual(values = fcolors)
+      p = p + ggplot2::guides(colour = guide_legend(title.position = "top", ncol=3))
+      p = p + ggplot2::guides(shape  = guide_legend(title.position = "top", ncol=3))
+      p = p + ggplot2::theme(legend.spacing.x      = unit(.01, "cm"))
+      p = p + ggplot2::theme(legend.key.spacing.x  = unit(.01, "cm"))
 
 
       figures[[fig_key]]$gg    = p
@@ -7385,7 +7673,7 @@ mk_figure_ind_obs = function(
     figures = figures
   )
 
-res}
+  res}
 
 #'@export
 #'@title Fetches the Current Analysis Object
@@ -7856,7 +8144,7 @@ NCA_test_mksession = function(session=list(), full=FALSE){
                 system.file(package="ruminate", "preload", "NCA_preload_minimal.yaml"))
   }
 
-  res = FM_app_preload(session=session, sources=sources)
+  res = formods::FM_app_preload(session=session, sources=sources)
   res = res[["all_sess_res"]][["NCA"]]
 
 res}
@@ -7902,7 +8190,7 @@ NCA_load_scenario = function(state, ana_scenario){
     }
 
     notify_text = paste0("Scenario: ", state[["MC"]][["ana_scenarios"]][[current_ana[["ana_scenario"]]]][["description"]])
-    state = FM_set_notification(state, notify_text, "NCA scenario set", "info")
+    state = formods::FM_set_notification(state, notify_text, "NCA scenario set", "info")
 
 state}
 
@@ -8071,7 +8359,8 @@ NCA_fetch_ana_ds = function(state, current_ana){
   ds = NULL
   dsview      = current_ana[["ana_dsview"]]
   if(is.null(dsview)){
-    FM_le(state      = state,
+    formods::FM_le(
+          state      = state,
           paste0("Unable to find dsview >", dsview ,"< for the current analysis"),
           entry_type = "danger")
   } else {
@@ -8146,8 +8435,8 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
   res    = c()
 
 
-  FM_yaml_file  = render_str(src_list[[mod_ID]][["fm_yaml"]])
-  MOD_yaml_file = render_str(src_list[[mod_ID]][["mod_yaml"]])
+  FM_yaml_file  = formods::render_str(src_list[[mod_ID]][["fm_yaml"]])
+  MOD_yaml_file = formods::render_str(src_list[[mod_ID]][["mod_yaml"]])
   id_UD         = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_UD"]]
   id_ASM        = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_ASM"]]
   id_DW         = yaml_res[[mod_ID]][["mod_cfg"]][["MC"]][["module"]][["depends"]][["id_DW"]]
@@ -8162,7 +8451,7 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
   # Some functions require the state to be in the session object:
   if(!formods::is_shiny(session)){
-    session = FM_set_mod_state(session, mod_ID, state)
+    session = formods::FM_set_mod_state(session, mod_ID, state)
   }
 
   elements = src_list[[mod_ID]][["elements"]]
@@ -8246,7 +8535,7 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
 
       # Setting any notes:
       if(!is.null(elements[[ele_idx]][["element"]][["notes"]])){
-        FM_le(state, paste0("  -> notes found and set"))
+        formods::FM_le(state, paste0("  -> notes found and set"))
         current_ele[["notes"]] = elements[[ele_idx]][["element"]][["notes"]]
       }
 
@@ -8276,9 +8565,6 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         ele_isgood = FALSE
       }
 
-      # JMH Setting any element uis
-      #state[["NCA"]][["ui_ana_map"]]
-      #state[["NCA"]][["ui_ids"]]
       #-------------------------------------------------------
       # Defining the ana_options
       for(ui_id in names(state[["NCA"]][["ui_ana_map"]])){
@@ -8317,16 +8603,16 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
       }
 
       # Attaching data source
-      fr_res = 
-        fetch_resource(
-          catalog   = DSV[["catalog"]], 
+      fr_res =
+        formods::fetch_resource(
+          catalog   = DSV[["catalog"]],
           id        = elements[[ele_idx]][["element"]][["data_source"]][["id"]],
           idx       = elements[[ele_idx]][["element"]][["data_source"]][["idx"]],
           res_label = elements[[ele_idx]][["element"]][["data_source"]][["res_label"]])
-      
+
       # Attaching data source
       if(fr_res[["isgood"]]){
- 
+
         formods::FM_le(state, paste0("  -> setting data source: ", fr_res[["res_obj"]]) )
         current_ele[["ana_dsview"]] = fr_res[["res_obj"]]
 
@@ -8387,9 +8673,9 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
         }
 
         # Uncomment to debug and see NCA results
-        #tmp_ele = NCA_fetch_current_ana(state)
-        #tmp_ele[["nca_res"]]
-        #browser()
+        # tmp_ele = NCA_fetch_current_ana(state)
+        # tmp_ele[["nca_res"]]
+        # browser()
       }
 
       if(ele_isgood){
@@ -8407,9 +8693,9 @@ NCA_preload  = function(session, src_list, yaml_res, mod_ID=NULL, react_state = 
   formods::FM_le(state,paste0("module isgood: ",isgood))
 
   if(formods::is_shiny(session)){
-    FM_set_mod_state(session, mod_ID, state)
+    formods::FM_set_mod_state(session, mod_ID, state)
   } else {
-    session = FM_set_mod_state(session, mod_ID, state)
+    session = formods::FM_set_mod_state(session, mod_ID, state)
   }
 
   res = list(isgood      = isgood,
@@ -8463,9 +8749,9 @@ NCA_mk_preload     = function(state){
         ds_id        = dsv_row[["id"]]
         ds_idx       = dsv_row[["idx"]]
         ds_res_label = dsv_row[["res_label"]]
-        
 
-        FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["key"]]))
+
+        formods::FM_le(state, paste0("saving element (", tmp_source_ele[["idx"]], ") ", tmp_source_ele[["key"]]))
 
         # Creates the empty element:
         tmp_element = list(
@@ -8488,7 +8774,18 @@ NCA_mk_preload     = function(state){
         # an explicit UI element so we have to add it here... manually :)
         ana_opts = unique(c(ana_opts, "manual_ds_flags"))
 
+        # This will get rid of any ana_opts that are not present in the element
+        ana_opts_missing = ana_opts[!(ana_opts %in% names(tmp_source_ele))]
 
+        if(length(ana_opts_missing)>0){
+          formods::FM_le(state, "skipping the following analysis options were found for the system but not the current element. ", entry_type="warning")
+          formods::FM_le(state, paste0(ana_opts_missing, collapse=", "), entry_type="warning")
+        }
+
+        # This will get rid of any ana_opts that are not present in the element
+        ana_opts = ana_opts[(ana_opts %in% names(tmp_source_ele))]
+
+        # Setting the analysis options
         tmp_element[["ana_options"]] = tmp_source_ele[ana_opts]
 
         # The key is defined as the name above and the mapping is handled on
@@ -8523,7 +8820,7 @@ NCA_mk_preload     = function(state){
                            ",",
                            tmp_source_ele[["intervals"]][ridx, ][["stop"]],
                            "]  ", tmp_source_ele[["intervals"]][ridx, ][["np_text"]])
-          FM_le(state, tmp_msg)
+          formods::FM_le(state, tmp_msg)
           tmp_element[["components"]][[comp_idx]] = list( component = list(
             nca_parameters = np_actual_vect,
               start        = tmp_source_ele[["intervals"]][ridx, ][["start"]],
@@ -8609,7 +8906,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
   msgs      = c()
 
 
-  code =  FM_build_comment(2, paste0("Reporting NCA results ", rpttype))
+  code =  formods::FM_build_comment(2, paste0("Reporting NCA results ", rpttype))
   # The NCA module supports the following report types:
   supported_rpttypes = c("xlsx", "pptx", "docx")
 
@@ -8671,7 +8968,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
             # block of code being returned
             code = c(code, code_chunk)
           } else {
-            FM_le(state, c(tmp_ana[["key"]], tc_res[["msgs"]]), entry_type="danger")
+            formods::FM_le(state, c(tmp_ana[["key"]], tc_res[["msgs"]]), entry_type="danger")
             msgs = c(msgs,  tc_res[["msgs"]])
           }
         }
@@ -8756,20 +9053,20 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 
                     # If there were any general messages we log and pass back to the user
                     if(!is.null(tc_res[["capture"]][["narf_res"]][["msgs"]])){
-                      FM_le(state, c(fig_id, tc_res[["capture"]][["narf_res"]][["msgs"]]))
+                      formods::FM_le(state, c(fig_id, tc_res[["capture"]][["narf_res"]][["msgs"]]))
                       msgs = c(msgs,  tc_res[["capture"]][["narf_res"]][["msgs"]])
                     }
                   } else {
                     # If there were any failure messages we log and pass back to the user
                     if(!is.null(tc_res[["capture"]][["narf_res"]][["msgs"]])){
-                      FM_le(state, c(fig_id, tc_res[["capture"]][["narf_res"]][["msgs"]]), entry_type="danger")
+                      formods::FM_le(state, c(fig_id, tc_res[["capture"]][["narf_res"]][["msgs"]]), entry_type="danger")
                       msgs = c(msgs,  tc_res[["capture"]][["narf_res"]][["msgs"]])
                     }
                   }
                 } else {
                   # If there were any Try/Catch failure messages we log it and pass it back to the user:
                   if(!is.null(tc_res[["msgs"]])){
-                    FM_le(state, c(fig_id, tc_res[["msgs"]]), entry_type="danger")
+                    formods::FM_le(state, c(fig_id, tc_res[["msgs"]]), entry_type="danger")
                     msgs = c(msgs,  tc_res[["msgs"]])
                   }
                 }
@@ -8850,20 +9147,20 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
 
                     # If there were any general messages we log and pass back to the user
                     if(!is.null(tc_res[["capture"]][["nart_res"]][["msgs"]])){
-                      FM_le(state, c(tab_id, tc_res[["capture"]][["nart_res"]][["msgs"]]))
+                      formods::FM_le(state, c(tab_id, tc_res[["capture"]][["nart_res"]][["msgs"]]))
                       msgs = c(msgs,  tc_res[["capture"]][["nart_res"]][["msgs"]])
                     }
                   } else {
                     # If there were any failure messages we log and pass back to the user
                     if(!is.null(tc_res[["capture"]][["nart_res"]][["msgs"]])){
-                      FM_le(state, c(tab_id, tc_res[["capture"]][["nart_res"]][["msgs"]]), entry_type="danger")
+                      formods::FM_le(state, c(tab_id, tc_res[["capture"]][["nart_res"]][["msgs"]]), entry_type="danger")
                       msgs = c(msgs,  tc_res[["capture"]][["nart_res"]][["msgs"]])
                     }
                   }
                 } else {
                   # If there were any Try/Catch failure messages we log it and pass it back to the user:
                   if(!is.null(tc_res[["msgs"]])){
-                    FM_le(state, c(tab_id, tc_res[["msgs"]]), entry_type="danger")
+                    formods::FM_le(state, c(tab_id, tc_res[["msgs"]]), entry_type="danger")
                     msgs = c(msgs,  tc_res[["msgs"]])
                   }
                 }
@@ -8914,7 +9211,7 @@ NCA_append_report = function(state, rpt, rpttype, gen_code_only=FALSE){
             # block of code being returned
             code = c(code, code_chunk)
           } else {
-            FM_le(state, c(tmp_ana[["key"]], tc_res[["msgs"]]), entry_type="danger")
+            formods::FM_le(state, c(tmp_ana[["key"]], tc_res[["msgs"]]), entry_type="danger")
             msgs = c(msgs,  tc_res[["msgs"]])
           }
         }

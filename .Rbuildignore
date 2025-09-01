@@ -14,3 +14,4 @@ README.RMD
 ^\.github$
 vignettes/transient/*
 check_depsonly.R
+.vscode

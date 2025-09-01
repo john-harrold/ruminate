@@ -11,3 +11,4 @@ vignettes/*.html
 inst/doc
 check_depsonly.R
 .here
+.vscode
