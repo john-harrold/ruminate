@@ -1,4 +1,4 @@
-# ruminate 0.3.2 (development version)
+# ruminate 0.4.0 (development version)
 
 - Implemented manual point flagging to allow: censoring, exclusion of points 
   from half-life calculation, or specyfing points to use in 
@@ -8,6 +8,11 @@
 - Added searchable dependencies table under the App Info tab. 
 - Adding DM module elements to default apps.
 - NCA: Moving checksum calculation to separate functions.
+- Chagned `simulate_subjects()` to use dataframes and `rbind()` instead of event tables and `etRbind()` and it's much faster now
+
+# ruminate 0.3.2 
+- Fixed bug in `simulate_rules()` that prevented proper reset of initial conditions.
+- Fixed bug in `simulate_rules()` that prevented tracking of rule evaluation for individuals. 
 
 # ruminate 0.3.1 
 
