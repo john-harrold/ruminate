@@ -6,7 +6,7 @@
 - Fixed typos in PKNCA parameters (`sparse_se` -> `sparse_auc_se` and `sparse_df` -> `sparse_auc_df`)
 - Updated model selection in MDL to include grouping.
 - Added searchable dependencies table under the App Info tab. 
-- Adding DM module elements to default apps.
+- DM: Added data management (DM) module to default apps.
 - NCA: Moving checksum calculation to separate functions.
 - Chagned `simulate_subjects()` to use dataframes and `rbind()` instead of event tables and `etRbind()` and it's much faster now
 

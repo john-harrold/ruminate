@@ -5,6 +5,8 @@
 \title{Fetches Information from an rxode2 Object}
 \usage{
 mk_subjects(object, nsub = 10, covs = NULL)
+
+mk_subjects(object, nsub = 10, covs = NULL)
 }
 \arguments{
 \item{object}{rxode2 model object  An ID string that corresponds with the ID used to call the modules UI elements.}
@@ -23,8 +25,20 @@ List with the following elements.
 \item{iCov:}       Data frame of the covariates.
 \item{params:}     Data frame of the parameters.
 }
+
+List with the following elements.
+\itemize{
+\item{isgood:}     Return status of the function.
+\item{msgs:}       Error or warning messages if any issues were encountered.
+\item{subjects:}   Data frame of parameters and covariates for the subjects generated.
+\item{iCov:}       Data frame of the covariates.
+\item{params:}     Data frame of the parameters.
+}
 }
 \description{
+This will provide information like parameter names, covriates,
+etc from an rxode2 object.
+
 This will provide information like parameter names, covriates,
 etc from an rxode2 object.
 }
@@ -191,6 +205,216 @@ given id and state. For example for the current \code{id} and the state
 }\if{html}{\out{</div>}}
 }
 
+\subsection{User-defined code in preamble}{
+
+When calling \code{simulate_subjects()} the preamble arugment expects a
+string of text containing evaluble code. If your rules require complex
+logic, you can create user defined functions here. You can call them
+here or in the rules.
+
+When the preamble is evaluated all of the elements in the
+rule-evaluation environment and the standard functions will be
+available. The preamble is evaluated once before the rules are
+evaluated.
+}
+
+}
+
+\subsection{Time scales}{
+
+You can include columns in your output for different time scales if you
+wish. You need to create a list in the format below. One element should
+be \code{system} with a short name for the system time scale. The next should
+be \code{details} which is a list containing short names for each time scale
+you want to include. Each of these is a list with a verbose name for the
+time scale (\code{verb}) and a numerical conversion indicating how that time
+scale relates to the others. Here we define weeks and days on the basis
+of seconds.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{time_scales = list(system="days", 
+                details= list(
+                  weeks = list(verb="Weeks",    conv=1/(60*60*24*7)),
+                  days  = list(verb="Days",     conv=1/(60*60*24))))
+}\if{html}{\out{</div>}}
+}
+
+}
+
+See below.
+
+The underlying simulations are run using \code{rxode2}, and as such we need
+an \code{rxode2} system object. From that we can either simulate subjects or
+load them from a file. Next we need to define a set of rules. These will
+be a set of conditions and actions. At each evaluation time point the
+conditions are evaluated. When a condition is met the actions associated
+with that condition are executed. For example, if during a visit (an
+evaluation time point) the trough PK is below a certain level
+(condition) we may want to increase the dosing regimen for the next
+dosing cycle (action).
+\subsection{Creating subjects}{
+
+Subjects are expected in a data frame with the following column headers:
+\itemize{
+\item \code{id} Individual subject id
+\item Names of parameters and iiv as specified in the \code{ini} section of the
+\code{rxode2} function specification
+\item Names of covariates used in the model.
+}
+
+\code{mk_subjects()} — Creates subjects for simulation by sampling based on
+between-subject variability and generating covariate information based
+on user specifications.
+\subsection{Covariates}{
+
+The \code{covs} input is a list with the following structure:
+\itemize{
+\item type: Can be either “fixed”, “discrete”, or “continuous”.
+\item sampling: This field is only needed for a “continuous” covariate ’
+type and can be either “random”, “normal” or “log-normal”.
+\item values: This field depends on the type and optional sampling above.
+\itemize{
+\item fixed: A single value.
+\item discrete: A vector of possible discrete elements.
+\item continuous, random: Two values the first is the lower bound and the
+second is the upper bound.
+\item continuous, normal: Two values the first is the mean and the second
+is the variance.
+\item continuous, log-normal: Two values the first is the mean and the
+second is the variance.
+}
+}
+
+This examples shows the \code{SEX_ID} randomly sampled from the values
+specified, \code{SUBTYPE_ID} fixed at a value, and \code{WT} sampled from a
+log-normal distribution.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{covs = list(
+  SEX_ID     = list(type     = "discrete", 
+                    values   = c(0,1)),
+  SUBTYPE_ID = list(type     = "fixed",
+                    values   = c(0)),
+  WT         = list(type     = "continuous",
+                    sampling = "log-normal",
+                    values   = c(70, .15))
+)
+}\if{html}{\out{</div>}}
+}
+
+}
+
+\subsection{Rule-based simulations}{
+
+\code{simulate_rules()} — This will run simulations based on the rule
+definitions below.
+\subsection{Rules}{
+
+Rules are a named list where the list name can be a short descriptive
+label used to remember what the rule does. These names will be returned
+as columns in the simulated data frame.
+\itemize{
+\item \code{condition}: Character string that evaluates to either \code{TRUE} or
+\code{FALSE}. When true the \code{action} portion will be triggered. For a list
+of objects available see the Rule-evaluation environment below.
+\item \code{fail_flag}: Flag set in the \code{rule_id} column when the condition is
+not met (set to \code{"false"} if not specified).
+\item \code{true_flag}: Flag set in the \code{rule_id} column when the condition is
+met (set to \code{"true"} if not specified).
+\item \code{action}: This is what the rule will trigger can be any of the
+following:
+\itemize{
+\item \code{type}: This defines the action type and can be either \code{"dose"},
+\code{"set state"}, or \code{"manual"}.
+}
+}
+
+Based on the \code{type} the \code{action} field will expect different elements.
+
+Dosing:
+\itemize{
+\item \code{action}
+\itemize{
+\item \code{type}: \code{"dose"}
+\item \code{values}: Character string that evaluates as a numeric vector dosing
+amounts (e.g. \code{"c(3,  3,  3,  3)"})
+\item \code{times}: Character string that evaluates as a numeric vector of
+times (e.g. \code{"c(0, 14, 28, 42)"})
+\item \code{durations}: Character string that evaluates as a numeric vector of
+durations (e.g. \code{"c(0, 0, 0, 0)"}, zero for bolus dosing)
+}
+}
+
+Changing a state value:
+\itemize{
+\item \code{action}
+\itemize{
+\item \code{type}: \code{"set state"}
+\item \code{state}: Character string with the name of the state to set (\code{"Ac"})
+\item \code{value}: Character string that evaluates as a numeric value for
+state (e.g. \code{"Ac/2"} would set the state to half the value of Ac at
+the evaluation point)
+}
+}
+
+Manual modification of the simulation:
+\itemize{
+\item \code{action}
+\itemize{
+\item \code{type}: \code{"manual"}
+\item \code{code}: Character string of code to evaluate.
+}
+}
+}
+
+\subsection{Rule-evaluation environment}{
+
+Beyond simple simulations it will be necessary to execute actions based
+on the current or previous state of the system. For this reason, when a
+\code{condition} or elements of the action (e.g., the \code{values}, \code{times} and
+\code{durations} of a dose action type) are being evaluated, the following
+objects will be available at each evaluation point:
+\itemize{
+\item outputs: The value of each model output.
+\item states: The value of each named state or compartment.
+\item covariates: The value of each named covariate.
+\item subject-level parameters: The value of each named parameter.
+\item rule value: The last value the rule evaluated as.
+\item \code{id}: Current subject id.
+\item \code{time}: Current evaluation time.
+\item \code{SI_SUB_HISTORY}: A data frame of the simulation history of the
+current subject up to the current evaluation point.
+\item \code{SI_subjects}: The subjects data frame.
+\item \code{SI_eval_times}: Vector of the evaluation times.
+\item \code{SI_interval_ev}: The events table in it’s current state for the given
+simulation interval.
+\item \code{SI_ev_history}: This is the history of the event table containing all
+the events leading up to the current interval.
+\item \code{SI_ud_history}: This is a free form object the user can define or
+alter within the “manual”action type (ud-user defined, history).
+}
+\subsection{The following functions will be available:}{
+\itemize{
+\item \code{SI_fpd}: This function will fetch the previous dose (fpd) for the
+given id and state. For example for the current \code{id} and the state
+\code{Ac} you would do the following:
+}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{SI_fpd(id=id, state="Ac")
+}\if{html}{\out{</div>}}
+}
+
+\subsection{User-defined code in preamble}{
+
+When calling \code{simulate_subjects()} the preamble arugment expects a
+string of text containing evaluble code. If your rules require complex
+logic, you can create user defined functions here. You can call them
+here or in the rules.
+
+When the preamble is evaluated all of the elements in the
+rule-evaluation environment and the standard functions will be
+available. The preamble is evaluated once before the rules are
+evaluated.
+}
+
 }
 
 \subsection{Time scales}{
@@ -331,7 +555,126 @@ pev$fig
 
 }
 }
+\donttest{
+library(formods)
+library(ggplot2)
+
+# For more information see the Clinical Trial Simulation vignette:
+# https://ruminate.ubiquity.tools/articles/clinical_trial_simulation.html
+
+# None of this will work if rxode2 isn't installed:
+if(is_installed("rxode2")){
+library(rxode2)
+set.seed(8675309)
+rxSetSeed(8675309)
+
+my_model = function ()
+{
+    description <- "One compartment PK model with linear clearance using differential equations"
+    ini({
+        lka <- 0.45
+        label("Absorption rate (Ka)")
+        lcl <- 1
+        label("Clearance (CL)")
+        lvc <- 3.45
+        label("Central volume of distribution (V)")
+        propSd <- c(0, 0.5)
+        label("Proportional residual error (fraction)")
+        etalcl ~ 0.1
+    })
+    model({
+        ka <- exp(lka)
+        cl <- exp(lcl + etalcl)
+        vc <- exp(lvc)
+        kel <- cl/vc
+        d/dt(depot) <- -ka * depot
+        d/dt(central) <- ka * depot - kel * central
+        Cc <- central/vc
+        Cc ~ prop(propSd)
+    })
+}
+
+# This creates an rxode2 object
+object  = rxode(my_model)
+
+# If you want details about the parameters, states, etc
+# in the model you can use this:
+rxdetails = fetch_rxinfo(object)
+
+rxdetails$elements
+
+# Next we will create subjects. To do that we need to
+# specify information about covariates:
+nsub = 2
+covs = list(
+  WT         = list(type     = "continuous",
+                    sampling = "log-normal",
+                    values   = c(70, .15))
+)
+
+subs = mk_subjects(object = object,
+                   nsub   = nsub,
+                   covs   = covs)
+
+head(subs$subjects)
+
+rules = list(
+  dose = list(
+    condition = "TRUE",
+    action    = list(
+      type  = "dose",
+      state     = "central",
+      values    = "c(1)",
+      times     = "c(0)",
+      durations = "c(0)")
+    )
+)
+
+# We evaulate the rules for dosing at time 0
+eval_times =  0
+
+# Stop 2 months after the last dose
+output_times = seq(0, 56, 1)
+
+# This runs the rule-based simulations
+simres =
+  simulate_rules(
+    object        = object,
+    subjects      = subs[["subjects"]],
+    eval_times    = eval_times,
+    output_times  = output_times,
+    rules         = rules)
+
+# First subject data:
+sub_1 = simres$simall[simres$simall$id == 1, ]
+
+# First subjects events
+evall = as.data.frame(simres$evall)
+ev_sub_1 = evall[evall$id ==1, ]
+
+# All of the simulation data
+simall = simres$simall
+simall$id = as.factor(simall$id)
+
+# Timecourse
+psim =
+  plot_sr_tc(
+    sro    = simres,
+    dvcols = "Cc")
+psim$fig
+
+# Events
+pev =
+  plot_sr_ev(
+    sro    = simres,
+    ylog   = FALSE)
+pev$fig
+
+}
+}
 }
 \seealso{
+\code{vignette("clinical_trial_simulation", package = "ruminate")}
+
 \code{vignette("clinical_trial_simulation", package = "ruminate")}
 }

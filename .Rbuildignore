@@ -15,3 +15,5 @@ README.RMD
 vignettes/transient/*
 check_depsonly.R
 .vscode
+tests/testing
+tests/testing/*

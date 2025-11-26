@@ -216,7 +216,7 @@ if(formods::is_installed("readxl")){
 
   # Generating figures of indiviudal profiles
   figure_ind_obs = mk_figure_ind_obs(
-    conc_DS,
+    nca_res,
     time_units = "day", 
     conc_units = "ng/mL", 
     col_map    = col_map, 

@@ -5,6 +5,8 @@
 \title{Extracts Timecourse and Merges Covariates}
 \usage{
 fetch_rxtc(rx_details, sim)
+
+fetch_rxtc(rx_details, sim)
 }
 \arguments{
 \item{rx_details}{Output of \code{fetch_rxinfo()}}
@@ -13,8 +15,13 @@ fetch_rxtc(rx_details, sim)
 }
 \value{
 Dataframe of the simulated time course.
+
+Dataframe of the simulated time course.
 }
 \description{
+Takes the output of \code{rxSolve()} and merges in any missing
+covariates that are present in params but not in sim
+
 Takes the output of \code{rxSolve()} and merges in any missing
 covariates that are present in params but not in sim
 }

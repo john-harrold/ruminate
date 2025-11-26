@@ -13,7 +13,7 @@ points based on the last observation of the user."><meta property="og:image" con
 
     <a class="navbar-brand me-2" href="../index.html">ruminate</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -262,6 +262,20 @@ alter within the “manual”action type (ud-user defined, history).</p></li>
 given id and state. For example for the current <code>id</code> and the state
 <code>Ac</code> you would do the following:</p></li>
 </ul><p></p><div class="sourceCode r"><pre><code><span><span class="fu">SI_fpd</span><span class="op">(</span>id<span class="op">=</span><span class="va">id</span>, state<span class="op">=</span><span class="st">"Ac"</span><span class="op">)</span></span></code></pre><p></p></div>
+</div>
+
+<div class="section">
+<h5 id="user-defined-code-in-preamble">User-defined code in preamble<a class="anchor" aria-label="anchor" href="#user-defined-code-in-preamble"></a></h5>
+
+
+<p>When calling <code>simulate_subjects()</code> the preamble arugment expects a
+string of text containing evaluble code. If your rules require complex
+logic, you can create user defined functions here. You can call them
+here or in the rules.</p>
+<p>When the preamble is evaluated all of the elements in the
+rule-evaluation environment and the standard functions will be
+available. The preamble is evaluated once before the rules are
+evaluated.</p>
 </div>
 
 

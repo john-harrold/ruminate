@@ -9,7 +9,7 @@ standard values ("intravascular").'><meta property="og:image" content="https://r
 
     <a class="navbar-brand me-2" href="../index.html">ruminate</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -328,7 +328,10 @@ a vector of regular expressions to match.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="va">table_ind_params</span><span class="op">$</span><span class="va">tables</span><span class="op">[[</span><span class="st">"Table 1"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">ft</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in UseMethod("as_PKNCAconc"):</span> no applicable method for 'as_PKNCAconc' applied to an object of class "c('tbl_df', 'tbl', 'data.frame')"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in `[&lt;-`(`*tmp*`, rec_row, , value = structure(list(ID = 1, TIME_DY = 21,     TIME_HR = 504, NTIME_DY = 21, NTIME_HR = 504, TIME = 504,     AMT = 0, DV = 122.9, RECDESC = "C_ng_ml", DOSE = 3e+06, DOSE_STR = "3 mg",     Cohort = "SD 3 mg IV", ROUTE = "intravascular", WT = 67.9,     SUBTYPE = "PT", SEX = "Female", F1 = 0.744, ka = 0.449, CL = 0.25,     Vc = 3.67, Vp = 3.77, Q = 0.325, BM_IC = 1250, kdeg_BM = 0.1,     Emax = 190, EC50 = 300, CMT = "C_ng_ml", DUR = 0, EVID = 0,     NDose = "SD", DOSE_NUM = 1, SUBTYPE_ID = 1, SEX_ID = 1, rmnt_key = "rec_7",     rmnt_flag = "hlex", rmnt_desc = "Observation", rmnt_cens = NA_character_,     rmnt_hlex = TRUE, rmnt_hlin = NA_character_, rmnt_note = "bad point"), row.names = c(NA, -1L), class = c("tbl_df", "tbl", "data.frame"))):</span> Assigned data `*vtmp*` must be compatible with existing data.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Error occurred for column `rmnt_hlex`.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error in `vec_assign()`:</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Can't convert &lt;logical&gt; to &lt;character&gt;.</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

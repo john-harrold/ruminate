@@ -10,7 +10,40 @@ nca_builder(state)
 \item{state}{NCA state from \code{NCA_fetch_state()}}
 }
 \value{
-NCA state with the NCA for the current analysis built.
+NCA state with the NCA for the current analysis built. This defines the following elements of the current analysis:
+\itemize{
+\item{code_sa}   Source code to run the analysis (includes loading packages, data wranling, etc)
+\item{code}      Same as code_sa except it assumes all packages have been loaded
+\item{code_fetch} Runs the analysis assuming all dependent objects like datasets are currently defined in the workspace
+\item{code_components} List of the code components with the following elements:
+\itemize{
+\item{code_previous}          Code from other upstream modules that this analysis depends on (e.g. datasets being loaded and any data wrangling.)
+\item{code_ana_only}          Only the analysis assuming any upstream objects, such as the source dataset, have been defined
+\item{code_fg_ind_obs}        Generate all plots for individual observations
+\item{code_fg_ind_obs_subset} Regenerate a subset of the plots for individual observations
+\item{code_tb_ind_obs}        Generate table of individual observations
+\item{code_tb_ind_obs_flags}  Generate table of flagged points
+\item{code_tb_ind_params}     Generate table of individual parameters
+}
+\item{objs}  Mapping of object generic names to names used by the analysis stored in the "names" element of the following elements:
+\itemize{
+\item{ds}    NCA dataset
+\item{rm}    Route map
+\item{drec}  Dose records
+\item{ints}  Analysis intervals
+\item{dose}  PKNCA dosing object (from: PKNCA::PKNCAdose())
+\item{data}  PKNCA data object (from: PKNCA::PKNCAdata())
+\item{conc}  PKNCA concentration object (from: PKNCA::PKNCAconc())
+\item{res}   NCA results (from: PKNCA::pk.nca)
+\item{ds_flags}         Dataframe containing flagging details
+\item{col_map}          List mapping columns in source dataset to columns needed in PKNCA
+\item{flag_map}         List contianing mapping information from short names used in flagging to other details
+\item{fg_ind_obs}       Figures of individual observations
+\item{tb_ind_obs}       Table(s) of individual observations
+\item{tb_ind_obs_flags} Table(s) of flagged datapoints
+\item{tb_ind_params}    Table(s) of individual parameters
+}
+}
 }
 \description{
 Takes the current analysis in the state object and creates the

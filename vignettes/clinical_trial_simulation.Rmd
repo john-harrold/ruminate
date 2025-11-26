@@ -309,16 +309,31 @@ print(p)
 
 # Example: Manual code evaluation
 
-If you find you need to do something more complicated you can include functions in the preamble and use those functions in the methods above. Alternatively you can create your own code and use the `"manual"` rule type to modify the event table using the objects in the rule evaluation environment above. In the code below we are simply setting a state for the current subject id to a value. 
+If you find you need to do something more complicated you can include functions
+in the preamble and use those functions in the methods above. Alternatively you
+can create your own code and use the `"manual"` rule type to modify the event
+table using the objects in the rule evaluation environment above. In the code
+below we are simply setting a state for the current subject id to a value. Note
+that when you define the events tabel there are a couple things you need to do.
+You need to use the `rbind()` function to append events. You must also specify
+values for all of these columns:
+
+- `cmt`
+- `id`
+- `amt`
+- `time`
+- `evid`
+- `dur`
 
 ```{r echo=TRUE, results=TRUE, eval=FALSE}
 code="
-SI_interval_ev = etRbind(SI_interval_ev,
+SI_interval_ev = rbind(SI_interval_ev,
 et(cmt  = 'Ac',
    id   = id,
    amt  = 10,
+   time = time
    evid = 4,
-   time = time))"
+   dur = 0))"
 
 rules = list(
   manual_example = list(
@@ -343,12 +358,13 @@ simulate_rules(object        = object,
 ```{r echo=FALSE, results=TRUE}
 if(rxode2_found){
 code="
-SI_interval_ev = etRbind(SI_interval_ev,
+SI_interval_ev = rbind(SI_interval_ev,
 et(cmt  = 'Ac',
    id   = id,
    amt  = 10,
+   time = time
    evid = 4,
-   time = time))"
+   dur = 0))"
 
 rules = list(
   manual_example = list(
@@ -369,6 +385,7 @@ simulate_rules(object        = object,
                output_times  = output_times, 
                rules         = rules,
                rx_options    = rx_options)
+
 presim[["exman"]][["simall"]]=simres[["simall"]]  |> dplyr::select(all_of(sim_call_keep)) 
 }
 ```

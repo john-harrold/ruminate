@@ -9,7 +9,7 @@ code to run the analysis"><meta property="og:image" content="https://ruminate.ub
 
     <a class="navbar-brand me-2" href="../index.html">ruminate</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,8 +68,34 @@ code to run the analysis</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>NCA state with the NCA for the current analysis built.</p>
-    </div>
+    <p>NCA state with the NCA for the current analysis built. This defines the following elements of the current analysis:</p><ul><li><p>code_sa   Source code to run the analysis (includes loading packages, data wranling, etc)</p></li>
+<li><p>code      Same as code_sa except it assumes all packages have been loaded</p></li>
+<li><p>code_fetch Runs the analysis assuming all dependent objects like datasets are currently defined in the workspace</p></li>
+<li><p>code_components List of the code components with the following elements:</p><ul><li><p>code_previous          Code from other upstream modules that this analysis depends on (e.g. datasets being loaded and any data wrangling.)</p></li>
+<li><p>code_ana_only          Only the analysis assuming any upstream objects, such as the source dataset, have been defined</p></li>
+<li><p>code_fg_ind_obs        Generate all plots for individual observations</p></li>
+<li><p>code_fg_ind_obs_subset Regenerate a subset of the plots for individual observations</p></li>
+<li><p>code_tb_ind_obs        Generate table of individual observations</p></li>
+<li><p>code_tb_ind_obs_flags  Generate table of flagged points</p></li>
+<li><p>code_tb_ind_params     Generate table of individual parameters</p></li>
+</ul></li>
+<li><p>objs  Mapping of object generic names to names used by the analysis stored in the "names" element of the following elements:</p><ul><li><p>ds    NCA dataset</p></li>
+<li><p>rm    Route map</p></li>
+<li><p>drec  Dose records</p></li>
+<li><p>ints  Analysis intervals</p></li>
+<li><p>dose  PKNCA dosing object (from: PKNCA::PKNCAdose())</p></li>
+<li><p>data  PKNCA data object (from: PKNCA::PKNCAdata())</p></li>
+<li><p>conc  PKNCA concentration object (from: PKNCA::PKNCAconc())</p></li>
+<li><p>res   NCA results (from: PKNCA::pk.nca)</p></li>
+<li><p>ds_flags         Dataframe containing flagging details</p></li>
+<li><p>col_map          List mapping columns in source dataset to columns needed in PKNCA</p></li>
+<li><p>flag_map         List contianing mapping information from short names used in flagging to other details</p></li>
+<li><p>fg_ind_obs       Figures of individual observations</p></li>
+<li><p>tb_ind_obs       Table(s) of individual observations</p></li>
+<li><p>tb_ind_obs_flags Table(s) of flagged datapoints</p></li>
+<li><p>tb_ind_params    Table(s) of individual parameters</p></li>
+</ul></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -125,20 +151,20 @@ code to run the analysis</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DM:  - url added: https://raw.githubusercontent.com/john-harrold/formods/refs/heads/master/inst/test_data/SDTM_DM.csv</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: url added: https://raw.githubusercontent.com/john-harrold/formods/refs/heads/master/inst/test_data/SDTM_DM.csv</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: loading element idx: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: 1f770fa2a631ddd1e582239c7468e7d6</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: ec605cad36bca1397aac8e6263ca3d5c</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: a260f0653846f780df917cbe451fdbc4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: dabc19da05e7d47bad63339c834161f2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: added element idx: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: loading element idx: 2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: 145670650bc0b11b7fa4497a414fcb42</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: 6d32ea85031e868945bff61827314415</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: b178245c9364ab447764f6deef017d39</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: fe31b733c6fdc89cf5f4a80dbee27973</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: added element idx: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: loading element idx: 3</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: 9659973dc9c99419e06584dc65d80a1f</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: 4e5de0f2b871560efae429c4742743a8</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: 0a3544f619b2e4fbf2eafa8d80bd9094</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: 6e896c7d9a19df9cc1fea27b6defde4f</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: added element idx: 3</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: loading element idx: 4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: 7511370eefdfd60d83b1284617cfc9d1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: f9c9070afe50188385d3b077596599a7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: ds checksum updated: 06e8bf9f031785dd7b418760b4deb6e0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module checksum updated: 036132e0e5cfabc5f01966324c713027</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: added element idx: 4</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DM: module isgood: TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → DW: including file</span>
@@ -272,8 +298,8 @@ code to run the analysis</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:87e9bf7cae52913d38f093b2a7e3698c</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: NCA_add_int: append</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: analysis fresh flag set to FALSE</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: analysis checksum updated:61ef29d35c2ad127f4d8408129938dfd</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:6ba7b094c1b57d093f0d762c6c2ec855</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: analysis checksum updated:119a2d1a02bbcafaba53781ddb0ec701</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module checksum updated:eca633c366f3787eed85f5bea80e8cf8</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: added element idx: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → NCA: module isgood: TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → # preload_complete is good: TRUE ------------------------------------------</span>

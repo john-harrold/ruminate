@@ -412,7 +412,9 @@ simulate_rules <- function(object,
               # This should always be one row, but just in case we check and throw
               # a flag if something went wrong.
               if(nrow(sub_state) == 1){
-                for(rule_id in names(rules)){
+
+                  # First we evaluate the inititialization and preamble stuff
+
                   # This is the snapshot of the current users simulation state at
                   # the evaluation point
                   tc_env = as.list(sub_state)
@@ -436,8 +438,22 @@ simulate_rules <- function(object,
                   tc_env[["SI_ev_history"]] = ev_history
 
                   cmd     = paste0(c(cmd_init,
-                                     preamble,
-                                     paste0("condition = ", rules[[rule_id]][["condition"]]), collapse="\n"))
+                                     preamble))
+                  tcres_init =
+                    formods::FM_tc(tc_env  = tc_env,
+                          capture = c(),
+                          cmd     = cmd)
+                for(rule_id in names(rules)){
+
+                  # The try/catch environment first picks up everything from the initilization above
+                  tc_env = tcres_init[["capture"]]  
+
+                  # Next we update those components that can change within the
+                  # loop evaluating the rules:
+                  tc_env[["SI_ud_history"]]  = ud_history
+                  tc_env[["SI_interval_ev"]] = interval_ev
+
+                  cmd   =  paste0("condition = ", rules[[rule_id]][["condition"]])
                   tcres =
                     formods::FM_tc(tc_env  = tc_env,
                           capture = c("condition"),

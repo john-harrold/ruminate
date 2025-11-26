@@ -3653,7 +3653,11 @@ NCA_fetch_state = function(id, input, session,
 
         # Rebuilding the figure to incorporate any flag changes:
         formods::FM_le(state, "rebuilding fg_ind_obs_subset")
-        state = run_nca_components(state, "fg_ind_obs_subset")
+
+        # JMH updaing NCA based on manual point selection
+        # First update analysis
+        # Then update figures
+        state = run_nca_components(state, components = c("nca_update", "fg_ind_obs_subset"))
 
         # Setting the good status to bad to indicate that we need to update
         # the current analysis:
@@ -3661,7 +3665,6 @@ NCA_fetch_state = function(id, input, session,
         current_ana[["isfresh"]] = FALSE
         state = NCA_set_current_ana(state, current_ana)
         formods::FM_le(state, "analysis fresh flag set to FALSE")
-
       }
     }
   }
@@ -5426,8 +5429,8 @@ flag_nca_ds  = function(DS       = NULL,
     dplyr::mutate(rmnt_flag = "obs")                               |>   # By default everything is an observation
     dplyr::mutate(rmnt_desc = flag_map[["obs"]][["description"]])  |>
     dplyr::mutate(rmnt_cens = NA_character_)                       |>   # By default no censoring
-    dplyr::mutate(rmnt_hlex = FALSE)                               |>   # By default no exclusions for  half-life calculations
-    dplyr::mutate(rmnt_hlin = NA)                                  |>   # By default no inclusions for  half-life calculations
+    dplyr::mutate(rmnt_hlex = as.logical(NA_character_))           |>   # By default no exclusions for  half-life calculations
+    dplyr::mutate(rmnt_hlin = as.logical(NA_character_))           |>   # By default no inclusions for  half-life calculations
     dplyr::mutate(rmnt_note = "")                                  |>   # By default no notes.
     dplyr::mutate(rmnt_flag = ifelse(.data[[col_conc]] == 0,
                                      "blq",
@@ -5910,7 +5913,40 @@ current_ana}
 #'@description Takes the current analysis in the state object and creates the
 #'code to run the analysis
 #'@param state NCA state from \code{NCA_fetch_state()}
-#'@return NCA state with the NCA for the current analysis built.
+#'@return NCA state with the NCA for the current analysis built. This defines the following elements of the current analysis:
+#' \itemize{
+#'  \item{code_sa}   Source code to run the analysis (includes loading packages, data wranling, etc)
+#'  \item{code}      Same as code_sa except it assumes all packages have been loaded
+#'  \item{code_fetch} Runs the analysis assuming all dependent objects like datasets are currently defined in the workspace
+#'  \item{code_components} List of the code components with the following elements:
+#'   \itemize{
+#'     \item{code_previous}          Code from other upstream modules that this analysis depends on (e.g. datasets being loaded and any data wrangling.)
+#'     \item{code_ana_only}          Only the analysis assuming any upstream objects, such as the source dataset, have been defined 
+#'     \item{code_fg_ind_obs}        Generate all plots for individual observations
+#'     \item{code_fg_ind_obs_subset} Regenerate a subset of the plots for individual observations 
+#'     \item{code_tb_ind_obs}        Generate table of individual observations     
+#'     \item{code_tb_ind_obs_flags}  Generate table of flagged points
+#'     \item{code_tb_ind_params}     Generate table of individual parameters 
+#'   }
+#'  \item{objs}  Mapping of object generic names to names used by the analysis stored in the "names" element of the following elements:
+#'   \itemize{
+#'     \item{ds}    NCA dataset 
+#'     \item{rm}    Route map
+#'     \item{drec}  Dose records           
+#'     \item{ints}  Analysis intervals
+#'     \item{dose}  PKNCA dosing object (from: PKNCA::PKNCAdose())
+#'     \item{data}  PKNCA data object (from: PKNCA::PKNCAdata())
+#'     \item{conc}  PKNCA concentration object (from: PKNCA::PKNCAconc())
+#'     \item{res}   NCA results (from: PKNCA::pk.nca)
+#'     \item{ds_flags}         Dataframe containing flagging details       
+#'     \item{col_map}          List mapping columns in source dataset to columns needed in PKNCA         
+#'     \item{flag_map}         List contianing mapping information from short names used in flagging to other details
+#'     \item{fg_ind_obs}       Figures of individual observations      
+#'     \item{tb_ind_obs}       Table(s) of individual observations      
+#'     \item{tb_ind_obs_flags} Table(s) of flagged datapoints
+#'     \item{tb_ind_params}    Table(s) of individual parameters
+#'   }
+#' }
 #'@examples
 #'# We need a module variables to be defined
 #' sess_res = NCA_test_mksession()
@@ -5928,13 +5964,19 @@ nca_builder = function(state){
 
   # Defins the analysis options
   code_ana_options   = c()
+
   # Processes the dataset and extracts dosing.
   code_ds_dosing     = c()
+
+  # Everything up to datat going into PKNCA
+  code_pknca_data    = c()
+
   # Building the PKNCA objects and running the analysi
   code_pknca         = c()
 
-
   code_ana_only             = ""
+  # runs update when points have been flagged manually
+  code_update_ana           = ""
   code_previous             = ""
   code_fetch                = ""
   code_tb_ind_obs           = ""
@@ -6256,7 +6298,7 @@ nca_builder = function(state){
       }
     }
 
-    code_pknca=c(code_pknca,
+    code_pknca_data=c(code_pknca_data,
       "",
       "# NCA concentration object",
       paste0(nca_conc_object_name, " = ", "PKNCA::PKNCAconc("),
@@ -6274,7 +6316,7 @@ nca_builder = function(state){
 
     # Building out the units component
     if(current_ana[["include_units"]]){
-    code_pknca=c(code_pknca,
+    code_pknca_data=c(code_pknca_data,
       "# NCA units table",
       paste0( nca_units_object_name, " = ", "PKNCA::pknca_units_table("),
       paste0( '  concu   = "', current_ana[["units_conc"]], '", '),
@@ -6325,7 +6367,7 @@ nca_builder = function(state){
       }
     }
 
-    code_pknca = c(code_pknca,
+    code_pknca_data = c(code_pknca_data,
       "# Dataframe containing the analysis intervals",
       paste0(nca_ints_object_name, " = "),
       "  data.frame("
@@ -6340,7 +6382,7 @@ nca_builder = function(state){
         comma_str = ""
       }
 
-      code_pknca = c(code_pknca,
+      code_pknca_data = c(code_pknca_data,
 
 
       paste0(
@@ -6350,7 +6392,7 @@ nca_builder = function(state){
 
     }
 
-    code_pknca = c(code_pknca,
+    code_pknca_data = c(code_pknca_data,
       "  )"
       )
     #--------------------------
@@ -6366,7 +6408,7 @@ nca_builder = function(state){
         paste0("  units = ", nca_units_object_name)
       )
     }
-    code_pknca = c(code_pknca,
+    code_pknca_data = c(code_pknca_data,
       "",
       "# Pulling everything together to create the data object.",
       paste0(
@@ -6377,6 +6419,7 @@ nca_builder = function(state){
         ")"
         )
       )
+
 
     # Running the NCA
     code_pknca = c(code_pknca,
@@ -6420,7 +6463,7 @@ nca_builder = function(state){
       "",
       "# Generating figures of indiviudal profiles",
       paste0(nca_fg_ind_obs_object_name, " = mk_figure_ind_obs("),
-      paste0(nca_ds_object_name, ", "),
+      paste0("  nca_res    = ", nca_res_object_name, ", "),
       paste0("  time_units = ", deparse(time_units), ", "),
       paste0("  conc_units = ", deparse(conc_units), ", "),
       paste0("  col_map    = ", nca_col_map_object_name, ", "),
@@ -6465,23 +6508,33 @@ nca_builder = function(state){
       paste0("  digits       = ",  state[["MC"]][["reporting"]][["digits"]]   ,','),
       paste0('  mult_str     = "', state[["MC"]][["reporting"]][["mult_str"]] ,'")'))
 
-    # Working out the little code elements:
+    # This runs the analysis 
     code_ana_only      = paste(c(code_ana_options,
                                  code_ds_dosing,
+                                 code_pknca_data,
                                  code_pknca),
-                               collapse="\n")
+                                 collapse="\n")
 
-    # JMH I don't think code_ana_options and code_ds_dosing are needed here. 
-    # Commenting them out on 2025.08.03 
+
+    # JMH notes:
+    # Chop code_pknca up into pieces
+    # Need to separate out the creation of the dataset to use in update
+    # code_update = c()
+    # NCA_1_res_ud = update(NCA_1_res, data=NCA_1_data)
+
+    code_update_ana = paste(c(code_ana_options,
+                               code_ds_dosing,
+                               code_pknca_data,
+                               paste0( nca_res_object_name, " = update(", nca_res_object_name ,", ", "data = ",nca_data_object_name, ")")
+                              ),
+                                 collapse="\n")
+
     code_fg_ind_obs_all = paste(c(
-                      # code_ana_options,
-                      # code_ds_dosing,
                         code_fg_ind_obs_all), collapse="\n")
 
-    code_fg_ind_obs_subset = paste(c(
-                        code_ana_options,
-                        code_ds_dosing,
-                        code_fg_ind_obs_subset), collapse="\n")
+    # JMH  Figure out subset here with the new update option
+    #browser()
+    code_fg_ind_obs_subset = paste(c( code_fg_ind_obs_subset), collapse="\n")
 
     code_tb_ind_obs_sa = paste(c(code_ana_options,
                                  code_ds_dosing,
@@ -6495,6 +6548,7 @@ nca_builder = function(state){
     code_previous      = ds[["code"]]
     code               = paste(c(code_previous,
                                  code_ana_only,
+                                 code_update_ana,
                                  code_fg_ind_obs_all,
                                  code_tb_ind_obs,
                                  code_tb_ind_obs_flags,
@@ -6546,6 +6600,7 @@ nca_builder = function(state){
   current_ana[["code_fetch"]]        = code_fetch
   current_ana[["code_components"]]   = list(
     code_previous             = code_previous,
+    code_update_ana           = code_update_ana,
     code_ana_only             = code_ana_only,
     code_fg_ind_obs           = code_fg_ind_obs_all,
     code_fg_ind_obs_subset    = code_fg_ind_obs_subset,
@@ -6629,6 +6684,8 @@ run_nca_components = function(
   #   - any messages that were generated
   state = nca_builder(state)
 
+  isgood = TRUE
+
   #valid_components = c("nca", "fg_ind_obs", "tb_ind_obs", "tb_ind_params")
 
   # Pulling out the current analysis to use and update below
@@ -6689,6 +6746,8 @@ run_nca_components = function(
             nca_run_res[["capture"]][[  current_ana[["objs"]][[obs_sn]][["name"]]  ]]
           }
 
+          FM_le(state, "nca run successful")
+
           # resetting the freshness flag
           current_ana[["isfresh"]] = TRUE
 
@@ -6697,8 +6756,54 @@ run_nca_components = function(
           # user:
           msgs = c(msgs, nca_run_res[["msgs"]] )
 
+          FM_le(state, "nca run failed")
           # We flag the analysis as bad:
           current_ana[["isgood"]] = FALSE
+        }
+      }
+    }
+
+    # This will update the analysis with changes to manual flags
+    if("nca_update" %in% components){
+      if(current_ana[["isgood"]]){
+        # Source to run
+        cmd = current_ana[["code_components"]][["code_update_ana"]]
+
+        # This is the name and value of the current analysis:
+        current_nca_ana_name  = current_ana[["objs"]][["res"]][["name"]]
+        current_nca_ana_value = current_ana[["objs"]][["res"]][["value"]]
+
+        # NCA environment environment:
+        tc_env = list()
+        tc_env[[dsview]]     = DS
+        tc_env[["rpt"]]      = state[["NCA"]][["docx_rpt"]]
+        tc_env[["NCA_nps"]]  = state[["NCA"]][["nca_parameters"]][["summary"]]
+        tc_env[[current_nca_ana_name]] = current_nca_ana_value
+
+        # This will caputre the analysis after it has been updated
+        capture = current_nca_ana_name
+
+        # Running the analysis and trapping any errors
+        nca_run_res = formods::FM_tc(cmd, tc_env, capture)
+
+        if(nca_run_res[["isgood"]]){
+          # Saving the updated analysis results 
+          current_ana[["objs"]][["res"]][["value"]] =  
+            nca_run_res[["capture"]][[ current_nca_ana_name ]]
+
+          # resetting the freshness flag
+          current_ana[["isfresh"]] = TRUE
+
+          FM_le(state, "nca updated run successful")
+
+        } else {
+          # If the run failed we capture the error messages to be passed back to the
+          # user:
+          msgs = c(msgs, nca_run_res[["msgs"]] )
+
+          FM_le(state, "nca updated run failed")
+
+          isgood = FALSE
         }
       }
     }
@@ -6739,9 +6844,11 @@ run_nca_components = function(
                                           reset_all = TRUE,
                                           obj       = "tb_ind_params",
                                           list_name = "tables"))
+
     for(fig_tab in names(fig_tabs)){
-      if(current_ana[["isgood"]]){
+      if(current_ana[["isgood"]] & isgood){
         if(fig_tab %in% components){
+
 
           # Object name generated when running the code:
           obj_name = fig_tabs[[fig_tab]][["obj"]]
@@ -6764,7 +6871,6 @@ run_nca_components = function(
             tc_env[[  current_ana[["objs"]][[obs_sn]][["name"]]  ]] =
             current_ana[["objs"]][[obs_sn]][["value"]]
           }
-          #message(paste0("building :", fig_tab))
 
           # Running the table or figure generation code:
           nca_run_res = formods::FM_tc(cmd, tc_env, capture)
@@ -6841,7 +6947,7 @@ run_nca_components = function(
 
       # If we encounter a failure anywhere above we attach a generic message
       # about the current figure or table
-      if(!current_ana[["isgood"]]){
+      if(!current_ana[["isgood"]] | !isgood){
         err_msgs = paste0("Unable to create: ", fig_tab, " see above for details.")
         msgs = c(msgs, err_msgs)
       }
@@ -6853,7 +6959,7 @@ run_nca_components = function(
 
 
   #If there is something wrong we set that in the messages
-  if(!current_ana[["isgood"]]){
+  if(!current_ana[["isgood"]] | !isgood){
     state = formods::FM_set_ui_msg(state, msgs)
     if(verbose){
       formods::FM_le(state, msgs, entry_type="danger")
@@ -6867,22 +6973,6 @@ run_nca_components = function(
   state = NCA_set_current_ana(state, current_ana)
 
   state = NCA_update_checksum(state)
-
-# JMH Moving checksum calcualtion into the NCA_set_current_ana and NCA_update_checksum
-# 2025.08.03
-# # Setting the analysis checksum based on the objs portion.
-# current_ana[["checksum"]] = digest::digest(current_ana[["objs"]], algo=c("md5"))
-# state = NCA_update_checksum(state)
-# Moving checksum updating to a separate function
-# # Creating a checksum for the entire module:
-# all_checksum = ":"
-# for(ana_id in names(state[["NCA"]][["anas"]])){
-#   all_checksum = paste0(all_checksum, ana_id, ":", state[["NCA"]][["anas"]][[ana_id]][["checksum"]], ":")
-# }
-# state[["NCA"]][["checksum"]] = digest::digest(all_checksum, algo=c("md5"))
-# if(verbose){
-#   formods::FM_le(state, paste0("module checksum updated:", state[["NCA"]][["checksum"]]))
-# }
 
   state}
 
@@ -7292,7 +7382,7 @@ mk_table_ind_obs_flags = function(
   # This is the original dataset along with what looks like
   # some extra columns added by PKNCA
   # raw_data = dplyr::as_tibble(as.data.frame(nca_res[["data"]][["conc"]]))
-  raw_data =  as.data.frame(as_PKNCAconc(nca_res))
+  raw_data =  as.data.frame(PKNCA::as_PKNCAconc(nca_res))
 
 
   all_data = dplyr::tibble(
@@ -7486,7 +7576,7 @@ mk_figure_ind_obs = function(
   only_figs       = NULL){
 
   # Extracting the original data set from the PKNCA results
-  ana_ds =  as.data.frame(as_PKNCAconc(nca_res))
+  ana_ds =  as.data.frame(PKNCA::as_PKNCAconc(nca_res))
 
   if(conc_units == ""){
     OBS_LAB  = stringr::str_replace(OBS_LAB,  "===CONCUNITS===", "")

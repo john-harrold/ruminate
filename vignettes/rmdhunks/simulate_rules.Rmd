@@ -124,6 +124,16 @@ at each evaluation point:
 SI_fpd(id=id, state="Ac")
 ```
 
+#### User-defined code in preamble
+
+When calling `simulate_subjects()` the preamble arugment expects a string of
+text containing evaluble code. If your rules require complex logic, you can
+create user defined functions here. You can call them here or in the rules. 
+
+When the preamble is evaluated all of the elements in the rule-evaluation
+environment and the standard functions will be available. The preamble is
+evaluated once before the rules are evaluated. 
+
 ### Time scales
 
 You can include columns in your output for different time scales if you wish.

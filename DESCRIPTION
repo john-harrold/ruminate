@@ -50,6 +50,6 @@ Suggests:
   testthat (>= 3.0.0),
   ubiquity
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Config/testthat/edition: 3
 VignetteBuilder: knitr

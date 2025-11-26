@@ -11,6 +11,14 @@ rx2other(
   export_name = "my_model",
   export_path = tempfile(pattern = "dir")
 )
+
+rx2other(
+  object,
+  out_type = "nonmem",
+  dataset = NULL,
+  export_name = "my_model",
+  export_path = tempfile(pattern = "dir")
+)
 }
 \arguments{
 \item{object}{rxode2 model object}
@@ -40,8 +48,35 @@ format:
 \item{contents:} Contents of the file.
 }
 }
+
+List with the following elements:
+\itemize{
+\item{isgood:}     Return status of the function.
+\item{msgs:}       Error or warning messages if any issues were encountered.
+\item{files:}      If succesful this will contain a list with an entry for
+each file generated to support the requested format.
+the current file format. For example if "nonmem" was
+selected this will include elements for "ctl" and
+"csv". Each of these are lists with the following
+format:
+\itemize{
+\item{fn:}       Exported file name
+\item{fn_full:}  Exported file name with the full path.
+\item{contents:} Contents of the file.
+}
+}
 }
 \description{
+If you have an rxode2 or nlmixr2 model object you can use this
+function to translate that object into other formats. See output_type below
+for the allowed formats.
+
+In order to do this you need at least one between-subject variability term
+and one endpoint. If these are missing then dummy values will be added. The
+dummy values for between-subject variablitiy are IIV will be
+\code{POP_RUMINATE}, \code{TV_RUMINATE}, and \code{ETA.RUMINATE}. The dummy
+terms for endpoints are \code{OUT_RUMINATE} and \code{add.OUT_RUMINATE}.
+
 If you have an rxode2 or nlmixr2 model object you can use this
 function to translate that object into other formats. See output_type below
 for the allowed formats.
@@ -55,8 +90,41 @@ terms for endpoints are \code{OUT_RUMINATE} and \code{add.OUT_RUMINATE}.
 \details{
 Known issues: If you have specified bioavailability in the model, it will
 fail on the Monolix conversion.
+
+Known issues: If you have specified bioavailability in the model, it will
+fail on the Monolix conversion.
 }
 \examples{
+
+library(ruminate)
+if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){
+ # First create an rxode2 model:
+ library(rxode2)
+ one.compartment <- function() {
+   rxode2::ini({
+     tka <- log(1.57); label("Ka")
+     tcl <- log(2.72); label("Cl")
+     tv <- log(31.5); label("V")
+     eta.ka ~ 0.6
+     eta.cl ~ 0.3
+     eta.v ~ 0.1
+     add.sd <- 0.7
+   })
+   # and a model block with the error specification and model specification
+   rxode2::model({
+     ka <- exp(tka + eta.ka)
+     cl <- exp(tcl + eta.cl)
+     v <- exp(tv + eta.v)
+     d/dt(depot) <- -ka * depot
+     d/dt(center) <- ka * depot - cl / v * center
+     cp <- center / v
+     cp ~ add(add.sd)
+   })
+ }
+
+ nmout = rx2other(one.compartment, out_type="nonmem")
+
+}
 
 library(ruminate)
 if( Sys.getenv("ruminate_rxfamily_found") == "TRUE"){

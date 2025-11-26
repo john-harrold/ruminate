@@ -225,6 +225,19 @@ given id and state. For example for the current \code{id} and the state
 }\if{html}{\out{</div>}}
 }
 
+\subsection{User-defined code in preamble}{
+
+When calling \code{simulate_subjects()} the preamble arugment expects a
+string of text containing evaluble code. If your rules require complex
+logic, you can create user defined functions here. You can call them
+here or in the rules.
+
+When the preamble is evaluated all of the elements in the
+rule-evaluation environment and the standard functions will be
+available. The preamble is evaluated once before the rules are
+evaluated.
+}
+
 }
 
 \subsection{Time scales}{

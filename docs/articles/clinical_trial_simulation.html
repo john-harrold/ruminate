@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ruminate</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -304,6 +304,18 @@ following:</li>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">SI_fpd</span><span class="op">(</span>id<span class="op">=</span><span class="va">id</span>, state<span class="op">=</span><span class="st">"Ac"</span><span class="op">)</span></span></code></pre></div>
 </div>
+<div class="section level5">
+<h5 id="user-defined-code-in-preamble">User-defined code in preamble<a class="anchor" aria-label="anchor" href="#user-defined-code-in-preamble"></a>
+</h5>
+<p>When calling <code>simulate_subjects()</code> the preamble arugment
+expects a string of text containing evaluble code. If your rules require
+complex logic, you can create user defined functions here. You can call
+them here or in the rules.</p>
+<p>When the preamble is evaluated all of the elements in the
+rule-evaluation environment and the standard functions will be
+available. The preamble is evaluated once before the rules are
+evaluated.</p>
+</div>
 </div>
 <div class="section level4">
 <h4 id="time-scales">Time scales<a class="anchor" aria-label="anchor" href="#time-scales"></a>
@@ -518,12 +530,13 @@ objects in the rule evaluation environment above. In the code below we
 are simply setting a state for the current subject id to a value.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">code</span><span class="op">=</span><span class="st">"</span></span>
-<span><span class="st">SI_interval_ev = etRbind(SI_interval_ev,</span></span>
+<span><span class="st">SI_interval_ev = rbind(SI_interval_ev,</span></span>
 <span><span class="st">et(cmt  = 'Ac',</span></span>
 <span><span class="st">   id   = id,</span></span>
 <span><span class="st">   amt  = 10,</span></span>
+<span><span class="st">   time = time</span></span>
 <span><span class="st">   evid = 4,</span></span>
-<span><span class="st">   time = time))"</span></span>
+<span><span class="st">   dur = 0))"</span></span>
 <span></span>
 <span><span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  manual_example <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>

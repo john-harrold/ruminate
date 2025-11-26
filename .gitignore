@@ -12,3 +12,5 @@ inst/doc
 check_depsonly.R
 .here
 .vscode
+tests/testing/*
+tests/testing/
