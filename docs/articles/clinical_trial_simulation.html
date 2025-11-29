@@ -527,7 +527,18 @@ functions in the preamble and use those functions in the methods above.
 Alternatively you can create your own code and use the
 <code>"manual"</code> rule type to modify the event table using the
 objects in the rule evaluation environment above. In the code below we
-are simply setting a state for the current subject id to a value.</p>
+are simply setting a state for the current subject id to a value. Note
+that when you define the events tabel there are a couple things you need
+to do. You need to use the <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> function to append
+events. You must also specify values for all of these columns:</p>
+<ul>
+<li><code>cmt</code></li>
+<li><code>id</code></li>
+<li><code>amt</code></li>
+<li><code>time</code></li>
+<li><code>evid</code></li>
+<li><code>dur</code></li>
+</ul>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">code</span><span class="op">=</span><span class="st">"</span></span>
 <span><span class="st">SI_interval_ev = rbind(SI_interval_ev,</span></span>

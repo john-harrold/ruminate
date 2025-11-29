@@ -141,6 +141,7 @@ MC:
   notifications:
     ana_add_int_success: "Interval added: ===DETAILS==="
     reset_manual_flag:   "Manual flags reset for current analysis"
+    manual_flagging_failed: "Manual flagging of data failed, flags not applied"
   # Put different formatting options (widths, heights,
   # shinyWidgets button sizes, etc) here.
   formatting:

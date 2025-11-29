@@ -109,6 +109,7 @@ NCA_Server <- function(id,
       input[["button_ana_copy"]]
       input[["select_current_ana"]]
       input[["switch_ana_fig"]]
+      react_internal[["select"]]
 
       state = NCA_fetch_state(id              = id,
                              input           = input,
@@ -2937,6 +2938,7 @@ NCA_Server <- function(id,
            input$button_ana_del,
            input$button_ana_new,
            input$action_fg_ind_obs_reset_manual,
+           react_internal[["select"]],
            input$button_ana_use_scenario)
     })
     observeEvent(toNotify(), {
@@ -3599,6 +3601,9 @@ NCA_fetch_state = function(id, input, session,
       # Opening up the current analysis
       current_ana = NCA_fetch_current_ana(state)
 
+      # Backing up the current analysis in case manual updating fails below
+      current_ana_backup = current_ana
+
       formods::FM_le(state, "updating manual flag")
       # Getting the current manual flag:
       manual_flag = current_ana[["manual_fg_ind_obs"]]
@@ -3659,12 +3664,21 @@ NCA_fetch_state = function(id, input, session,
         # Then update figures
         state = run_nca_components(state, components = c("nca_update", "fg_ind_obs_subset"))
 
+
         # Setting the good status to bad to indicate that we need to update
         # the current analysis:
         current_ana = NCA_fetch_current_ana(state)
-        current_ana[["isfresh"]] = FALSE
-        state = NCA_set_current_ana(state, current_ana)
-        formods::FM_le(state, "analysis fresh flag set to FALSE")
+        if(current_ana[["isgood"]]){
+          current_ana[["isfresh"]] = FALSE
+          state = NCA_set_current_ana(state, current_ana)
+          formods::FM_le(state, "analysis fresh flag set to FALSE")
+        } else {
+          formods::FM_le(state, "analysis update failed reverting to previous analysis")
+          msgs = c(msgs, current_ana[["msgs"]] )
+          notify_text = state[["MC"]][["notifications"]][["manual_flagging_failed"]]
+          state = formods::FM_set_notification(state, "Manual flagging of data failed", "Manual flags failed", "failure")
+          state = NCA_set_current_ana(state, current_ana_backup)
+        }
       }
     }
   }
@@ -6802,8 +6816,8 @@ run_nca_components = function(
           msgs = c(msgs, nca_run_res[["msgs"]] )
 
           FM_le(state, "nca updated run failed")
-
-          isgood = FALSE
+          current_ana[["isgood"]] = FALSE
+          isgood                  = FALSE
         }
       }
     }
@@ -7552,13 +7566,18 @@ res}
 #'@param scales      String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}
 #'@param nfrows      Number of facet rows per page
 #'@param nfcols      Number of facet cols per page
+#'@param hl_overlay  Set to \code{TRUE} to overlay half-life details on the figures
 #'@param only_figs   Vector of figures to generate (e.g \code{c(1,3)}) to generate 1 and 3 or \code{NULL} to generate all figures
-#'@return List containing the element \code{figures} which is a list of figure
-#'        pages (\code{"Figure 1"}, \code{"Figure 2"}, etc.). Each of these is
-#'        a also a list containing two elements:
+#'@return List containing the following elements
 #'\itemize{
-#' \item{gg:}    A ggplot object for that page.
-#' \item{notes:} Placeholder for future notes, but NULL now.
+#'  \item{isgood:}   Return status of the function.
+#'  \item{msgs:}     Messages to be passed back to the user.
+#' \item{figures:} A list of figure  pages (\code{"Figure 1"}, \code{"Figure 2"}, etc.). Each of these is
+#'        a also a list containing two elements:
+#'  \itemize{
+#'   \item{gg:}    A ggplot object for that page.
+#'   \item{notes:} Placeholder for future notes, but NULL now.
+#'  }
 #'}
 #'@example inst/test_apps/nca_programming_funcs.R
 mk_figure_ind_obs = function(
@@ -7573,7 +7592,11 @@ mk_figure_ind_obs = function(
   scales          = "fixed",
   nfrows          = 4,
   nfcols          = 3,
+  hl_overlay      = TRUE,
   only_figs       = NULL){
+
+  isgood = TRUE
+  msgs = c()
 
   # Extracting the original data set from the PKNCA results
   ana_ds =  as.data.frame(PKNCA::as_PKNCAconc(nca_res))
@@ -7605,6 +7628,38 @@ mk_figure_ind_obs = function(
   cols_keep = unique(c(col_id, col_time, col_conc, col_group, col_analyte,
                        "rmnt_key", "rmnt_flag", "rmnt_desc"))
 
+  # Dataframe of the NCA results
+  nca_res_df = as.data.frame(nca_res)
+
+  # Getting the intervals
+  hl_col_keep = c("tlast", "clast.pred", "half.life", "lambda.z")
+  nca_res_ints = nca_res_df                                                        |> 
+    dplyr::select(dplyr::all_of(c(col_id, "start", "end", "PPTESTCD", "PPORRES"))) |>
+    dplyr::filter(PPTESTCD %in% hl_col_keep)                                       |>
+    tidyr::pivot_wider(values_from="PPORRES", names_from="PPTESTCD")               |>
+    dplyr::distinct(.data[[col_id]], start, end, .keep_all=TRUE)                   |>
+    dplyr::mutate(rmnt_int_str = paste0("int_", start, "_", end))                      
+
+  # Appending half-life cacluation details and retaining that column. 
+  if(hl_overlay){
+    if("half.life" %in% nca_res_df$PPTESTCD){
+      cmd = 'ana_ds[["rmnt_used_hl_calc"]] = PKNCA::get_halflife_points(nca_res)'
+      tc_res = formods::FM_tc(capture=c("ana_ds"), cmd=cmd, tc_env = list(nca_res=nca_res))
+      if(tc_res[["isgood"]]){
+        ana_ds = tc_res[["capture"]][["ana_ds"]]
+        #ana_ds[["rmnt_used_hl_calc"]] = PKNCA::get_halflife_points(nca_res)
+        cols_keep = c(cols_keep, "rmnt_used_hl_calc")
+      } else {
+        hl_overlay=FALSE
+        isgood = FALSE
+        msgs = c(msgs, tc_res[["msgs"]])
+      }
+    } else {
+      hl_overlay = FALSE
+    }
+  }
+
+
   if(log_scale){
     BLQMULT = 0.8
   } else {
@@ -7613,25 +7668,44 @@ mk_figure_ind_obs = function(
 
   # This is the original dataset along with what looks like
   # some extra columns added by PKNCA
-  #browser()
   all_data = ana_ds                                                       |>
     dplyr::select(dplyr::all_of(cols_keep))                               |>
     dplyr::rename(CONC = dplyr::all_of(col_conc))                         |>   # Renaming columns to standard values
     dplyr::rename(TIME = dplyr::all_of(col_time))                         |>
-#   dplyr::rename(ID   = dplyr::all_of(col_id))                           |>
-#   dplyr::group_by(!!as.name(col_group))                                 |>
     dplyr::mutate(NONOBS = min(.data[["CONC"]][.data[["CONC"]]>0 &
                                !is.na(.data[["CONC"]])])*BLQMULT)         |>   # Creating a concentration for non-observations (0 and NA below)
-#   dplyr::ungroup()                                                      |>
     dplyr::mutate(CONC            = ifelse(is.na(.data[["CONC"]]),             # Setting missing values to values for plotting
                                            .data[["NONOBS"]],
-                                           .data[["CONC"]]))       |>
+                                           .data[["CONC"]]))              |>
     dplyr::mutate(CONC            = ifelse(.data[["CONC"]] == 0,               # Setting missing values to values for plotting
                                            .data[["NONOBS"]],
-                                           .data[["CONC"]]))
+                                           .data[["CONC"]]))              |>
+    dplyr::rowwise()                                                      |>
+    dplyr::mutate(
+       rmnt_tmp_match = list(
+          nca_res_ints |>
+            dplyr::filter(TIME>=start, TIME<=end) |>
+            pull(rmnt_int_str)
+       )
+    ) |>
+    mutate(rmnt_int_str = ifelse(length(rmnt_tmp_match) == 0, NA_character_, rmnt_tmp_match[[1]]))|>
+    select(-rmnt_tmp_match)|>
+    dplyr::ungroup()
+
+
+    # If we're doing the hl overlay we need to merge in the hl parameters:
+    if(hl_overlay){
+      by_cols = c(col_id, "rmnt_int_str")
+      all_data = all_data |>
+        dplyr::left_join(nca_res_ints, by=by_cols)
+    }
+
+  # Adding the interval string to the grouping columns
+  col_group = c(col_group, "rmnt_int_str")
 
   # Subjects remaining to plot
   subs_left = unique(all_data[[col_id]])
+
   # Number of subjects per plot:
   subs_pp   = nfrows*nfcols
 
@@ -7689,7 +7763,21 @@ mk_figure_ind_obs = function(
       # This dataset contains the subset of the current subjects for plotting.
       plot_ds = dplyr::filter(all_data, .data[[col_id]] %in% subs_current)
 
+      if(hl_overlay){
+        # Removing any subject with no half-life calc rows and removing any rows not used
+        hl_ds =  plot_ds                                       |>
+          dplyr::mutate(rmnt_hover_text = NA)                  |>
+          dplyr::filter(!is.na(.data[["rmnt_used_hl_calc"]]))  |>
+          dplyr::filter(.data[["rmnt_used_hl_calc"]])          |>
+          dplyr::filter(!is.na(.data[["tlast"]]))              |>
+          dplyr::filter(!is.na(.data[["clast.pred"]]))         |>
+          dplyr::filter(!is.na(.data[["lambda.z"]]))           
 
+        # If nothing is left this will disable the overlay for this figure
+        if(nrow(hl_ds) == 0){
+          hl_overlay = FALSE
+        }
+      }
       #-------------------------------------------
       # Creating label text for the plotly figure
       plot_ds[["rmnt_hover_text"]] = ""
@@ -7711,7 +7799,7 @@ mk_figure_ind_obs = function(
         )
       }
       #-------------------------------------------
-      p = ggplot2::ggplot(data = plot_ds, ggplot2::aes( key   = .data[["rmnt_key"]], text=.data[["rmnt_hover_text"]]))
+      p = ggplot2::ggplot(data = plot_ds, ggplot2::aes( key   = .data[["rmnt_key"]]))
 
       p = p + ggplot2::geom_line( ggplot2::aes(x=.data[["TIME"]],
                                                y=.data[["CONC"]],
@@ -7722,6 +7810,7 @@ mk_figure_ind_obs = function(
         # If there is an analyte we set the shape based on the analyte column
         p = p + ggplot2::geom_point(ggplot2::aes(x     = .data[["TIME"]],
                                                  y     = .data[["CONC"]],
+                                                 text  = .data[["rmnt_hover_text"]],
                                                  shape = !!as.name(col_analyte),
                                                  group = .data[["GROUP_ALL"]],
                                                  color = .data[["rmnt_desc"]]), size=1.8)
@@ -7729,14 +7818,39 @@ mk_figure_ind_obs = function(
       } else {
         p = p + ggplot2::geom_point(ggplot2::aes(x     = .data[["TIME"]],
                                                  y     = .data[["CONC"]],
+                                                 text  = .data[["rmnt_hover_text"]],
                                                  group = .data[["GROUP_ALL"]],
                                                  color = .data[["rmnt_desc"]]), size=1.8)
       }
       p = p + ggplot2::facet_wrap(.~.data[[col_id]], ncol=nfcols, nrow=nfrows, scales=scales)
-      p = p + ggplot2::theme_light()
+
+      if(hl_overlay){
+        # pred = clast.pred*exp(-lambda.z*(time-pred))
+        hl_ds[["PRED"]] =  hl_ds[["clast.pred"]]*exp(-hl_ds[["lambda.z"]]*(hl_ds[["TIME"]]-hl_ds[["tlast"]]))
+        p = p + 
+          ggplot2::geom_line( data=hl_ds,
+          ggplot2::aes(x=.data[["TIME"]],
+                       y=.data[["PRED"]],
+                       group=.data[["GROUP_ALL"]]),
+                       show.legend = FALSE,
+                       linetype='dashed', 
+                       text = "",
+                       color='orange') +
+          ggplot2::geom_point( data=hl_ds,
+          ggplot2::aes(x=.data[["TIME"]],
+                       y=.data[["PRED"]],
+                       group=.data[["GROUP_ALL"]]),
+                       show.legend = FALSE,
+                       size=.4,
+                       text = "",
+                       color='orange')
+
+      }
       if(log_scale){
         p = p + ggplot2::scale_y_log10()
       }
+
+      p = p + ggplot2::theme_light()
       p = p + ggplot2::xlab(TIME_LAB)
       p = p + ggplot2::ylab(OBS_LAB)
       p = p + ggplot2::labs(color="Data Type", shape="Analyte")
@@ -7760,6 +7874,8 @@ mk_figure_ind_obs = function(
   }
 
   res = list(
+    isgood  = isgood,
+    msgs    = msgs,
     figures = figures
   )
 

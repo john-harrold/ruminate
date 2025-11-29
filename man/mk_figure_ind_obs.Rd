@@ -16,6 +16,7 @@ mk_figure_ind_obs(
   scales = "fixed",
   nfrows = 4,
   nfcols = 3,
+  hl_overlay = TRUE,
   only_figs = NULL
 )
 }
@@ -42,15 +43,21 @@ mk_figure_ind_obs(
 
 \item{nfcols}{Number of facet cols per page}
 
+\item{hl_overlay}{Set to \code{TRUE} to overlay half-life details on the figures}
+
 \item{only_figs}{Vector of figures to generate (e.g \code{c(1,3)}) to generate 1 and 3 or \code{NULL} to generate all figures}
 }
 \value{
-List containing the element \code{figures} which is a list of figure
-pages (\code{"Figure 1"}, \code{"Figure 2"}, etc.). Each of these is
+List containing the following elements
+\itemize{
+\item{isgood:}   Return status of the function.
+\item{msgs:}     Messages to be passed back to the user.
+\item{figures:} A list of figure  pages (\code{"Figure 1"}, \code{"Figure 2"}, etc.). Each of these is
 a also a list containing two elements:
 \itemize{
 \item{gg:}    A ggplot object for that page.
 \item{notes:} Placeholder for future notes, but NULL now.
+}
 }
 }
 \description{
