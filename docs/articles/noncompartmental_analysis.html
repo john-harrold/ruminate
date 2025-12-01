@@ -255,12 +255,11 @@ will not be used in the half-life calculation but will otherwise be
 included in the analysis</li>
 </ul>
 <p>Note that if you have an interval/analyte combination with points
-specified to be included in the half-life (<code>hlin</code>), any flags
-for exclusion (<code>hlex</code>) in this interval/analyte combination
-will be ignored. At the scripting level the function
-<code><a href="../reference/flag_nca_ds.html">flag_nca_ds()</a></code> is used to apply flags to the dataset. See
-the examples section of that function documentation for an example of
-how flags are applied.</p>
+specified to be included in the half-life (<code>hlin</code>) and also
+for exclusion (<code>hlex</code>) this will cause an error. At the
+scripting level the function <code><a href="../reference/flag_nca_ds.html">flag_nca_ds()</a></code> is used to apply
+flags to the dataset. See the examples section of that function
+documentation for an example of how flags are applied.</p>
 <p>In the Shiny App manual flags can be applied by:</p>
 <ul>
 <li>First running the analysis with no flags</li>
@@ -271,9 +270,14 @@ how flags are applied.</p>
 <li>Add any notes you want to associated with the flagged records</li>
 <li>Select the points to apply that flag</li>
 </ul>
-<p>Once manual flags have been applied it is necessary to rerun the
-analysis. These points will be carried through to the reported
-tables.</p>
+<p>Note if you try to combind half-life inclusion (<code>hlin</code>)
+and half-life exclusion (<code>hlex</code>), you will get an error. To
+switch from one to the other you need to remove the flagging (“Clear
+Flagging”) of the current points for that subject/analyte first.</p>
+<p>Once manual flags have been applied the figure should update. However
+it is necessary to rerun the analysis for the tables to be consistent.
+The analysis will be highlighted to indicate that the analysis is no
+longer in sync with the options the user has selected.</p>
 </div>
 <div class="section level2">
 <h2 id="nca-details">NCA details<a class="anchor" aria-label="anchor" href="#nca-details"></a>
@@ -576,6 +580,11 @@ Parameter Name is the value shown in the app.</p>
       block: TRUE
     check_fg_ind_obs:
       width: 75
+    check_fg_ind_obs_hl_overlay:
+      width: 75
+      default: TRUE
+      tooltip: "This will overlay half-life details when available."
+      tooltip_position: "right"
     select_ana_interval_range:
       width:  200
     text_ana_interval_start:
@@ -834,6 +843,7 @@ Parameter Name is the value shown in the app.</p>
     select_fg_ind_obs_manual_notes:  # Select predefined or user defined label for flagged data
     select_tb_page:                  "Show Page"
     check_fg_ind_obs_logy:           "Log 10 y-scale"
+    check_fg_ind_obs_hl_overlay:     "Half-life Details"
     switch_ana_include_units:        "Include Units"
     switch_ana_fig:                  NULL
     switch_ana_fig_interactive:      "Interactive"
@@ -1452,7 +1462,7 @@ Parameter Name is the value shown in the app.</p>
       group:       "Other"
     half.life:
       description: NULL
-      text:        NULL
+      text:        "t½"
       md:          "t~half~"
       group:       "Common Parameters"
     kel.iv.last:

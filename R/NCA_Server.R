@@ -317,7 +317,7 @@ NCA_Server <- function(id,
       react_internal[["click"]]
       react_internal[["select"]]
 
-      message("select current ana")
+      #message("select current ana")
 
       state = NCA_fetch_state(id              = id,
                              input           = input,
@@ -1342,9 +1342,20 @@ NCA_Server <- function(id,
                    width    = state[["MC"]][["formatting"]][["check_fg_ind_obs"]][["width"]],
                    value    = current_ana[["fg_ind_obs_logy"]])
 
+        uiele_hl_overlay = shinyWidgets::awesomeCheckbox(
+                   inputId  = NS(id, "check_fg_ind_obs_hl_overlay"),
+                   label    = state[["MC"]][["labels"]][["check_fg_ind_obs_hl_overlay"]],
+                   width    = state[["MC"]][["formatting"]][["check_fg_ind_obs_hl_overlay"]][["width"]],
+                   value    = current_ana[["fg_ind_obs_hl_overlay"]])
+
+        uiele_hl_overlay = formods::FM_add_ui_tooltip(state, uiele_hl_overlay,
+                   tooltip     = state[["MC"]][["formatting"]][["check_fg_ind_obs_hl_overlay"]][["tooltip"]],
+                   position    = state[["MC"]][["formatting"]][["check_fg_ind_obs_hl_overlay"]][["tooltip_position"]])
+
         uiele = tagList(div(style=dvstyle, uiele_save),
                         div(style=dvstyle, uiele_nrow),
                         div(style=dvstyle, uiele_ncol),
+                        div(style=dvstyle, uiele_hl_overlay),
                         div(style=dvstyle, uiele_logy))
       } else {
         uiele = tagList(div(style=dvstyle, uiele_save))
@@ -3577,6 +3588,9 @@ NCA_fetch_state = function(id, input, session,
         current_ana[["isfresh"]] = FALSE
         formods::FM_le(state, "analysis fresh flag set to FALSE")
 
+        # Resetting the manual flags
+        state = NCA_reset_manual_flags(state)
+
         # Storing any changes here:
         state = NCA_set_current_ana(state, current_ana)
 
@@ -3715,17 +3729,7 @@ NCA_fetch_state = function(id, input, session,
       if(is.logical(state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]])){
         if(state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]] == TRUE){
 
-
-          formods::FM_le(state, "removing manual flags")
-
-          # Pulling out the current analysis:
-          current_ana = NCA_fetch_current_ana(state)
-
-          # Zeroing out any manual flags
-          current_ana[["manual_ds_flags"]] = data.frame()
-
-          # Now we save the analysis with the page updated
-          state = NCA_set_current_ana(state, current_ana)
+          state = NCA_reset_manual_flags(state)
 
           # Setting notification
           notify_text = state[["MC"]][["notifications"]][["reset_manual_flag"]]
@@ -3910,6 +3914,10 @@ NCA_fetch_state = function(id, input, session,
 
     # If everything is good up top we add the interval
     if(ADD_INTERVAL){
+
+      # Resetting the manual flags
+      state = NCA_reset_manual_flags(state)
+
       state = NCA_add_int(state=state,
         interval_start = interval_start,
         interval_stop  = interval_stop,
@@ -4110,6 +4118,9 @@ NCA_fetch_state = function(id, input, session,
 
     formods::FM_le(state, "saving changes to current analysis")
 
+    # Resetting the manual flags
+    state = NCA_reset_manual_flags(state)
+
     # Getting the current analysis
     current_ana = NCA_fetch_current_ana(state)
 
@@ -4233,6 +4244,7 @@ NCA_init_state = function(FM_yaml_file, MOD_yaml_file, id, session){
     "tb_ind_params_rpt"              = "tb_ind_params_rpt",
     "tb_sum_params_rpt"              = "tb_sum_params_rpt",
     "check_fg_ind_obs_logy"          = "fg_ind_obs_logy",
+    "check_fg_ind_obs_hl_overlay"    = "fg_ind_obs_hl_overlay",
     "select_ana_source_sampling"     = "sampling",
     "switch_ana_dose_from"           = "dose_from",
     "switch_ana_fig"                 = "fig_type",
@@ -5085,7 +5097,6 @@ NCA_new_ana    = function(state){
   first_flag_name = names(state[["MC"]][["formatting"]][["flags"]])[1]
   first_flag      = state[["MC"]][["formatting"]][["flags"]][[first_flag_name]][["flag"]]
 
-
   nca_def =
     list(key                     = nca_id,
          id                      = nca_id,
@@ -5105,6 +5116,7 @@ NCA_new_ana    = function(state){
          manual_notes_fg_ind_obs = c(), 
          reset_manual_fg_ind_obs = c(),
          fg_ind_obs_logy         = TRUE,
+         fg_ind_obs_hl_overlay   = state[["MC"]][["formatting"]][["check_fg_ind_obs_hl_overlay"]][["default"]],
          fg_ind_obs_rpt          = c(), # These defaults are controlled below based on the yaml
          tb_ind_obs_rpt          = c(), #
          tb_ind_obs_flags_rpt    = c(), #
@@ -6466,8 +6478,10 @@ nca_builder = function(state){
       paste0("  conc_units = ", deparse(conc_units), ", "),
       paste0("  col_map    = ", nca_col_map_object_name, ", "),
       paste0("  flag_map   = ", nca_flag_map_object_name, ", "),
+             "  nps        = NCA_nps, ",
       paste0("  nfrows     = ", current_ana$fg_ind_obs_nrow, ", "),
       paste0("  nfcols     = ", current_ana$fg_ind_obs_ncol, ", "),
+      paste0("  hl_overlay = ", current_ana$fg_ind_obs_hl_overlay, ", "),
       paste0("  log_scale  = ", current_ana$fg_ind_obs_logy),
       paste0(")"))
 
@@ -6482,9 +6496,11 @@ nca_builder = function(state){
       paste0("  conc_units = ", deparse(conc_units), ", "),
       paste0("  col_map    = ", nca_col_map_object_name, ", "),
       paste0("  flag_map   = ", nca_flag_map_object_name, ", "),
+             "  nps        = NCA_nps, ",
       paste0("  nfrows     = ", current_ana$fg_ind_obs_nrow, ", "),
       paste0("  nfcols     = ", current_ana$fg_ind_obs_ncol, ", "),
       paste0("  only_figs  = ", deparse(current_ana$curr_fg_ind_obs), ", "),
+      paste0("  hl_overlay = ", current_ana$fg_ind_obs_hl_overlay, ", "),
       paste0("  log_scale  = ", current_ana$fg_ind_obs_logy),
       paste0(")"))
 
@@ -6963,6 +6979,7 @@ run_nca_components = function(
       # about the current figure or table
       if(!current_ana[["isgood"]] | !isgood){
         err_msgs = paste0("Unable to create: ", fig_tab, " see above for details.")
+        err_msgs = c(err_msgs, "run_nca_components()")
         msgs = c(msgs, err_msgs)
       }
     }
@@ -7562,11 +7579,21 @@ res}
 #'@param conc_units  Concentration units (default \code{""})
 #'@param col_map     List with column mapping details
 #'@param flag_map    List with flag mapping detials
+#'@param digits      Number of significant figures to report (default: 3)
+#'@param nps NCA parameter summary table with the following columns.
+#'   \itemize{
+#'     \item{parameter:}      PKNCA Paramter name.
+#'     \item{text:}           Name used in text output.
+#'     \item{md:}             Name used markdown output.
+#'     \item{latex:}          Name used in latex output.
+#'     \item{description:}    Verbose textual description of the parameter.
+#'   }
 #'@param log_scale   Boolean variable to control y-scale (\code{TRUE}: Log 10, \code{FALSE}: linear)
 #'@param scales      String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}
 #'@param nfrows      Number of facet rows per page
 #'@param nfcols      Number of facet cols per page
 #'@param hl_overlay  Set to \code{TRUE} to overlay half-life details on the figures
+#'@param hl_annotate Template for label when overlaying hal-life information. You can use \code{"===NCAPARAM==="} where NCAPARAM is either "half.life", "r.squared". You can also use \code{"===INT==="} and \code{"===TIMEUNITS==="}
 #'@param only_figs   Vector of figures to generate (e.g \code{c(1,3)}) to generate 1 and 3 or \code{NULL} to generate all figures
 #'@return List containing the following elements
 #'\itemize{
@@ -7588,10 +7615,13 @@ mk_figure_ind_obs = function(
   conc_units      = "",
   col_map         = list(),
   flag_map        = list(),
+  nps             = list(),
   log_scale       = TRUE,
   scales          = "fixed",
+  digits          = 3,
   nfrows          = 4,
   nfcols          = 3,
+  hl_annotate = "===INT===\n===r.squared===\n===half.life=== ===TIMEUNITS===",
   hl_overlay      = TRUE,
   only_figs       = NULL){
 
@@ -7632,7 +7662,7 @@ mk_figure_ind_obs = function(
   nca_res_df = as.data.frame(nca_res)
 
   # Getting the intervals
-  hl_col_keep = c("tlast", "clast.pred", "half.life", "lambda.z")
+  hl_col_keep = c("tlast", "clast.pred", "half.life", "lambda.z", "r.squared")
   nca_res_ints = nca_res_df                                                        |> 
     dplyr::select(dplyr::all_of(c(col_id, "start", "end", "PPTESTCD", "PPORRES"))) |>
     dplyr::filter(PPTESTCD %in% hl_col_keep)                                       |>
@@ -7642,20 +7672,23 @@ mk_figure_ind_obs = function(
 
   # Appending half-life cacluation details and retaining that column. 
   if(hl_overlay){
-    if("half.life" %in% nca_res_df$PPTESTCD){
+    if(all(hl_col_keep %in% nca_res_df$PPTESTCD)){
       cmd = 'ana_ds[["rmnt_used_hl_calc"]] = PKNCA::get_halflife_points(nca_res)'
-      tc_res = formods::FM_tc(capture=c("ana_ds"), cmd=cmd, tc_env = list(nca_res=nca_res))
+      tc_res = formods::FM_tc(capture=c("ana_ds"), cmd=cmd, tc_env = list(nca_res=nca_res, ana_ds=ana_ds))
       if(tc_res[["isgood"]]){
         ana_ds = tc_res[["capture"]][["ana_ds"]]
         #ana_ds[["rmnt_used_hl_calc"]] = PKNCA::get_halflife_points(nca_res)
         cols_keep = c(cols_keep, "rmnt_used_hl_calc")
+        #message("1 true")
       } else {
         hl_overlay=FALSE
         isgood = FALSE
         msgs = c(msgs, tc_res[["msgs"]])
+        #message("1 false")
       }
     } else {
       hl_overlay = FALSE
+      #message("2 false")
     }
   }
 
@@ -7695,6 +7728,7 @@ mk_figure_ind_obs = function(
 
     # If we're doing the hl overlay we need to merge in the hl parameters:
     if(hl_overlay){
+      #message("3 true")
       by_cols = c(col_id, "rmnt_int_str")
       all_data = all_data |>
         dplyr::left_join(nca_res_ints, by=by_cols)
@@ -7765,6 +7799,7 @@ mk_figure_ind_obs = function(
 
       if(hl_overlay){
         # Removing any subject with no half-life calc rows and removing any rows not used
+        #message("4 true")
         hl_ds =  plot_ds                                       |>
           dplyr::mutate(rmnt_hover_text = NA)                  |>
           dplyr::filter(!is.na(.data[["rmnt_used_hl_calc"]]))  |>
@@ -7776,6 +7811,7 @@ mk_figure_ind_obs = function(
         # If nothing is left this will disable the overlay for this figure
         if(nrow(hl_ds) == 0){
           hl_overlay = FALSE
+          #message("5 false")
         }
       }
       #-------------------------------------------
@@ -7825,8 +7861,45 @@ mk_figure_ind_obs = function(
       p = p + ggplot2::facet_wrap(.~.data[[col_id]], ncol=nfcols, nrow=nfrows, scales=scales)
 
       if(hl_overlay){
+        #message("6 true")
         # pred = clast.pred*exp(-lambda.z*(time-pred))
         hl_ds[["PRED"]] =  hl_ds[["clast.pred"]]*exp(-hl_ds[["lambda.z"]]*(hl_ds[["TIME"]]-hl_ds[["tlast"]]))
+        hl_ds = hl_ds  |>
+          dplyr::group_by(.data[["GROUP_ALL"]]) |>
+          dplyr::mutate(rmnt_tint_lab = min(.data[["TIME"]]))  |>
+          dplyr::ungroup()
+
+        hl_ds[["rmnt_hl_annotate"]] = hl_annotate
+
+        #message("7 true")
+
+        # For any parameter in the hl_ds we will populate the rmnt_hl_annotate
+        hl_ds = hl_ds  |>
+        dplyr::mutate(rmnt_hl_annotate = stringr::str_replace_all(
+          string      = .data[["rmnt_hl_annotate"]],
+          pattern     = "===TIMEUNITS===",
+          replacement = time_units 
+          )) |>
+        dplyr::mutate(rmnt_hl_annotate = stringr::str_replace_all(
+          string      = .data[["rmnt_hl_annotate"]],
+          pattern     = "===INT===",
+          replacement = paste0("[", .data[["start"]], ",", .data[["end"]], "]")
+          ))
+        #message("8 true")
+        for(tmppname in  nps$parameter[nps$parameter %in% names(hl_ds)]){
+          #tmp_pattern = paste0("===", pname, "===")
+          tmpptext = nps[nps$parameter == tmppname, ]$text
+          hl_ds = hl_ds  |>
+            dplyr::mutate(rmnt_hl_annotate = stringr::str_replace_all(
+              string      = .data[["rmnt_hl_annotate"]],
+              pattern     = paste0("===", tmppname, "==="),
+              replacement = paste0(tmpptext, ": ", as.character(signif(.data[[tmppname]], digits=digits)))
+              ))
+        }
+        #message("9 true")
+
+
+
         p = p + 
           ggplot2::geom_line( data=hl_ds,
           ggplot2::aes(x=.data[["TIME"]],
@@ -7845,6 +7918,15 @@ mk_figure_ind_obs = function(
                        text = "",
                        color='orange')
 
+        #message("10 true")
+         p = p +
+          geom_label(data=hl_ds, 
+            aes(x=.data[["rmnt_tint_lab"]], 
+                label=.data[["rmnt_hl_annotate"]]),
+                hjust = "left",
+                size = 3,
+                y = Inf, vjust=1) 
+        #message("11 true")
       }
       if(log_scale){
         p = p + ggplot2::scale_y_log10()
@@ -7862,9 +7944,11 @@ mk_figure_ind_obs = function(
       p = p + ggplot2::theme(legend.spacing.x      = unit(.01, "cm"))
       p = p + ggplot2::theme(legend.key.spacing.x  = unit(.01, "cm"))
 
-
       figures[[fig_key]]$gg    = p
       figures[[fig_key]]$notes = NULL
+     #if(hl_overlay){
+     #  browser()
+     #}
 
     }
 
@@ -9061,6 +9145,26 @@ NCA_mk_preload     = function(state){
     yaml_list = yaml_list)
 }
 
+#'@export
+#'@title Reset Manual Flags
+#'@description Resets the manual flags for the current analysis
+#'@param state NCA state from \code{NCA_fetch_state()}
+#'@return state with manual flags reset
+#'@examples
+#' # We need a state object to use below
+#' sess_res = NCA_test_mksession()
+#' state = sess_res$state
+#' state = NCA_reset_manual_flags(state)
+NCA_reset_manual_flags = function(state){
+
+  formods::FM_le(state, "removing manual flags")
+  # Pulling out the current analysis:
+  current_ana = NCA_fetch_current_ana(state)
+  # Zeroing out any manual flags
+  current_ana[["manual_ds_flags"]] = data.frame()
+  # Now we save the analysis with the page updated
+  state = NCA_set_current_ana(state, current_ana)
+state}
 
 #'@export
 #'@title Append Report Elements

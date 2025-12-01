@@ -272,6 +272,11 @@ MC:
       block: TRUE
     check_fg_ind_obs:
       width: 75
+    check_fg_ind_obs_hl_overlay:
+      width: 75
+      default: TRUE
+      tooltip: "This will overlay half-life details when available."
+      tooltip_position: "right"
     select_ana_interval_range:
       width:  200
     text_ana_interval_start:
@@ -530,6 +535,7 @@ MC:
     select_fg_ind_obs_manual_notes:  # Select predefined or user defined label for flagged data
     select_tb_page:                  "Show Page"
     check_fg_ind_obs_logy:           "Log 10 y-scale"
+    check_fg_ind_obs_hl_overlay:     "Half-life Details"
     switch_ana_include_units:        "Include Units"
     switch_ana_fig:                  NULL
     switch_ana_fig_interactive:      "Interactive"
@@ -1148,7 +1154,7 @@ MC:
       group:       "Other"
     half.life:
       description: NULL
-      text:        NULL
+      text:        "t½"
       md:          "t~half~"
       group:       "Common Parameters"
     kel.iv.last:

@@ -12,10 +12,13 @@ mk_figure_ind_obs(
   conc_units = "",
   col_map = list(),
   flag_map = list(),
+  nps = list(),
   log_scale = TRUE,
   scales = "fixed",
+  digits = 3,
   nfrows = 4,
   nfcols = 3,
+  hl_annotate = "===INT===\\n===r.squared===\\n===half.life=== ===TIMEUNITS===",
   hl_overlay = TRUE,
   only_figs = NULL
 )
@@ -35,13 +38,26 @@ mk_figure_ind_obs(
 
 \item{flag_map}{List with flag mapping detials}
 
+\item{nps}{NCA parameter summary table with the following columns.
+\itemize{
+\item{parameter:}      PKNCA Paramter name.
+\item{text:}           Name used in text output.
+\item{md:}             Name used markdown output.
+\item{latex:}          Name used in latex output.
+\item{description:}    Verbose textual description of the parameter.
+}}
+
 \item{log_scale}{Boolean variable to control y-scale (\code{TRUE}: Log 10, \code{FALSE}: linear)}
 
 \item{scales}{String to determine the scales used when faceting. Can be either \code{"fixed"}, \code{"free"}, \code{"free_x"}, or \code{"free_y"}}
 
+\item{digits}{Number of significant figures to report (default: 3)}
+
 \item{nfrows}{Number of facet rows per page}
 
 \item{nfcols}{Number of facet cols per page}
+
+\item{hl_annotate}{Template for label when overlaying hal-life information. You can use \code{"===NCAPARAM==="} where NCAPARAM is either "half.life", "r.squared". You can also use \code{"===INT==="} and \code{"===TIMEUNITS==="}}
 
 \item{hl_overlay}{Set to \code{TRUE} to overlay half-life details on the figures}
 

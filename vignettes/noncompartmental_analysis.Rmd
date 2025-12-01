@@ -229,7 +229,11 @@ It is possible to manually flag data for the following purposes:
 * Specifying half-life: For a given interval/analyte combination only these flagged points will be used to determine the half-life (flag: `hlin`)
 * Exclusion from half-life: Records with this flag (`hlex`) will not be used in the half-life calculation but will otherwise be included in the analysis
 
-Note that if you have an interval/analyte combination with points specified to be included in the half-life (`hlin`), any flags for exclusion (`hlex`) in this interval/analyte combination will be ignored. At the scripting level the function `flag_nca_ds()` is used to apply flags to the dataset. See the examples section of that function documentation for an example of how flags are applied. 
+Note that if you have an interval/analyte combination with points specified to
+be included in the half-life (`hlin`) and also for exclusion (`hlex`) this will
+cause an error.  At the scripting level the function `flag_nca_ds()` is used to
+apply flags to the dataset. See the examples section of that function
+documentation for an example of how flags are applied. 
 
 In the Shiny App manual flags can be applied by:
 
@@ -241,7 +245,15 @@ In the Shiny App manual flags can be applied by:
 * Add any notes you want to associated with the flagged records
 * Select the points to apply that flag
 
-Once manual flags have been applied it is necessary to rerun the analysis. These points will be carried through to the reported tables.
+Note if you try to combind half-life inclusion (`hlin`) and half-life exclusion
+(`hlex`), you will get an error. To switch from one to the other you need to
+remove the flagging ("Clear Flagging") of the current points for that
+subject/analyte first.  
+
+Once manual flags have been applied the figure should update. However it is
+necessary to rerun the analysis for the tables to be consistent. The analysis
+will be highlighted to indicate that the analysis is no longer in sync with the
+options the user has selected.
 
 # NCA details
 
