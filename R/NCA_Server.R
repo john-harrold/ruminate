@@ -7869,6 +7869,32 @@ mk_figure_ind_obs = function(
           dplyr::mutate(rmnt_tint_lab = min(.data[["TIME"]]))  |>
           dplyr::ungroup()
 
+        # Creating a dataset of predictions that is heavily sampled so that it
+        # will be smooth when plotted
+        smooth_cols = c(col_id, "TIME", "GROUP_ALL", "clast.pred", 
+                        "lambda.z", "tlast", "GROUP_ALL", "rmnt_key")
+        hl_ds_smooth = hl_ds                                      |>
+          dplyr::group_by(.data[["GROUP_ALL"]])                   |>
+          dplyr::mutate(tmin = min(.data[["TIME"]]))              |>
+          dplyr::mutate(tmax = max(.data[["TIME"]]))              |>
+          filter(row_number()==1)                                 |>
+          dplyr::group_by(GROUP_ALL) |>
+           # For each group, create a sequence of 100 TIME values
+           summarise(
+             data = list({
+               row <- cur_data() |> slice(1)   # take the first row per group
+               times <- seq(from = row$tmin, to = row$tmax, length.out = 100)
+         
+               # duplicate row 100 times, replace TIME
+               row[rep(1, 100), ] |>  
+                 mutate(TIME = times)
+             }),
+             .groups = "drop"
+           ) |>  
+           tidyr::unnest(data) |>
+           dplyr::select(all_of(smooth_cols))
+        hl_ds_smooth[["PRED"]] =  hl_ds_smooth[["clast.pred"]]*exp(-hl_ds_smooth[["lambda.z"]]*(hl_ds_smooth[["TIME"]]-hl_ds_smooth[["tlast"]]))
+
         hl_ds[["rmnt_hl_annotate"]] = hl_annotate
 
         #message("7 true")
@@ -7897,11 +7923,8 @@ mk_figure_ind_obs = function(
               ))
         }
         #message("9 true")
-
-
-
         p = p + 
-          ggplot2::geom_line( data=hl_ds,
+          ggplot2::geom_line( data=hl_ds_smooth,
           ggplot2::aes(x=.data[["TIME"]],
                        y=.data[["PRED"]],
                        group=.data[["GROUP_ALL"]]),
