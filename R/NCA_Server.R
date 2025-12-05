@@ -3519,7 +3519,9 @@ NCA_fetch_state = function(id, input, session,
       }
 
       # Storing any changes here:
+      message("----> 1")
       state = NCA_set_current_ana(state, current_ana)
+      message("/---> 1")
     }
   }
   #---------------------------------------------
@@ -3551,7 +3553,9 @@ NCA_fetch_state = function(id, input, session,
     }
   }
   # Storing any changes here:
+  message("----> 2")
   state = NCA_set_current_ana(state, current_ana)
+  message("/---> 2")
   #---------------------------------------------
   # Here we're processing any element delete requests
   # - first we only do this if the hot_nca_intervals has been defined
@@ -3592,7 +3596,9 @@ NCA_fetch_state = function(id, input, session,
         state = NCA_reset_manual_flags(state)
 
         # Storing any changes here:
+        message("----> 3")
         state = NCA_set_current_ana(state, current_ana)
+        message("/---> 3")
 
         # Preventing further deletes
         state = formods::set_hold(state)
@@ -3668,7 +3674,9 @@ NCA_fetch_state = function(id, input, session,
 
 
         # Saving the current analysis
+        message("----> 4")
         state = NCA_set_current_ana(state, current_ana)
+        message("/---> 4")
 
         # Rebuilding the figure to incorporate any flag changes:
         formods::FM_le(state, "rebuilding fg_ind_obs_subset")
@@ -3684,14 +3692,18 @@ NCA_fetch_state = function(id, input, session,
         current_ana = NCA_fetch_current_ana(state)
         if(current_ana[["isgood"]]){
           current_ana[["isfresh"]] = FALSE
+          message("---> 5")
           state = NCA_set_current_ana(state, current_ana)
+          message("/--> 5")
           formods::FM_le(state, "analysis fresh flag set to FALSE")
         } else {
           formods::FM_le(state, "analysis update failed reverting to previous analysis")
           msgs = c(msgs, current_ana[["msgs"]] )
           notify_text = state[["MC"]][["notifications"]][["manual_flagging_failed"]]
           state = formods::FM_set_notification(state, "Manual flagging of data failed", "Manual flags failed", "failure")
+          message("---> 6")
           state = NCA_set_current_ana(state, current_ana_backup)
+          message("/--> 6")
         }
       }
     }
@@ -3828,7 +3840,9 @@ NCA_fetch_state = function(id, input, session,
     }
 
     # Now we save the analysis with the page updated
+    message("---> 7")
     state = NCA_set_current_ana(state, current_ana)
+    message("/--> 7")
 
     # Next we need to hold the show page pull down
     state = formods::set_hold(state)
@@ -4029,7 +4043,9 @@ NCA_fetch_state = function(id, input, session,
     # Now we save the copy of the new analysis that has been updated with
     # the elements of the old analysis. This has to be done before we rerun
     # the components below:
+    message("---> 8")
     state = NCA_set_current_ana(state, current_ana)
+    message("/--> 8")
 
     # Lastly we need to rebuild the analysis elements so all the id in
     # the generated code are correct. It's a little slow but it ensures the
@@ -4164,7 +4180,9 @@ NCA_fetch_state = function(id, input, session,
 
 
     # Saving changes to the current analysis
+    message("---> 9")
     state = NCA_set_current_ana(state, current_ana)
+    message("/--> 9")
 
     # Setting holds to ensure any key changes are made
     state = formods::set_hold(state)
