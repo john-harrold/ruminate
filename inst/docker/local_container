@@ -8,6 +8,7 @@ RUN apt-get update && apt-get -y install curl
 RUN apt-get update && apt-get -y install libmpfr6
 RUN apt-get update && apt-get -y install libmpfr-dev
 RUN apt-get update && apt-get -y install vim
+RUN apt-get update && apt-get -y install git
 
 # Install R packages
 RUN curl https://raw.githubusercontent.com/john-harrold/ruminate/main/inst/docker/install_packages.R --output /tmp/install_packages.R

@@ -456,7 +456,7 @@ NCA_Server <- function(id,
         all_choices = state[["NCA"]][["DSV"]][["choices"]]
 
         if(current_ana[["ana_dsview"]] %in% ds_catalog[["object"]]){
-          current_view_id= current_ana[["ana_dsview"]]
+          current_view_id = current_ana[["ana_dsview"]]
         } else {
           current_view_id = ds_catalog[["object"]][1]
           formods::FM_le(state, paste0("ui_nca_curr_views: dataset view missing."   ))
@@ -3283,6 +3283,8 @@ NCA_Server <- function(id,
            input$button_fg_ind_obs_next_pg,
            input$action_fg_ind_obs_reset_manual,
            input$hot_nca_intervals, 
+           input$button_ana_save,    
+           input$button_ana_copy,    
            input$select_current_ana,
            input$select_current_view)
     })
@@ -3486,725 +3488,744 @@ NCA_fetch_state = function(id, input, session,
    msgs = c()
 
   #---------------------------------------------
-  # This will sync the analysis options in the UI to the values in the UI
-  for(ui_name in names(state[["NCA"]][["ui_ana_map"]])){
-    # We only update if there are no holds set:
-    # for the current ui_name
-    if(!formods::fetch_hold(state, ui_name)){
-      # Pulling out the current analysis
-      current_ana = NCA_fetch_current_ana(state)
-
-      # This prevents updating analysis elements if
-      # the ui_element has not yet been created:
-      SAVE_ANA_NAME = FALSE
-      if(length(state[["NCA"]][["ui"]][[ui_name]])>1){
-        SAVE_ANA_NAME = TRUE
-      }else if(state[["NCA"]][["ui"]][[ui_name]] != "" ){
-        SAVE_ANA_NAME = TRUE
-      }
-
-      if(SAVE_ANA_NAME){
-        ana_name = state[["NCA"]][["ui_ana_map"]][[ui_name]]
-        # Messaging detected change
-        if(formods::has_updated(
-             ui_val   = state[["NCA"]][["ui"]][[ui_name]],
-             old_val  = current_ana[[ana_name]],
-             init_val = c(""))){
-
-
-          formods::FM_le(state, paste0("setting analysis: ", ana_name, " = ", paste(state[["NCA"]][["ui"]][[ui_name]], collapse=", ")))
-        }
-
-        current_ana[[ana_name]] = state[["NCA"]][["ui"]][[ui_name]]
-      }
-
-      # Storing any changes here:
-      message("----> 1")
-      state = NCA_set_current_ana(state, current_ana)
-      message("/---> 1")
-    }
-  }
-  #---------------------------------------------
-  #---------------------------------------------
-  # This will sync the nca options in the UI to the values in the state
-  current_ana = NCA_fetch_current_ana(state)
-  for(nca_opt in names(current_ana[["nca_config"]])){
-    # Getting the ui_id for the current option:
-    ui_name = current_ana[["nca_config"]][[nca_opt]][["ui_id"]]
-
-    # We only update the nca option if it exists in the UI
-    if(!is.null(state[["NCA"]][["ui"]][[ui_name]])){
-      # We only update the nca option of there is no hold
+  # We only do the following if the state is good
+  if(state[["NCA"]][["isgood"]]){
+    #---------------------------------------------
+    # This will sync the analysis options in the UI to the values in the UI
+    for(ui_name in names(state[["NCA"]][["ui_ana_map"]])){
+      # We only update if there are no holds set:
+      # for the current ui_name
       if(!formods::fetch_hold(state, ui_name)){
-        if(state[["NCA"]][["ui"]][[ui_name]] != ""){
-
-          # We compare the values in the ui to the nca_config and if they are
-          # different we assign them
-          if(as.character(state[["NCA"]][["ui"]][[ui_name]]) !=
-             as.character(current_ana[["nca_config"]][[nca_opt]][["value"]])){
-
-             # Updating the current analysis with the ui from the state
-             current_ana[["nca_config"]][[nca_opt]][["value"]] =
-               state[["NCA"]][["ui"]][[ui_name]]
-            formods::FM_le(state, paste0("setting NCA option: ", nca_opt, " = ", state[["NCA"]][["ui"]][[ui_name]]))
-          }
-        }
-      }
-    }
-  }
-  # Storing any changes here:
-  message("----> 2")
-  state = NCA_set_current_ana(state, current_ana)
-  message("/---> 2")
-  #---------------------------------------------
-  # Here we're processing any element delete requests
-  # - first we only do this if the hot_nca_intervals has been defined
-  if(!formods::fetch_hold(state,"hot_nca_intervals")){
-    proc_int_del = FALSE
-    if(is.list(state[["NCA"]][["ui"]][["hot_nca_intervals"]])){
-      # - If that's the case we get the data frame for it:
-      hot_df = rhandsontable::hot_to_r(state[["NCA"]][["ui"]][["hot_nca_intervals"]])
-      # - Because the UI initialzes to a "no intervals" message we need
-      # to make sure there is a delete column
-      if("Delete" %in% names(hot_df)){
-        # - lastly we check to see if any have been selected for deletion:
-        if(!any(is.na(hot_df$Delete))){
-          if(any(hot_df$Delete == TRUE)){
-            proc_int_del = TRUE
-          }
-        }
-      }
-
-      if(proc_int_del){
         # Pulling out the current analysis
         current_ana = NCA_fetch_current_ana(state)
-     
-        # Just keeping the rows that are _not_ marked for deletion:
-        current_ana[["intervals"]] = current_ana[["intervals"]][!hot_df$Delete, ]
-     
-        # If we delete the last entry we set it to NULL so it will display
-        # the empty intervals message:
-        if(nrow(current_ana[["intervals"]]) == 0){
-          current_ana[["intervals"]] = NULL
+
+        # This prevents updating analysis elements if
+        # the ui_element has not yet been created:
+        SAVE_ANA_NAME = FALSE
+        if(length(state[["NCA"]][["ui"]][[ui_name]])>1){
+          SAVE_ANA_NAME = TRUE
+        }else if(state[["NCA"]][["ui"]][[ui_name]] != "" ){
+          SAVE_ANA_NAME = TRUE
         }
 
-        # Changing the fresh status
+        if(SAVE_ANA_NAME){
+          ana_name = state[["NCA"]][["ui_ana_map"]][[ui_name]]
+          # Messaging detected change
+          if(formods::has_updated(
+               ui_val   = state[["NCA"]][["ui"]][[ui_name]],
+               old_val  = current_ana[[ana_name]],
+               init_val = c(""))){
+            formods::FM_le(state, paste0("setting analysis: ", ana_name, " = ", paste(state[["NCA"]][["ui"]][[ui_name]], collapse=", ")))
+          }
+
+          current_ana[[ana_name]] = state[["NCA"]][["ui"]][[ui_name]]
+        }
+
+        # Storing any changes here:
+        state = NCA_set_current_ana(state, current_ana)
+      }
+    }
+    #---------------------------------------------
+
+    #---------------------------------------------
+    # This will sync the nca options in the UI to the values in the state
+    current_ana = NCA_fetch_current_ana(state)
+    for(nca_opt in names(current_ana[["nca_config"]])){
+      # Getting the ui_id for the current option:
+      ui_name = current_ana[["nca_config"]][[nca_opt]][["ui_id"]]
+  
+      # We only update the nca option if it exists in the UI
+      if(!is.null(state[["NCA"]][["ui"]][[ui_name]])){
+        # We only update the nca option of there is no hold
+        if(!formods::fetch_hold(state, ui_name)){
+          if(state[["NCA"]][["ui"]][[ui_name]] != ""){
+  
+            # We compare the values in the ui to the nca_config and if they are
+            # different we assign them
+            if(as.character(state[["NCA"]][["ui"]][[ui_name]]) !=
+               as.character(current_ana[["nca_config"]][[nca_opt]][["value"]])){
+  
+               # Updating the current analysis with the ui from the state
+               current_ana[["nca_config"]][[nca_opt]][["value"]] =
+                 state[["NCA"]][["ui"]][[ui_name]]
+              formods::FM_le(state, paste0("setting NCA option: ", nca_opt, " = ", state[["NCA"]][["ui"]][[ui_name]]))
+            }
+          }
+        }
+      }
+    }
+    # Storing any changes here:
+    state = NCA_set_current_ana(state, current_ana)
+    #---------------------------------------------
+    # Here we're processing any element delete requests
+    # - first we only do this if the hot_nca_intervals has been defined
+    if(!formods::fetch_hold(state,"hot_nca_intervals")){
+      proc_int_del = FALSE
+      if(is.list(state[["NCA"]][["ui"]][["hot_nca_intervals"]])){
+        # - If that's the case we get the data frame for it:
+        hot_df = rhandsontable::hot_to_r(state[["NCA"]][["ui"]][["hot_nca_intervals"]])
+        # - Because the UI initialzes to a "no intervals" message we need
+        # to make sure there is a delete column
+        if("Delete" %in% names(hot_df)){
+          # - lastly we check to see if any have been selected for deletion:
+          if(!any(is.na(hot_df$Delete))){
+            if(any(hot_df$Delete == TRUE)){
+              proc_int_del = TRUE
+            }
+          }
+        }
+  
+        if(proc_int_del){
+          # Pulling out the current analysis
+          current_ana = NCA_fetch_current_ana(state)
+       
+          # Just keeping the rows that are _not_ marked for deletion:
+          current_ana[["intervals"]] = current_ana[["intervals"]][!hot_df$Delete, ]
+       
+          # If we delete the last entry we set it to NULL so it will display
+          # the empty intervals message:
+          if(nrow(current_ana[["intervals"]]) == 0){
+            current_ana[["intervals"]] = NULL
+          }
+  
+          # Changing the fresh status
+          current_ana[["isfresh"]] = FALSE
+          formods::FM_le(state, "analysis fresh flag set to FALSE")
+  
+          # Resetting the manual flags
+          state = NCA_reset_manual_flags(state)
+  
+          # Storing any changes here:
+          state = NCA_set_current_ana(state, current_ana)
+  
+          # Preventing further deletes
+          state = formods::set_hold(state)
+  
+          formods::FM_le(state, "interval deleted")
+        }
+      }
+    }
+    #---------------------------------------------
+    # Checking for internal reaction changes
+    if(!is.null(react_internal)){
+        manual_rows = NULL
+        if(!is.null(shiny::isolate(react_internal[["select"]]))){
+          manual_rows = rbind(manual_rows, shiny::isolate(react_internal[["select"]])) }
+        if(!is.null(shiny::isolate(react_internal[["click"]]))){
+          manual_rows = rbind(manual_rows, shiny::isolate(react_internal[["click"]])) }
+  
+      if(!is.null(manual_rows)){
+  
+        # Opening up the current analysis
+        current_ana = NCA_fetch_current_ana(state)
+  
+        # Backing up the current analysis in case manual updating fails below
+        current_ana_backup = current_ana
+  
+        formods::FM_le(state, "updating manual flag")
+        # Getting the current manual flag:
+        manual_flag = current_ana[["manual_fg_ind_obs"]]
+        manual_key = unlist(manual_rows$key)
+  
+  
+        if(is.null(manual_key)){
+          formods::FM_le(state, "no points selected")
+        } else {
+          formods::FM_le(state, paste0("  ", manual_key,": ", manual_flag))
+  
+          manual_note = ""
+          # We only set the note of no_notes has not been selected and the
+          # text_manual has a value. Otherwise we set an empty note ""
+          if(!is.null(current_ana[["manual_notes_fg_ind_obs"]])){
+            if(current_ana[["manual_notes_fg_ind_obs"]] != "no_notes"){
+              if(!is.null(current_ana[["text_manual"]])){
+                manual_note = current_ana[["text_manual"]]
+              }
+            }
+          }
+  
+          # Removing records from the manual flag tracking dataframe
+          # that match the current manual key(s):
+          if(nrow(current_ana[["manual_ds_flags"]])>0){
+            current_ana[["manual_ds_flags"]] =
+              current_ana[["manual_ds_flags"]][!(current_ana[["manual_ds_flags"]]$key %in% manual_key), ]
+          }
+  
+          # Adding non reset keys to the dataframe tracking manual flags:
+          if(manual_flag != "reset"){
+            # JMH BLQ selection error here
+            current_ana[["manual_ds_flags"]] = rbind(
+               current_ana[["manual_ds_flags"]],
+               data.frame('key'  = manual_key,
+                          'flag' = manual_flag,
+                          'note' = manual_note)
+            )
+          }
+  
+          if(nrow(current_ana[["manual_ds_flags"]]) > 0){
+            formods::FM_le(state, "applying manual flags:")
+            formods::FM_le(state, paste0("  ", current_ana[["manual_ds_flags"]]$key, ": ", current_ana[["manual_ds_flags"]]$flag, ", note: ", current_ana[["manual_ds_flags"]]$note, "\n"))
+          } else {
+            formods::FM_le(state, "no manual flags currently set.")
+          }
+  
+  
+  
+          # Saving the current analysis
+          state = NCA_set_current_ana(state, current_ana)
+  
+          # Rebuilding the figure to incorporate any flag changes:
+          formods::FM_le(state, "rebuilding fg_ind_obs_subset")
+  
+          # JMH updaing NCA based on manual point selection
+          # First update analysis
+          # Then update figures
+          state = run_nca_components(state, components = c("nca_update", "fg_ind_obs_subset"))
+  
+  
+          # Setting the good status to bad to indicate that we need to update
+          # the current analysis:
+          current_ana = NCA_fetch_current_ana(state)
+          if(current_ana[["isgood"]]){
+            current_ana[["isfresh"]] = FALSE
+            state = NCA_set_current_ana(state, current_ana)
+            formods::FM_le(state, "analysis fresh flag set to FALSE")
+          } else {
+            formods::FM_le(state, "analysis update failed reverting to previous analysis")
+            msgs = c(msgs, current_ana[["msgs"]] )
+            notify_text = state[["MC"]][["notifications"]][["manual_flagging_failed"]]
+            state = formods::FM_set_notification(state, "Manual flagging of data failed", "Manual flags failed", "failure")
+            state = NCA_set_current_ana(state, current_ana_backup)
+          }
+        }
+      }
+    }
+  
+    #---------------------------------------------
+    # Process option changes to the fg_ind_obs figure
+    # the current selection in the UI:
+    if(formods::has_updated(
+          ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]],
+          old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_save"]],
+          init_val = c("", "0"))){
+  
+      formods::FM_le(state, "updating fg_ind_obs")
+  
+      # updating just the fg_ind_obs figure
+      state = run_nca_components(state, "fg_ind_obs")
+  
+      # Saving the button state to the counter
+      state[["NCA"]][["button_counters"]][["button_fg_ind_obs_save"]] =
+        state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]]
+    }
+  
+  
+    #---------------------------------------------
+    # resetting manual flags
+    if((state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]] == TRUE) &
+        (!formods::fetch_hold(state, "action_fg_ind_obs_reset_manual"))){
+  
+      if(!is.null(state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]])){
+        if(is.logical(state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]])){
+          if(state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]] == TRUE){
+  
+            state = NCA_reset_manual_flags(state)
+  
+            # Setting notification
+            notify_text = state[["MC"]][["notifications"]][["reset_manual_flag"]]
+            state = formods::FM_set_notification(state, notify_text, "Manual flags reset", "success")
+  
+            # Regenerating figure after removal of flags
+            formods::FM_le(state, "rebuilding fg_ind_obs_subset")
+            state = run_nca_components(state, "fg_ind_obs_subset")
+  
+           ## Setting the good status to bad to indicate that we need to update
+           ## the current analysis:
+           #current_ana = NCA_fetch_current_ana(state)
+           #current_ana[["isfresh"]] = FALSE
+           #state = NCA_set_current_ana(state, current_ana)
+           #formods::FM_le(state, "analysis fresh flag set to FALSE")
+  
+          }
+        }
+      }
+  
+      state = formods::set_hold(state)
+      # Saving the button state to the counter
+      state[["NCA"]][["reset_manual_fg_ind_obs"]]                =
+        state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]]
+    }
+    #---------------------------------------------
+    # Moving to the next or previous figure
+    if(formods::has_updated(
+          ui_val  = state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]],
+          old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]], 
+          init_val =c("", 0)) |
+       formods::has_updated(
+          ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]],
+          old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]], 
+          init_val =c("", 0))){
+  
+      # Pulling out the current analysis:
+      current_ana = NCA_fetch_current_ana(state)
+  
+      # Now we update the selected page based on whether the user has selected
+      # next or previous
+      if(formods::has_updated(
+           ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]],
+           old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]], 
+           init_val = c("", 0))){
+         formods::FM_le(state, "switching fg_ind_obs_next_pg")
+         pg_change = "next"
+      }
+      if(formods::has_updated(
+           ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]],
+           old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]], 
+           init_val=c("", 0))){
+         formods::FM_le(state, "switching fg_ind_obs_prev_pg")
+         pg_change = "prev"
+      }
+  
+      page_values = names(current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]])
+  
+      if(length(page_values)>0){
+  
+        current_page = current_ana[["curr_fg_ind_obs"]]
+  
+        if(is.null(current_page)){
+          current_page =  page_values[1]
+          formods::FM_le(state, paste0("current page for fg_ind_obs not found defaulting to ", current_page), entry_type="warning")
+        }
+  
+        new_page = NULL
+        if(length(page_values)==1){
+          # If there is only 1 page then we just return it again
+          new_page = page_values[1]
+  
+        } else if(pg_change == "prev" & which(page_values == current_page) == 1){
+          # Here the previous page is requested but we are currently at the
+          # beginning so we wrap around to the back:
+          new_page = page_values[length(page_values)]
+        } else if(pg_change == "next" & which(page_values == current_page) == length(page_values)){
+          # Here the next page is requested but we are currently at the
+          # end so we wrap around to the front:
+          new_page = page_values[1]
+        } else if(pg_change == "prev"){
+          new_page = page_values[which(page_values == current_page) - 1]
+        } else if(pg_change == "next"){
+          new_page = page_values[which(page_values == current_page) + 1]
+        }
+  
+        if(!is.null(new_page)){
+          current_ana[["curr_fg_ind_obs"]] = new_page
+          formods::FM_le(state, paste0("page for fg_ind_obs set to ", new_page))
+        } else {
+          formods::FM_le(state, paste0("failed to set ", pg_change, " for fg_ind_obs new page logic failed"), entry_type="warning")
+        }
+  
+      } else {
+        formods::FM_le(state, paste0("failed to set ", pg_change, " for fg_ind_obs no figure pages were found"), entry_type="warning")
+      }
+  
+      # Now we save the analysis with the page updated
+      state = NCA_set_current_ana(state, current_ana)
+  
+      # Next we need to hold the show page pull down
+      state = formods::set_hold(state)
+  
+      # Saving the button states to the counter
+      state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]] =
+        state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]]
+      state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]] =
+        state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]]
+    }
+    #---------------------------------------------
+    # Process scenario button selection here to overwrite
+    # the current selection in the UI:
+    if(formods::has_updated(
+         ui_val   = state[["NCA"]][["ui"]][["button_ana_use_scenario"]],
+         old_val  = state[["NCA"]][["button_counters"]][["button_ana_use_scenario"]],
+         init_val = c("", "0"))){
+      # Empty messages:
+      msgs = c()
+  
+  
+      # Current scenario:
+      ana_scenario = current_ana[["ana_scenario"]]
+  
+      # Loading the scenario:
+      state = NCA_load_scenario(state, ana_scenario)
+  
+      # Saving the button state to the counter
+      state[["NCA"]][["button_counters"]][["button_ana_use_scenario"]] =
+        state[["NCA"]][["ui"]][["button_ana_use_scenario"]]
+  
+    }
+    #---------------------------------------------
+    # Process scenario button selection here to overwrite
+    # the current selection in the UI:
+    if(formods::has_updated(
+          ui_val   = state[["NCA"]][["ui"]][["button_ana_add_int"]],
+          old_val  = state[["NCA"]][["button_counters"]][["button_ana_add_int"]],
+          init_val = c("", "0"))){
+  
+      # Default to adding the interval
+      ADD_INTERVAL = TRUE
+  
+      # Pulling the interval specifications from the ui elements:
+      if(length(state[["NCA"]][["ui"]][["select_ana_interval_range"]])==2){
+        interval_start = state[["NCA"]][["ui"]][["select_ana_interval_range"]][1]
+        interval_stop  = state[["NCA"]][["ui"]][["select_ana_interval_range"]][2]
+      } else {
+        ADD_INTERVAL = FALSE
+        interval_start = NA
+        interval_stop  = NA
+        msgs = c(msgs, "Interval range should be of lenght 2")
+      }
+      interval_start = as.numeric(as.character(interval_start))
+      interval_stop  = as.numeric(as.character(interval_stop))
+  
+      # Pulling out the NCA parameters
+      nca_parameters = state[["NCA"]][["ui"]][["select_ana_nca_parameters"]]
+  
+      # Some basic error checking
+      if(is.na(interval_start)){
+        ADD_INTERVAL = FALSE
+        msgs = c(msgs, "Unknown interval start time. Must be a number, 0, or Inf")
+      }
+      if(is.na(interval_stop)){
+        ADD_INTERVAL = FALSE
+        msgs = c(msgs, "Unknown interval stop time. Must be a number, 0, or Inf")
+      }
+  
+      if(!is.na(interval_start) & !is.na(interval_stop)){
+        if(interval_start > interval_stop){
+          ADD_INTERVAL = FALSE
+          msgs  = c(msgs, paste0("Interval start (", interval_start, ") should be less than the interval end (", interval_stop, ")"))
+        }
+      }
+  
+      if(length(nca_parameters) == 1){
+        if(nca_parameters ==""){
+          ADD_INTERVAL = FALSE
+          msgs = c(msgs, "You must select at least one NCA parameter per interval.")
+        }
+      }
+  
+      # If everything is good up top we add the interval
+      if(ADD_INTERVAL){
+  
+        # Resetting the manual flags
+        state = NCA_reset_manual_flags(state)
+  
+        state = NCA_add_int(state=state,
+          interval_start = interval_start,
+          interval_stop  = interval_stop,
+          nca_parameters = nca_parameters)
+  
+        details = paste0("[", interval_start, ", ",
+                              interval_stop, "] ",
+                              paste0(nca_parameters, collapse=", "))
+  
+        # Adding a notification
+        notify_text = state[["MC"]][["notifications"]][["ana_add_int_success"]]
+        notify_text = stringr::str_replace(notify_text, "===DETAILS===", details)
+        notify_type = "success"
+        formods::FM_le(state, notify_text)
+        state = formods::FM_set_notification(state, notify_text, "Interval Added", "success")
+      } else {
+        notify_text = paste(msgs, collapse="\n")
+        notify_type = "failure"
+        state = formods::FM_set_notification(state, notify_text, "Interval Not Added", "failure")
+        formods::FM_le(state, "interval was not added")
+      }
+  
+      # Saving the button state to the counter
+      state[["NCA"]][["button_counters"]][["button_ana_add_int"]] =
+        state[["NCA"]][["ui"]][["button_ana_add_int"]]
+  
+      # Updating any messages
+      state = formods::FM_set_ui_msg(state, msgs)
+    }
+    #---------------------------------------------
+    # Run Analysis
+    if(formods::has_updated(
+         ui_val   = state[["NCA"]][["ui"]][["button_ana_run"]],
+         old_val  = state[["NCA"]][["button_counters"]][["button_ana_run"]],
+         init_val = c("", "0"))){
+  
+      formods::FM_le(state, "running nca and generating subsequent figures and tables")
+  
+      # Pausing access to the screen
+      formods:: FM_pause_screen(
+        state   = state,
+        message = state[["MC"]][["labels"]][["busy"]][["run_nca"]],
+        session = session)
+  
+      # This will build the code and run the different components:
+      state = run_nca_components(state)
+  
+      # Removing the pause
+      formods::FM_resume_screen(
+        state   = state,
+        session = session)
+  
+      # Saving the button state to the counter
+      state[["NCA"]][["button_counters"]][["button_ana_run"]] =
+        state[["NCA"]][["ui"]][["button_ana_run"]]
+    }
+    #---------------------------------------------
+    # Here we react to changes between the UI and the current state
+    if(formods::has_updated(
+          ui_val   = state[["NCA"]][["ui"]][["select_current_ana"]],
+          old_val  = state[["NCA"]][["current_ana"]],
+          init_val = c("", "0")) &
+        (!formods::fetch_hold(state, "select_current_ana"))){
+  
+      # Changing the current view to the one selected in the UI
+      state = NCA_mkactive_ana(state, state[["NCA"]][["ui"]][["select_current_ana"]])
+      state = formods::set_hold(state)
+    }
+    #---------------------------------------------
+    # Copy Analysis
+    cli::cli_alert_info(paste0("Copy analysis button:"))
+    cli::cli_alert_info(paste0("ui:   ",  state[["NCA"]][["ui"]][["button_ana_copy"]]))
+    cli::cli_alert_info(paste0("cntr: ",  state[["NCA"]][["button_counters"]][["button_ana_copy"]]))
+    if(formods::has_updated(
+          ui_val   = state[["NCA"]][["ui"]][["button_ana_copy"]],
+          old_val  = state[["NCA"]][["button_counters"]][["button_ana_copy"]],
+          init_val = c("", "0"))){
+  
+      formods::FM_le(state, "copying current analysis")
+  
+      # Pausing access to the screen because the rebuilding portion below can
+      # take a while and we don't want the user mucking around with things while
+      # that is happening.
+      formods::FM_pause_screen(
+        state   = state,
+        message = state[["MC"]][["labels"]][["busy"]][["run_nca"]],
+        session = session)
+  
+      # This creates a copy of the current analysis which will become the old
+      # one :).
+      old_ana = NCA_fetch_current_ana(state)
+  
+      # Creating a new analysis and pulling it out of the
+      # state object:
+      state = NCA_new_ana(state)
+      current_ana = NCA_fetch_current_ana(state)
+  
+  
+      # Now we take the current (new one we just created) analysis and
+      # we populate it with all the individual elements except
+      # the following:
+      exnames    = c("id", "key", "idx", "nca_object_name", "objs")
+      # This is all the names
+      copy_names = names(old_ana)
+      # And this removes the exclusions:
+      copy_names = copy_names[!(copy_names %in% exnames)]
+  
+      for(ana_name in copy_names){
+        current_ana[[ana_name]] = old_ana[[ana_name]]
+      }
+  
+      # Now we save the copy of the new analysis that has been updated with
+      # the elements of the old analysis. This has to be done before we rerun
+      # the components below:
+      state = NCA_set_current_ana(state, current_ana)
+  
+      # Lastly we need to rebuild the analysis elements so all the id in
+      # the generated code are correct. It's a little slow but it ensures the
+      # objs list element is correct
+      state = run_nca_components(state)
+  
+      # Setting hold for all the elements
+      state = formods::set_hold(state, inputId = NULL)
+  
+      # Removing the pause
+      formods::FM_resume_screen(
+        state   = state,
+        session = session)
+  
+      # Saving the button state to the counter
+      state[["NCA"]][["button_counters"]][["button_ana_copy"]] =
+        state[["NCA"]][["ui"]][["button_ana_copy"]]
+  
+    }
+    #---------------------------------------------
+    # New Analysis
+    if(formods::has_updated(
+          ui_val   = state[["NCA"]][["ui"]][["button_ana_new"]],
+          old_val  = state[["NCA"]][["button_counters"]][["button_ana_new"]],
+          init_val = c("", "0"))){
+  
+      formods::FM_le(state, "creating new analysis")
+      msgs = c()
+  
+      # Creating a new analysis
+      state = NCA_new_ana(state)
+  
+      # Setting hold for all the elements
+      state = formods::set_hold(state, inputId = NULL)
+      #state = formods::set_hold(state, inputId = "select_current_ana")
+      #state = formods::set_hold(state, inputId = "select_current_view")
+  
+      # Saving the button state to the counter
+      state[["NCA"]][["button_counters"]][["button_ana_new"]] =
+        state[["NCA"]][["ui"]][["button_ana_new"]]
+  
+      # Updating any messages
+      state = formods::FM_set_ui_msg(state, msgs)
+    }
+    #---------------------------------------------
+    # Delete analysis
+    if(formods::has_updated(
+          ui_val   = state[["NCA"]][["ui"]][["button_ana_del"]],
+          old_val  = state[["NCA"]][["button_counters"]][["button_ana_del"]],
+          init_val = c("", "0"))){
+  
+      formods::FM_le(state, "deleting analysis")
+      msgs = c()
+  
+      # Getting the current analysis
+      current_ana = NCA_fetch_current_ana(state)
+  
+      # Deleting the analysis
+      state[["NCA"]][["anas"]][[current_ana[["id"]]]] = NULL
+  
+      # If there are no analysis left then we create an empty one
+      if( length(state[["NCA"]][["anas"]])  == 0){
+        state = NCA_new_ana(state)
+      } else {
+        # If there are analysis then we set the first one as active
+        state[["NCA"]][["current_ana"]] = names(state[["NCA"]][["anas"]])[1]
+      }
+  
+      # Setting hold for analysis select
+      state = formods::set_hold(state, inputId = "select_current_ana")
+      state = formods::set_hold(state, inputId = "select_current_view")
+  
+      # Saving the button state to the counter
+      state[["NCA"]][["button_counters"]][["button_ana_del"]] =
+        state[["NCA"]][["ui"]][["button_ana_del"]]
+  
+      # Updating any messages
+      state = formods::FM_set_ui_msg(state, msgs)
+    }
+
+    # JMH before we save the analysis we need to:
+    # - update the dataset
+    # - flag the analysis as stale
+    # - remove any manual flags
+    message(paste0("ui: ", state[["NCA"]][["ui"]][["select_current_view"]]))
+    message(paste0("ana: ", current_ana[["ana_dsview"]]))
+    # Getting the current analysis
+    if( !(state[["NCA"]][["ui"]][["select_current_view"]] %in% c("", "PH"))){
+      current_ana = NCA_fetch_current_ana(state)
+      if(formods::has_updated(
+            ui_val   = state[["NCA"]][["ui"]][["select_current_view"]],
+            old_val  = current_ana[["ana_dsview"]],
+            init_val = c("", "0", "PH")) &
+            !(formods::fetch_hold(state, "select_current_view"))) {
+
+        # browser()
+        formods::FM_le(state, paste0("data source changed detected for analysis: ", current_ana[["key"]]))
+
+        # updating the current analysis
+        current_ana[["ana_dsview"]] = state[["NCA"]][["ui"]][["select_current_view"]]
+
+        # Setting the freshness flag 
         current_ana[["isfresh"]] = FALSE
-        formods::FM_le(state, "analysis fresh flag set to FALSE")
+
+        # Saving changes to the current analysis
+        state = NCA_set_current_ana(state, current_ana)
 
         # Resetting the manual flags
         state = NCA_reset_manual_flags(state)
 
-        # Storing any changes here:
-        message("----> 3")
-        state = NCA_set_current_ana(state, current_ana)
-        message("/---> 3")
-
-        # Preventing further deletes
+        # Setting holds to ensure any changes made to the data source is kept
         state = formods::set_hold(state)
-
-        formods::FM_le(state, "interval deleted")
       }
     }
-  }
-  #---------------------------------------------
-  # Checking for internal reaction changes
-  if(!is.null(react_internal)){
-      manual_rows = NULL
-      if(!is.null(shiny::isolate(react_internal[["select"]]))){
-        manual_rows = rbind(manual_rows, shiny::isolate(react_internal[["select"]])) }
-      if(!is.null(shiny::isolate(react_internal[["click"]]))){
-        manual_rows = rbind(manual_rows, shiny::isolate(react_internal[["click"]])) }
 
-    if(!is.null(manual_rows)){
-
-      # Opening up the current analysis
+  
+    #---------------------------------------------
+    # Save analysis
+    if(formods::has_updated(
+          ui_val   = state[["NCA"]][["ui"]][["button_ana_save"]],
+          old_val  = state[["NCA"]][["button_counters"]][["button_ana_save"]],
+          init_val = c("", "0"))){
+  
+      formods::FM_le(state, "saving changes to current analysis")
+  
+      # Resetting the manual flags
+      state = NCA_reset_manual_flags(state)
+  
+      # Getting the current analysis
       current_ana = NCA_fetch_current_ana(state)
-
-      # Backing up the current analysis in case manual updating fails below
-      current_ana_backup = current_ana
-
-      formods::FM_le(state, "updating manual flag")
-      # Getting the current manual flag:
-      manual_flag = current_ana[["manual_fg_ind_obs"]]
-      manual_key = unlist(manual_rows$key)
-
-
-      if(is.null(manual_key)){
-        formods::FM_le(state, "no points selected")
-      } else {
-        formods::FM_le(state, paste0("  ", manual_key,": ", manual_flag))
-
-        manual_note = ""
-        # We only set the note of no_notes has not been selected and the
-        # text_manual has a value. Otherwise we set an empty note ""
-        if(!is.null(current_ana[["manual_notes_fg_ind_obs"]])){
-          if(current_ana[["manual_notes_fg_ind_obs"]] != "no_notes"){
-            if(!is.null(current_ana[["text_manual"]])){
-              manual_note = current_ana[["text_manual"]]
+  
+      if(state[["NCA"]][["ui"]][["text_ana_key"]] != ""){
+  
+        # Resetting the key
+        current_ana[["key"]] = state[["NCA"]][["ui"]][["text_ana_key"]]
+  
+        # If the key is the same as the ID (the default value) then we name it
+        # the same as the data view being used:
+        if(current_ana[["key"]] == current_ana[["id"]]){
+          ana_dsview = state[["NCA"]][["ui"]][["select_current_view"]]
+          if(!is.null(state[["NCA"]][["DSV"]][["ds"]][[ ana_dsview ]][["label"]])){
+            if(state[["NCA"]][["DSV"]][["ds"]][[ ana_dsview ]][["label"]] != ""){
+              current_ana[["key"]] = state[["NCA"]][["DSV"]][["ds"]][[ ana_dsview ]][["label"]]
             }
           }
         }
-
-        # Removing records from the manual flag tracking dataframe
-        # that match the current manual key(s):
-        if(nrow(current_ana[["manual_ds_flags"]])>0){
-          current_ana[["manual_ds_flags"]] =
-            current_ana[["manual_ds_flags"]][!(current_ana[["manual_ds_flags"]]$key %in% manual_key), ]
-        }
-
-        # Adding non reset keys to the dataframe tracking manual flags:
-        if(manual_flag != "reset"){
-          # JMH BLQ selection error here
-          current_ana[["manual_ds_flags"]] = rbind(
-             current_ana[["manual_ds_flags"]],
-             data.frame('key'  = manual_key,
-                        'flag' = manual_flag,
-                        'note' = manual_note)
-          )
-        }
-
-        if(nrow(current_ana[["manual_ds_flags"]]) > 0){
-          formods::FM_le(state, "applying manual flags:")
-          formods::FM_le(state, paste0("  ", current_ana[["manual_ds_flags"]]$key, ": ", current_ana[["manual_ds_flags"]]$flag, ", note: ", current_ana[["manual_ds_flags"]]$note, "\n"))
-        } else {
-          formods::FM_le(state, "no manual flags currently set.")
-        }
-
-
-
-        # Saving the current analysis
-        message("----> 4")
-        state = NCA_set_current_ana(state, current_ana)
-        message("/---> 4")
-
-        # Rebuilding the figure to incorporate any flag changes:
-        formods::FM_le(state, "rebuilding fg_ind_obs_subset")
-
-        # JMH updaing NCA based on manual point selection
-        # First update analysis
-        # Then update figures
-        state = run_nca_components(state, components = c("nca_update", "fg_ind_obs_subset"))
-
-
-        # Setting the good status to bad to indicate that we need to update
-        # the current analysis:
-        current_ana = NCA_fetch_current_ana(state)
-        if(current_ana[["isgood"]]){
-          current_ana[["isfresh"]] = FALSE
-          message("---> 5")
-          state = NCA_set_current_ana(state, current_ana)
-          message("/--> 5")
-          formods::FM_le(state, "analysis fresh flag set to FALSE")
-        } else {
-          formods::FM_le(state, "analysis update failed reverting to previous analysis")
-          msgs = c(msgs, current_ana[["msgs"]] )
-          notify_text = state[["MC"]][["notifications"]][["manual_flagging_failed"]]
-          state = formods::FM_set_notification(state, "Manual flagging of data failed", "Manual flags failed", "failure")
-          message("---> 6")
-          state = NCA_set_current_ana(state, current_ana_backup)
-          message("/--> 6")
-        }
-      }
-    }
-  }
-
-  #---------------------------------------------
-  # Process option changes to the fg_ind_obs figure
-  # the current selection in the UI:
-  if(formods::has_updated(
-        ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]],
-        old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_save"]],
-        init_val = c("", "0"))){
-
-    formods::FM_le(state, "updating fg_ind_obs")
-
-    # updating just the fg_ind_obs figure
-    state = run_nca_components(state, "fg_ind_obs")
-
-    # Saving the button state to the counter
-    state[["NCA"]][["button_counters"]][["button_fg_ind_obs_save"]] =
-      state[["NCA"]][["ui"]][["button_fg_ind_obs_save"]]
-  }
-
-
-  #---------------------------------------------
-  # resetting manual flags
-# if(formods::has_updated(
-#      ui_val   = state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]],
-#      old_val  = state[["NCA"]][["reset_manual_fg_ind_obs"]],
-#      init_val=c("", FALSE)) &
-  if((state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]] == TRUE) &
-      (!formods::fetch_hold(state, "action_fg_ind_obs_reset_manual"))){
-
-    if(!is.null(state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]])){
-      if(is.logical(state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]])){
-        if(state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]] == TRUE){
-
-          state = NCA_reset_manual_flags(state)
-
-          # Setting notification
-          notify_text = state[["MC"]][["notifications"]][["reset_manual_flag"]]
-          state = formods::FM_set_notification(state, notify_text, "Manual flags reset", "success")
-
-          # Regenerating figure after removal of flags
-          formods::FM_le(state, "rebuilding fg_ind_obs_subset")
-          state = run_nca_components(state, "fg_ind_obs_subset")
-
-         ## Setting the good status to bad to indicate that we need to update
-         ## the current analysis:
-         #current_ana = NCA_fetch_current_ana(state)
-         #current_ana[["isfresh"]] = FALSE
-         #state = NCA_set_current_ana(state, current_ana)
-         #formods::FM_le(state, "analysis fresh flag set to FALSE")
-
-        }
-      }
-    }
-
-    state = formods::set_hold(state)
-    # Saving the button state to the counter
-    state[["NCA"]][["reset_manual_fg_ind_obs"]]                =
-      state[["NCA"]][["ui"]][["action_fg_ind_obs_reset_manual"]]
-  }
-  #---------------------------------------------
-  # Moving to the next or previous figure
-  if(formods::has_updated(
-        ui_val  = state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]],
-        old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]], 
-        init_val =c("", 0)) |
-     formods::has_updated(
-        ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]],
-        old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]], 
-        init_val =c("", 0))){
-
-    # Pulling out the current analysis:
-    current_ana = NCA_fetch_current_ana(state)
-
-    # Now we update the selected page based on whether the user has selected
-    # next or previous
-    if(formods::has_updated(
-         ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]],
-         old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]], 
-         init_val = c("", 0))){
-       formods::FM_le(state, "switching fg_ind_obs_next_pg")
-       pg_change = "next"
-    }
-    if(formods::has_updated(
-         ui_val   = state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]],
-         old_val  = state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]], 
-         init_val=c("", 0))){
-       formods::FM_le(state, "switching fg_ind_obs_prev_pg")
-       pg_change = "prev"
-    }
-
-    page_values = names(current_ana[["objs"]][["fg_ind_obs"]][["value"]][["figures"]])
-
-    if(length(page_values)>0){
-
-      current_page = current_ana[["curr_fg_ind_obs"]]
-
-      if(is.null(current_page)){
-        current_page =  page_values[1]
-        formods::FM_le(state, paste0("current page for fg_ind_obs not found defaulting to ", current_page), entry_type="warning")
-      }
-
-      new_page = NULL
-      if(length(page_values)==1){
-        # If there is only 1 page then we just return it again
-        new_page = page_values[1]
-
-      } else if(pg_change == "prev" & which(page_values == current_page) == 1){
-        # Here the previous page is requested but we are currently at the
-        # beginning so we wrap around to the back:
-        new_page = page_values[length(page_values)]
-      } else if(pg_change == "next" & which(page_values == current_page) == length(page_values)){
-        # Here the next page is requested but we are currently at the
-        # end so we wrap around to the front:
-        new_page = page_values[1]
-      } else if(pg_change == "prev"){
-        new_page = page_values[which(page_values == current_page) - 1]
-      } else if(pg_change == "next"){
-        new_page = page_values[which(page_values == current_page) + 1]
-      }
-
-      if(!is.null(new_page)){
-        current_ana[["curr_fg_ind_obs"]] = new_page
-        formods::FM_le(state, paste0("page for fg_ind_obs set to ", new_page))
       } else {
-        formods::FM_le(state, paste0("failed to set ", pg_change, " for fg_ind_obs new page logic failed"), entry_type="warning")
+        # returning an error
+        msgs = c(msgs,
+            state[["MC"]][["errors"]][["current_key_empty"]])
       }
-
-    } else {
-      formods::FM_le(state, paste0("failed to set ", pg_change, " for fg_ind_obs no figure pages were found"), entry_type="warning")
+  
+      # Saving the caption as well
+      current_ana[["notes"]] = state[["NCA"]][["ui"]][["text_ana_notes"]]
+  
+    # # If the selected data view is different than the data view being used by
+    # # the current analysis then we need to reset the manual flags
+    # if(current_ana[["ana_dsview"]] != state[["NCA"]][["ui"]][["select_current_view"]]){
+    #   # JMH update to use NCA_reset_manual_flags()
+    #   if(nrow(current_ana[["manual_ds_flags"]])){
+    #     notify_text = "Data source change detected: You will need to rerun the analysis. Manual flags reset."
+    #     state = formods::FM_set_notification(state, notify_text, "Manual Flags Reset", "warning") }
+    #   current_ana[["isfresh"]] = FALSE
+    #   current_ana[["manual_ds_flags"]] = data.frame()
+    # }
+    # # updating the view id
+    # current_ana[["ana_dsview"]] = state[["NCA"]][["ui"]][["select_current_view"]]
+  
+      # Saving changes to the current analysis
+      state = NCA_set_current_ana(state, current_ana)
+  
+      # Setting holds to ensure any key changes are made
+      state = formods::set_hold(state)
+  
+      notify_text = paste(
+             tagList(paste0("Caption: ", current_ana[["key"]], ", " ),
+               paste0("Source Data: ", state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]][["label"]], ", "),
+               paste0("Notes: ", current_ana[["notes"]]  )),
+                          collapse="\n")
+  
+  
+      state = formods::FM_set_notification(state, notify_text, "Analysis saved", "info")
+  
+  
+      # Saving the button state to the counter
+      state[["NCA"]][["button_counters"]][["button_ana_save"]] =
+        state[["NCA"]][["ui"]][["button_ana_save"]]
+  
+      # Updating any messages
+      state = formods::FM_set_ui_msg(state, msgs)
     }
-
-    # Now we save the analysis with the page updated
-    message("---> 7")
-    state = NCA_set_current_ana(state, current_ana)
-    message("/--> 7")
-
-    # Next we need to hold the show page pull down
-    state = formods::set_hold(state)
-
-    # Saving the button states to the counter
-    state[["NCA"]][["button_counters"]][["button_fg_ind_obs_next_pg"]] =
-      state[["NCA"]][["ui"]][["button_fg_ind_obs_next_pg"]]
-    state[["NCA"]][["button_counters"]][["button_fg_ind_obs_prev_pg"]] =
-      state[["NCA"]][["ui"]][["button_fg_ind_obs_prev_pg"]]
   }
-  #---------------------------------------------
-  # Process scenario button selection here to overwrite
-  # the current selection in the UI:
-  if(formods::has_updated(
-       ui_val   = state[["NCA"]][["ui"]][["button_ana_use_scenario"]],
-       old_val  = state[["NCA"]][["button_counters"]][["button_ana_use_scenario"]],
-       init_val = c("", "0"))){
-    # Empty messages:
-    msgs = c()
 
-
-    # Current scenario:
-    ana_scenario = current_ana[["ana_scenario"]]
-
-    # Loading the scenario:
-    state = NCA_load_scenario(state, ana_scenario)
-
-    # Saving the button state to the counter
-    state[["NCA"]][["button_counters"]][["button_ana_use_scenario"]] =
-      state[["NCA"]][["ui"]][["button_ana_use_scenario"]]
-
-  }
-  #---------------------------------------------
-  # Process scenario button selection here to overwrite
-  # the current selection in the UI:
-  if(formods::has_updated(
-        ui_val   = state[["NCA"]][["ui"]][["button_ana_add_int"]],
-        old_val  = state[["NCA"]][["button_counters"]][["button_ana_add_int"]],
-        init_val = c("", "0"))){
-
-    # Default to adding the interval
-    ADD_INTERVAL = TRUE
-
-    # Pulling the interval specifications from the ui elements:
-    if(length(state[["NCA"]][["ui"]][["select_ana_interval_range"]])==2){
-      interval_start = state[["NCA"]][["ui"]][["select_ana_interval_range"]][1]
-      interval_stop  = state[["NCA"]][["ui"]][["select_ana_interval_range"]][2]
-    } else {
-      ADD_INTERVAL = FALSE
-      interval_start = NA
-      interval_stop  = NA
-      msgs = c(msgs, "Interval range should be of lenght 2")
-    }
-    interval_start = as.numeric(as.character(interval_start))
-    interval_stop  = as.numeric(as.character(interval_stop))
-
-    # Pulling out the NCA parameters
-    nca_parameters = state[["NCA"]][["ui"]][["select_ana_nca_parameters"]]
-
-    # Some basic error checking
-    if(is.na(interval_start)){
-      ADD_INTERVAL = FALSE
-      msgs = c(msgs, "Unknown interval start time. Must be a number, 0, or Inf")
-    }
-    if(is.na(interval_stop)){
-      ADD_INTERVAL = FALSE
-      msgs = c(msgs, "Unknown interval stop time. Must be a number, 0, or Inf")
-    }
-
-    if(!is.na(interval_start) & !is.na(interval_stop)){
-      if(interval_start > interval_stop){
-        ADD_INTERVAL = FALSE
-        msgs  = c(msgs, paste0("Interval start (", interval_start, ") should be less than the interval end (", interval_stop, ")"))
-      }
-    }
-
-    if(length(nca_parameters) == 1){
-      if(nca_parameters ==""){
-        ADD_INTERVAL = FALSE
-        msgs = c(msgs, "You must select at least one NCA parameter per interval.")
-      }
-    }
-
-    # If everything is good up top we add the interval
-    if(ADD_INTERVAL){
-
-      # Resetting the manual flags
-      state = NCA_reset_manual_flags(state)
-
-      state = NCA_add_int(state=state,
-        interval_start = interval_start,
-        interval_stop  = interval_stop,
-        nca_parameters = nca_parameters)
-
-      details = paste0("[", interval_start, ", ",
-                            interval_stop, "] ",
-                            paste0(nca_parameters, collapse=", "))
-
-      # Adding a notification
-      notify_text = state[["MC"]][["notifications"]][["ana_add_int_success"]]
-      notify_text = stringr::str_replace(notify_text, "===DETAILS===", details)
-      notify_type = "success"
-      formods::FM_le(state, notify_text)
-      state = formods::FM_set_notification(state, notify_text, "Interval Added", "success")
-    } else {
-      notify_text = paste(msgs, collapse="\n")
-      notify_type = "failure"
-      state = formods::FM_set_notification(state, notify_text, "Interval Not Added", "failure")
-      formods::FM_le(state, "interval was not added")
-    }
-
-    # Saving the button state to the counter
-    state[["NCA"]][["button_counters"]][["button_ana_add_int"]] =
-      state[["NCA"]][["ui"]][["button_ana_add_int"]]
-
-    # Updating any messages
-    state = formods::FM_set_ui_msg(state, msgs)
-  }
-  #---------------------------------------------
-  # Run Analysis
-  if(formods::has_updated(
-       ui_val   = state[["NCA"]][["ui"]][["button_ana_run"]],
-       old_val  = state[["NCA"]][["button_counters"]][["button_ana_run"]],
-       init_val = c("", "0"))){
-
-    formods::FM_le(state, "running nca and generating subsequent figures and tables")
-
-    # Pausing access to the screen
-    formods:: FM_pause_screen(
-      state   = state,
-      message = state[["MC"]][["labels"]][["busy"]][["run_nca"]],
-      session = session)
-
-    # This will build the code and run the different components:
-    state = run_nca_components(state)
-
-    # Removing the pause
-    formods::FM_resume_screen(
-      state   = state,
-      session = session)
-
-    # Saving the button state to the counter
-    state[["NCA"]][["button_counters"]][["button_ana_run"]] =
-      state[["NCA"]][["ui"]][["button_ana_run"]]
-  }
-  #---------------------------------------------
-  # Here we react to changes between the UI and the current state
-  if(formods::has_updated(
-        ui_val   = state[["NCA"]][["ui"]][["select_current_ana"]],
-        old_val  = state[["NCA"]][["current_ana"]],
-        init_val = c("", "0")) &
-      (!formods::fetch_hold(state, "select_current_ana"))){
-
-    # Changing the current view to the one selected in the UI
-    state = NCA_mkactive_ana(state, state[["NCA"]][["ui"]][["select_current_ana"]])
-    state = formods::set_hold(state)
-  }
-  #---------------------------------------------
-  # Copy Analysis
-  if(formods::has_updated(
-        ui_val   = state[["NCA"]][["ui"]][["button_ana_copy"]],
-        old_val  = state[["NCA"]][["button_counters"]][["button_ana_copy"]],
-        init_val = c("", "0"))){
-
-    formods::FM_le(state, "copying current analysis")
-
-    # Pausing access to the screen because the rebuilding portion below can
-    # take a while and we don't want the user mucking around with things while
-    # that is happening.
-    formods::FM_pause_screen(
-      state   = state,
-      message = state[["MC"]][["labels"]][["busy"]][["run_nca"]],
-      session = session)
-
-    # This creates a copy of the current analysis which will become the old
-    # one :).
-    old_ana = NCA_fetch_current_ana(state)
-
-    # Creating a new analysis and pulling it out of the
-    # state object:
-    state = NCA_new_ana(state)
-    current_ana = NCA_fetch_current_ana(state)
-
-
-    # Now we take the current (new one we just created) analysis and
-    # we populate it with all the individual elements except
-    # the following:
-    exnames    = c("id", "key", "idx", "nca_object_name", "objs")
-    # This is all the names
-    copy_names = names(old_ana)
-    # And this removes the exclusions:
-    copy_names = copy_names[!(copy_names %in% exnames)]
-
-    for(ana_name in copy_names){
-      current_ana[[ana_name]] = old_ana[[ana_name]]
-    }
-
-    # Now we save the copy of the new analysis that has been updated with
-    # the elements of the old analysis. This has to be done before we rerun
-    # the components below:
-    message("---> 8")
-    state = NCA_set_current_ana(state, current_ana)
-    message("/--> 8")
-
-    # Lastly we need to rebuild the analysis elements so all the id in
-    # the generated code are correct. It's a little slow but it ensures the
-    # objs list element is correct
-    state = run_nca_components(state)
-
-    # Setting hold for all the elements
-    state = formods::set_hold(state, inputId = NULL)
-
-    # Removing the pause
-    formods::FM_resume_screen(
-      state   = state,
-      session = session)
-
-    # Saving the button state to the counter
-    state[["NCA"]][["button_counters"]][["button_ana_copy"]] =
-      state[["NCA"]][["ui"]][["button_ana_copy"]]
-
-  }
-  #---------------------------------------------
-  # New Analysis
-  if(formods::has_updated(
-        ui_val   = state[["NCA"]][["ui"]][["button_ana_new"]],
-        old_val  = state[["NCA"]][["button_counters"]][["button_ana_new"]],
-        init_val = c("", "0"))){
-
-    formods::FM_le(state, "creating new analysis")
-    msgs = c()
-
-    # Creating a new analysis
-    state = NCA_new_ana(state)
-
-    # Setting hold for all the elements
-    state = formods::set_hold(state, inputId = NULL)
-    #state = formods::set_hold(state, inputId = "select_current_ana")
-    #state = formods::set_hold(state, inputId = "select_current_view")
-
-    # Saving the button state to the counter
-    state[["NCA"]][["button_counters"]][["button_ana_new"]] =
-      state[["NCA"]][["ui"]][["button_ana_new"]]
-
-    # Updating any messages
-    state = formods::FM_set_ui_msg(state, msgs)
-  }
-  #---------------------------------------------
-  # Delete analysis
-  if(formods::has_updated(
-        ui_val   = state[["NCA"]][["ui"]][["button_ana_del"]],
-        old_val  = state[["NCA"]][["button_counters"]][["button_ana_del"]],
-        init_val = c("", "0"))){
-
-    formods::FM_le(state, "deleting analysis")
-    msgs = c()
-
-    # Getting the current analysis
-    current_ana = NCA_fetch_current_ana(state)
-
-    # Deleting the analysis
-    state[["NCA"]][["anas"]][[current_ana[["id"]]]] = NULL
-
-    # If there are no analysis left then we create an empty one
-    if( length(state[["NCA"]][["anas"]])  == 0){
-      state = NCA_new_ana(state)
-    } else {
-      # If there are analysis then we set the first one as active
-      state[["NCA"]][["current_ana"]] = names(state[["NCA"]][["anas"]])[1]
-    }
-
-    # Setting hold for analysis select
-    state = formods::set_hold(state, inputId = "select_current_ana")
-    state = formods::set_hold(state, inputId = "select_current_view")
-
-    # Saving the button state to the counter
-    state[["NCA"]][["button_counters"]][["button_ana_del"]] =
-      state[["NCA"]][["ui"]][["button_ana_del"]]
-
-    # Updating any messages
-    state = formods::FM_set_ui_msg(state, msgs)
-  }
-  #---------------------------------------------
-  # Save analysis
-  if(formods::has_updated(
-        ui_val   = state[["NCA"]][["ui"]][["button_ana_save"]],
-        old_val  = state[["NCA"]][["button_counters"]][["button_ana_save"]],
-        init_val = c("", "0"))){
-
-    formods::FM_le(state, "saving changes to current analysis")
-
-    # Resetting the manual flags
-    state = NCA_reset_manual_flags(state)
-
-    # Getting the current analysis
-    current_ana = NCA_fetch_current_ana(state)
-
-    if(state[["NCA"]][["ui"]][["text_ana_key"]] != ""){
-
-      # Resetting the key
-      current_ana[["key"]] = state[["NCA"]][["ui"]][["text_ana_key"]]
-
-      # If the key is the same as the ID (the default value) then we name it
-      # the same as the data view being used:
-      if(current_ana[["key"]] == current_ana[["id"]]){
-        ana_dsview = state[["NCA"]][["ui"]][["select_current_view"]]
-        if(!is.null(state[["NCA"]][["DSV"]][["ds"]][[ ana_dsview ]][["label"]])){
-          if(state[["NCA"]][["DSV"]][["ds"]][[ ana_dsview ]][["label"]] != ""){
-            current_ana[["key"]] = state[["NCA"]][["DSV"]][["ds"]][[ ana_dsview ]][["label"]]
-          }
-        }
-      }
-    } else {
-      # returning an error
-      msgs = c(msgs,
-          state[["MC"]][["errors"]][["current_key_empty"]])
-    }
-
-    # Saving the caption as well
-    current_ana[["notes"]] = state[["NCA"]][["ui"]][["text_ana_notes"]]
-
-
-    # If the selected data view is different than the data view being used by
-    # the current analysis then we need to reset the manual flags
-    if(current_ana[["ana_dsview"]] != state[["NCA"]][["ui"]][["select_current_view"]]){
-      if(nrow(current_ana[["manual_ds_flags"]])){
-        notify_text = "Data source change detected: You will need to rerun the analysis. Manual flags reset."
-        state = formods::FM_set_notification(state, notify_text, "Manual Flags Reset", "warning") }
-      current_ana[["isfresh"]] = FALSE
-      current_ana[["manual_ds_flags"]] = data.frame()
-    }
-    # updating the view id
-    current_ana[["ana_dsview"]] = state[["NCA"]][["ui"]][["select_current_view"]]
-
-
-
-    # Saving changes to the current analysis
-    message("---> 9")
-    state = NCA_set_current_ana(state, current_ana)
-    message("/--> 9")
-
-    # Setting holds to ensure any key changes are made
-    state = formods::set_hold(state)
-
-    notify_text = paste(
-           tagList(paste0("Caption: ", current_ana[["key"]], ", " ),
-             paste0("Source Data: ", state[["NCA"]][["DSV"]][["ds"]][[current_ana[["ana_dsview"]]]][["label"]], ", "),
-             paste0("Notes: ", current_ana[["notes"]]  )),
-                        collapse="\n")
-
-
-    state = formods::FM_set_notification(state, notify_text, "Analysis saved", "info")
-
-
-    # Saving the button state to the counter
-    state[["NCA"]][["button_counters"]][["button_ana_save"]] =
-      state[["NCA"]][["ui"]][["button_ana_save"]]
-
-    # Updating any messages
-    state = formods::FM_set_ui_msg(state, msgs)
-
-  }
   #---------------------------------------------
   # Passing any messages back to the user
   #state = formods::FM_set_ui_msg(state, msgs, append=TRUE)
