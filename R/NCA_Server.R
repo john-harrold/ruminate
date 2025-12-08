@@ -3988,9 +3988,9 @@ NCA_fetch_state = function(id, input, session,
     }
     #---------------------------------------------
     # Copy Analysis
-    cli::cli_alert_info(paste0("Copy analysis button:"))
-    cli::cli_alert_info(paste0("ui:   ",  state[["NCA"]][["ui"]][["button_ana_copy"]]))
-    cli::cli_alert_info(paste0("cntr: ",  state[["NCA"]][["button_counters"]][["button_ana_copy"]]))
+    #cli::cli_alert_info(paste0("Copy analysis button:"))
+    #cli::cli_alert_info(paste0("ui:   ",  state[["NCA"]][["ui"]][["button_ana_copy"]]))
+    #cli::cli_alert_info(paste0("cntr: ",  state[["NCA"]][["button_counters"]][["button_ana_copy"]]))
     if(formods::has_updated(
           ui_val   = state[["NCA"]][["ui"]][["button_ana_copy"]],
           old_val  = state[["NCA"]][["button_counters"]][["button_ana_copy"]],
@@ -4113,12 +4113,6 @@ NCA_fetch_state = function(id, input, session,
       state = formods::FM_set_ui_msg(state, msgs)
     }
 
-    # JMH before we save the analysis we need to:
-    # - update the dataset
-    # - flag the analysis as stale
-    # - remove any manual flags
-    message(paste0("ui: ", state[["NCA"]][["ui"]][["select_current_view"]]))
-    message(paste0("ana: ", current_ana[["ana_dsview"]]))
     # Getting the current analysis
     if( !(state[["NCA"]][["ui"]][["select_current_view"]] %in% c("", "PH"))){
       current_ana = NCA_fetch_current_ana(state)
@@ -7688,10 +7682,8 @@ mk_figure_ind_obs = function(
   col_group   = col_map[["col_group"]]
   col_analyte = col_map[["col_analyte"]]
 
-  # We need to group by both ID and any other columns specified in the
-  # grouping:
-  col_group = c(col_id, col_group)
-
+  # All grouping columsn 
+  col_group_all = c(col_id, col_group, col_analyte)
 
   # Retaining only the needed columns
   cols_keep = unique(c(col_id, col_time, col_conc, col_group, col_analyte,
@@ -7703,11 +7695,14 @@ mk_figure_ind_obs = function(
   # Getting the intervals
   hl_col_keep = c("tlast", "clast.pred", "half.life", "lambda.z", "r.squared")
   nca_res_ints = nca_res_df                                                        |> 
-    dplyr::select(dplyr::all_of(c(col_id, "start", "end", "PPTESTCD", "PPORRES"))) |>
+    dplyr::select(dplyr::all_of(c(col_id, col_analyte, col_group, "start", "end", "PPTESTCD", "PPORRES"))) |>
     dplyr::filter(PPTESTCD %in% hl_col_keep)                                       |>
     tidyr::pivot_wider(values_from="PPORRES", names_from="PPTESTCD")               |>
-    dplyr::distinct(.data[[col_id]], start, end, .keep_all=TRUE)                   |>
-    dplyr::mutate(rmnt_int_str = paste0("int_", start, "_", end))                      
+    dplyr::mutate(rmnt_int_str = paste0("int_", start, "_", end))                    
+
+  ints_col_keep = c(col_id, col_analyte, col_group, "start", "end")
+  nca_res_ints = nca_res_ints                                                      |>
+    dplyr::distinct(dplyr::pick(dplyr::all_of(ints_col_keep)), .keep_all=TRUE)                   
 
   # Appending half-life cacluation details and retaining that column. 
   if(hl_overlay){
@@ -7716,18 +7711,14 @@ mk_figure_ind_obs = function(
       tc_res = formods::FM_tc(capture=c("ana_ds"), cmd=cmd, tc_env = list(nca_res=nca_res, ana_ds=ana_ds))
       if(tc_res[["isgood"]]){
         ana_ds = tc_res[["capture"]][["ana_ds"]]
-        #ana_ds[["rmnt_used_hl_calc"]] = PKNCA::get_halflife_points(nca_res)
         cols_keep = c(cols_keep, "rmnt_used_hl_calc")
-        #message("1 true")
       } else {
         hl_overlay=FALSE
         isgood = FALSE
         msgs = c(msgs, tc_res[["msgs"]])
-        #message("1 false")
       }
     } else {
       hl_overlay = FALSE
-      #message("2 false")
     }
   }
 
@@ -7765,16 +7756,13 @@ mk_figure_ind_obs = function(
     dplyr::ungroup()
 
 
-    # If we're doing the hl overlay we need to merge in the hl parameters:
-    if(hl_overlay){
-      #message("3 true")
-      by_cols = c(col_id, "rmnt_int_str")
-      all_data = all_data |>
-        dplyr::left_join(nca_res_ints, by=by_cols)
-    }
-
-  # Adding the interval string to the grouping columns
-  col_group = c(col_group, "rmnt_int_str")
+  # If we're doing the hl overlay we need to merge in the hl parameters:
+  if(hl_overlay){
+    #message("3 true")
+    by_cols = c(col_id, "rmnt_int_str", col_analyte, col_group)
+    all_data = all_data |>
+      dplyr::left_join(nca_res_ints, by=by_cols)
+  }
 
   # Subjects remaining to plot
   subs_left = unique(all_data[[col_id]])
@@ -7784,13 +7772,6 @@ mk_figure_ind_obs = function(
 
   # This is a list where we'll store the figures
   figures = list()
-
-  if(length(col_analyte) > 0){
-    col_group_all = c(col_group, col_analyte)
-  } else {
-    col_group_all = c(col_group)
-  }
-
 
   # Constructing the mutate command based on the col_group_all above
   mucmd = c(
@@ -7838,7 +7819,6 @@ mk_figure_ind_obs = function(
 
       if(hl_overlay){
         # Removing any subject with no half-life calc rows and removing any rows not used
-        #message("4 true")
         hl_ds =  plot_ds                                       |>
           dplyr::mutate(rmnt_hover_text = NA)                  |>
           dplyr::filter(!is.na(.data[["rmnt_used_hl_calc"]]))  |>
@@ -7850,7 +7830,6 @@ mk_figure_ind_obs = function(
         # If nothing is left this will disable the overlay for this figure
         if(nrow(hl_ds) == 0){
           hl_overlay = FALSE
-          #message("5 false")
         }
       }
       #-------------------------------------------
@@ -7900,8 +7879,6 @@ mk_figure_ind_obs = function(
       p = p + ggplot2::facet_wrap(.~.data[[col_id]], ncol=nfcols, nrow=nfrows, scales=scales)
 
       if(hl_overlay){
-        #message("6 true")
-        # pred = clast.pred*exp(-lambda.z*(time-pred))
         hl_ds[["PRED"]] =  hl_ds[["clast.pred"]]*exp(-hl_ds[["lambda.z"]]*(hl_ds[["TIME"]]-hl_ds[["tlast"]]))
         hl_ds = hl_ds  |>
           dplyr::group_by(.data[["GROUP_ALL"]]) |>
@@ -8025,7 +8002,7 @@ mk_figure_ind_obs = function(
     figures = figures
   )
 
-  res}
+    res}
 
 #'@export
 #'@title Fetches the Current Analysis Object
