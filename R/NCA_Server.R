@@ -7751,26 +7751,35 @@ mk_figure_ind_obs = function(
                                            .data[["CONC"]]))              |>
     dplyr::mutate(CONC            = ifelse(.data[["CONC"]] == 0,               # Setting missing values to values for plotting
                                            .data[["NONOBS"]],
-                                           .data[["CONC"]]))              |>
+                                           .data[["CONC"]]))              
+  
+  # Wrapping this in an eval because it's just too difficult to get this to work with
+  # .data and stuff to fix the "Undefined global functions or variables"
+  tmp_cmd = "
+  all_data = all_data                                                     |>
     dplyr::rowwise()                                                      |>
     dplyr::mutate(
        rmnt_tmp_match = list(
           nca_res_ints |>
-            dplyr::filter(.data[["TIME"]]>=.data[["start"]], .data[["TIME"]]<=.data[["end"]]) |>
-            pull(.data[["rmnt_int_str"]])
+            dplyr::filter(TIME>=start, TIME<=end) |>
+            pull(rmnt_int_str)
        )
     ) |>
-    mutate(rmnt_int_str = ifelse(length(.data[["rmnt_tmp_match"]]) == 0, NA_character_, .data[["rmnt_tmp_match"]][[1]]))|>
-    select(-.data[["rmnt_tmp_match"]])|>
+    mutate(rmnt_int_str = ifelse(length(rmnt_tmp_match) == 0, NA_character_, rmnt_tmp_match[[1]]))|>
+    select(-rmnt_tmp_match)|>
     dplyr::ungroup()
+   "
+   eval(parse(text=tmp_cmd))
 
 
   # If we're doing the hl overlay we need to merge in the hl parameters:
   if(hl_overlay){
-    #message("3 true")
-    by_cols = c(col_id, "rmnt_int_str", col_analyte, col_group)
+    tmp_cmd = "
+    by_cols = c(col_id, 'rmnt_int_str', col_analyte, col_group)
     all_data = all_data |>
       dplyr::left_join(nca_res_ints, by=by_cols)
+    "
+   eval(parse(text=tmp_cmd))
   }
 
   # Subjects remaining to plot
@@ -7898,12 +7907,16 @@ mk_figure_ind_obs = function(
         # will be smooth when plotted
         smooth_cols = c(col_id, "TIME", "GROUP_ALL", "clast.pred", 
                         "lambda.z", "tlast", "GROUP_ALL", "rmnt_key")
+
+        # Wrapping this in an eval because it's just too difficult to get this to work with
+        # .data and stuff to fix the "Undefined global functions or variables"
+        tmp_cmd = '
         hl_ds_smooth = hl_ds                                      |>
           dplyr::group_by(.data[["GROUP_ALL"]])                   |>
           dplyr::mutate(tmin = min(.data[["TIME"]]))              |>
           dplyr::mutate(tmax = max(.data[["TIME"]]))              |>
           filter(row_number()==1)                                 |>
-          dplyr::group_by(.data[["GROUP_ALL"]]) |>
+          dplyr::group_by(GROUP_ALL) |>
            # For each group, create a sequence of 100 TIME values
            summarise(
              data = list({
@@ -7918,6 +7931,10 @@ mk_figure_ind_obs = function(
            ) |>  
            tidyr::unnest(data) |>
            dplyr::select(all_of(smooth_cols))
+        '
+        eval(parse(text=tmp_cmd))
+
+
         hl_ds_smooth[["PRED"]] =  hl_ds_smooth[["clast.pred"]]*exp(-hl_ds_smooth[["lambda.z"]]*(hl_ds_smooth[["TIME"]]-hl_ds_smooth[["tlast"]]))
 
         hl_ds[["rmnt_hl_annotate"]] = hl_annotate
@@ -8011,7 +8028,7 @@ mk_figure_ind_obs = function(
     figures = figures
   )
 
-    res}
+  res}
 
 #'@export
 #'@title Fetches the Current Analysis Object
