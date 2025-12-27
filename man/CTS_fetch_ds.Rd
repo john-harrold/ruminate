@@ -4,10 +4,12 @@
 \alias{CTS_fetch_ds}
 \title{Fetch Clinical Trial Simulator Module Datasets}
 \usage{
-CTS_fetch_ds(state)
+CTS_fetch_ds(state, meta_only = FALSE)
 }
 \arguments{
 \item{state}{CTS state from \code{CTS_fetch_state()}}
+
+\item{meta_only}{Include only metadata and not the dataset (default \code{FALSE})}
 }
 \value{
 Character object vector with the lines of code

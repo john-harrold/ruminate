@@ -4,10 +4,12 @@
 \alias{NCA_fetch_ds}
 \title{Fetch Module Datasets}
 \usage{
-NCA_fetch_ds(state)
+NCA_fetch_ds(state, meta_only = FALSE)
 }
 \arguments{
 \item{state}{NCA state from \code{NCA_fetch_state()}}
+
+\item{meta_only}{Include only metadata and not the dataset (default \code{FALSE})}
 }
 \value{
 list containing the following elements

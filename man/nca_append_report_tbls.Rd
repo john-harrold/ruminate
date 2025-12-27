@@ -220,6 +220,16 @@ ui <- shinydashboard::dashboardPage(
                    htmlOutput(NS("ASM", "ui_asm_compact"))
                    ))
                    )
+                 ),
+                 shiny::tabPanel(id="workflows",
+                          title=tagList(shiny::icon("robot"),
+                                        "Workflows"),
+                 fluidRow(
+                   column(width=12,
+                          div(style="display:inline-block;vertical-align:top",
+                   htmlOutput(NS("ASM", "ASM_ui_workflows"))
+                   ))
+                   )
                  )
                )
          #     ),

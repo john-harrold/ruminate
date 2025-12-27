@@ -331,6 +331,16 @@ for the total number of figures (<code>===FIGTOT===</code>) and the current figu
 <span class="r-in"><span>                   <span class="fu">htmlOutput</span><span class="op">(</span><span class="fu">NS</span><span class="op">(</span><span class="st">"ASM"</span>, <span class="st">"ui_asm_compact"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>                   <span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>                   <span class="op">)</span></span></span>
+<span class="r-in"><span>                 <span class="op">)</span>,</span></span>
+<span class="r-in"><span>                 <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/tabPanel.html" class="external-link">tabPanel</a></span><span class="op">(</span>id<span class="op">=</span><span class="st">"workflows"</span>,</span></span>
+<span class="r-in"><span>                          title<span class="op">=</span><span class="fu">tagList</span><span class="op">(</span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/icon.html" class="external-link">icon</a></span><span class="op">(</span><span class="st">"robot"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                        <span class="st">"Workflows"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                 <span class="fu">fluidRow</span><span class="op">(</span></span></span>
+<span class="r-in"><span>                   <span class="fu">column</span><span class="op">(</span>width<span class="op">=</span><span class="fl">12</span>,</span></span>
+<span class="r-in"><span>                          <span class="fu">div</span><span class="op">(</span>style<span class="op">=</span><span class="st">"display:inline-block;vertical-align:top"</span>,</span></span>
+<span class="r-in"><span>                   <span class="fu">htmlOutput</span><span class="op">(</span><span class="fu">NS</span><span class="op">(</span><span class="st">"ASM"</span>, <span class="st">"ASM_ui_workflows"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                   <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                   <span class="op">)</span></span></span>
 <span class="r-in"><span>                 <span class="op">)</span></span></span>
 <span class="r-in"><span>               <span class="op">)</span></span></span>
 <span class="r-in"><span>         <span class="co">#     ),</span></span></span>
