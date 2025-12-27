@@ -58,12 +58,13 @@ if(system.file(package="devtools") == ""){
   install.packages("devtools") 
 }
 
+devtools::install_github("humanpred/pknca",        dependencies=TRUE)
 devtools::install_github("john-harrold/onbrand",   dependencies=TRUE)
 devtools::install_github("john-harrold/formods",   dependencies=TRUE)
 devtools::install_github("john-harrold/ruminate",  dependencies=TRUE)
 ```
 
-Note that because `{ruminate}` depends on `{formods}` and `{onbrand}` you will need to first install the development versions of `{onbrand}` and `{formods}`.
+Note that because `{ruminate}` depends on `{formods}` and `{onbrand}` you will need to first install the development versions of `{onbrand}` and `{formods}`. You may also need to install the development version of `{PKNC}` as well. 
 
 # Running ruminate
 

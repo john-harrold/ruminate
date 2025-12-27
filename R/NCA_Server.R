@@ -5493,6 +5493,7 @@ flag_nca_ds  = function(DS       = NULL,
 
   # Creating columns with default values
   DS = DS |>
+    dplyr::ungroup()                                               |>   # If for some reason the data is grouped we ungroup it
     dplyr::mutate(rmnt_key  = paste0("rec_", 1:nrow(DS)))          |>
     dplyr::mutate(rmnt_flag = "obs")                               |>   # By default everything is an observation
     dplyr::mutate(rmnt_desc = flag_map[["obs"]][["description"]])  |>
