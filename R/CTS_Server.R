@@ -3464,6 +3464,7 @@ res}
 #'@description Fetches the datasets produced by the module. For each cohort
 #'this will be the simulation timecourse and the event table
 #'@param state CTS state from \code{CTS_fetch_state()}
+#'@param meta_only Include only metadata and not the dataset (default \code{FALSE})
 #'@return Character object vector with the lines of code
 #'@return list containing the following elements
 #'\itemize{
@@ -3484,7 +3485,7 @@ res}
 #'  }
 #'}
 #'@example inst/test_apps/CTS_funcs.R
-CTS_fetch_ds = function(state){
+CTS_fetch_ds = function(state, meta_only=FALSE){
   hasds  = FALSE
   isgood = TRUE
   msgs   = c()
@@ -3520,7 +3521,11 @@ CTS_fetch_ds = function(state){
             # Timecourse dataset
             ds[[sim_tc_obj]] = NEWDS
             ds[[sim_tc_obj]][["label"]]       = paste0(current_ele[[ename]][["element_name"]])
-            ds[[sim_tc_obj]][["DS"]]          =  current_ele[["simres"]][["capture"]][[sim_tc_obj]]
+            if(meta_only){
+              ds[[sim_tc_obj]][["DS"]]        =  NULL
+            } else {
+              ds[[sim_tc_obj]][["DS"]]        =  current_ele[["simres"]][["capture"]][[sim_tc_obj]]
+            }
             ds[[sim_tc_obj]][["DSMETA"]]      =  state[["MC"]][["labels"]][["ds_tc"]]
             ds[[sim_tc_obj]][["code"]]        =  current_ele[["code_ele_only"]]
             ds[[sim_tc_obj]][["checksum"]]    =  state[["CTS"]][["checksum"]]
@@ -3531,14 +3536,18 @@ CTS_fetch_ds = function(state){
             # Event table dataset
             ds[[sim_ev_obj]] = NEWDS
             ds[[sim_ev_obj]][["label"]]       = paste0(current_ele[[ename]][["element_name"]])
-            ds[[sim_ev_obj]][["DS"]]          =  current_ele[["simres"]][["capture"]][[sim_ev_obj]]
+            if(meta_only){
+              ds[[sim_ev_obj]][["DS"]]        =  NULL
+            } else {
+              ds[[sim_ev_obj]][["DS"]]        =  current_ele[["simres"]][["capture"]][[sim_ev_obj]]
+            }
             ds[[sim_ev_obj]][["DSMETA"]]      =  state[["MC"]][["labels"]][["ds_ev"]]
             ds[[sim_ev_obj]][["code"]]        =  current_ele[["code_ele_only"]]
             ds[[sim_ev_obj]][["checksum"]]    =  state[["CTS"]][["checksum"]]
             ds[[sim_ev_obj]][["DSchecksum"]]  =  digest::digest(
               current_ele[["simres"]][["capture"]][[sim_ev_obj]],
               algo=c("md5"))
-          }
+            }
         }
       }
     }

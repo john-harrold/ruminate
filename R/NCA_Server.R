@@ -4986,6 +4986,7 @@ res}
 #'@title Fetch Module Datasets
 #'@description Fetches the datasets contained in the module
 #'@param state NCA state from \code{NCA_fetch_state()}
+#'@param meta_only Include only metadata and not the dataset (default \code{FALSE})
 #'@return list containing the following elements
 #'\itemize{
 #'  \item{isgood:}    Return status of the function.
@@ -5010,7 +5011,7 @@ res}
 #' state = sess_res$state
 #'
 #'myDs = NCA_fetch_ds(state)
-NCA_fetch_ds = function(state){
+NCA_fetch_ds = function(state, meta_only=FALSE){
   hasds  = FALSE
   isgood = TRUE
   msgs   = c()
@@ -5055,7 +5056,11 @@ NCA_fetch_ds = function(state){
         # Creating an emtpy dataset
         ds[[tb_name]]                  = NEWDS
         ds[[tb_name]][["label"]]       = tb_label
-        ds[[tb_name]][["DS"]]          = curr_ana[["objs"]][["tb_ind_params"]][["value"]][["raw_nca"]]
+        if(meta_only){
+          ds[[tb_name]][["DS"]]        = NULL
+        } else{
+          ds[[tb_name]][["DS"]]        = curr_ana[["objs"]][["tb_ind_params"]][["value"]][["raw_nca"]]
+        }
         ds[[tb_name]][["DSMETA"]]      = DSMETA
         ds[[tb_name]][["code"]]        = curr_ana[["code"]]
         ds[[tb_name]][["checksum"]]    = state[["NCA"]][["checksum"]]
@@ -5084,7 +5089,11 @@ NCA_fetch_ds = function(state){
         # Creating an emtpy dataset
         ds[[tb_name]]                  = NEWDS
         ds[[tb_name]][["label"]]       = tb_label
-        ds[[tb_name]][["DS"]]          = curr_ana[["objs"]][["tb_ind_params"]][["value"]][["one_table"]]
+        if(meta_only){
+          ds[[tb_name]][["DS"]]        = NULL
+        } else{
+          ds[[tb_name]][["DS"]]        = curr_ana[["objs"]][["tb_ind_params"]][["value"]][["one_table"]]
+        }
         ds[[tb_name]][["DSMETA"]]      = DSMETA
         ds[[tb_name]][["code"]]        = curr_ana[["code"]]
         ds[[tb_name]][["checksum"]]    = state[["NCA"]][["checksum"]]
@@ -7696,9 +7705,9 @@ mk_figure_ind_obs = function(
   hl_col_keep = c("tlast", "clast.pred", "half.life", "lambda.z", "r.squared")
   nca_res_ints = nca_res_df                                                        |> 
     dplyr::select(dplyr::all_of(c(col_id, col_analyte, col_group, "start", "end", "PPTESTCD", "PPORRES"))) |>
-    dplyr::filter(PPTESTCD %in% hl_col_keep)                                       |>
+    dplyr::filter(.data[["PPTESTCD"]] %in% hl_col_keep)                                       |>
     tidyr::pivot_wider(values_from="PPORRES", names_from="PPTESTCD")               |>
-    dplyr::mutate(rmnt_int_str = paste0("int_", start, "_", end))                    
+    dplyr::mutate(rmnt_int_str = paste0("int_", .data[["start"]], "_", .data[["end"]]))                    
 
   ints_col_keep = c(col_id, col_analyte, col_group, "start", "end")
   nca_res_ints = nca_res_ints                                                      |>
@@ -7747,12 +7756,12 @@ mk_figure_ind_obs = function(
     dplyr::mutate(
        rmnt_tmp_match = list(
           nca_res_ints |>
-            dplyr::filter(TIME>=start, TIME<=end) |>
-            pull(rmnt_int_str)
+            dplyr::filter(.data[["TIME"]]>=.data[["start"]], .data[["TIME"]]<=.data[["end"]]) |>
+            pull(.data[["rmnt_int_str"]])
        )
     ) |>
-    mutate(rmnt_int_str = ifelse(length(rmnt_tmp_match) == 0, NA_character_, rmnt_tmp_match[[1]]))|>
-    select(-rmnt_tmp_match)|>
+    mutate(rmnt_int_str = ifelse(length(.data[["rmnt_tmp_match"]]) == 0, NA_character_, .data[["rmnt_tmp_match"]][[1]]))|>
+    select(-.data[["rmnt_tmp_match"]])|>
     dplyr::ungroup()
 
 
@@ -7894,7 +7903,7 @@ mk_figure_ind_obs = function(
           dplyr::mutate(tmin = min(.data[["TIME"]]))              |>
           dplyr::mutate(tmax = max(.data[["TIME"]]))              |>
           filter(row_number()==1)                                 |>
-          dplyr::group_by(GROUP_ALL) |>
+          dplyr::group_by(.data[["GROUP_ALL"]]) |>
            # For each group, create a sequence of 100 TIME values
            summarise(
              data = list({
