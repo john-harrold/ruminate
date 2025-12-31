@@ -7023,6 +7023,7 @@ run_nca_components = function(
       if(!current_ana[["isgood"]] | !isgood){
         err_msgs = paste0("Unable to create: ", fig_tab, " see above for details.")
         err_msgs = c(err_msgs, "run_nca_components()")
+        err_msgs = c(err_msgs, paste0("components: ", paste0(components, collapse=", ")))
         msgs = c(msgs, err_msgs)
       }
     }
@@ -7898,7 +7899,7 @@ mk_figure_ind_obs = function(
       p = p + ggplot2::facet_wrap(.~.data[[col_id]], ncol=nfcols, nrow=nfrows, scales=scales)
 
       if(hl_overlay){
-        hl_ds[["PRED"]] =  hl_ds[["clast.pred"]]*exp(-hl_ds[["lambda.z"]]*(hl_ds[["TIME"]]-hl_ds[["tlast"]]))
+        hl_ds[["PRED"]] =  hl_ds[["clast.pred"]]*exp(-hl_ds[["lambda.z"]]*(hl_ds[["TIME"]]-(hl_ds[["start"]]+hl_ds[["tlast"]])))
         hl_ds = hl_ds  |>
           dplyr::group_by(.data[["GROUP_ALL"]]) |>
           dplyr::mutate(rmnt_tint_lab = min(.data[["TIME"]]))  |>
@@ -7906,7 +7907,7 @@ mk_figure_ind_obs = function(
 
         # Creating a dataset of predictions that is heavily sampled so that it
         # will be smooth when plotted
-        smooth_cols = c(col_id, "TIME", "GROUP_ALL", "clast.pred", 
+        smooth_cols = c(col_id, "TIME", "GROUP_ALL", "clast.pred", "start",
                         "lambda.z", "tlast", "GROUP_ALL", "rmnt_key")
 
         # Wrapping this in an eval because it's just too difficult to get this to work with
@@ -7936,7 +7937,7 @@ mk_figure_ind_obs = function(
         eval(parse(text=tmp_cmd))
 
 
-        hl_ds_smooth[["PRED"]] =  hl_ds_smooth[["clast.pred"]]*exp(-hl_ds_smooth[["lambda.z"]]*(hl_ds_smooth[["TIME"]]-hl_ds_smooth[["tlast"]]))
+        hl_ds_smooth[["PRED"]] =  hl_ds_smooth[["clast.pred"]]*exp(-hl_ds_smooth[["lambda.z"]]*(hl_ds_smooth[["TIME"]]-(hl_ds_smooth[["start"]]+hl_ds_smooth[["tlast"]])))
 
         hl_ds[["rmnt_hl_annotate"]] = hl_annotate
 
@@ -8299,16 +8300,6 @@ mk_table_nca_params = function(
   if(type == "summary"){
     # JMH create summary table here
   }
-  if(type == "indiviudal"){
-    # NAs come from parameters that were not calculated for whatever reason.
-    # Having NAs pop up in reports is kind of sloppy so here we replace them
-    # with the user-specified value:
-    nca_data = nca_data |>
-      dplyr::mutate(PPORRES =as.character(.data[["PPORRES"]])) |>
-      dplyr::mutate(PPORRES = ifelse(.data[["PPORRES"]] == "NA",
-                                     not_calc,
-                                     .data[["PPORRES"]] ))
-  }
 
 
   # We're going to group by everything except the id
@@ -8340,7 +8331,10 @@ mk_table_nca_params = function(
     dplyr::mutate(PPORRES = ifelse(is.na(.data[["PPORRES"]]), not_calc, .data[["PPORRES"]])) |>
     dplyr::select(dplyr::all_of(col_keep)) |>
     tidyr::pivot_wider(names_from="pnames",
-                       values_from="PPORRES")
+                       values_from="PPORRES") |>
+    dplyr::mutate(across(everything(), \(x) replace_na(x, "--")))
+
+
   # Creating a lookup table to group output and create headers
   col_lookup = nca_data                     |>
     dplyr::group_by(.data[["pnames"]])      |>
