@@ -57,7 +57,11 @@ navbar:
        - text: "Introduction and Overview"
          href:  https://vimeo.com/1042516737
        - text: "Getting Started: Wrangling, Plotting and NCA"
-         href: https://vimeo.com/1042510561
+         href:  https://vimeo.com/1042510561
+       - text: "Manually Flagging NCA Data"
+         href:  https://vimeo.com/1150267933
+       - text: "SDTM Datasets to ARD"
+         href:  https://vimeo.com/1150267893
        - text: "Deployment, App Preloading, and Analysis Workflows"
          href:  https://vimeo.com/1045192047
   - text: "Tutorials"

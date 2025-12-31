@@ -4,7 +4,7 @@ Version: 0.4.0
 Authors@R: 
     person("John", "Harrold", , "john.m.harrold@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2052-4373"))
-Description: Exploration of pharmacometrics data involves both general tools (transformation and plotting) and specific techniques (non-compartmental analysis). This kind of exploration is generally accomplished by utilizing different packages. The purpose of 'ruminate' is to create a 'shiny' interface to make these tools more broadly available while creating reproducible results.
+Description: Exploration of pharmacometrics data involves both general tools (transformation and plotting) and specific techniques (non-compartmental analysis). This kind of exploration is generally accomplished by utilizing different packages. The purpose of 'ruminate' is to create a 'shiny' interface to make these tools more broadly available while creating reproducible results.  Currently there are modules for uploading one or more datasets, data wrangling, plot genreation, non-compartmental analysis, construction of ODE-based models, and constructing and running adaptive trial simualtions. Analyses can be saved and reloaded later. It's possible to create workflows to automate analyses.  There is integrated reporting in Word, Powerpoint and Excel. You can also generate scripts to replicate what was done in the app to create a stand-alone script to run in validated environments. 
 License: BSD_2_clause + file LICENSE
 BugReports: https://github.com/john-harrold/ruminate/issues
 URL: https://ruminate.ubiquity.tools/
