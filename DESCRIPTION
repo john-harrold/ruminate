@@ -19,7 +19,7 @@ Imports:
   flextable,
   formods (>= 0.2.0),
   ggplot2,
-  onbrand (>= 1.0.3),
+  onbrand (>= 1.0.8),
   PKNCA (>= 0.10.2),
   plotly (>= 4.11.0),
   rhandsontable,

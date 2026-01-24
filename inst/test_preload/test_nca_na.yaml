@@ -1,0 +1,148 @@
+ASM:
+  fm_yaml: config/formods.yaml
+  mod_yaml: config/ASM.yaml
+  docx_ph:
+    HEADERLEFT: ''
+    HEADERRIGHT: ''
+    FOOTERLEFT: ''
+UD:
+  fm_yaml: config/formods.yaml
+  mod_yaml: config/UD.yaml
+  data_source:
+    file_name: test_nca_na.csv
+    sheet: ~
+    clean: yes
+DM:
+  fm_yaml: config/formods.yaml
+  mod_yaml: config/DM.yaml
+  res_deps:
+    ds: []
+  sources: ~
+  elements: ~
+  ui:
+    element_selection: ''
+    source_url: ''
+DW:
+  fm_yaml: config/formods.yaml
+  mod_yaml: config/DW.yaml
+  res_deps:
+    ds: []
+  elements:
+  - element:
+      idx: 1.0
+      name: data_view_1
+      data_source:
+        id: UD
+        idx: 1.0
+        res_label: ''
+      components: []
+FG:
+  fm_yaml: config/formods.yaml
+  mod_yaml: config/FG.yaml
+  elements:
+  - element:
+      idx: 1.0
+      name: Fig_1
+      notes: ''
+      data_source:
+        id: UD
+        idx: 1.0
+        res_label: ''
+      components: []
+NCA:
+  fm_yaml: config/formods.yaml
+  mod_yaml: config/NCA.yaml
+  elements:
+  - element:
+      idx: 1.0
+      name: NCA_1
+      notes: ''
+      data_source:
+        id: UD
+        idx: 1.0
+        res_label: ''
+      nca_config:
+        adj.r.squared.factor: 0.0001
+        max.missing: 0.5
+        auc.method: lin up/log down
+        conc.na: drop
+        conc.blq$first: keep
+        conc.blq$middle: drop
+        conc.blq$last: keep
+        first.tmax: yes
+        allow.tmax.in.half.life: no
+        min.hl.points: 3
+        min.span.ratio: 2
+        min.hl.r.squared: 0.9
+        max.aucinf.pext: 20
+      ana_options:
+        include_units: yes
+        interval_range:
+        - '0'
+        - Inf
+        fg_ind_obs_ncol: '3'
+        fg_ind_obs_nrow: '3'
+        curr_fg_ind_obs: Figure_1
+        manual_fg_ind_obs: ~
+        manual_notes_fg_ind_obs: ~
+        reset_manual_fg_ind_obs: no
+        curr_tb_ind_obs: Table 1
+        curr_tb_ind_params: Table 1
+        curr_tb_sum_params: ''
+        text_manual: ''
+        fg_ind_obs_rpt:
+        - docx
+        - pptx
+        tb_ind_obs_rpt:
+        - docx
+        - xlsx
+        tb_ind_obs_flags_rpt:
+        - docx
+        - xlsx
+        tb_ind_params_rpt:
+        - docx
+        - xlsx
+        tb_sum_params_rpt: ~
+        fg_ind_obs_logy: yes
+        fg_ind_obs_hl_overlay: yes
+        sampling: serial
+        dose_from: cols
+        fig_type: report
+        tab_type: report
+        nca_parameters:
+        - cmax
+        - aucinf.obs
+        - auclast
+        ana_scenario: sd_iv
+        units_time: day
+        units_conc: ng/mL
+        units_dose: mg
+        units_amt: mg
+        col_id: ID
+        col_time: TIME_DY
+        col_ntime: NTIME_DY
+        col_dose: DOSE
+        col_dur: N/A
+        col_conc: CONC
+        col_route: ROUTE
+        col_group: ''
+        col_evid: ''
+        col_cycle: DOSE_NUM
+        col_analyte: N/A
+        fig_view: fg_ind_obs
+        tab_view: tb_ind_obs
+        manual_ds_flags: {}
+      components:
+      - component:
+          nca_parameters:
+          - cmax
+          - aucinf.obs
+          - auclast
+          start: 0.0
+          stop: .inf
+MB:
+  fm_yaml: config/formods.yaml
+  mod_yaml: config/MB.yaml
+CTS:
+  fm_yaml: config/formods.yaml
+  mod_yaml: config/CTS.yaml

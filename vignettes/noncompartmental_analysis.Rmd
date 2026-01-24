@@ -259,7 +259,7 @@ options the user has selected.
 
 ## NCA analysis intervals
 
-If you select an interval for analysis, it is necessary that you have observations at the beginning and end of that interval. If you do not have observations at dosing times (e.g. you dose at time zero but your first observation is at 15 minutes post-dose) and you want to use the dosing time as the beginning of your interval, you can have an observation that is BQL or missing (`NA`) at the dosing time (zero).
+If you select an interval for analysis, it is necessary that you have observations at the beginning and end of that interval. If you do not have observations at dosing times (e.g. you dose at time zero but your first observation is at 15 minutes post-dose) and you want to use the dosing time as the beginning of your interval, you can have an observation that is BLQ or missing (`NA`) at the dosing time (zero).
 
 ```{r warning=FALSE, message=FALSE, echo=FALSE}
 save(presim, file="NCA_presim.RData")

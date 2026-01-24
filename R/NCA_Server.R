@@ -5501,12 +5501,18 @@ flag_nca_ds  = function(DS       = NULL,
     dplyr::mutate(rmnt_hlex = as.logical(NA_character_))           |>   # By default no exclusions for  half-life calculations
     dplyr::mutate(rmnt_hlin = as.logical(NA_character_))           |>   # By default no inclusions for  half-life calculations
     dplyr::mutate(rmnt_note = "")                                  |>   # By default no notes.
-    dplyr::mutate(rmnt_flag = ifelse(.data[[col_conc]] == 0,
+    dplyr::mutate(rmnt_flag = ifelse(.data[[col_conc]] == 0,            # Here we flag all the blq values
                                      "blq",
-                                     .data[["rmnt_flag"]])) |>                     # Lastly we flag all the blq values
+                                     .data[["rmnt_flag"]])) |>                     
     dplyr::mutate(rmnt_desc = ifelse(.data[[col_conc]] == 0,
                                      flag_map[["blq"]][["description"]],
-                                     .data[["rmnt_desc"]]))
+                                     .data[["rmnt_desc"]])) |>
+    dplyr::mutate(rmnt_flag = ifelse(is.na(.data[[col_conc]]),          # Here we flag all missing (not sampled) values 
+                                     "ns",
+                                     .data[["rmnt_flag"]])) |>                     
+    dplyr::mutate(rmnt_desc = ifelse(is.na(.data[[col_conc]]),
+                                     flag_map[["ns"]][["description"]],
+                                     .data[["rmnt_desc"]])) 
 
   # If no notes are present we set them to ""
   if(!("note" %in% names(ds_flags))){
@@ -6619,9 +6625,10 @@ nca_builder = function(state){
 
     code_tb_ind_params = paste(code_tb_ind_params, collapse="\n")
     code_previous      = ds[["code"]]
+
+    # This is the code shown in the UI pull down
     code               = paste(c(code_previous,
                                  code_ana_only,
-                                 code_update_ana,
                                  code_fg_ind_obs_all,
                                  code_tb_ind_obs,
                                  code_tb_ind_obs_flags,
@@ -7231,7 +7238,6 @@ mk_table_ind_obs = function(
         .data[["CONC"]]))                                          |>
     dplyr::select(-.data[["rmnt_flag"]])
 
-
   if(rows_by == "time"){
     if(is.null(row_common_head)){
       row_common_head = data.frame(TIME="Time")
@@ -7312,6 +7318,10 @@ mk_table_ind_obs = function(
 
   # We need to attach the units to the rows as well:
   row_common_head = rbind(row_common_head, units_data)
+
+  # Making sure all NA values have actual values in the table body
+  table_body <- table_body |>
+    mutate(across(everything(), ~replace(., is.na(.), not_sampled)))
 
   stres = onbrand::span_table(
              table_body      = table_body,

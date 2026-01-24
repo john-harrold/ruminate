@@ -61,6 +61,40 @@ if(formods::is_installed("readxl")){
       expect_true(state[["NCA"]][["anas"]][[aname]][["isgood"]])
     }
   })
-
-
 }
+
+test_that("Testing NA values in NCA analysis", {
+
+  pldir = file.path(tempdir(), "preload_test")
+  mpd_res = mk_preload_dir(
+    directory = pldir,
+    preload   = system.file(package="ruminate", "test_preload", "test_nca_na.yaml"),
+    mod_yaml  = c( 
+      system.file(package="formods",  "templates", "formods.yaml"),
+      system.file(package="formods",  "templates", "ASM.yaml"),
+      system.file(package="formods",  "templates", "UD.yaml"),
+      system.file(package="formods",  "templates", "DM.yaml"),
+      system.file(package="formods",  "templates", "DW.yaml"),
+      system.file(package="formods",  "templates", "FG.yaml"),
+      system.file(package="ruminate", "templates", "NCA.yaml"),
+      system.file(package="ruminate", "templates", "MB.yaml"),
+      system.file(package="ruminate", "templates", "CTS.yaml")),
+    include = list(
+      UD = list(
+        from = system.file(package="ruminate", "test_data", "test_nca_na.csv"),
+        to   = "test_nca_na.csv" )
+    )
+  )
+  
+  old_dir = getwd()
+  setwd(pldir)
+  on.exit(setwd(old_dir))
+  apl_res = suppressMessages(suppressWarnings(FM_app_preload(session=list(), sources="preload.yaml")))
+  testthat::expect_true(apl_res[["isgood"]])
+
+  tmp_state = apl_res[["all_sess_res"]][["NCA"]][["state"]]
+  current_ana = NCA_fetch_current_ana(tmp_state)
+  testthat::expect_true(current_ana[["isgood"]])
+  
+  setwd(old_dir)
+})
