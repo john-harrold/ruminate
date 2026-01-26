@@ -1,4 +1,4 @@
-FROM rocker/shiny-verse:4.2.0
+FROM rocker/shiny-verse:4.5.2
 
 ## Install R libraries
 RUN R -e "install.packages('remotes', repos='http://cran.rstudio.com/')"

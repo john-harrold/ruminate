@@ -53,7 +53,7 @@ if(formods::is_installed("readxl")){
   expect_true(drb_res[["isgood"]])
   })
 
-  test_that("Test session examples", {
+  test_that("Test NCA analyses in test session", {
     state = sess_res$state
     # This makes sure each analysis in the test
     # session was completed successfully

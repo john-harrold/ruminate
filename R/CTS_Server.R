@@ -3701,8 +3701,25 @@ CTS_test_mksession = function(session=list(), full=FALSE){
                 system.file(package="ruminate", "preload", "CTS_preload_minimal.yaml"))
   }
 
-  res = formods::FM_app_preload(session=session, sources=sources)
+  pldir = tempfile(pattern="preload_")
+  mpd_res = formods::mk_preload_dir(
+    directory = pldir,
+    preload   = sources, 
+    mod_yaml  = c( 
+      system.file(package="formods",  "templates", "formods.yaml"),
+      system.file(package="formods",  "templates", "ASM.yaml"),
+      system.file(package="ruminate", "templates", "MB.yaml"),
+      system.file(package="ruminate", "templates", "CTS.yaml"))
+  )
+  
+  old_dir = getwd()
+  setwd(pldir)
+  on.exit(setwd(old_dir))
+  res = FM_app_preload(session=list(), sources="preload.yaml")
   res = res[["all_sess_res"]][["CTS"]]
+
+  setwd(old_dir)
+  unlink(pldir, recursive = TRUE)
 
 res}
 

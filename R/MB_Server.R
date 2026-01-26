@@ -2070,8 +2070,27 @@ MB_test_mksession = function(session=list()){
   sources = c(system.file(package="formods",  "preload", "ASM_preload.yaml"),
               system.file(package="ruminate", "preload", "MB_preload.yaml"))
 
-  res = formods::FM_app_preload(session=session, sources=sources)
+  pldir = tempfile(pattern="preload_")
+  mpd_res = formods::mk_preload_dir(
+    directory = pldir,
+    preload   = sources, 
+    mod_yaml  = c( 
+      system.file(package="formods",  "templates", "formods.yaml"),
+      system.file(package="formods",  "templates", "ASM.yaml"),
+      system.file(package="ruminate", "templates", "MB.yaml"))
+  )
+  
+  old_dir = getwd()
+  setwd(pldir)
+  on.exit(setwd(old_dir))
+  res = FM_app_preload(session=list(), sources="preload.yaml")
   res = res[["all_sess_res"]][["MB"]]
+
+  setwd(old_dir)
+  unlink(pldir, recursive = TRUE)
+
+  #res = formods::FM_app_preload(session=session, sources=sources)
+  #res = res[["all_sess_res"]][["MB"]]
 res}
 
 #'@export
