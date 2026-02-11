@@ -14,3 +14,4 @@ check_depsonly.R
 .vscode
 tests/testing/*
 tests/testing/
+CLAUDE.md

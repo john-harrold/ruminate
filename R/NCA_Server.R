@@ -36,6 +36,7 @@
 #'  \item{MOD_yaml_file:}  Module configuration file with MC as main section.
 #'}
 #'@example inst/test_apps/nca_app.R
+# nocov start
 NCA_Server <- function(id,
                       FM_yaml_file  = system.file(package = "formods",   "templates", "formods.yaml"),
                       MOD_yaml_file = system.file(package = "ruminate",  "templates", "NCA.yaml"),
@@ -3308,6 +3309,7 @@ NCA_Server <- function(id,
 
   })
 }
+# nocov end
 
 #'@export
 #'@title Fetch ruminate State

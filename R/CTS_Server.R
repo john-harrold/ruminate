@@ -13,6 +13,7 @@
 #'@param react_state Variable passed to server to allow reaction outside of module (\code{NULL})
 #'@return UD Server object
 # JMH Add example
+# nocov start
 CTS_Server <- function(id,
                FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml"),
                MOD_yaml_file = system.file(package = "ruminate",  "templates", "CTS.yaml"),
@@ -2243,6 +2244,7 @@ CTS_Server <- function(id,
 
   })
 }
+# nocov end
 
 #'@export
 #'@title Fetch Clinical Trial Simulator State

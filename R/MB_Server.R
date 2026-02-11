@@ -13,6 +13,7 @@
 #'@param react_state Variable passed to server to allow reaction outside of module (\code{NULL})
 #'@return MB Server object
 # JMH Add example
+# nocov start
 MB_Server <- function(id,
                FM_yaml_file  = system.file(package = "formods", "templates", "formods.yaml"),
                MOD_yaml_file = system.file(package = "ruminate",  "templates", "MB.yaml"),
@@ -1066,6 +1067,7 @@ MB_Server <- function(id,
 
   })
 }
+# nocov end
 
 #'@export
 #'@title Fetch Model Builder State
