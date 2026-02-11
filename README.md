@@ -8,14 +8,12 @@
 
 <!-- badges: start -->
 
-[![Codecov test
-coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
 ![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate)
 ![Active](https://www.repostatus.org/badges/latest/active.svg)
 [![Lifecycle:
 Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![R-CMD-check](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml)
-
+[![codecov](https://codecov.io/gh/john-harrold/ruminate/branch/main/graph/badge.svg)](https://codecov.io/gh/john-harrold/ruminate)
 <!-- badges: end -->
 
 The goal of `{ruminate}` is to facilitate exploration of pharmacometrics
@@ -63,6 +61,7 @@ if(system.file(package="devtools") == ""){
   install.packages("devtools") 
 }
 
+devtools::install_github("humanpred/pknca",        dependencies=TRUE)
 devtools::install_github("john-harrold/onbrand",   dependencies=TRUE)
 devtools::install_github("john-harrold/formods",   dependencies=TRUE)
 devtools::install_github("john-harrold/ruminate",  dependencies=TRUE)
@@ -70,7 +69,8 @@ devtools::install_github("john-harrold/ruminate",  dependencies=TRUE)
 
 Note that because `{ruminate}` depends on `{formods}` and `{onbrand}`
 you will need to first install the development versions of `{onbrand}`
-and `{formods}`.
+and `{formods}`. You may also need to install the development version of
+`{PKNC}` as well.
 
 # Running ruminate
 

@@ -20,12 +20,11 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 
-[![Codecov test coverage](https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg)](https://app.codecov.io/gh/john-harrold/ruminate?branch=master)
 ![cranlogs](https://cranlogs.r-pkg.org/badges/ruminate)
 ![Active](https://www.repostatus.org/badges/latest/active.svg)
 [![Lifecycle: Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![R-CMD-check](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml)
-
+[![codecov](https://codecov.io/gh/john-harrold/ruminate/branch/main/graph/badge.svg)](https://codecov.io/gh/john-harrold/ruminate)
 <!-- badges: end -->
 
 The goal of `{ruminate}` is to facilitate exploration of pharmacometrics data. This is done by creating a Shiny interface to different tools for data transformation (`{dplyr}` and `{tidyr}`), plotting (`{ggplot2}`), noncompartmental analysis (`{PKNCA}`), and ODE-based adaptive trial simulations (`{rxode2}`). These results can be reported in Excel, Word or PowerPoint. The state of the app can be saved and loaded at a later date. When saved, a script is generated to reproduce the different actions in the Shiny interface.
