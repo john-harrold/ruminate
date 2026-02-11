@@ -292,7 +292,7 @@ observations at the beginning and end of that interval. If you do not
 have observations at dosing times (e.g. you dose at time zero but your
 first observation is at 15 minutes post-dose) and you want to use the
 dosing time as the beginning of your interval, you can have an
-observation that is BQL or missing (<code>NA</code>) at the dosing time
+observation that is BLQ or missing (<code>NA</code>) at the dosing time
 (zero).</p>
 </div>
 <div class="section level3">
@@ -446,7 +446,7 @@ Parameter Name is the value shown in the app.</p>
    #notes:
    #  NC: "not calculated"
    #  NS: "not sampled"
-   #  BLQ: "below the level of quantification"
+   #  BLQ: "below the limit of quantification"
    #--------
   notifications:
     ana_add_int_success: "Interval added: ===DETAILS==="
@@ -731,8 +731,8 @@ Parameter Name is the value shown in the app.</p>
         manual:       "no"
         sn:           "NS"
         description:  "Not Sampled"
-        notes:        "not calculated"
-        color:        "black"
+        notes:        "not sampled"
+        color:        "grey"
       nc:
         manual:       "no"
         sn:           "NC"

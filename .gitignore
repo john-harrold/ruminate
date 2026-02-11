@@ -15,3 +15,7 @@ check_depsonly.R
 tests/testing/*
 tests/testing/
 CLAUDE.md
+README.html
+
+/.quarto/
+**/*.quarto_ipynb

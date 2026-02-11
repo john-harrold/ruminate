@@ -47,6 +47,7 @@ Suggests:
   rxode2 (>= 3.0.0),
   shinybusy,
   shinydashboard,
+  shinytest2,
   testthat (>= 3.0.0),
   ubiquity
 Roxygen: list(markdown = TRUE)

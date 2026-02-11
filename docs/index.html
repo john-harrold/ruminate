@@ -81,7 +81,6 @@
 -->
 <!-- badges: start -->
 
-<!-- badges: end -->
 <p>The goal of <a href="https://ruminate.ubiquity.tools/">ruminate</a> is to facilitate exploration of pharmacometrics data. This is done by creating a Shiny interface to different tools for data transformation (<a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a> and <a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a>), plotting (<a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>), noncompartmental analysis (<a href="https://humanpred.github.io/pknca/" class="external-link">PKNCA</a>), and ODE-based adaptive trial simulations (<a href="https://nlmixr2.github.io/rxode2/" class="external-link">rxode2</a>). These results can be reported in Excel, Word or PowerPoint. The state of the app can be saved and loaded at a later date. When saved, a script is generated to reproduce the different actions in the Shiny interface.</p>
 </div>
 <div class="section level1">
@@ -112,10 +111,11 @@
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span> </span>
 <span><span class="op">}</span></span>
 <span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"humanpred/pknca"</span>,        dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"john-harrold/onbrand"</span>,   dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"john-harrold/formods"</span>,   dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"john-harrold/ruminate"</span>,  dependencies<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>Note that because <a href="https://ruminate.ubiquity.tools/">ruminate</a> depends on <a href="https://formods.ubiquity.tools/" class="external-link">formods</a> and <a href="https://onbrand.ubiquity.tools" class="external-link">onbrand</a> you will need to first install the development versions of <a href="https://onbrand.ubiquity.tools" class="external-link">onbrand</a> and <a href="https://formods.ubiquity.tools/" class="external-link">formods</a>.</p>
+<p>Note that because <a href="https://ruminate.ubiquity.tools/">ruminate</a> depends on <a href="https://formods.ubiquity.tools/" class="external-link">formods</a> and <a href="https://onbrand.ubiquity.tools" class="external-link">onbrand</a> you will need to first install the development versions of <a href="https://onbrand.ubiquity.tools" class="external-link">onbrand</a> and <a href="https://formods.ubiquity.tools/" class="external-link">formods</a>. You may also need to install the development version of <code>{PKNC}</code> as well.</p>
 </div>
 </div>
 <div class="section level1">
@@ -206,9 +206,9 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://app.codecov.io/gh/john-harrold/ruminate?branch=master" class="external-link"><img src="https://codecov.io/gh/john-harrold/ruminate/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: Experimental"></a></li>
 <li><a href="https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/john-harrold/ruminate/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://codecov.io/gh/john-harrold/ruminate" class="external-link"><img src="https://codecov.io/gh/john-harrold/ruminate/branch/main/graph/badge.svg" alt="codecov"></a></li>
 </ul>
 </div>
 
